@@ -8,7 +8,7 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace WEM\Portfolio\Model\Item;
+namespace Portfolio\Model\Item;
 
 use Contao\Model;
 

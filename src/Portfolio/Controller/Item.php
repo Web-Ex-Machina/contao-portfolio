@@ -8,11 +8,11 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace WEM\Portfolio\Controller;
+namespace Portfolio\Controller;
 
 use Exception;
 
-use WEM\Portfolio\Model\Item as ItemModel;
+use Portfolio\Model\Item as ItemModel;
 
 /**
  * Class Item - Handle Portfolio Items functions

@@ -8,7 +8,7 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace WEM\Portfolio\Module;
+namespace Portfolio\Module;
 
 use Exception;
 use Contao\CoreBundle\Exception\PageNotFoundException;

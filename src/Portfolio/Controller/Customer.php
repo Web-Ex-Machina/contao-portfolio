@@ -8,11 +8,11 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace WEM\Portfolio\Controller;
+namespace Portfolio\Controller;
 
 use Exception;
 
-use WEM\Portfolio\Model\Customer as CustomerModel;
+use Portfolio\Model\Customer as CustomerModel;
 
 /**
  * Class Customer - Handle Portfolio Customers functions

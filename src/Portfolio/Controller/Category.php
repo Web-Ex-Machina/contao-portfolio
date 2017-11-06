@@ -8,11 +8,11 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace WEM\Portfolio\Controller;
+namespace Portfolio\Controller;
 
 use Exception;
 
-use WEM\Portfolio\Model\Category as CategoryModel;
+use Portfolio\Model\Category as CategoryModel;
 
 /**
  * Class Category - Handle Portfolio Categories functions

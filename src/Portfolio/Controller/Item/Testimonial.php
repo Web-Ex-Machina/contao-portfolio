@@ -8,11 +8,11 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace WEM\Portfolio\Controller\Item;
+namespace Portfolio\Controller\Item;
 
 use Exception;
 
-use WEM\Portfolio\Model\Item\Testimonial as TestimonialModel;
+use Portfolio\Model\Item\Testimonial as TestimonialModel;
 
 /**
  * Class Testimonial - Handle Portfolio Testimonials functions
