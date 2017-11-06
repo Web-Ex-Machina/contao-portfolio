@@ -1,0 +1,76 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/wem-portfolio/languages/en/tl_wem_portfolio_customer.php" source-language="en" target-language="fr">
+    <body>
+      <trans-unit id="tl_wem_portfolio_customer.title.0">
+        <source>Title</source>
+        <target>Intitulé</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.title.1">
+        <source>Enter the customer title</source>
+        <target>Saisissez l'intitulé du client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.alias.0">
+        <source>Alias</source>
+        <target>Alias</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.alias.1">
+        <source>Enter the customer alias - it will be automaticly generated, based on customer title.</source>
+        <target>Saisissez l'alias du client - Il sera généré automatiquement, en rapport avec l'intitulé du client.</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_customer.title_legend">
+        <source>Global informations</source>
+        <target>Informations générales</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_customer.new.0">
+        <source>New customer</source>
+        <target>Nouveau client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.new.1">
+        <source>Add a new customer</source>
+        <target>Ajouter un nouveau client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.edit.0">
+        <source>Edit customer</source>
+        <target>Editer le client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.edit.1">
+        <source>Edit customer ID %s</source>
+        <target>Editer le client ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.copy.0">
+        <source>Duplicate customer</source>
+        <target>Copier le client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.copy.1">
+        <source>Duplicate customer ID %s</source>
+        <target>Copier le client ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.cut.0">
+        <source>Move customer</source>
+        <target>Déplacer le client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.cut.1">
+        <source>Move customer ID %s</source>
+        <target>Déplacer le client ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.delete.0">
+        <source>Delete customer</source>
+        <target>Supprimer le client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.delete.1">
+        <source>Delete customer ID %s</source>
+        <target>Supprimer le client ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.show.0">
+        <source>Show customer</source>
+        <target>Afficher le client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_customer.show.1">
+        <source>Show customer ID %s</source>
+        <target>Afficher le client ID %s</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

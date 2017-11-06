@@ -1,0 +1,33 @@
+{
+    "name": "webexmachina/contao-portfolio",
+    "description": "Portfolio for Contao Open Source CMS",
+    "keywords": ["portfolio", "webexmachina", "module", "contao"],
+    "type": "contao-module",
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "Web ex Machina",
+            "homepage": "https://www.webexmachina.fr",
+            "role":"Developer"
+        }
+    ],
+    "support":{
+        "website":"https://www.webexmachina.fr/",
+        "issues":"https://github.com/webexmachina/contao-portfolio/issues",
+        "source":"https://github.com/webexmachina/contao-portfolio"
+    },
+    "require": {
+        "php": ">=5.5",
+        "contao/core-bundle": "~3.2 || ~4.1",
+        "contao-community-alliance/composer-plugin": "~2.4 || ~3.0",
+        "codefog/contao-haste": "4.*",
+        "terminal42/dcawizard":"2.*"
+    },
+    "autoload":{
+        "psr-0": {
+            "Portfolio\\": [
+                "src/"
+            ]
+        }
+    }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="src/Resources/contao/languages/en/tl_module.php" source-language="en" target-language="fr">
+    <body>
+      <trans-unit id="tl_module.wem_portfolio_categories.0">
+        <source>Portfolio categories</source>
+        <target>Catégories du portfolio</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_categories.1">
+        <source>Please select one or more portfolio categories.</source>
+        <target>Sélectionner une ou plusieurs catégories du portfolio.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

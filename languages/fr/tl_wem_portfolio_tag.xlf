@@ -1,0 +1,76 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/wem-portfolio/languages/en/tl_wem_portfolio_tag.php" source-language="en" target-language="fr">
+    <body>
+      <trans-unit id="tl_wem_portfolio_tag.title.0">
+        <source>Title</source>
+        <target>Intitulé</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.title.1">
+        <source>Enter the tag title</source>
+        <target>Saisissez l'intitulé du tag</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.alias.0">
+        <source>Alias</source>
+        <target>Alias</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.alias.1">
+        <source>Enter the tag alias - it will be automaticly generated, based on tag title.</source>
+        <target>Saisissez l'alias du tag - Il sera généré automatiquement, en rapport avec l'intitulé du tag.</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_tag.title_legend">
+        <source>Global informations</source>
+        <target>Informations générales</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_tag.new.0">
+        <source>New tag</source>
+        <target>Nouveau tag</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.new.1">
+        <source>Add a new tag</source>
+        <target>Ajouter un nouveau tag</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.edit.0">
+        <source>Edit tag</source>
+        <target>Editer le tag</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.edit.1">
+        <source>Edit tag ID %s</source>
+        <target>Editer le tag ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.copy.0">
+        <source>Duplicate tag</source>
+        <target>Copier le tag</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.copy.1">
+        <source>Duplicate tag ID %s</source>
+        <target>Copier le tag ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.cut.0">
+        <source>Move tag</source>
+        <target>Déplacer le tag</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.cut.1">
+        <source>Move tag ID %s</source>
+        <target>Déplacer le tag ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.delete.0">
+        <source>Delete tag</source>
+        <target>Supprimer le tag</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.delete.1">
+        <source>Delete tag ID %s</source>
+        <target>Supprimer le tag ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.show.0">
+        <source>Show tag</source>
+        <target>Afficher le tag</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.show.1">
+        <source>Show tag ID %s</source>
+        <target>Afficher le tag ID %s</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
