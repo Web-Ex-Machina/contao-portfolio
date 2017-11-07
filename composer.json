@@ -29,5 +29,12 @@
                 "src/"
             ]
         }
+    },
+    "extra": {
+        "contao": {
+            "sources": {
+                "": "system/modules/wem-portfolio"
+            }
+        }
     }
 }
