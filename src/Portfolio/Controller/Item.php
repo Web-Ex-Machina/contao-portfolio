@@ -85,6 +85,47 @@ class Item extends \Controller
 				}
 			}
 
+			// Parse item dates
+			$arrDates = ["timestamp"=>$arrItem['created_on'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['created_on']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['created_on'])];
+			$arrItem['created_on'] = $arrDates;
+			$arrDates = ["timestamp"=>$arrItem['date'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['date']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])];
+			$arrItem['date'] = $arrDates;
+
+			// Get the item category
+			if($arrConfig["getCategory"])
+			{
+				$arrItem['pid'] = Category::getItem($arrItem['pid'], $arrConfig['getCategoryConfig']);
+			}
+
+			// Get the item customer
+			if($arrConfig["getCustomer"])
+			{
+				$arrItem['customer'] = Category::getItem($arrItem['pid'], $arrConfig['getCustomerConfig']);
+			}
+
+			// Get the item tags
+			if($arrConfig["getTags"])
+			{
+				$arrTags = deserialize($arrItem['tags']);
+
+				if(is_array($arrTags) && !empty($arrTags))
+				{
+					$arrItem['tags'] = [];
+
+					foreach($arrTags as $intTag)
+					{
+						$arrItem['tags'][] = Tag::getItem($intTag, $arrConfig['getTagsConfig']);
+					}
+				}
+			}
+
+			// Get the item testimonials
+			if($arrConfig['getTestimonials'])
+			{
+				$arrTmpConfig['pid'] = $arrItem['id'];
+				$arrItem['testimonials'] = Item\Testimonial::getItems($arrTmpConfig, $arrTmpConfig['limit'], $arrTmpConfig['offset'], $arrTmpConfig['options']);
+			}
+
 			return $arrItem;
 		}
 		catch(Exception $e)

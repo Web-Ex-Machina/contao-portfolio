@@ -14,4 +14,5 @@
 TemplateLoader::addFiles(array
 (
 	'mod_wem_portfolio_list' => 'system/modules/wem-portfolio/templates/modules',
+	'wem_portfolio_item' => 'system/modules/wem-portfolio/templates/elements',
 ));

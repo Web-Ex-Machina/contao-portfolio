@@ -37,7 +37,7 @@ class Item extends Model
 		{
 			$t = static::$strTable;
 			$arrColumns = static::formatColumns($arrConfig);
-
+				
 			if($intLimit > 0)
 				$arrOptions['limit'] = $intLimit;
 
@@ -88,15 +88,17 @@ class Item extends Model
 			$t = static::$strTable;
 			$arrColumns = array();
 
+			if($arrConfig["categories"])
+				$arrColumns[] = "$t.pid IN(" . implode(',', array_map('intval', $arrConfig["categories"])) . ")";
+
 			if($arrConfig["alias"])
-			{
 				$arrColumns[] = "$t.alias = '". $arrConfig["alias"] ."'";
-			}
 
 			if($arrConfig["not"])
-			{
 				$arrColumns[] = $arrConfig["not"];
-			}
+
+			if(empty($arrColumns))
+				throw new Exception("Model error : Config sent is invalid");
 
 			return $arrColumns;
 		}

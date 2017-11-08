@@ -28,13 +28,17 @@
             "Portfolio\\": [
                 "src/"
             ]
-        }
+        },
+        "classmap": [""]
     },
     "extra": {
         "contao": {
             "sources": {
                 "": "system/modules/wem-portfolio"
-            }
+            },
+            "runonce": [
+                "system/modules/dlh_googlemaps/config/runonce.php"
+            ]
         }
     }
 }

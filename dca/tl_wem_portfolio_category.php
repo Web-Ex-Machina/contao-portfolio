@@ -102,7 +102,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = array
 			'items' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'],
-				'href'                => 'do=article',
+				'href'                => 'do=wem_portfolio_item',
 				'icon'                => 'article.svg',
 			)
 		)
@@ -111,7 +111,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{title_legend},title,alias',
+		'default'                     => '
+			{title_legend},title,alias;
+			{redirect_legend},jumpTo
+		',
 	),
 
 	// Fields
@@ -161,6 +164,16 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = array
 				array('tl_wem_portfolio_category', 'generateAlias')
 			),
 			'sql'                     => "varchar(128) COLLATE utf8_bin NOT NULL default ''"
+		),
+		'jumpTo' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['jumpTo'],
+			'exclude'                 => true,
+			'inputType'               => 'pageTree',
+			'foreignKey'              => 'tl_page.title',
+			'eval'                    => array('fieldType'=>'radio', 'tl_class'=>'clr'),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
+			'relation'                => array('type'=>'hasOne', 'load'=>'eager')
 		),
 	),
 );

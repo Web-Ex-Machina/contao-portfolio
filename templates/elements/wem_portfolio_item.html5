@@ -1,0 +1,21 @@
+<div class="portfolio_item block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article">
+
+  <?php if($this->date): ?>
+    <p class="info"><time datetime="<?= $this->date['datetime'] ?>" itemprop="datePublished"><?= $this->date['date'] ?></time></p>
+  <?php endif; ?>
+
+  <?php if ($this->addImage): ?>
+    <?php $this->insert('image', $this->arrData); ?>
+  <?php endif; ?>
+
+  <h2 itemprop="name"><?= $this->title ?></h2>
+
+  <div class="ce_text block" itemprop="description">
+    <?= $this->teaser ?>
+  </div>
+
+  <?php if ($this->hasText || $this->hasTeaser): ?>
+    <p class="more"><?= $this->more ?></p>
+  <?php endif; ?>
+
+</div>

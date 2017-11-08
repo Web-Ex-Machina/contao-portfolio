@@ -17,10 +17,22 @@
         <source>Enter the category alias - it will be automaticly generated, based on category title.</source>
         <target>Saisissez l'alias de la catégorie - Il sera généré automatiquement, en rapport avec l'intitulé de la catégorie.</target>
       </trans-unit>
+      <trans-unit id="tl_wem_portfolio_category.jumpTo.0">
+        <source>Readerpage</source>
+        <target>Page de lecture</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_category.jumpTo.1">
+        <source>Select a reader page where the users will be redirected</source>
+        <target>Sélectionnez une page lecteur où les usagers seront redirigés</target>
+      </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_category.title_legend">
         <source>Global informations</source>
         <target>Informations générales</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_category.redirect_legend">
+        <source>Redirect settings</source>
+        <target>Paramètres de redirection</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_category.dcaLabel">
