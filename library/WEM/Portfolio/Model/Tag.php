@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
@@ -24,7 +24,7 @@ class Tag extends Model
 	protected static $strTable = 'tl_wem_portfolio_tag';
 
 	/**
-	 * Find the customers, depends on the arguments
+	 * Find tags, depends on the arguments
 	 * @param Array
 	 * @param Int
 	 * @param Int
@@ -56,7 +56,7 @@ class Tag extends Model
 	}
 
 	/**
-	 * Count the customers, depends on the arguments
+	 * Count tags, depends on the arguments
 	 * @param Array
 	 * @param Array
 	 * @return Integer
@@ -77,7 +77,7 @@ class Tag extends Model
 	}
 
 	/**
-	 * Format CustomerModel columns
+	 * Format TagModel columns
 	 * @param  [Array] $arrConfig [Configuration to format]
 	 * @return [Array]            [The Model columns]
 	 */

@@ -41,7 +41,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = array
 			'headerFields'            => array('title', 'pid', 'tstamp', 'date', 'published'),
 			'panelLayout'             => 'filter;sort,search,limit',
 			'child_record_callback'   => array('tl_wem_portfolio_item_attribute', 'listItemAttributes'),
-			'child_record_class'      => 'no_padding'
+			'child_record_class'      => 'no_padding',
+			'disableGrouping'		  => true,
 		),
 		'global_operations' => array
 		(
@@ -58,14 +59,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = array
 			'edit' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['edit'],
-				'href'                => 'table=tl_content',
-				'icon'                => 'edit.svg'
-			),
-			'editheader' => array
-			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['editmeta'],
 				'href'                => 'act=edit',
-				'icon'                => 'header.svg'
+				'icon'                => 'edit.svg'
 			),
 			'copy' => array
 			(

@@ -24,7 +24,7 @@ class ItemAttribute extends Model
 	protected static $strTable = 'tl_wem_portfolio_item_attribute';
 
 	/**
-	 * Find the attributes, depends on the arguments
+	 * Find item attributes, depends on the arguments
 	 * @param Array
 	 * @param Int
 	 * @param Int
@@ -56,7 +56,7 @@ class ItemAttribute extends Model
 	}
 
 	/**
-	 * Count the attributes, depends on the arguments
+	 * Count item attributes, depends on the arguments
 	 * @param Array
 	 * @param Array
 	 * @return Integer
@@ -77,7 +77,7 @@ class ItemAttribute extends Model
 	}
 
 	/**
-	 * Format AttributeModel columns
+	 * Format ItemAttributeModel columns
 	 * @param  [Array] $arrConfig [Configuration to format]
 	 * @return [Array]            [The Model columns]
 	 */

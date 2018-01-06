@@ -24,7 +24,7 @@ class Attribute extends Model
 	protected static $strTable = 'tl_wem_portfolio_attribute';
 
 	/**
-	 * Find the attributes, depends on the arguments
+	 * Find attributes, depends on the arguments
 	 * @param Array
 	 * @param Int
 	 * @param Int
@@ -56,7 +56,7 @@ class Attribute extends Model
 	}
 
 	/**
-	 * Count the attributes, depends on the arguments
+	 * Count attributes, depends on the arguments
 	 * @param Array
 	 * @param Array
 	 * @return Integer

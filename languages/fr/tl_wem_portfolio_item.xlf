@@ -17,14 +17,6 @@
         <source>Enter the item alias - it will be automaticly generated, based on item title.</source>
         <target>Saisissez l'alias de l'élément - Il sera généré automatiquement, en rapport avec l'intitulé de l'élément.</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.customer.0">
-        <source>Customer</source>
-        <target>Client</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.customer.1">
-        <source>Link this item to a customer</source>
-        <target>Associez cet élément à un client</target>
-      </trans-unit>
       <trans-unit id="tl_wem_portfolio_item.date.0">
         <source>Date</source>
         <target>Date</target>
@@ -34,14 +26,6 @@
         <target>Saisissez une date pour cet élément</target>
       </trans-unit>
 
-      <trans-unit id="tl_wem_portfolio_item.picture.0">
-        <source>Main picture</source>
-        <target>Illustration principale</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.picture.1">
-        <source>Select the item main picture</source>
-        <target>Sélectionnez l'illustration principale de l'élément</target>
-      </trans-unit>
       <trans-unit id="tl_wem_portfolio_item.pictures.0">
         <source>Pictures</source>
         <target>Illustrations</target>
@@ -59,29 +43,14 @@
         <source>Enter the item teaser</source>
         <target>Saisissez l'accroche de l'élément</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.technologies.0">
-        <source>Technologies</source>
-        <target>Technologies</target>
+
+      <trans-unit id="tl_wem_portfolio_item.attributes.0">
+        <source>Attributes</source>
+        <target>Attributs</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.technologies.1">
-        <source>Enter the item technologies</source>
-        <target>Saisissez les technologies de l'élément</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.duration.0">
-        <source>Duration</source>
-        <target>Durée</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.duration.1">
-        <source>Enter the item duration</source>
-        <target>Saisissez la durée de l'élément</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.url.0">
-        <source>URL</source>
-        <target>URL</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.url.1">
-        <source>Enter the item URL</source>
-        <target>Saisissez l'URL de l'élément</target>
+      <trans-unit id="tl_wem_portfolio_item.attributes.1">
+        <source>Enter the item attributes</source>
+        <target>Saisissez les attributs de l'élément</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.tags.0">
@@ -91,15 +60,6 @@
       <trans-unit id="tl_wem_portfolio_item.tags.1">
         <source>Select the item tags</source>
         <target>Sélectionnez les tags de l'élément</target>
-      </trans-unit>
-
-      <trans-unit id="tl_wem_portfolio_item.testimonials.0">
-        <source>Testimonials</source>
-        <target>Témoignages</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.testimonials.1">
-        <source>Manage the item testimonials</source>
-        <target>Gérez les témoignages de l'élément</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.published.0">
@@ -139,13 +99,13 @@
         <source>Item data</source>
         <target>Données de l'élément</target>
       </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.attributes_legend">
+        <source>Item attributes</source>
+        <target>Attributs de l'élément</target>
+      </trans-unit>
       <trans-unit id="tl_wem_portfolio_item.tags_legend">
         <source>Item tags</source>
         <target>Tags de l'élément</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.testimonials_legend">
-        <source>Item testimonials</source>
-        <target>Témoignages de l'élément</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_item.publish_legend">
         <source>Publication settings</source>

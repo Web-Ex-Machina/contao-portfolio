@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
@@ -24,7 +24,7 @@ class Item extends Model
 	protected static $strTable = 'tl_wem_portfolio_item';
 
 	/**
-	 * Find the customers, depends on the arguments
+	 * Find items, depends on the arguments
 	 * @param Array
 	 * @param Int
 	 * @param Int
@@ -56,7 +56,7 @@ class Item extends Model
 	}
 
 	/**
-	 * Count the customers, depends on the arguments
+	 * Count items, depends on the arguments
 	 * @param Array
 	 * @param Array
 	 * @return Integer
@@ -77,7 +77,7 @@ class Item extends Model
 	}
 
 	/**
-	 * Format CustomerModel columns
+	 * Format ItemModel columns
 	 * @param  [Array] $arrConfig [Configuration to format]
 	 * @return [Array]            [The Model columns]
 	 */

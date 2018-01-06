@@ -19,6 +19,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 	(
 		'dataContainer'               => 'Table',
 		'ptable'                      => 'tl_wem_portfolio_category',
+		'ctable'					  => array('tl_wem_portfolio_item_attribute'),
 		'switchToEdit'                => true,
 		'enableVersioning'            => true,
 		'sql' => array
@@ -107,8 +108,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 	(
 		'default'                     => '
 			{title_legend},title,alias,date;
-			{media_legend},picture,pictures;
+			{media_legend},pictures;
 			{details_legend},teaser;
+			{attributes_legend},attributes;
 			{tags_legend},tags;
 			{publish_legend},published,start,stop
 		'
@@ -177,14 +179,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'eval'                    => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'picture' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['picture'],
-			'exclude'                 => true,
-			'inputType'               => 'fileTree',
-			'eval'                    => array('filesOnly'=>true, 'extensions'=>$GLOBALS['TL_CONFIG']['validImageTypes'], 'fieldType'=>'radio'),
-			'sql'                     => "binary(16) NULL"
-		),
 		'pictures' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['pictures'],
@@ -201,6 +195,28 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'inputType'               => 'textarea',
 			'eval'                    => array('rte'=>'tinyMCE', 'tl_class'=>'clr'),
 			'sql'                     => "text NULL"
+		),
+
+		'attributes' => array
+		(
+			'label'                 => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['attributes'],
+		    'inputType'             => 'dcaWizard',
+		    'foreignTable'          => 'tl_wem_portfolio_item_attribute',
+		    'foreignField'          => 'pid',
+		    'params'                  => array
+		    (
+		        'do'                  => 'wem_portfolio_item',
+		    ),
+		    'eval'                  => array
+		    (
+		        'fields' => array('attribute', 'value'),
+		        'editButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['edit_attribute'],
+		        'applyButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['apply_attribute'],
+		        'orderField' => 'attribute',
+		        'showOperations' => true,
+		        'operations' => array('edit', 'delete'),
+		        'tl_class'=>'clr',
+		    ),
 		),
 
 		'tags' => array

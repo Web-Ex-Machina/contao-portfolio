@@ -26,7 +26,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
-				'alias' => 'index',
 			)
 		)
 	),

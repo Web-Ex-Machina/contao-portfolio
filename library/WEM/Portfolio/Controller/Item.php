@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
@@ -97,12 +97,6 @@ class Item extends \Controller
 				$arrItem['pid'] = Category::getItem($arrItem['pid'], $arrConfig['getCategoryConfig']);
 			}
 
-			// Get the item customer
-			if($arrConfig["getCustomer"])
-			{
-				$arrItem['customer'] = Category::getItem($arrItem['pid'], $arrConfig['getCustomerConfig']);
-			}
-
 			// Get the item tags
 			if($arrConfig["getTags"])
 			{
@@ -119,11 +113,11 @@ class Item extends \Controller
 				}
 			}
 
-			// Get the item testimonials
-			if($arrConfig['getTestimonials'])
+			// Get the item attributes
+			if($arrConfig["getAttributes"])
 			{
-				$arrTmpConfig['pid'] = $arrItem['id'];
-				$arrItem['testimonials'] = Item\Testimonial::getItems($arrTmpConfig, $arrTmpConfig['limit'], $arrTmpConfig['offset'], $arrTmpConfig['options']);
+				$arrConfig["itemAttributes"]["pid"] = $arrItem['id'];
+				$arrItem['attributes'] = ItemAttribute::getItems($arrConfig["itemAttributes"]);
 			}
 
 			return $arrItem;

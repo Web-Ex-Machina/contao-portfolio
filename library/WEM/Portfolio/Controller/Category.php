@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
@@ -20,7 +20,7 @@ use Portfolio\Model\Category as CategoryModel;
 class Category extends \Controller
 {
 	/**
-	 * Get Items
+	 * Get Categories
 	 * @param  [Array]   $arrConfig  [Configuration wanted for the list]
 	 * @param  [Integer] $intLimit   [Query Limit]
 	 * @param  [Integer] $intOffset  [Query Offset]
@@ -94,7 +94,7 @@ class Category extends \Controller
 	}
 
 	/**
-	 * Count Items
+	 * Count Categories
 	 * @param  [Array]   $arrConfig  [Configuration wanted for the count]
 	 * @param  [Array]   $arrOptions [Query Options]
 	 * @return [Integer]             [Number of items]
