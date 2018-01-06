@@ -3,28 +3,28 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace Portfolio\Model\Item;
+namespace Portfolio\Model;
 
 use Contao\Model;
 
 /**
- * Reads and writes tags
+ * Reads and writes item attributes
  */
-class Testimonial extends Model
+class ItemAttribute extends Model
 {
 	/**
 	 * Table name
 	 * @var string
 	 */
-	protected static $strTable = 'tl_wem_portfolio_item_testimonial';
+	protected static $strTable = 'tl_wem_portfolio_item_attribute';
 
 	/**
-	 * Find the testimonials, depends on the arguments
+	 * Find the attributes, depends on the arguments
 	 * @param Array
 	 * @param Int
 	 * @param Int
@@ -56,7 +56,7 @@ class Testimonial extends Model
 	}
 
 	/**
-	 * Count the testimonials, depends on the arguments
+	 * Count the attributes, depends on the arguments
 	 * @param Array
 	 * @param Array
 	 * @return Integer
@@ -77,7 +77,7 @@ class Testimonial extends Model
 	}
 
 	/**
-	 * Format model columns
+	 * Format AttributeModel columns
 	 * @param  [Array] $arrConfig [Configuration to format]
 	 * @return [Array]            [The Model columns]
 	 */
@@ -87,6 +87,16 @@ class Testimonial extends Model
 		{
 			$t = static::$strTable;
 			$arrColumns = array();
+
+			if($arrConfig["pid"])
+			{
+				$arrColumns[] = "$t.pid = ". $arrConfig["pid"];
+			}
+
+			if($arrConfig["attribute"])
+			{
+				$arrColumns[] = "$t.attribute = ". $arrConfig["attribute"];
+			}
 
 			if($arrConfig["not"])
 			{

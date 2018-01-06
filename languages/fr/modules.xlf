@@ -13,14 +13,6 @@
         <source>Manage portfolio items</source>
         <target>Gérer les éléments de votre portfolio</target>
       </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_customer.0">
-        <source>Customers</source>
-        <target>Clients</target>
-      </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_customer.1">
-        <source>Manage portfolio customers</source>
-        <target>Gérer les clients de votre portfolio</target>
-      </trans-unit>
       <trans-unit id="MOD.wem_portfolio_category.0">
         <source>Categories</source>
         <target>Catégories</target>
@@ -36,6 +28,14 @@
       <trans-unit id="MOD.wem_portfolio_tag.1">
         <source>Manage portfolio tags</source>
         <target>Gérer les tags de votre portfolio</target>
+      </trans-unit>
+      <trans-unit id="MOD.wem_portfolio_attribute.0">
+        <source>Attributes</source>
+        <target>Attributs</target>
+      </trans-unit>
+      <trans-unit id="MOD.wem_portfolio_attribute.1">
+        <source>Manage portfolio attributes</source>
+        <target>Gérer les attributs de votre portfolio</target>
       </trans-unit>
       
       <trans-unit id="FMD.wem_portfolio">

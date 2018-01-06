@@ -1,0 +1,68 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/wem-portfolio/languages/en/tl_wem_portfolio_tag.php" source-language="en" target-language="fr">
+    <body>
+      <trans-unit id="tl_wem_portfolio_tag.attribute.0">
+        <source>Attribute</source>
+        <target>Attribut</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.attribute.1">
+        <source>Select the attribute you want to fill</source>
+        <target>Sélectionnez l'attribut que vous souhaitez renseigner</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.value.0">
+        <source>Value</source>
+        <target>Valeur</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.value.1">
+        <source>Enter the attribute's value</source>
+        <target>Entrez la valeur de l'attribut</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_tag.title_legend">
+        <source>Global informations</source>
+        <target>Informations générales</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_tag.new.0">
+        <source>New value</source>
+        <target>Nouvelle valeur</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.new.1">
+        <source>Add a new value</source>
+        <target>Ajouter une nouvelle valeur</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.edit.0">
+        <source>Edit value</source>
+        <target>Editer la valeur</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.edit.1">
+        <source>Edit value ID %s</source>
+        <target>Editer la valeur ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.copy.0">
+        <source>Duplicate value</source>
+        <target>Copier la valeur</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.copy.1">
+        <source>Duplicate value ID %s</source>
+        <target>Copier la valeur ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.delete.0">
+        <source>Delete value</source>
+        <target>Supprimer la valeur</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.delete.1">
+        <source>Delete value ID %s</source>
+        <target>Supprimer la valeur ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.show.0">
+        <source>Show value</source>
+        <target>Afficher la valeur</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_tag.show.1">
+        <source>Show value ID %s</source>
+        <target>Afficher la valeur ID %s</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

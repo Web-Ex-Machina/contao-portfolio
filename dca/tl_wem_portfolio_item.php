@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
@@ -106,11 +106,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 	'palettes' => array
 	(
 		'default'                     => '
-			{title_legend},title,alias,customer,date;
+			{title_legend},title,alias,date;
 			{media_legend},picture,pictures;
-			{details_legend},teaser,technologies,duration,url;
+			{details_legend},teaser;
 			{tags_legend},tags;
-			{testimonials_legend},testimonials;
 			{publish_legend},published,start,stop
 		'
 	),
@@ -144,6 +143,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
+
 		'title' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['title'],
@@ -164,16 +164,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 				array('tl_wem_portfolio_item', 'generateAlias')
 			),
 			'sql'                     => "varchar(128) COLLATE utf8_bin NOT NULL default ''"
-		),
-		'customer' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['customer'],
-			'exclude'                 => true,
-			'inputType'               => 'select',
-			'foreignKey'              => 'tl_wem_portfolio_customer.title',
-			'eval'                    => array('doNotCopy'=>true, 'chosen'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "int(10) unsigned NOT NULL default '0'",
-			'relation'                => array('type'=>'belongsTo', 'load'=>'lazy')
 		),
 		'date' => array
 		(
@@ -212,28 +202,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'eval'                    => array('rte'=>'tinyMCE', 'tl_class'=>'clr'),
 			'sql'                     => "text NULL"
 		),
-		'technologies' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['technologies'],
-			'exclude'                 => true,
-			'inputType'               => 'listWizard',
-			'sql'                     => "blob NULL"
-		),
-		'duration' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['duration'],
-			'exclude'                 => true,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'url' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['url'],
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>255, 'rgxp' => 'url', 'tl_class'=>'w50'),
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
+
 		'tags' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['tags'],
@@ -243,27 +212,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'eval'                    => array('doNotCopy'=>true, 'chosen'=>true, 'multiple'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "blob NULL",
 		),
-		'testimonials' => array
-		(
-			'label'                 => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['testimonials'],
-		    'inputType'             => 'dcaWizard',
-		    'foreignTable'          => 'tl_wem_portfolio_item_testimonial',
-		    'foreignField'          => 'pid',
-		    'params'                  => array
-		    (
-		        'do'                  => 'wem_portfolio_item',
-		    ),
-		    'eval'                  => array
-		    (
-		        'fields' => array('title', 'author', 'created_on'),
-		        'editButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['edit_testiomnials'],
-		        'applyButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['apply_testiomnials'],
-		        'orderField' => 'sorting',
-		        'showOperations' => true,
-		        'operations' => array('edit', 'delete'),
-		        'tl_class'=>'clr',
-		    ),
-		),
+
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['published'],

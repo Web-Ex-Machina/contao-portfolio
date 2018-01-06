@@ -3,16 +3,16 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
 
 /**
- * Table tl_wem_portfolio_customer
+ * Table tl_wem_portfolio_attribute
  */
-$GLOBALS['TL_DCA']['tl_wem_portfolio_customer'] = array
+$GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array
 (
 
 	// Config
@@ -60,26 +60,26 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_customer'] = array
 		(
 			'edit' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_customer']['edit'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['edit'],
 				'href'                => 'act=edit',
 				'icon'                => 'edit.svg',
 			),
 			'copy' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_customer']['copy'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['copy'],
 				'href'                => 'act=copy',
 				'icon'                => 'copy.svg',
 			),
 			'delete' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_customer']['delete'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.svg',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'show' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_customer']['show'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['show'],
 				'href'                => 'act=show',
 				'icon'                => 'show.svg'
 			)
@@ -89,7 +89,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_customer'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{title_legend},title,alias'
+		'default'                     => '{title_legend},title'
 	),
 
 	// Fields
@@ -111,24 +111,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_customer'] = array
 		),
 		'title' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_customer']['title'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['title'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'search'                  => true,
 			'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'decodeEntities'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'alias' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_customer']['alias'],
-			'exclude'                 => true,
-			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'folderalias', 'doNotCopy'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
-			'save_callback' => array
-			(
-				array('tl_wem_portfolio_customer', 'generateAlias')
-			),
-			'sql'                     => "varchar(128) COLLATE utf8_bin NOT NULL default ''"
 		),
 	)
 );
@@ -139,7 +127,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_customer'] = array
  *
  * @author Web ex Machina <contact@webexmachina.fr>
  */
-class tl_wem_portfolio_customer extends Backend
+class tl_wem_portfolio_attribute extends Backend
 {
 
 	/**
@@ -149,43 +137,5 @@ class tl_wem_portfolio_customer extends Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
-	}
-
-	/**
-	 * Auto-generate the category alias if it has not been set yet
-	 *
-	 * @param mixed         $varValue
-	 * @param DataContainer $dc
-	 *
-	 * @return string
-	 *
-	 * @throws Exception
-	 */
-	public function generateAlias($varValue, DataContainer $dc)
-	{
-		$autoAlias = false;
-
-		// Generate alias if there is none
-		if ($varValue == '')
-		{
-			$autoAlias = true;
-			$varValue = StringUtil::generateAlias($dc->activeRecord->title);
-		}
-
-		$objAlias = $this->Database->prepare("SELECT id FROM tl_wem_portfolio_customer WHERE alias=? AND id!=?")
-								   ->execute($varValue, $dc->id);
-
-		// Check whether the news alias exists
-		if ($objAlias->numRows)
-		{
-			if (!$autoAlias)
-			{
-				throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
-			}
-
-			$varValue .= '-' . $dc->id;
-		}
-
-		return $varValue;
 	}
 }

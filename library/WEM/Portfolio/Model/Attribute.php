@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
@@ -13,18 +13,18 @@ namespace Portfolio\Model;
 use Contao\Model;
 
 /**
- * Reads and writes items
+ * Reads and writes attributes
  */
-class Customer extends Model
+class Attribute extends Model
 {
 	/**
 	 * Table name
 	 * @var string
 	 */
-	protected static $strTable = 'tl_wem_portfolio_customer';
+	protected static $strTable = 'tl_wem_portfolio_attribute';
 
 	/**
-	 * Find the customers, depends on the arguments
+	 * Find the attributes, depends on the arguments
 	 * @param Array
 	 * @param Int
 	 * @param Int
@@ -45,7 +45,7 @@ class Customer extends Model
 				$arrOptions['offset'] = $intOffset;
 
 			if(!isset($arrOptions['order']))
-				$arrOptions['order'] = "$t.sorting ASC";
+				$arrOptions['order'] = "$t.title ASC";
 
 			return static::findBy($arrColumns, null, $arrOptions);
 		}
@@ -56,7 +56,7 @@ class Customer extends Model
 	}
 
 	/**
-	 * Count the customers, depends on the arguments
+	 * Count the attributes, depends on the arguments
 	 * @param Array
 	 * @param Array
 	 * @return Integer
@@ -77,7 +77,7 @@ class Customer extends Model
 	}
 
 	/**
-	 * Format CustomerModel columns
+	 * Format AttributeModel columns
 	 * @param  [Array] $arrConfig [Configuration to format]
 	 * @return [Array]            [The Model columns]
 	 */
@@ -88,9 +88,9 @@ class Customer extends Model
 			$t = static::$strTable;
 			$arrColumns = array();
 
-			if($arrConfig["alias"])
+			if($arrConfig["title"])
 			{
-				$arrColumns[] = "$t.alias = '". $arrConfig["alias"] ."'";
+				$arrColumns[] = "$t.title = '". $arrConfig["title"] ."'";
 			}
 
 			if($arrConfig["not"])

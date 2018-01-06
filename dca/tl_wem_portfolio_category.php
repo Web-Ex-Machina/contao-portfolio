@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
@@ -19,7 +19,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = array
 	(
 		'label'                       => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['dcaLabel'],
 		'dataContainer'               => 'Table',
-		//'ctable'                      => array('tl_wem_portfolio_item'),
 		'enableVersioning'            => true,
 		'sql' => array
 		(
@@ -98,12 +97,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['show'],
 				'href'                => 'act=show',
 				'icon'                => 'show.svg'
-			),
-			'items' => array
-			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'],
-				'href'                => 'do=wem_portfolio_item',
-				'icon'                => 'article.svg',
 			)
 		)
 	),
@@ -208,7 +201,13 @@ class tl_wem_portfolio_category extends Backend
 	 */
 	public function addIcon($row, $label, DataContainer $dc=null, $imageAttribute='', $blnReturnImage=false, $blnProtected=false)
 	{
-		return '<img src="system/themes/flexible/icons/folderC.svg" width="18" height="18" alt="" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
+		$strStyle = "margin-right:3px;";
+
+		$objChildren = $this->Database->prepare("SELECT * FROM tl_wem_portfolio_category WHERE pid = ?")->execute($row['id']);
+		if($objChildren->numRows == 0)
+			$strStyle .= 'padding-left:20px;';
+
+		return '<img src="system/themes/flexible/icons/folderC.svg" width="18" height="18" alt="" style="'.$strStyle.'"><span style="vertical-align:-1px">'.$label.'</span>';
 	}
 
 	/**

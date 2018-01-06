@@ -17,6 +17,22 @@
         <source>Enter the item alias - it will be automaticly generated, based on item title.</source>
         <target>Saisissez l'alias de l'élément - Il sera généré automatiquement, en rapport avec l'intitulé de l'élément.</target>
       </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.customer.0">
+        <source>Customer</source>
+        <target>Client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.customer.1">
+        <source>Link this item to a customer</source>
+        <target>Associez cet élément à un client</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.date.0">
+        <source>Date</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.date.1">
+        <source>Enter a date for this item</source>
+        <target>Saisissez une date pour cet élément</target>
+      </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.picture.0">
         <source>Main picture</source>

@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
@@ -51,20 +51,12 @@ class tl_module_wem_portfolio extends Backend
 	 */
 	public function getPortfolioCategories()
 	{
-		/*if (!$this->User->isAdmin && !is_array($this->User->news))
-		{
-			return array();
-		}*/
-
 		$arrCategories = array();
 		$objCategories = $this->Database->execute("SELECT id, title FROM tl_wem_portfolio_category ORDER BY pid, sorting");
 
 		while ($objCategories->next())
 		{
-			/*if ($this->User->hasAccess($objCategories->id, 'news'))
-			{*/
-				$arrCategories[$objCategories->id] = $objCategories->title;
-			//}
+			$arrCategories[$objCategories->id] = $objCategories->title;
 		}
 
 		return $arrCategories;
