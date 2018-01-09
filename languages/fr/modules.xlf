@@ -58,6 +58,14 @@
         <source>Display a reader of portfolio item</source>
         <target>Afficher un lecteur d'élément du portfolio</target>
       </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_navigation.0">
+        <source>Navigation</source>
+        <target>Navigation</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_navigation.1">
+        <source>Display a navigation of portfolio categories</source>
+        <target>Afficher une navigation de catégories du portfolio</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

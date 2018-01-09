@@ -18,11 +18,6 @@ array_insert($GLOBALS['BE_MOD']['wem_portfolio'], 1, array
 		'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute'),
 		'icon'		=> 'system/modules/wem-portfolio/assets/icon_item.png'
 	),
-	'wem_portfolio_category' => array
-	(
-		'tables'    => array('tl_wem_portfolio_category'),
-		'icon'		=> 'system/modules/wem-portfolio/assets/icon_category.png'
-	),
 	'wem_portfolio_tag' => array
 	(
 		'tables'    => array('tl_wem_portfolio_tag'),
@@ -60,6 +55,6 @@ array_insert($GLOBALS['FE_MOD'], 2, array
  * Models
  */
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_item"] 				= 'WEM\Portfolio\Model\Item';
-$GLOBALS['TL_MODELS']["tl_wem_portfolio_category"] 			= 'WEM\Portfolio\Model\Category';
+$GLOBALS['TL_MODELS']["tl_wem_portfolio_item_attribute"] 	= 'WEM\Portfolio\Model\ItemAttribute';
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_tag"] 				= 'WEM\Portfolio\Model\Tag';
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_attribute"] 		= 'WEM\Portfolio\Model\Attribute';

@@ -8,11 +8,11 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace Portfolio\Controller;
+namespace WEM\Portfolio\Controller;
 
-use Exception;
+use \RuntimeException as Exception;
 
-use Portfolio\Model\Attribute as AttributeModel;
+use WEM\Portfolio\Model\Attribute as AttributeModel;
 
 /**
  * Class Attribute - Handle Portfolio ItemAttributes functions

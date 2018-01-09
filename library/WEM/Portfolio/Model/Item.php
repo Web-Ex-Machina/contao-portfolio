@@ -8,8 +8,9 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace Portfolio\Model;
+namespace WEM\Portfolio\Model;
 
+use \RuntimeException as Exception;
 use Contao\Model;
 
 /**
@@ -86,19 +87,16 @@ class Item extends Model
 		try
 		{
 			$t = static::$strTable;
-			$arrColumns = array();
+			$arrColumns = array("published=1");
 
-			if($arrConfig["categories"])
-				$arrColumns[] = "$t.pid IN(" . implode(',', array_map('intval', $arrConfig["categories"])) . ")";
+			if($arrConfig["page"])
+				$arrColumns[] = "$t.pages = ". $arrConfig["page"];
 
 			if($arrConfig["alias"])
 				$arrColumns[] = "$t.alias = '". $arrConfig["alias"] ."'";
 
 			if($arrConfig["not"])
 				$arrColumns[] = $arrConfig["not"];
-
-			if(empty($arrColumns))
-				throw new Exception("Model error : Config sent is invalid");
 
 			return $arrColumns;
 		}

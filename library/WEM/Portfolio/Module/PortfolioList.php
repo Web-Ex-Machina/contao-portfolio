@@ -3,19 +3,18 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2018 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace Portfolio\Module;
+namespace WEM\Portfolio\Module;
 
-use Exception;
+use \RuntimeException as Exception;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Patchwork\Utf8;
 
-use Portfolio\Controller\Item;
-use Portfolio\Controller\Category;
+use WEM\Portfolio\Controller\Item;
 
 /**
  * Front end module "portfolio list".
@@ -53,14 +52,6 @@ class PortfolioList extends \Module
 			return $objTemplate->parse();
 		}
 
-		$this->wem_portfolio_categories = \StringUtil::deserialize($this->wem_portfolio_categories);
-
-		// Return if there are no archives
-		if (!is_array($this->wem_portfolio_categories) || empty($this->wem_portfolio_categories))
-		{
-			return '';
-		}
-
 		return parent::generate();
 	}
 
@@ -69,78 +60,74 @@ class PortfolioList extends \Module
 	 */
 	protected function compile()
 	{
-		try
+		$limit = null;
+		$offset = intval($this->skipFirst);
+		$arrOptions = array();
+
+		// Maximum number of items
+		if($this->numberOfItems > 0)
+			$limit = $this->numberOfItems;
+
+		$this->Template->articles = array();
+		$this->Template->empty = $GLOBALS['TL_LANG']['MSC']['emptyList'];
+
+		global $objPage;
+		$arrConfig["page"] = $objPage->id;
+
+		// Get the total number of items
+		$intTotal = Item::countItems($arrConfig, $arrOptions);
+
+		if($intTotal < 1)
+			return;
+
+		$total = $intTotal - $offset;
+
+		// Split the results
+		if ($this->perPage > 0 && (!isset($limit) || $this->numberOfItems > $this->perPage))
 		{
-			$limit = null;
-			$offset = intval($this->skipFirst);
-			$arrOptions = array();
-
-			// Maximum number of items
-			if($this->numberOfItems > 0)
-				$limit = $this->numberOfItems;
-
-			$this->Template->articles = array();
-			$this->Template->empty = $GLOBALS['TL_LANG']['MSC']['emptyList'];
-
-			// Prepare configuration
-			$arrConfig["categories"] = $this->wem_portfolio_categories;
-
-			// Get the total number of items
-			$intTotal = Item::countItems($arrConfig, $arrOptions);
-
-			if($intTotal < 1)
-				return;
-
-			$total = $intTotal - $offset;
-
-			// Split the results
-			if ($this->perPage > 0 && (!isset($limit) || $this->numberOfItems > $this->perPage))
+			// Adjust the overall limit
+			if (isset($limit))
 			{
-				// Adjust the overall limit
-				if (isset($limit))
-				{
-					$total = min($limit, $total);
-				}
-
-				// Get the current page
-				$id = 'page_n' . $this->id;
-				$page = (\Input::get($id) !== null) ? \Input::get($id) : 1;
-
-				// Do not index or cache the page if the page number is outside the range
-				if ($page < 1 || $page > max(ceil($total/$this->perPage), 1))
-				{
-					throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
-				}
-
-				// Set limit and offset
-				$limit = $this->perPage;
-				$offset += (max($page, 1) - 1) * $this->perPage;
-				$skip = intval($this->skipFirst);
-
-				// Overall limit
-				if ($offset + $limit > $total + $skip)
-				{
-					$limit = $total + $skip - $offset;
-				}
-
-				// Add the pagination menu
-				$objPagination = new \Pagination($total, $this->perPage, \Config::get('maxPaginationLinks'), $id);
-				$this->Template->pagination = $objPagination->generate("\n  ");
+				$total = min($limit, $total);
 			}
 
-			$objItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
+			// Get the current page
+			$id = 'page_n' . $this->id;
+			$page = (\Input::get($id) !== null) ? \Input::get($id) : 1;
 
-			// Add the articles
-			if ($objItems !== null)
+			// Do not index or cache the page if the page number is outside the range
+			if ($page < 1 || $page > max(ceil($total/$this->perPage), 1))
 			{
-				$this->Template->items = $this->parseItems($objItems);
+				throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
 			}
 
-			$this->Template->categories = $this->wem_portfolio_categories;
+			// Set limit and offset
+			$limit = $this->perPage;
+			$offset += (max($page, 1) - 1) * $this->perPage;
+			$skip = intval($this->skipFirst);
+
+			// Overall limit
+			if ($offset + $limit > $total + $skip)
+			{
+				$limit = $total + $skip - $offset;
+			}
+
+			// Add the pagination menu
+			$objPagination = new \Pagination($total, $this->perPage, \Config::get('maxPaginationLinks'), $id);
+			$this->Template->pagination = $objPagination->generate("\n  ");
 		}
-		catch(Exception $e)
+
+		if($this->jumpTo && $objRedirectPage = \PageModel::findByPk($this->jumpTo))
 		{
-			throw $e;
+			$this->jumpTo = $objRedirectPage;
+		}
+
+		$objItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
+
+		// Add the articles
+		if ($objItems !== null)
+		{
+			$this->Template->items = $this->parseItems($objItems);
 		}
 	}
 
@@ -190,6 +177,12 @@ class PortfolioList extends \Module
 			$objTemplate->setData($arrItem);
 			$objTemplate->class = (($arrItem['cssClass'] != '') ? ' ' . $arrItem['cssClass'] : '') . $strClass;
 			$objTemplate->count = $intCount;
+
+			// Build the item's link
+			if($this->jumpTo instanceof \PageModel)
+			{
+				$objTemplate->link = $this->jumpTo->getFrontendUrl("/".$arrItem['alias']);
+			}
 
 			return $objTemplate->parse();
 		}

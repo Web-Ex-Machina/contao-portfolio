@@ -8,8 +8,9 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace Portfolio\Model;
+namespace WEM\Portfolio\Model;
 
+use \RuntimeException as Exception;
 use Contao\Model;
 
 /**

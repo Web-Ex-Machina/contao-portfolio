@@ -8,11 +8,11 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
-namespace Portfolio\Controller;
+namespace WEM\Portfolio\Controller;
 
-use Exception;
+use \RuntimeException as Exception;
 
-use Portfolio\Model\Tag as TagModel;
+use WEM\Portfolio\Model\Tag as TagModel;
 
 /**
  * Class Tag - Handle Portfolio Tags functions

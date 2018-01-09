@@ -18,7 +18,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 	'config' => array
 	(
 		'dataContainer'               => 'Table',
-		'ptable'                      => 'tl_wem_portfolio_category',
 		'ctable'					  => array('tl_wem_portfolio_item_attribute'),
 		'switchToEdit'                => true,
 		'enableVersioning'            => true,
@@ -28,7 +27,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			(
 				'id' => 'primary',
 				'alias' => 'index',
-				'pid' => 'index'
 			)
 		)
 	),
@@ -38,8 +36,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 	(
 		'sorting' => array
 		(
-			'mode'                    => 6,
-			'fields'                  => array('title'),
+			'mode'                    => 1,
+			'fields'                  => array('date'),
 			'panelLayout'             => 'filter;search',
 		),
 		'label' => array
@@ -107,7 +105,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 	'palettes' => array
 	(
 		'default'                     => '
-			{title_legend},title,alias,date;
+			{title_legend},title,alias,date,pages;
 			{media_legend},pictures;
 			{details_legend},teaser;
 			{attributes_legend},attributes;
@@ -124,12 +122,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'label'                   => array('ID'),
 			'search'                  => true,
 			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
-		),
-		'pid' => array
-		(
-			'foreignKey'              => 'tl_wem_portfolio_category.title',
-			'sql'                     => "int(10) unsigned NOT NULL default '0'",
-			'relation'                => array('type'=>'belongsTo', 'load'=>'lazy')
 		),
 		'sorting' => array
 		(
@@ -178,6 +170,16 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'inputType'               => 'text',
 			'eval'                    => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'pages' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['pages'],
+			'exclude'                 => true,
+			'inputType'               => 'pageTree',
+			'foreignKey'              => 'tl_page.title',
+			'eval'                    => array('mandatory'=>true, 'fieldType'=>'radio', 'tl_class'=>'clr'),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
+			'relation'                => array('type'=>'hasMany', 'load'=>'eager')
 		),
 		'pictures' => array
 		(
@@ -362,20 +364,6 @@ class tl_wem_portfolio_item extends Backend
 		if (!$row['published'])
 		{
 			$icon = 'invisible.svg';
-		}
-
-		$objPage = $this->Database->prepare("SELECT * FROM tl_wem_portfolio_category WHERE id=?")
-								  ->limit(1)
-								  ->execute($row['pid']);
-
-		if (!$this->User->isAllowed(BackendUser::CAN_EDIT_ARTICLES, $objPage->row()))
-		{
-			if ($row['published'])
-			{
-				$icon = preg_replace('/\.svg$/i', '_.svg', $icon); // see #8126
-			}
-
-			return Image::getHtml($icon) . ' ';
 		}
 
 		return '<a href="'.$this->addToUrl($href).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"').'</a> ';
