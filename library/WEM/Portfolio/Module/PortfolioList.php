@@ -23,7 +23,7 @@ use WEM\Portfolio\Controller\Item;
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
-class PortfolioList extends \Module
+class PortfolioList extends Portfolio
 {
 	/**
 	 * Template
@@ -127,68 +127,7 @@ class PortfolioList extends \Module
 		// Add the articles
 		if ($objItems !== null)
 		{
-			$this->Template->items = $this->parseItems($objItems);
-		}
-	}
-
-	/**
-	 * Parse multiple items
-	 * @param Array
-	 * @return String
-	 */
-	protected function parseItems($arrItems, $strTemplate = "wem_portfolio_item")
-	{
-		try
-		{
-			$limit = count($arrItems);
-			if($limit < 1)
-			{
-				return array();
-			}
-			$count = 0;
-			$arrElements = array();
-			foreach($arrItems as $arrItem)
-			{
-				$arrElements[] = $this->parseItem($arrItem, $strTemplate, ((++$count == 1) ? ' first' : '') . (($count == $limit) ? ' last' : '') . ((($count % 2) == 0) ? ' odd' : ' even'), $count);
-			}
-			return $arrElements;
-		}
-		catch(Exception $e)
-		{
-			throw $e;
-		}
-	}
-
-	/**
-	 * Parse an item
-	 * @param Array
-	 * @param String
-	 * @return String
-	 */
-	public function parseItem($arrItem, $strTemplate = "wem_portfolio_item", $strClass = '', $intCount = 0)
-	{
-		try
-		{
-			/** @var \PageModel $objPage */
-			global $objPage;
-			
-			/** @var \FrontendTemplate|object $objTemplate */
-			$objTemplate = new \FrontendTemplate($strTemplate);
-			$objTemplate->setData($arrItem);
-			$objTemplate->class = (($arrItem['cssClass'] != '') ? ' ' . $arrItem['cssClass'] : '') . $strClass;
-			$objTemplate->count = $intCount;
-
-			// Build the item's link
-			if($this->jumpTo instanceof \PageModel)
-			{
-				$objTemplate->link = $this->jumpTo->getFrontendUrl("/".$arrItem['alias']);
-			}
-
-			return $objTemplate->parse();
-		}
-		catch(Exception $e)
-		{
-			throw $e;
+			$this->Template->items = $this->parseItems($objItems, $this->wem_portfolio_template);
 		}
 	}
 }

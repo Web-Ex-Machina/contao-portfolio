@@ -14,6 +14,8 @@ use \RuntimeException as Exception;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Patchwork\Utf8;
 
+use WEM\Portfolio\Controller\Item;
+
 /**
  * Front end module "portfolio reader".
  *
@@ -21,7 +23,7 @@ use Patchwork\Utf8;
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
-class PortfolioReader extends \Module
+class PortfolioReader extends Portfolio
 {
 	/**
 	 * Template
@@ -50,11 +52,21 @@ class PortfolioReader extends \Module
 			return $objTemplate->parse();
 		}
 
-		$this->portfolio_categories = \StringUtil::deserialize($this->portfolio_categories);
-
-		// Return if there are no archives
-		if (!is_array($this->portfolio_categories) || empty($this->portfolio_categories))
+		// Set the item from the auto_item parameter
+		if (!isset($_GET['items']) && \Config::get('useAutoItem') && isset($_GET['auto_item']))
 		{
+			\Input::setGet('items', \Input::get('auto_item'));
+		}
+
+		// Do not index or cache the page if no news item has been specified
+		if (!\Input::get('items'))
+		{
+			/** @var PageModel $objPage */
+			global $objPage;
+
+			$objPage->noSearch = 1;
+			$objPage->cache = 0;
+
 			return '';
 		}
 
@@ -66,14 +78,33 @@ class PortfolioReader extends \Module
 	 */
 	protected function compile()
 	{
-		try
-		{
+		/** @var PageModel $objPage */
+		global $objPage;
 
-		}
-		catch(Exception $e)
+		$this->Template->articles = '';
+		$this->Template->referer = 'javascript:history.go(-1)';
+		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
+
+		// Get the portfolio item
+		$arrItem = Item::getItem(\Input::get('items'));
+
+		if (null === $arrItem)
 		{
-			$this->Template->blnError = true;
-			$this->Template->strError = "Une erreur est survenue : ".$e->getMessage();
+			throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
+		}
+
+		$this->Template->articles = $this->parseItem($arrItem, $this->wem_portfolio_template);
+
+		// Overwrite the page title (see #2853 and #4955)
+		if ($objArticle->headline != '')
+		{
+			$objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($objArticle->headline));
+		}
+
+		// Overwrite the page description
+		if ($objArticle->teaser != '')
+		{
+			$objPage->description = $this->prepareMetaDescription($objArticle->teaser);
 		}
 	}
 }

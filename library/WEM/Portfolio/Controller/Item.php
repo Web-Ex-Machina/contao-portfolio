@@ -91,6 +91,23 @@ class Item extends \Controller
 			$arrDates = ["timestamp"=>$arrItem['date'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['date']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])];
 			$arrItem['date'] = $arrDates;
 
+			// Fetch item pictures
+			if($arrItem['pictures'])
+			{
+				$arrPictures = deserialize($arrItem['pictures']);
+				if(is_array($arrPictures) && count($arrPictures) > 0)
+				{
+					unset($arrItem['pictures']);
+					foreach($arrPictures as $strUuid)
+					{
+						if($objFile = \FilesModel::findByUuid($strUuid))
+						{
+							$arrItem['pictures'][] = $objFile;
+						}
+					}
+				}
+			}
+
 			// Get the item category
 			if($arrConfig["getCategory"])
 			{
