@@ -46,7 +46,7 @@ class ItemAttribute extends Model
 				$arrOptions['offset'] = $intOffset;
 
 			if(!isset($arrOptions['order']))
-				$arrOptions['order'] = "$t.title ASC";
+				$arrOptions['order'] = "$t.attribute ASC";
 
 			return static::findBy($arrColumns, null, $arrOptions);
 		}

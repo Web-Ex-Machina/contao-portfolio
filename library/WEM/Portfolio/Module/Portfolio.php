@@ -24,6 +24,23 @@ use WEM\Portfolio\Controller\Item;
 abstract class Portfolio extends \Module
 {
 	/**
+	 * Retrieve module configuration
+	 * @return [Array] [Module configuration]
+	 */
+	protected function getConfig()
+	{
+		$arrConfig = array();
+
+		if($this->wem_portfolio_attributes)
+			$arrConfig['getAttributes'] = true;
+
+		if($this->wem_portfolio_tags)
+			$arrConfig['getTags'] = true;
+
+		return $arrConfig;
+	}
+
+	/**
 	 * Parse multiple items
 	 * @param Array
 	 * @return String
@@ -79,19 +96,51 @@ abstract class Portfolio extends \Module
 			// Add an image
 			if($arrItem['pictures'][0])
 			{
-				if($arrItem['pictures'][0]->imgSize)
-				{
-					$size = \StringUtil::deserialize($this->imgSize);
+				$size = \StringUtil::deserialize($this->imgSize);
 
-					if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]))
+				if($arrItem['pictures'][0]->imgSize || $size)
+				{
+					if($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]))
 					{
 						$arrArticle['size'] = $this->imgSize;
+					}
+					else if($arrItem['pictures'][0]->imgSize)
+					{
+						$arrArticle['size'] = $arrItem['pictures'][0]->imgSize;
 					}
 				}
 
 				$arrArticle['singleSRC'] = $arrItem['pictures'][0]->path;
 
 				$this->addImageToTemplate($objTemplate, $arrArticle, null, null, $arrItem['pictures'][0]);
+			}
+
+			// Parse the others images, in a easier way
+			for($i=1;$i<count($arrItem['pictures']);$i++)
+			{
+				$strPath = $arrItem['pictures'][$i]->path;
+
+				if($size || $arrItem['pictures'][$i]->imgSize)
+				{
+					if($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]))
+					{
+						$arrImages[$i] = \Image::get($strPath, $size[0], $size[1], $size[2]);
+					}
+					else if($arrItem['pictures'][0]->imgSize)
+					{
+						$imgSize = deserialize($arrItem['pictures'][0]->imgSize);
+						$arrImages[$i] = \Image::get($strPath, $imgSize[0], $imgSize[1], $imgSize[2]);
+					}
+				}
+				else
+				{
+					$arrImages[$i] = $strPath;
+				}
+			}
+
+			if($arrImages)
+			{
+				$objTemplate->images = $arrImages;
 			}
 
 			return $objTemplate->parse();

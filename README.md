@@ -2,7 +2,14 @@ Extension "Portfolio" for Contao Open Source CMS
 ======================
 
 The purpose of this extension is to allow agencies, developers and webmasters to display their work with various functionalities.
-For each work, you can precise customer, work category, tags, testimonials, and more in the future
+
+Functionnalities
+-------------------
+ * Handle main porfolio features (list, reader...)
+ * Create and attach tags to portfolio items
+ * Create attributes and fill values for each items
+ * Use the Contao pages as Portfolio categories
+ * Attach multiple files to portfolio items and display them in your templates
 
 System requirements
 -------------------

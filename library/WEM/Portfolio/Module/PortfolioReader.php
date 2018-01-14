@@ -86,7 +86,9 @@ class PortfolioReader extends Portfolio
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
 
 		// Get the portfolio item
-		$arrItem = Item::getItem(\Input::get('items'));
+		$arrConfig = $this->getConfig();
+		$arrConfig['getCategory'] = true;
+		$arrItem = Item::getItem(\Input::get('items'), $arrConfig);
 
 		if (null === $arrItem)
 		{
@@ -96,15 +98,15 @@ class PortfolioReader extends Portfolio
 		$this->Template->articles = $this->parseItem($arrItem, $this->wem_portfolio_template);
 
 		// Overwrite the page title (see #2853 and #4955)
-		if ($objArticle->headline != '')
+		if ($arrItem['title'] != '')
 		{
-			$objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($objArticle->headline));
+			$objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($arrItem['title']));
 		}
 
 		// Overwrite the page description
-		if ($objArticle->teaser != '')
+		if ($arrItem['teaser'] != '')
 		{
-			$objPage->description = $this->prepareMetaDescription($objArticle->teaser);
+			$objPage->description = $this->prepareMetaDescription($arrItem['teaser']);
 		}
 	}
 }

@@ -73,6 +73,7 @@ class PortfolioList extends Portfolio
 
 		global $objPage;
 		$arrConfig["page"] = $objPage->id;
+		$arrConfig["getItem"] = $this->getConfig();
 
 		// Get the total number of items
 		$intTotal = Item::countItems($arrConfig, $arrOptions);

@@ -111,7 +111,7 @@ class Item extends \Controller
 			// Get the item category
 			if($arrConfig["getCategory"])
 			{
-				$arrItem['pid'] = Category::getItem($arrItem['pid'], $arrConfig['getCategoryConfig']);
+				$arrItem['category'] = \PageModel::findByPk($arrItem['pages']);
 			}
 
 			// Get the item tags

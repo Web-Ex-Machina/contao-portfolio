@@ -9,6 +9,22 @@
         <source>Please select the portfolio item template.</source>
         <target>Sélectionner le modèle pour les éléments du portfolio.</target>
       </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_attributes.0">
+        <source>Retrieve attributes</source>
+        <target>Récupérer les attributs</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_attributes.1">
+        <source>Check to retrieve item attributes.</source>
+        <target>Cochez pour récupérer les attributs de l'élément.</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_tags.0">
+        <source>Retrieve tags</source>
+        <target>Récupérer les tags</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_tags.1">
+        <source>Check to retrieve item tags.</source>
+        <target>Cochez pour récupérer les tags de l'élément.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
