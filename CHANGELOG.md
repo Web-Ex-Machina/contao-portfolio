@@ -21,3 +21,6 @@ Extension "Portfolio" for Contao Open Source CMS
 - Create attributes and fill values for each items
 - Use the Contao pages as Portfolio categories
 - Attach multiple files to portfolio items and display them in your templates
+
+1.0.1 - 2018-04-19
+- Bugfixes & UX Adjustements
