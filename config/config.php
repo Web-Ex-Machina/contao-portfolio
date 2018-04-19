@@ -11,31 +11,34 @@
 /**
  * Back end modules
  */
-array_insert($GLOBALS['BE_MOD']['wem_portfolio'], 1, array
+array_insert($GLOBALS['BE_MOD'], 1, array
 (
-	'wem_portfolio_item' => array
+	'wem_portfolio' => array
 	(
-		'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute'),
-		'icon'		=> 'system/modules/wem-portfolio/assets/icon_item.png'
-	),
-	'wem_portfolio_tag' => array
-	(
-		'tables'    => array('tl_wem_portfolio_tag'),
-		'icon'		=> 'system/modules/wem-portfolio/assets/icon_tag.png'
-	),
-	'wem_portfolio_attribute' => array
-	(
-		'tables'    => array('tl_wem_portfolio_attribute'),
-		'icon'		=> 'system/modules/wem-portfolio/assets/icon_tag.png'
-	),
+		'wem_portfolio_item' => array
+		(
+			'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute'),
+			'icon'		=> 'system/modules/wem-portfolio/assets/icon_item.png'
+		),
+		'wem_portfolio_tag' => array
+		(
+			'tables'    => array('tl_wem_portfolio_tag'),
+			'icon'		=> 'system/modules/wem-portfolio/assets/icon_tag.png'
+		),
+		'wem_portfolio_attribute' => array
+		(
+			'tables'    => array('tl_wem_portfolio_attribute'),
+			'icon'		=> 'system/modules/wem-portfolio/assets/icon_tag.png'
+		),
+	)
 ));
 
 // Load icon in Contao 4.2 backend
 if ('BE' === TL_MODE) {
     if (version_compare(VERSION, '4.4', '<')) {
-        $GLOBALS['TL_CSS'][] = 'system/modules/wem-portfolio/assets/backend.css';
+        $GLOBALS['TL_CSS'][] = 'system/modules/wem-contao-portfolio/assets/backend.css';
     } else {
-        $GLOBALS['TL_CSS'][] = 'system/modules/wem-portfolio/assets/backend_svg.css';
+        $GLOBALS['TL_CSS'][] = 'system/modules/wem-contao-portfolio/assets/backend_svg.css';
     }
 }
 
