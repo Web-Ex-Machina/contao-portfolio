@@ -110,15 +110,15 @@ abstract class Portfolio extends \Module
 					}
 				}
 
-				$arrArticle['singleSRC'] = $arrItem['pictures'][0]->path;
+				$arrArticle['singleSRC'] = $arrItem['pictures'][0]['singleSRC'];
 
-				$this->addImageToTemplate($objTemplate, $arrArticle, null, null, $arrItem['pictures'][0]);
+				$this->addImageToTemplate($objTemplate, $arrArticle, null, null, null);
 			}
 
 			// Parse the others images, in a easier way
 			for($i=1;$i<count($arrItem['pictures']);$i++)
 			{
-				$strPath = $arrItem['pictures'][$i]->path;
+				$strPath = $arrItem['pictures'][$i]['singleSRC'];
 
 				if($size || $arrItem['pictures'][$i]->imgSize)
 				{

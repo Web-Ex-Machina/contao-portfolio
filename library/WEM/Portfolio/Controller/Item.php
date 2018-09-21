@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2015-2018 Web ex Machina
  *
- * @author Web ex Machina <http://www.webexmachina.fr>
+ * @author Web ex Machina <https://www.webexmachina.fr>
  */
 
 namespace WEM\Portfolio\Controller;
@@ -27,28 +27,21 @@ class Item extends \Controller
 	 * @param  [Array]   $arrOptions [Query Options]
 	 * @return [Array]               [Items list as Array]
 	 */
-	public static function getItems($arrConfig, $intLimit = 0, $intOffset = 0, $arrOptions = array())
-	{
-		try
-		{
+	public static function getItems($arrConfig, $intLimit = 0, $intOffset = 0, $arrOptions = array()){
+		try{
 			$objItems = ItemModel::findItems($arrConfig, $intLimit, $intOffset, $arrOptions);
 
 			if(!$objItems)
-			{
 				return;
-			}
 
 			$arrItems = array();
 
 			while($objItems->next())
-			{
 				$arrItems[] = static::getItem($objItems->row(), $arrConfig["getItem"]);
-			}
 
 			return $arrItems;
 		}
-		catch(Exception $e)
-		{
+		catch(Exception $e){
 			throw $e;
 		}
 	}
@@ -59,30 +52,18 @@ class Item extends \Controller
 	 * @param  [Array] $arrConfig [Item configuration]
 	 * @return [Array]            [Item data]
 	 */
-	public static function getItem($varItem, $arrConfig = array())
-	{
-		try
-		{
+	public static function getItem($varItem, $arrConfig = array()){
+		try{
 			if(is_object($varItem))
-			{
 				$arrItem = $varItem->row();
-			}
 			else if(is_array($varItem))
-			{
 				$arrItem = $varItem;
-			}
-			else
-			{
+			else{
 				$sql = ItemModel::findByIdOrAlias($varItem);
-				
 				if(!$sql)
-				{
 					return;
-				}
 				else
-				{
 					$arrItem = $sql->row();
-				}
 			}
 
 			// Parse item dates
@@ -92,55 +73,71 @@ class Item extends \Controller
 			$arrItem['date'] = $arrDates;
 
 			// Fetch item pictures
-			if($arrItem['pictures'])
-			{
-				$arrPictures = deserialize($arrItem['pictures']);
-				if(is_array($arrPictures) && count($arrPictures) > 0)
-				{
-					unset($arrItem['pictures']);
-					foreach($arrPictures as $strUuid)
-					{
-						if($objFile = \FilesModel::findByUuid($strUuid))
-						{
-							$arrItem['pictures'][] = $objFile;
+			if($arrItem['pictures'] = \StringUtil::deserialize($arrItem['pictures'])){
+				$objFiles = \FilesModel::findMultipleByUuids($arrItem['pictures']);
+				$images = [];
+				while($objFiles->next()){
+					$images[$objFiles->path] = array(
+						'id'         => $objFiles->id,
+						'uuid'       => $objFiles->uuid,
+						'name'       => $objFile->basename,
+						'singleSRC'  => $objFiles->path,
+						'filesModel' => $objFiles->current()
+					);
+				}
+
+				if($arrItem['orderPictures'] != ''){
+					$t = \StringUtil::deserialize($arrItem['orderPictures']);
+					if(!empty($t) && \is_array($t)){
+						// Remove all values
+						$arrOrder = array_map(function () {}, array_flip($t));
+
+						// Move the matching elements to their position in $arrOrder
+						foreach($images as $k=>$v){
+							if(array_key_exists($v['uuid'], $arrOrder)){
+								$arrOrder[$v['uuid']] = $v;
+								unset($images[$k]);
+							}
 						}
+
+						// Append the left-over images at the end
+						if(!empty($images))
+							$arrOrder = array_merge($arrOrder, array_values($images));
+
+						// Remove empty (unreplaced) entries
+						$images = array_values(array_filter($arrOrder));
+						unset($arrOrder);
 					}
 				}
+
+				$arrItem['pictures'] = $images;
 			}
 
 			// Get the item category
 			if($arrConfig["getCategory"])
-			{
 				$arrItem['category'] = \PageModel::findByPk($arrItem['pages']);
-			}
 
 			// Get the item tags
-			if($arrConfig["getTags"])
-			{
+			if($arrConfig["getTags"]){
 				$arrTags = deserialize($arrItem['tags']);
 
-				if(is_array($arrTags) && !empty($arrTags))
-				{
+				if(is_array($arrTags) && !empty($arrTags)){
 					$arrItem['tags'] = [];
 
 					foreach($arrTags as $intTag)
-					{
 						$arrItem['tags'][] = Tag::getItem($intTag, $arrConfig['getTagsConfig']);
-					}
 				}
 			}
 
 			// Get the item attributes
-			if($arrConfig["getAttributes"])
-			{
+			if($arrConfig["getAttributes"]){
 				$arrConfig["itemAttributes"]["pid"] = $arrItem['id'];
 				$arrItem['attributes'] = ItemAttribute::getItems($arrConfig["itemAttributes"]);
 			}
 
 			return $arrItem;
 		}
-		catch(Exception $e)
-		{
+		catch(Exception $e){
 			throw $e;
 		}
 	}
@@ -151,14 +148,11 @@ class Item extends \Controller
 	 * @param  [Array]   $arrOptions [Query Options]
 	 * @return [Integer]             [Number of items]
 	 */
-	public static function countItems($arrConfig, $arrOptions = array())
-	{
-		try
-		{
+	public static function countItems($arrConfig, $arrOptions = array()){
+		try{
 			return ItemModel::countItems($arrConfig, $arrOptions);
 		}
-		catch(Exception $e)
-		{
+		catch(Exception $e){
 			throw $e;
 		}
 	}
