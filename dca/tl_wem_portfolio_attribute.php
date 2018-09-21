@@ -88,7 +88,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{title_legend},title'
+		'default'                     => '{title_legend},title,alias'
 	),
 
 	// Fields
@@ -104,6 +104,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array
 		),
 		'created_on' => array
 		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['created_on'],
 			'default'				  => time(),
 			'flag'					  => 8,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
@@ -116,6 +117,18 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array
 			'search'                  => true,
 			'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'decodeEntities'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
+		),
+		'alias' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['alias'],
+			'exclude'                 => true,
+			'inputType'               => 'text',
+			'eval'                    => array('rgxp'=>'folderalias', 'doNotCopy'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
+			'save_callback' => array
+			(
+				array('tl_wem_portfolio_attribute', 'generateAlias')
+			),
+			'sql'                     => "varchar(128) COLLATE utf8_bin NOT NULL default ''"
 		),
 	)
 );
@@ -136,5 +149,43 @@ class tl_wem_portfolio_attribute extends Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
+	}
+
+	/**
+	 * Auto-generate the category alias if it has not been set yet
+	 *
+	 * @param mixed         $varValue
+	 * @param DataContainer $dc
+	 *
+	 * @return string
+	 *
+	 * @throws Exception
+	 */
+	public function generateAlias($varValue, DataContainer $dc)
+	{
+		$autoAlias = false;
+
+		// Generate alias if there is none
+		if ($varValue == '')
+		{
+			$autoAlias = true;
+			$varValue = StringUtil::generateAlias($dc->activeRecord->title);
+		}
+
+		$objAlias = $this->Database->prepare("SELECT id FROM tl_wem_portfolio_attribute WHERE alias=? AND id!=?")
+								   ->execute($varValue, $dc->id);
+
+		// Check whether the news alias exists
+		if ($objAlias->numRows)
+		{
+			if (!$autoAlias)
+			{
+				throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+			}
+
+			$varValue .= '-' . $dc->id;
+		}
+
+		return $varValue;
 	}
 }

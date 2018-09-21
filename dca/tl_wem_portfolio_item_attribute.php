@@ -107,6 +107,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = array
 		),
 		'created_on' => array
 		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['created_on'],
 			'default'				  => time(),
 			'flag'					  => 8,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
@@ -124,7 +125,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = array
 			'flag'                    => 11,
 			'inputType'               => 'select',
 			'foreignKey'              => 'tl_wem_portfolio_attribute.title',
-			'eval'                    => array('doNotCopy'=>true, 'chosen'=>true, 'mandatory'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
+			'eval'                    => array('chosen'=>true, 'mandatory'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'",
 			'relation'                => array('type'=>'hasOne', 'load'=>'eager')
 		),
@@ -164,7 +165,7 @@ class tl_wem_portfolio_item_attribute extends Backend
 	 */
 	public function listItemAttributes($arrRow)
 	{
-		$objAttribute = $this->Database->prepare("SELECT * FROM tl_wem_portfolio_attribute WHERE id = ?")->limit(1)->execute($arrRow['id']);
+		$objAttribute = $this->Database->prepare("SELECT * FROM tl_wem_portfolio_attribute WHERE id = ?")->limit(1)->execute($arrRow['attribute']);
 		return sprintf("%s -> %s", $objAttribute->title, $arrRow['value']);
 	}
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" ?><xliff version="1.1">
-  <file datatype="php" original="system/modules/wem-portfolio/languages/en/tl_wem_portfolio_attribute.php" source-language="en" target-language="fr">
+  <file datatype="php" original="system/modules/wem-contao-portfolio/languages/en/tl_wem_portfolio_attribute.php" source-language="en" target-language="fr">
     <body>
       <trans-unit id="tl_wem_portfolio_attribute.title.0">
         <source>Title</source>
@@ -7,7 +7,24 @@
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.title.1">
         <source>Enter the tag title</source>
-        <target>Saisissez l'intitulé du tag</target>
+        <target>Saisissez l'intitulé de l'attribut</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.alias.0">
+        <source>Alias</source>
+        <target>Alias</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.alias.1">
+        <source>Enter the attribute alias - it will be automaticly generated, based on attribute title.</source>
+        <target>Saisissez l'alias de l'attribut - Il sera généré automatiquement, en rapport avec l'intitulé de l'attribut.</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_attribute.created_on.0">
+        <source>Created on</source>
+        <target>Créé le</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.created_on.1">
+        <source>Enter the date when the item has been created.</source>
+        <target>Saisissez la date à laquelle le contenu a été créé.</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_attribute.title_legend">
@@ -16,43 +33,43 @@
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_attribute.new.0">
-        <source>New tag</source>
+        <source>New attribute</source>
         <target>Nouvel attribut</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.new.1">
-        <source>Add a new tag</source>
+        <source>Add a new attribute</source>
         <target>Ajouter un nouvel attribut</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.edit.0">
-        <source>Edit tag</source>
+        <source>Edit attribute</source>
         <target>Editer l'attribut</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.edit.1">
-        <source>Edit tag ID %s</source>
+        <source>Edit attribute ID %s</source>
         <target>Editer l'attribut ID %s</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.copy.0">
-        <source>Duplicate tag</source>
+        <source>Duplicate attribute</source>
         <target>Copier l'attribut</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.copy.1">
-        <source>Duplicate tag ID %s</source>
+        <source>Duplicate attribute ID %s</source>
         <target>Copier l'attribut ID %s</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.delete.0">
-        <source>Delete tag</source>
+        <source>Delete attribute</source>
         <target>Supprimer l'attribut</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.delete.1">
-        <source>Delete tag ID %s</source>
+        <source>Delete attribute ID %s</source>
         <target>Supprimer l'attribut ID %s</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.show.0">
-        <source>Show tag</source>
+        <source>Show attribute</source>
         <target>Afficher l'attribut</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.show.1">
-        <source>Show tag ID %s</source>
+        <source>Show attribute ID %s</source>
         <target>Afficher l'attribut ID %s</target>
       </trans-unit>
     </body>

@@ -38,6 +38,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 		(
 			'mode'                    => 1,
 			'fields'                  => array('date'),
+			'flag'                    => 1,
 			'panelLayout'             => 'filter;search',
 		),
 		'label' => array
@@ -67,15 +68,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'copy' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['copy'],
-				'href'                => 'act=paste&amp;mode=copy',
+				'href'                => 'act=copy',
 				'icon'                => 'copy.svg',
-				'attributes'          => 'onclick="Backend.getScrollOffset()"',
-			),
-			'cut' => array
-			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['cut'],
-				'href'                => 'act=paste&amp;mode=cut',
-				'icon'                => 'cut.svg',
 				'attributes'          => 'onclick="Backend.getScrollOffset()"',
 			),
 			'delete' => array
@@ -129,6 +123,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 		),
 		'created_on' => array
 		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['created_on'],
 			'default'				  => time(),
 			'flag'					  => 8,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
@@ -168,7 +163,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'sorting'                 => true,
 			'flag'                    => 8,
 			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
+			'eval'                    => array('rgxp'=>'date', 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'pages' => array
@@ -186,7 +181,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['pictures'],
 			'exclude'                 => true,
 			'inputType'               => 'fileTree',
-			'eval'                    => array('filesOnly'=>true, 'extensions'=>$GLOBALS['TL_CONFIG']['validImageTypes'], 'multiple' => true, 'fieldType'=>'checkbox'),
+			'eval'                    => array('filesOnly'=>true, 'extensions'=>$GLOBALS['TL_CONFIG']['validImageTypes'], 'multiple' => true, 'fieldType'=>'checkbox', 'orderField'=>'orderPictures'),
+			'sql'                     => "blob NULL"
+		),
+		'orderPictures' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['MSC']['sortOrder'],
 			'sql'                     => "blob NULL"
 		),
 		'teaser' => array
@@ -227,7 +227,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'foreignKey'              => 'tl_wem_portfolio_tag.title',
-			'eval'                    => array('doNotCopy'=>true, 'chosen'=>true, 'multiple'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
+			'eval'                    => array('chosen'=>true, 'multiple'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
 			'sql'                     => "blob NULL",
 		),
 

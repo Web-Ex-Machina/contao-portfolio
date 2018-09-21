@@ -105,6 +105,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_tag'] = array
 		),
 		'created_on' => array
 		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_tag']['created_on'],
 			'default'				  => time(),
 			'flag'					  => 8,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
