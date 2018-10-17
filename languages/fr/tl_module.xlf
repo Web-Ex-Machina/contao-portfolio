@@ -25,6 +25,16 @@
         <source>Check to retrieve item tags.</source>
         <target>Cochez pour récupérer les tags de l'élément.</target>
       </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_filters.0">
+        <source>Add filters</source>
+        <target>Ajouter des filtres</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_filters.1">
+        <source>Allow user to filter items depending on attributes</source>
+        <target>Permet à l'utilisateur de filtrer les éléments selon les attributs</target>
+      </trans-unit>
+
+      
     </body>
   </file>
 </xliff>

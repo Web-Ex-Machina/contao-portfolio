@@ -111,4 +111,19 @@ class ItemAttribute extends Model
 			throw $e;
 		}
 	}
+
+	public static function findAllGroupBy($strField){
+		try{
+			$t = static::$strTable;
+			$objRows = \Database::getInstance()->prepare("SELECT * FROM $t GROUP BY $strField")->execute();
+
+			if(!$objRows)
+				return null;
+
+			return static::createCollectionFromDbResult($objRows, $t);
+		}
+		catch(Exception $e){
+			throw $e;
+		}
+	}
 }

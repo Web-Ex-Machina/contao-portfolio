@@ -15,7 +15,7 @@
   </div>
 
   <?php if ($this->link): ?>
-    <p class="more"><a href="<?= $this->link ?>" title=""><?= $GLOBALS['TL_LANG']['MSC']['more'] ?></a></p>
+    <p class="more"><a href="<?= $this->link ?>" title="<?= $GLOBALS['TL_LANG']['MSC']['more'] ?>"><?= $GLOBALS['TL_LANG']['MSC']['more'] ?></a></p>
   <?php endif; ?>
 
 </div>

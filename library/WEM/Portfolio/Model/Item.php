@@ -95,6 +95,14 @@ class Item extends Model
 			if($arrConfig["alias"])
 				$arrColumns[] = "$t.alias = '". $arrConfig["alias"] ."'";
 
+			if($arrConfig["attributes"]){
+				$i = 1;
+				foreach($arrConfig["attributes"] as $attribute){
+					$i++;
+					$arrColumns[] = "$t.id IN(SELECT t".$i.".pid FROM tl_wem_portfolio_item_attribute AS t".$i." WHERE t".$i.".attribute = ".$attribute["attribute"]." AND t".$i.".value = '".$attribute["value"]."')";
+				}
+			}
+
 			if($arrConfig["not"])
 				$arrColumns[] = $arrConfig["not"];
 

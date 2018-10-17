@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2015-2018 Web ex Machina
  *
- * @author Web ex Machina <http://www.webexmachina.fr>
+ * @author Web ex Machina <https://www.webexmachina.fr>
  */
 
 namespace WEM\Portfolio\Module;
@@ -36,10 +36,8 @@ class PortfolioList extends Portfolio
 	 *
 	 * @return string
 	 */
-	public function generate()
-	{
-		if (TL_MODE == 'BE')
-		{
+	public function generate(){
+		if (TL_MODE == 'BE'){
 			/** @var BackendTemplate|object $objTemplate */
 			$objTemplate = new \BackendTemplate('be_wildcard');
 
@@ -52,14 +50,17 @@ class PortfolioList extends Portfolio
 			return $objTemplate->parse();
 		}
 
+		// Do not display the module if there is an auto_item
+		if(\Input::get('auto_item'))
+			return '';
+
 		return parent::generate();
 	}
 
 	/**
 	 * Generate the module
 	 */
-	protected function compile()
-	{
+	protected function compile(){
 		$limit = null;
 		$offset = intval($this->skipFirst);
 		$arrOptions = array();
@@ -68,12 +69,26 @@ class PortfolioList extends Portfolio
 		if($this->numberOfItems > 0)
 			$limit = $this->numberOfItems;
 
+		// If we want filters
+		if($this->wem_portfolio_filters)
+			$this->filters = $this->getAvailableFilters();
+
 		$this->Template->articles = array();
-		$this->Template->empty = $GLOBALS['TL_LANG']['MSC']['emptyList'];
+		$this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
+		$this->Template->filterBy = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['filterBy'];
 
 		global $objPage;
 		$arrConfig["page"] = $objPage->id;
 		$arrConfig["getItem"] = $this->getConfig();
+
+		// Adjust the config
+		if($this->filters){
+			foreach($this->filters['attributes'] as $filter){
+				if($filter['selected']){
+					$arrConfig['attributes'][] = ["attribute"=>$filter['id'], "value"=>$filter["value"]];
+				}
+			}
+		}
 
 		// Get the total number of items
 		$intTotal = Item::countItems($arrConfig, $arrOptions);
@@ -84,13 +99,10 @@ class PortfolioList extends Portfolio
 		$total = $intTotal - $offset;
 
 		// Split the results
-		if ($this->perPage > 0 && (!isset($limit) || $this->numberOfItems > $this->perPage))
-		{
+		if ($this->perPage > 0 && (!isset($limit) || $this->numberOfItems > $this->perPage)){
 			// Adjust the overall limit
 			if (isset($limit))
-			{
 				$total = min($limit, $total);
-			}
 
 			// Get the current page
 			$id = 'page_n' . $this->id;
@@ -98,9 +110,7 @@ class PortfolioList extends Portfolio
 
 			// Do not index or cache the page if the page number is outside the range
 			if ($page < 1 || $page > max(ceil($total/$this->perPage), 1))
-			{
 				throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
-			}
 
 			// Set limit and offset
 			$limit = $this->perPage;
@@ -109,9 +119,7 @@ class PortfolioList extends Portfolio
 
 			// Overall limit
 			if ($offset + $limit > $total + $skip)
-			{
 				$limit = $total + $skip - $offset;
-			}
 
 			// Add the pagination menu
 			$objPagination = new \Pagination($total, $this->perPage, \Config::get('maxPaginationLinks'), $id);
@@ -119,16 +127,16 @@ class PortfolioList extends Portfolio
 		}
 
 		if($this->jumpTo && $objRedirectPage = \PageModel::findByPk($this->jumpTo))
-		{
 			$this->jumpTo = $objRedirectPage;
-		}
 
 		$objItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
 
 		// Add the articles
 		if ($objItems !== null)
-		{
 			$this->Template->items = $this->parseItems($objItems, $this->wem_portfolio_template);
-		}
+
+		// Add the filters
+		if($this->wem_portfolio_filters && !empty($this->filters))
+			$this->Template->filters = $this->filters;
 	}
 }

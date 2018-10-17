@@ -38,8 +38,7 @@ class PortfolioReader extends Portfolio
 	 */
 	public function generate()
 	{
-		if (TL_MODE == 'BE')
-		{
+		if (TL_MODE == 'BE'){
 			/** @var BackendTemplate|object $objTemplate */
 			$objTemplate = new \BackendTemplate('be_wildcard');
 
@@ -54,13 +53,10 @@ class PortfolioReader extends Portfolio
 
 		// Set the item from the auto_item parameter
 		if (!isset($_GET['items']) && \Config::get('useAutoItem') && isset($_GET['auto_item']))
-		{
 			\Input::setGet('items', \Input::get('auto_item'));
-		}
 
 		// Do not index or cache the page if no news item has been specified
-		if (!\Input::get('items'))
-		{
+		if (!\Input::get('items')){
 			/** @var PageModel $objPage */
 			global $objPage;
 
@@ -76,8 +72,7 @@ class PortfolioReader extends Portfolio
 	/**
 	 * Generate the module
 	 */
-	protected function compile()
-	{
+	protected function compile(){
 		/** @var PageModel $objPage */
 		global $objPage;
 
@@ -91,22 +86,16 @@ class PortfolioReader extends Portfolio
 		$arrItem = Item::getItem(\Input::get('items'), $arrConfig);
 
 		if (null === $arrItem)
-		{
 			throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
-		}
 
 		$this->Template->articles = $this->parseItem($arrItem, $this->wem_portfolio_template);
 
 		// Overwrite the page title (see #2853 and #4955)
 		if ($arrItem['title'] != '')
-		{
 			$objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($arrItem['title']));
-		}
 
 		// Overwrite the page description
 		if ($arrItem['teaser'] != '')
-		{
 			$objPage->description = $this->prepareMetaDescription($arrItem['teaser']);
-		}
 	}
 }

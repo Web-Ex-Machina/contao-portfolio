@@ -1,0 +1,14 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/wem-portfolio/languages/en/modules.php" source-language="en" target-language="fr">
+    <body>
+      <trans-unit id="WEM.PORTFOLIO.empty">
+        <source>There is no items yet.</source>
+        <target>Il n'y a pas encore d'éléments.</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.filterBy">
+        <source>Filter by</source>
+        <target>Filtrer par</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
