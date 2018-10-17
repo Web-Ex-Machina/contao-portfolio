@@ -61,82 +61,103 @@ class PortfolioList extends Portfolio
 	 * Generate the module
 	 */
 	protected function compile(){
-		$limit = null;
-		$offset = intval($this->skipFirst);
-		$arrOptions = array();
+		try{
+			$limit = null;
+			$offset = intval($this->skipFirst);
+			$arrOptions = array();
 
-		// Maximum number of items
-		if($this->numberOfItems > 0)
-			$limit = $this->numberOfItems;
+			// Maximum number of items
+			if($this->numberOfItems > 0)
+				$limit = $this->numberOfItems;
 
-		// If we want filters
-		if($this->wem_portfolio_filters)
-			$this->filters = $this->getAvailableFilters();
+			// If we want filters
+			if($this->wem_portfolio_filters)
+				$this->filters = $this->getAvailableFilters();
 
-		$this->Template->articles = array();
-		$this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
-		$this->Template->filterBy = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['filterBy'];
+			$this->Template->articles = array();
+			$this->Template->rt = \RequestToken::get();
+			$this->Template->request = \Environment::get('request');
+			$this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
+			$this->Template->filterBy = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['filterBy'];
 
-		global $objPage;
-		$arrConfig["page"] = $objPage->id;
-		$arrConfig["getItem"] = $this->getConfig();
+			global $objPage;
+			$arrConfig["page"] = $objPage->id;
+			$arrConfig["getItem"] = $this->getConfig();
 
-		// Adjust the config
-		if($this->filters){
-			foreach($this->filters['attributes'] as $filter){
-				if($filter['selected']){
-					$arrConfig['attributes'][] = ["attribute"=>$filter['id'], "value"=>$filter["value"]];
+			// Adjust the config
+			if($this->filters){
+				foreach($this->filters['attributes'] as $filter){
+					if($filter['selected']){
+						$arrConfig['attributes'][] = ["attribute"=>$filter['id'], "value"=>$filter["value"]];
+					}
 				}
 			}
+
+			// Get the total number of items
+			$intTotal = Item::countItems($arrConfig, $arrOptions);
+
+			if($intTotal < 1)
+				return;
+
+			$total = $intTotal - $offset;
+
+			// Split the results
+			if ($this->perPage > 0 && (!isset($limit) || $this->numberOfItems > $this->perPage)){
+				// Adjust the overall limit
+				if (isset($limit))
+					$total = min($limit, $total);
+
+				// Get the current page
+				$id = 'page_n' . $this->id;
+				$page = (\Input::get($id) !== null) ? \Input::get($id) : 1;
+
+				// Do not index or cache the page if the page number is outside the range
+				if ($page < 1 || $page > max(ceil($total/$this->perPage), 1))
+					throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
+
+				// Set limit and offset
+				$limit = $this->perPage;
+				$offset += (max($page, 1) - 1) * $this->perPage;
+				$skip = intval($this->skipFirst);
+
+				// Overall limit
+				if ($offset + $limit > $total + $skip)
+					$limit = $total + $skip - $offset;
+
+				// Add the pagination menu
+				$objPagination = new \Pagination($total, $this->perPage, \Config::get('maxPaginationLinks'), $id);
+				$this->Template->pagination = $objPagination->generate("\n  ");
+			}
+
+			if($this->jumpTo && $objRedirectPage = \PageModel::findByPk($this->jumpTo))
+				$this->jumpTo = $objRedirectPage;
+
+			$objItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
+
+			// Add the filters
+			if($this->wem_portfolio_filters && !empty($this->filters))
+				$this->Template->filters = $this->filters;
+
+			// Add the articles
+			if($objItems !== null && \Input::post('TL_AJAX')){
+				$arrResponse = ["status"=>"success", "items"=>$objItems, "rt"=>$this->Template->rt];
+				echo json_encode($arrResponse);
+				die;
+			}
+			else if($objItems !== null)
+				$this->Template->items = $this->parseItems($objItems, $this->wem_portfolio_template);
 		}
-
-		// Get the total number of items
-		$intTotal = Item::countItems($arrConfig, $arrOptions);
-
-		if($intTotal < 1)
-			return;
-
-		$total = $intTotal - $offset;
-
-		// Split the results
-		if ($this->perPage > 0 && (!isset($limit) || $this->numberOfItems > $this->perPage)){
-			// Adjust the overall limit
-			if (isset($limit))
-				$total = min($limit, $total);
-
-			// Get the current page
-			$id = 'page_n' . $this->id;
-			$page = (\Input::get($id) !== null) ? \Input::get($id) : 1;
-
-			// Do not index or cache the page if the page number is outside the range
-			if ($page < 1 || $page > max(ceil($total/$this->perPage), 1))
-				throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
-
-			// Set limit and offset
-			$limit = $this->perPage;
-			$offset += (max($page, 1) - 1) * $this->perPage;
-			$skip = intval($this->skipFirst);
-
-			// Overall limit
-			if ($offset + $limit > $total + $skip)
-				$limit = $total + $skip - $offset;
-
-			// Add the pagination menu
-			$objPagination = new \Pagination($total, $this->perPage, \Config::get('maxPaginationLinks'), $id);
-			$this->Template->pagination = $objPagination->generate("\n  ");
+		catch(Exception $e){
+			if(\Input::post('TL_AJAX')){
+				$arrResponse = ["status"=>"error", "error"=>$e->getMessage(), "trace"=>$e->getTrace()];
+				echo json_encode($arrResponse);
+				die;
+			}
+			else{
+				$this->Template->error = true;
+				$this->Template->message = $e->getMessage();
+				$this->Template->trace = $e->getTrace();
+			}
 		}
-
-		if($this->jumpTo && $objRedirectPage = \PageModel::findByPk($this->jumpTo))
-			$this->jumpTo = $objRedirectPage;
-
-		$objItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
-
-		// Add the articles
-		if ($objItems !== null)
-			$this->Template->items = $this->parseItems($objItems, $this->wem_portfolio_template);
-
-		// Add the filters
-		if($this->wem_portfolio_filters && !empty($this->filters))
-			$this->Template->filters = $this->filters;
 	}
 }
