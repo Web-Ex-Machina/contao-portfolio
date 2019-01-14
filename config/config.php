@@ -3,9 +3,9 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2018 Web ex Machina
+ * Copyright (c) 2015-2019 Web ex Machina
  *
- * @author Web ex Machina <http://www.webexmachina.fr>
+ * @author Web ex Machina <https://www.webexmachina.fr>
  */
 
 /**
@@ -19,11 +19,6 @@ array_insert($GLOBALS['BE_MOD'], 1, array
 		(
 			'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute'),
 			'icon'		=> 'system/modules/wem-portfolio/assets/icon_item.png'
-		),
-		'wem_portfolio_tag' => array
-		(
-			'tables'    => array('tl_wem_portfolio_tag'),
-			'icon'		=> 'system/modules/wem-portfolio/assets/icon_tag.png'
 		),
 		'wem_portfolio_attribute' => array
 		(
@@ -59,5 +54,4 @@ array_insert($GLOBALS['FE_MOD'], 2, array
  */
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_item"] 				= 'WEM\Portfolio\Model\Item';
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_item_attribute"] 	= 'WEM\Portfolio\Model\ItemAttribute';
-$GLOBALS['TL_MODELS']["tl_wem_portfolio_tag"] 				= 'WEM\Portfolio\Model\Tag';
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_attribute"] 		= 'WEM\Portfolio\Model\Attribute';

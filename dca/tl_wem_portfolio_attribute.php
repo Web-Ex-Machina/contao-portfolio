@@ -123,12 +123,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['alias'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'folderalias', 'doNotCopy'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
+			'eval'                    => array('rgxp'=>'alias', 'doNotCopy'=>true, 'unique'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
 				array('tl_wem_portfolio_attribute', 'generateAlias')
 			),
-			'sql'                     => "varchar(128) COLLATE utf8_bin NOT NULL default ''"
+			'sql'                     => "varchar(128) BINARY NOT NULL default ''"
 		),
 	)
 );
@@ -161,27 +161,32 @@ class tl_wem_portfolio_attribute extends Backend
 	 *
 	 * @throws Exception
 	 */
-	public function generateAlias($varValue, DataContainer $dc)
-	{
+	public function generateAlias($varValue, DataContainer $dc){
 		$autoAlias = false;
 
-		// Generate alias if there is none
-		if ($varValue == '')
-		{
+		// Generate an alias if there is none
+		if($varValue == ''){
 			$autoAlias = true;
-			$varValue = StringUtil::generateAlias($dc->activeRecord->title);
+			$slugOptions = array();
+
+			// Read the slug options from the associated page
+			if(($objPage = PageModel::findWithDetails($dc->activeRecord->pages)) !== null)
+				$slugOptions = $objPage->getSlugOptions();
+
+			$varValue = System::getContainer()->get('contao.slug.generator')->generate(StringUtil::prepareSlug($dc->activeRecord->title), $slugOptions);
+
+			// Prefix numeric aliases (see #1598)
+			if(is_numeric($varValue))
+				$varValue = 'id-' . $varValue;
 		}
 
-		$objAlias = $this->Database->prepare("SELECT id FROM tl_wem_portfolio_attribute WHERE alias=? AND id!=?")
-								   ->execute($varValue, $dc->id);
+		$objAlias = $this->Database->prepare("SELECT id FROM tl_wem_portfolio_attribute WHERE id=? OR alias=?")
+								   ->execute($dc->id, $varValue);
 
-		// Check whether the news alias exists
-		if ($objAlias->numRows)
-		{
-			if (!$autoAlias)
-			{
+		// Check whether the page alias exists
+		if($objAlias->numRows > 1){
+			if(!$autoAlias)
 				throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
-			}
 
 			$varValue .= '-' . $dc->id;
 		}

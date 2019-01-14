@@ -3,16 +3,16 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2018 Web ex Machina
+ * Copyright (c) 2015-2019 Web ex Machina
  *
- * @author Web ex Machina <http://www.webexmachina.fr>
+ * @author Web ex Machina <https://www.webexmachina.fr>
  */
 
 /**
  * Add palettes to tl_module
  */
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list']    = '{title_legend},name,headline,type;{config_legend},jumpTo,wem_portfolio_attributes,wem_portfolio_tags,wem_portfolio_filters,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader']  = '{title_legend},name,headline,type;{config_legend},wem_portfolio_attributes,wem_portfolio_tags;{template_legend:hide},wem_portfolio_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list']    = '{title_legend},name,headline,type;{config_legend},jumpTo,wem_portfolio_filters,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader']  = '{title_legend},name,headline,type;{template_legend:hide},wem_portfolio_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_template'] = array
 (
@@ -24,29 +24,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_template'] = array
 	'eval'                    => array('tl_class'=>'w50'),
 	'sql'                     => "varchar(64) NOT NULL default ''"
 );
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_attributes'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_attributes'],
-	'exclude'                 => true,
-	'inputType'               => 'checkbox',
-	'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'w50'),
-	'sql'                     => "char(1) NOT NULL default ''"
-);
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_tags'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_tags'],
-	'exclude'                 => true,
-	'inputType'               => 'checkbox',
-	'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'w50'),
-	'sql'                     => "char(1) NOT NULL default ''"
-);
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_filters'],
 	'exclude'                 => true,
-	'inputType'               => 'checkbox',
-	'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'w50'),
-	'sql'                     => "char(1) NOT NULL default ''"
+	'inputType'               => 'select',
+	'foreignKey'              => 'tl_wem_portfolio_attribute.title',
+	'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'w50', 'chosen'=>true, 'multiple'=>true),
+	'sql'                     => "blob NULL"
 );
 
 /**
@@ -60,8 +45,7 @@ class tl_module_wem_portfolio extends Backend
 	/**
 	 * Import the back end user object
 	 */
-	public function __construct()
-	{
+	public function __construct(){
 		parent::__construct();
 		$this->import('BackendUser', 'User');
 	}
@@ -71,8 +55,7 @@ class tl_module_wem_portfolio extends Backend
 	 *
 	 * @return array
 	 */
-	public function getPortfolioTemplates()
-	{
+	public function getPortfolioTemplates(){
 		return $this->getTemplateGroup('wem_portfolio_');
 	}
 }

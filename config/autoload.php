@@ -3,9 +3,9 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2017 Web ex Machina
+ * Copyright (c) 2015-2019 Web ex Machina
  *
- * @author Web ex Machina <http://www.webexmachina.fr>
+ * @author Web ex Machina <https://www.webexmachina.fr>
  */
 
 /**

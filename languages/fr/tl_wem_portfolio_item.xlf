@@ -25,13 +25,13 @@
         <source>Enter a date for this item</source>
         <target>Saisissez une date pour cet élément</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.pages.0">
-        <source>Pages</source>
-        <target>Pages</target>
+      <trans-unit id="tl_wem_portfolio_item.category.0">
+        <source>Category</source>
+        <target>Catégorie</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.pages.1">
-        <source>Select the item's pages</source>
-        <target>Sélectionnez les pages pour cet élément</target>
+      <trans-unit id="tl_wem_portfolio_item.category.1">
+        <source>Select the item's category</source>
+        <target>Sélectionnez la catégorie de l'élément</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.pictures.0">
@@ -59,15 +59,6 @@
       <trans-unit id="tl_wem_portfolio_item.attributes.1">
         <source>Enter the item attributes</source>
         <target>Saisissez les attributs de l'élément</target>
-      </trans-unit>
-
-      <trans-unit id="tl_wem_portfolio_item.tags.0">
-        <source>Tags</source>
-        <target>Tags</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.tags.1">
-        <source>Select the item tags</source>
-        <target>Sélectionnez les tags de l'élément</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.published.0">
@@ -119,10 +110,6 @@
       <trans-unit id="tl_wem_portfolio_item.attributes_legend">
         <source>Item attributes</source>
         <target>Attributs de l'élément</target>
-      </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.tags_legend">
-        <source>Item tags</source>
-        <target>Tags de l'élément</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_item.publish_legend">
         <source>Publication settings</source>

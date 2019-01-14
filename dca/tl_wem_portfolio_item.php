@@ -37,13 +37,13 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 		'sorting' => array
 		(
 			'mode'                    => 1,
-			'fields'                  => array('date'),
+			'fields'                  => array('category'),
 			'flag'                    => 1,
 			'panelLayout'             => 'filter;search',
 		),
 		'label' => array
 		(
-			'fields'                  => array('title', 'created_on'),
+			'fields'                  => array('title', 'date'),
 			'format'                  => '%s <span style="color:#999;padding-left:3px">[%s]</span>',
 			'label_callback'          => array('tl_wem_portfolio_item', 'addIcon')
 		),
@@ -99,11 +99,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 	'palettes' => array
 	(
 		'default'                     => '
-			{title_legend},title,alias,date,pages;
+			{title_legend},title,alias,date,category;
 			{media_legend},pictures;
 			{details_legend},teaser;
 			{attributes_legend},attributes;
-			{tags_legend},tags;
 			{publish_legend},published,start,stop
 		'
 	),
@@ -147,12 +146,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['alias'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'alias', 'doNotCopy'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
+			'eval'                    => array('rgxp'=>'alias', 'doNotCopy'=>true, 'unique'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
 				array('tl_wem_portfolio_item', 'generateAlias')
 			),
-			'sql'                     => "varchar(128) COLLATE utf8_bin NOT NULL default ''"
+			'sql'                     => "varchar(128) BINARY NOT NULL default ''"
 		),
 		'date' => array
 		(
@@ -166,22 +165,22 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'eval'                    => array('rgxp'=>'date', 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'pages' => array
+		'category' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['pages'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['category'],
 			'exclude'                 => true,
 			'inputType'               => 'pageTree',
 			'foreignKey'              => 'tl_page.title',
-			'eval'                    => array('mandatory'=>true, 'fieldType'=>'radio', 'tl_class'=>'clr'),
+			'eval'                    => array('mandatory'=>true, 'fieldType'=>'radio', 'tl_class'=>'w50'),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'",
-			'relation'                => array('type'=>'hasMany', 'load'=>'eager')
+			'relation'                => array('type'=>'hasOne', 'load'=>'eager')
 		),
 		'pictures' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['pictures'],
 			'exclude'                 => true,
 			'inputType'               => 'fileTree',
-			'eval'                    => array('filesOnly'=>true, 'extensions'=>$GLOBALS['TL_CONFIG']['validImageTypes'], 'multiple' => true, 'fieldType'=>'checkbox', 'orderField'=>'orderPictures'),
+			'eval'                    => array('files'=>true, 'extensions'=>Config::get('validImageTypes'), 'multiple'=>true, 'fieldType'=>'checkbox', 'orderField'=>'orderPictures'),
 			'sql'                     => "blob NULL"
 		),
 		'orderPictures' => array
@@ -219,16 +218,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 		        'operations' => array('edit', 'delete'),
 		        'tl_class'=>'clr',
 		    ),
-		),
-
-		'tags' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['tags'],
-			'exclude'                 => true,
-			'inputType'               => 'select',
-			'foreignKey'              => 'tl_wem_portfolio_tag.title',
-			'eval'                    => array('chosen'=>true, 'multiple'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "blob NULL",
 		),
 
 		'published' => array
@@ -272,8 +261,7 @@ class tl_wem_portfolio_item extends Backend
 	/**
 	 * Import the back end user object
 	 */
-	public function __construct()
-	{
+	public function __construct(){
 		parent::__construct();
 		$this->import('BackendUser', 'User');
 	}
@@ -290,8 +278,7 @@ class tl_wem_portfolio_item extends Backend
 	 *
 	 * @return string
 	 */
-	public function addIcon($row, $label, DataContainer $dc=null, $imageAttribute='', $blnReturnImage=false, $blnProtected=false)
-	{
+	public function addIcon($row, $label, DataContainer $dc=null, $imageAttribute='', $blnReturnImage=false, $blnProtected=false){
 		return '<img src="assets/contao/images/iconJPG.svg" width="18" height="18" alt="image/jpeg" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
 	}
 
@@ -305,27 +292,32 @@ class tl_wem_portfolio_item extends Backend
 	 *
 	 * @throws Exception
 	 */
-	public function generateAlias($varValue, DataContainer $dc)
-	{
+	public function generateAlias($varValue, DataContainer $dc){
 		$autoAlias = false;
 
 		// Generate an alias if there is none
-		if ($varValue == '')
-		{
+		if($varValue == ''){
 			$autoAlias = true;
-			$varValue = StringUtil::generateAlias($dc->activeRecord->title);
+			$slugOptions = array();
+
+			// Read the slug options from the associated page
+			if(($objPage = PageModel::findWithDetails($dc->activeRecord->pages)) !== null)
+				$slugOptions = $objPage->getSlugOptions();
+
+			$varValue = System::getContainer()->get('contao.slug.generator')->generate(StringUtil::prepareSlug($dc->activeRecord->title), $slugOptions);
+
+			// Prefix numeric aliases (see #1598)
+			if(is_numeric($varValue))
+				$varValue = 'id-' . $varValue;
 		}
 
 		$objAlias = $this->Database->prepare("SELECT id FROM tl_wem_portfolio_item WHERE id=? OR alias=?")
 								   ->execute($dc->id, $varValue);
 
 		// Check whether the page alias exists
-		if ($objAlias->numRows > 1)
-		{
-			if (!$autoAlias)
-			{
+		if($objAlias->numRows > 1){
+			if(!$autoAlias)
 				throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
-			}
 
 			$varValue .= '-' . $dc->id;
 		}
@@ -345,26 +337,20 @@ class tl_wem_portfolio_item extends Backend
 	 *
 	 * @return string
 	 */
-	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
-	{
-		if (strlen(Input::get('tid')))
-		{
+	public function toggleIcon($row, $href, $label, $title, $icon, $attributes){
+		if(strlen(Input::get('tid'))){
 			$this->toggleVisibility(Input::get('tid'), (Input::get('state') == 1), (@func_get_arg(12) ?: null));
 			$this->redirect($this->getReferer());
 		}
 
 		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->hasAccess('tl_wem_portfolio_item::published', 'alexf'))
-		{
+		if(!$this->User->hasAccess('tl_wem_portfolio_item::published', 'alexf'))
 			return '';
-		}
 
 		$href .= '&amp;tid='.$row['id'].'&amp;state='.($row['published'] ? '' : 1);
 
-		if (!$row['published'])
-		{
+		if(!$row['published'])
 			$icon = 'invisible.svg';
-		}
 
 		return '<a href="'.$this->addToUrl($href).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"').'</a> ';
 	}
@@ -379,99 +365,73 @@ class tl_wem_portfolio_item extends Backend
 	 *
 	 * @throws Contao\CoreBundle\Exception\AccessDeniedException
 	 */
-	public function toggleVisibility($intId, $blnVisible, DataContainer $dc=null)
-	{
+	public function toggleVisibility($intId, $blnVisible, DataContainer $dc=null){
 		// Set the ID and action
 		Input::setGet('id', $intId);
 		Input::setGet('act', 'toggle');
 
-		if ($dc)
-		{
+		if($dc)
 			$dc->id = $intId; // see #8043
-		}
 
 		// Trigger the onload_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onload_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onload_callback'] as $callback)
-			{
-				if (is_array($callback))
-				{
+		if(is_array($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onload_callback'])){
+			foreach($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onload_callback'] as $callback){
+				if(is_array($callback)){
 					$this->import($callback[0]);
 					$this->{$callback[0]}->{$callback[1]}($dc);
 				}
 				elseif (is_callable($callback))
-				{
 					$callback($dc);
-				}
 			}
 		}
 
 		// Check the field access
-		if (!$this->User->hasAccess('tl_wem_portfolio_item::published', 'alexf'))
-		{
+		if(!$this->User->hasAccess('tl_wem_portfolio_item::published', 'alexf'))
 			throw new Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to publish/unpublish article ID "' . $intId . '".');
-		}
 
 		// Set the current record
-		if ($dc)
-		{
-			$objRow = $this->Database->prepare("SELECT * FROM tl_wem_portfolio_item WHERE id=?")
-									 ->limit(1)
-									 ->execute($intId);
+		if($dc){
+			$objRow = $this->Database->prepare("SELECT * FROM tl_wem_portfolio_item WHERE id=?")->limit(1)->execute($intId);
 
-			if ($objRow->numRows)
-			{
+			if($objRow->numRows)
 				$dc->activeRecord = $objRow;
-			}
 		}
 
 		$objVersions = new Versions('tl_wem_portfolio_item', $intId);
 		$objVersions->initialize();
 
 		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['published']['save_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['published']['save_callback'] as $callback)
-			{
-				if (is_array($callback))
-				{
+		if(is_array($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['published']['save_callback'])){
+			foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['published']['save_callback'] as $callback){
+				if(is_array($callback)){
 					$this->import($callback[0]);
 					$blnVisible = $this->{$callback[0]}->{$callback[1]}($blnVisible, $dc);
 				}
 				elseif (is_callable($callback))
-				{
 					$blnVisible = $callback($blnVisible, $dc);
-				}
 			}
 		}
 
 		$time = time();
 
 		// Update the database
-		$this->Database->prepare("UPDATE tl_wem_portfolio_item SET tstamp=$time, published='" . ($blnVisible ? '1' : '') . "' WHERE id=?")
-					   ->execute($intId);
+		$this->Database->prepare("UPDATE tl_wem_portfolio_item SET tstamp=$time, published='" . ($blnVisible ? '1' : '') . "' WHERE id=?")->execute($intId);
 
-		if ($dc)
-		{
+		if($dc){
 			$dc->activeRecord->tstamp = $time;
 			$dc->activeRecord->published = ($blnVisible ? '1' : '');
 		}
 
 		// Trigger the onsubmit_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onsubmit_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onsubmit_callback'] as $callback)
-			{
-				if (is_array($callback))
+		if(is_array($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onsubmit_callback'])){
+			foreach($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onsubmit_callback'] as $callback){
+				if(is_array($callback))
 				{
 					$this->import($callback[0]);
 					$this->{$callback[0]}->{$callback[1]}($dc);
 				}
 				elseif (is_callable($callback))
-				{
 					$callback($dc);
-				}
 			}
 		}
 
