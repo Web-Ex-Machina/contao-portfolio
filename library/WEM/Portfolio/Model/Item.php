@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2018 Web ex Machina
+ * Copyright (c) 2015-2019 Web ex Machina
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
@@ -32,10 +32,8 @@ class Item extends Model
 	 * @param Array
 	 * @return Collection
 	 */
-	public static function findItems($arrConfig = array(), $intLimit = 0, $intOffset = 0, array $arrOptions = array())
-	{
-		try
-		{
+	public static function findItems($arrConfig = array(), $intLimit = 0, $intOffset = 0, array $arrOptions = array()){
+		try{
 			$t = static::$strTable;
 			$arrColumns = static::formatColumns($arrConfig);
 				
@@ -50,8 +48,7 @@ class Item extends Model
 
 			return static::findBy($arrColumns, null, $arrOptions);
 		}
-		catch(Exception $e)
-		{
+		catch(Exception $e){
 			throw $e;
 		}
 	}
@@ -62,17 +59,14 @@ class Item extends Model
 	 * @param Array
 	 * @return Integer
 	 */
-	public static function countItems($arrConfig = array(), array $arrOptions = array())
-	{
-		try
-		{
+	public static function countItems($arrConfig = array(), array $arrOptions = array()){
+		try{
 			$t = static::$strTable;
 			$arrColumns = static::formatColumns($arrConfig);
 
 			return static::countBy($arrColumns, null, $arrOptions);
 		}
-		catch(Exception $e)
-		{
+		catch(Exception $e){
 			throw $e;
 		}
 	}
@@ -82,15 +76,13 @@ class Item extends Model
 	 * @param  [Array] $arrConfig [Configuration to format]
 	 * @return [Array]            [The Model columns]
 	 */
-	public static function formatColumns($arrConfig)
-	{
-		try
-		{
+	public static function formatColumns($arrConfig){
+		try{
 			$t = static::$strTable;
-			$arrColumns = array("published=1");
+			$arrColumns = array("$t.published=1");
 
-			if($arrConfig["page"])
-				$arrColumns[] = "$t.pages = ". $arrConfig["page"];
+			if($arrConfig["category"])
+				$arrColumns[] = "$t.category = ". $arrConfig["category"];
 
 			if($arrConfig["alias"])
 				$arrColumns[] = "$t.alias = '". $arrConfig["alias"] ."'";
@@ -108,8 +100,7 @@ class Item extends Model
 
 			return $arrColumns;
 		}
-		catch(Exception $e)
-		{
+		catch(Exception $e){
 			throw $e;
 		}
 	}

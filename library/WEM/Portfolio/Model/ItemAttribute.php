@@ -3,9 +3,9 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2018 Web ex Machina
+ * Copyright (c) 2015-2019 Web ex Machina
  *
- * @author Web ex Machina <http://www.webexmachina.fr>
+ * @author Web ex Machina <https://www.webexmachina.fr>
  */
 
 namespace WEM\Portfolio\Model;
@@ -32,10 +32,8 @@ class ItemAttribute extends Model
 	 * @param Array
 	 * @return Collection
 	 */
-	public static function findItems($arrConfig = array(), $intLimit = 0, $intOffset = 0, array $arrOptions = array())
-	{
-		try
-		{
+	public static function findItems($arrConfig = array(), $intLimit = 0, $intOffset = 0, array $arrOptions = array()){
+		try{
 			$t = static::$strTable;
 			$arrColumns = static::formatColumns($arrConfig);
 
@@ -50,8 +48,7 @@ class ItemAttribute extends Model
 
 			return static::findBy($arrColumns, null, $arrOptions);
 		}
-		catch(Exception $e)
-		{
+		catch(Exception $e){
 			throw $e;
 		}
 	}
@@ -62,17 +59,13 @@ class ItemAttribute extends Model
 	 * @param Array
 	 * @return Integer
 	 */
-	public static function countItems($arrConfig = array(), array $arrOptions = array())
-	{
-		try
-		{
+	public static function countItems($arrConfig = array(), array $arrOptions = array()){
+		try{
 			$t = static::$strTable;
 			$arrColumns = static::formatColumns($arrConfig);
-
 			return static::countBy($arrColumns, null, $arrOptions);
 		}
-		catch(Exception $e)
-		{
+		catch(Exception $e){
 			throw $e;
 		}
 	}
@@ -82,32 +75,23 @@ class ItemAttribute extends Model
 	 * @param  [Array] $arrConfig [Configuration to format]
 	 * @return [Array]            [The Model columns]
 	 */
-	public static function formatColumns($arrConfig)
-	{
-		try
-		{
+	public static function formatColumns($arrConfig){
+		try{
 			$t = static::$strTable;
 			$arrColumns = array();
 
 			if($arrConfig["pid"])
-			{
 				$arrColumns[] = "$t.pid = ". $arrConfig["pid"];
-			}
 
 			if($arrConfig["attribute"])
-			{
 				$arrColumns[] = "$t.attribute = ". $arrConfig["attribute"];
-			}
 
 			if($arrConfig["not"])
-			{
 				$arrColumns[] = $arrConfig["not"];
-			}
 
 			return $arrColumns;
 		}
-		catch(Exception $e)
-		{
+		catch(Exception $e){
 			throw $e;
 		}
 	}

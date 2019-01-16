@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2018 Web ex Machina
+ * Copyright (c) 2015-2019 Web ex Machina
  *
  * @author Web ex Machina <https://www.webexmachina.fr>
  */
@@ -18,10 +18,6 @@ use WEM\Portfolio\Controller\Item;
 
 /**
  * Front end module "portfolio list".
- *
- * @property array  $portfolio_categories
- *
- * @author Web ex Machina <http://www.webexmachina.fr>
  */
 class PortfolioList extends Portfolio
 {
@@ -82,16 +78,13 @@ class PortfolioList extends Portfolio
 
 			global $objPage;
 			$arrConfig["page"] = $objPage->id;
-			$arrConfig["getItem"] = $this->getConfig();
 
 			// Adjust the config
-			if($this->filters){
-				foreach($this->filters['attributes'] as $filter){
-					if($filter['selected']){
-						$arrConfig['attributes'][] = ["attribute"=>$filter['id'], "value"=>$filter["value"]];
-					}
-				}
-			}
+			if($this->filters)
+				foreach($this->filters as $filter)
+					foreach($filter['options'] as $option)
+						if($option['selected'])
+							$arrConfig['attributes'][] = ["attribute"=>$filter['id'], "value"=>$filter["value"]];
 
 			// Get the total number of items
 			$intTotal = Item::countItems($arrConfig, $arrOptions);
@@ -132,20 +125,24 @@ class PortfolioList extends Portfolio
 			if($this->jumpTo && $objRedirectPage = \PageModel::findByPk($this->jumpTo))
 				$this->jumpTo = $objRedirectPage;
 
-			$objItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
+			$arrItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
 
 			// Add the filters
 			if($this->wem_portfolio_filters && !empty($this->filters))
 				$this->Template->filters = $this->filters;
 
 			// Add the articles
-			if($objItems !== null && \Input::post('TL_AJAX')){
-				$arrResponse = ["status"=>"success", "items"=>$objItems, "rt"=>$this->Template->rt];
+			if($arrItems !== null && \Input::post('TL_AJAX')){
+				$arrResponse = ["status"=>"success", "items"=>$arrItems, "rt"=>$this->Template->rt];
 				echo json_encode($arrResponse);
 				die;
 			}
-			else if($objItems !== null)
-				$this->Template->items = $this->parseItems($objItems, $this->wem_portfolio_template);
+			else if($arrItems !== null)
+				$this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_template);
+
+			$this->Template->raw_items = $arrItems;
+
+			dump($arrItems);
 		}
 		catch(Exception $e){
 			if(\Input::post('TL_AJAX')){

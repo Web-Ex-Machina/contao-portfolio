@@ -54,17 +54,12 @@ class Item extends \Controller
 	 */
 	public static function getItem($varItem, $arrConfig = array()){
 		try{
-			if(is_object($varItem))
-				$arrItem = $varItem->row();
-			else if(is_array($varItem))
+			if(is_array($varItem))
 				$arrItem = $varItem;
-			else{
-				$sql = ItemModel::findByIdOrAlias($varItem);
-				if(!$sql)
-					return;
-				else
-					$arrItem = $sql->row();
-			}
+			else if($varItem instanceof ItemModel || $varItem = ItemModel::findByPk($varItem))
+				$arrItem = $varItem->row();
+			else
+				return;
 
 			// Parse item dates
 			$arrDates = ["timestamp"=>$arrItem['created_on'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['created_on']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['created_on'])];
@@ -115,24 +110,15 @@ class Item extends \Controller
 
 			// Get the item category
 			if($arrConfig["getCategory"])
-				$arrItem['category'] = \PageModel::findByPk($arrItem['pages']);
-
-			// Get the item tags
-			if($arrConfig["getTags"]){
-				$arrTags = deserialize($arrItem['tags']);
-
-				if(is_array($arrTags) && !empty($arrTags)){
-					$arrItem['tags'] = [];
-
-					foreach($arrTags as $intTag)
-						$arrItem['tags'][] = Tag::getItem($intTag, $arrConfig['getTagsConfig']);
-				}
-			}
+				$arrItem['category'] = \PageModel::findByPk($arrItem['category']);
 
 			// Get the item attributes
-			if($arrConfig["getAttributes"]){
-				$arrConfig["itemAttributes"]["pid"] = $arrItem['id'];
-				$arrItem['attributes'] = ItemAttribute::getItems($arrConfig["itemAttributes"]);
+			$arrConfig["itemAttributes"]["pid"] = $arrItem['id'];
+			if($attributes = ItemAttribute::getItems($arrConfig["itemAttributes"])){
+				$arrItem["attributes"] = [];
+				foreach($attributes as $attribute){
+					$arrItem["attributes"][$attribute['attribute']['alias']] = ['label'=>$attribute['attribute']['title'], 'value'=>$attribute['value']];
+				}
 			}
 
 			return $arrItem;

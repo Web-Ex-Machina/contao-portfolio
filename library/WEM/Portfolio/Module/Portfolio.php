@@ -3,7 +3,7 @@
 /**
  * Module Portfolio for Contao Open Source CMS
  *
- * Copyright (c) 2015-2018 Web ex Machina
+ * Copyright (c) 2015-2019 Web ex Machina
  *
  * @author Web ex Machina <https://www.webexmachina.fr>
  */
@@ -26,22 +26,6 @@ use WEM\Portfolio\Model\Attribute;
 abstract class Portfolio extends \Module
 {
 	/**
-	 * Retrieve module configuration
-	 * @return [Array] [Module configuration]
-	 */
-	protected function getConfig(){
-		$arrConfig = array();
-
-		if($this->wem_portfolio_attributes)
-			$arrConfig['getAttributes'] = true;
-
-		if($this->wem_portfolio_tags)
-			$arrConfig['getTags'] = true;
-
-		return $arrConfig;
-	}
-
-	/**
 	 * Retrieve module filters
 	 * @return [Array] [Attributes available]
 	 */
@@ -49,34 +33,38 @@ abstract class Portfolio extends \Module
 		try{
 			$arrFilters = [];
 
-			$objItemAttributes = ItemAttribute::findAll();
-			if(!$objItemAttributes || 0 == $objItemAttributes->count())
-				return [];
+			foreach(unserialize($this->wem_portfolio_filters) as $id){
+				$attribute = Attribute::findByPk($id);
 
-			$arrAttributes = [];
-			while($objItemAttributes->next()){
-				$objAttribute = Attribute::findByPk($objItemAttributes->attribute);
-
-				if(!$objAttribute)
+				if(!$attribute)
 					continue;
 
-				// Get generic data
-				if(!is_array($arrAttributes[$objAttribute->id]["options"])){
-					$arrAttributes[$objAttribute->id] = $objAttribute->row();
-					$arrAttributes[$objAttribute->id]["options"] = [];
-				}
+				// Get the filter options & skip if there is no options available
+				$objItemAttributes = ItemAttribute::findItems(['attribute'=>$id]);
+				if(!$objItemAttributes || 0 == $objItemAttributes->count())
+					continue;
 
-				// Get available values
-				if(!in_array($objItemAttributes->value, $arrAttributes[$objAttribute->id]["options"]))
-					$arrAttributes[$objAttribute->id]["options"][] = $objItemAttributes->value;
+				// Prepare the filter
+				$arrFilters[$attribute->alias] = ['label'=>$attribute->title, 'options'=>[]];
 
-				// If the value has been posted, let the module knows about it
-				if(\Input::post($objAttribute->alias) || \Input::get($objAttribute->alias)){
-					$arrAttributes[$objAttribute->id]['selected'] = true;
-					$arrAttributes[$objAttribute->id]['value'] = \Input::post($objAttribute->alias) ? \Input::post($objAttribute->alias) : \Input::get($objAttribute->alias);
+				// Get the options
+				$arrValues = array();
+				while($objItemAttributes->next()){
+					// Skip if we already know this value
+					if(in_array($objItemAttributes->value, $arrValues))
+						continue;
+
+					// Store the value
+					$arrValues[] = $objItemAttributes->value;
+					
+					// Format the option
+					$option = ['value' => $objItemAttributes->value, 'text' => $objItemAttributes->value, 'selected'=>0];
+					if(\Input::post($attribute->alias) || \Input::get($attribute->alias))
+						$option['selected'] = 1;
+					
+					$arrFilters[$attribute->alias]['options'][] = $option;
 				}
 			}
-			$arrFilters["attributes"] = $arrAttributes;
 
 			return $arrFilters;
 		}
