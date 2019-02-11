@@ -37,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 		'sorting' => array
 		(
 			'mode'                    => 1,
-			'fields'                  => array('category'),
+			'fields'                  => array('date DESC'),
 			'flag'                    => 1,
 			'panelLayout'             => 'filter;search',
 		),
@@ -115,10 +115,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'label'                   => array('ID'),
 			'search'                  => true,
 			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
-		),
-		'sorting' => array
-		(
-			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'created_on' => array
 		(

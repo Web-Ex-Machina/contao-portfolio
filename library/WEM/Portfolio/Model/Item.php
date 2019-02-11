@@ -44,7 +44,7 @@ class Item extends Model
 				$arrOptions['offset'] = $intOffset;
 
 			if(!isset($arrOptions['order']))
-				$arrOptions['order'] = "$t.sorting ASC";
+				$arrOptions['order'] = "$t.date DESC";
 
 			return static::findBy($arrColumns, null, $arrOptions);
 		}
