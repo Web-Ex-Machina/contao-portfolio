@@ -142,7 +142,7 @@ class PortfolioList extends Portfolio
 
 			$this->Template->raw_items = $arrItems;
 
-			dump($arrItems);
+			//dump($arrItems);
 		}
 		catch(Exception $e){
 			if(\Input::post('TL_AJAX')){
