@@ -56,7 +56,7 @@ class Item extends \Controller
 		try{
 			if(is_array($varItem))
 				$arrItem = $varItem;
-			else if($varItem instanceof ItemModel || $varItem = ItemModel::findByPk($varItem))
+			else if($varItem instanceof ItemModel || $varItem = ItemModel::findByIdOrAlias($varItem))
 				$arrItem = $varItem->row();
 			else
 				return;

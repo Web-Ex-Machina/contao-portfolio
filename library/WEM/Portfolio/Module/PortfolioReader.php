@@ -81,7 +81,7 @@ class PortfolioReader extends Portfolio
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
 
 		// Get the portfolio item
-		$arrConfig = $this->getConfig();
+		$arrConfig = [];
 		$arrConfig['getCategory'] = true;
 		$arrItem = Item::getItem(\Input::get('items'), $arrConfig);
 
