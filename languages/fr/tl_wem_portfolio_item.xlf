@@ -130,10 +130,18 @@
         <target>Ajouter un nouvel élément</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_item.edit.0">
+        <source>Edit item contents</source>
+        <target>Editer les contenus de l'élément</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.edit.1">
+        <source>Edit item ID %s contents</source>
+        <target>Editer les contenus de l'élément ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.header.0">
         <source>Edit item</source>
         <target>Editer l'élément</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.edit.1">
+      <trans-unit id="tl_wem_portfolio_item.header.1">
         <source>Edit item ID %s</source>
         <target>Editer l'élément ID %s</target>
       </trans-unit>

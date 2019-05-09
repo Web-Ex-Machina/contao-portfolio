@@ -150,6 +150,15 @@ abstract class Portfolio extends \Module
 			if($arrImages)
 				$objTemplate->images = $arrImages;
 
+			$strContent = '';
+            $objElement = \ContentModel::findPublishedByPidAndTable($arrItem['id'], 'tl_wem_portfolio_item');
+            if ($objElement !== null) {
+                while ($objElement->next()) {
+                    $strContent .= $this->getContentElement($objElement->current());
+                }
+            }
+            $objTemplate->text = $strContent;
+
 			return $objTemplate->parse();
 		}
 		catch(Exception $e){

@@ -18,7 +18,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 	'config' => array
 	(
 		'dataContainer'               => 'Table',
-		'ctable'					  => array('tl_wem_portfolio_item_attribute'),
+		'ctable'					  => array('tl_wem_portfolio_item_attribute', 'tl_content'),
 		'switchToEdit'                => true,
 		'enableVersioning'            => true,
 		'sql' => array
@@ -62,8 +62,14 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array
 			'edit' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['edit'],
-				'href'                => 'act=edit',
+				'href'                => 'table=tl_content',
 				'icon'                => 'edit.svg',
+			),
+			'header' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['header'],
+				'href'                => 'act=edit',
+				'icon'                => 'header.svg',
 			),
 			'copy' => array
 			(
