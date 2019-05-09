@@ -17,7 +17,7 @@ array_insert($GLOBALS['BE_MOD'], 1, array
 	(
 		'wem_portfolio_item' => array
 		(
-			'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute'),
+			'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'),
 			'icon'		=> 'system/modules/wem-portfolio/assets/icon_item.png'
 		),
 		'wem_portfolio_attribute' => array
