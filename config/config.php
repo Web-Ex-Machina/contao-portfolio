@@ -11,22 +11,22 @@
 /**
  * Back end modules
  */
-array_insert($GLOBALS['BE_MOD'], 1, array
-(
-	'wem_portfolio' => array
-	(
-		'wem_portfolio_item' => array
-		(
-			'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'),
-			'icon'		=> 'system/modules/wem-portfolio/assets/icon_item.png'
-		),
-		'wem_portfolio_attribute' => array
-		(
-			'tables'    => array('tl_wem_portfolio_attribute'),
-			'icon'		=> 'system/modules/wem-portfolio/assets/icon_tag.png'
-		),
-	)
-));
+array_insert(
+    $GLOBALS['BE_MOD'],
+    1,
+    array(
+    'wem_portfolio' => array(
+        'wem_portfolio_item' => array(
+            'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'),
+            'icon'      => 'system/modules/wem-portfolio/assets/icon_item.png'
+        ),
+        'wem_portfolio_attribute' => array(
+            'tables'    => array('tl_wem_portfolio_attribute'),
+            'icon'      => 'system/modules/wem-portfolio/assets/icon_tag.png'
+        ),
+    )
+    )
+);
 
 // Load icon in Contao 4.2 backend
 if ('BE' === TL_MODE) {
@@ -40,18 +40,20 @@ if ('BE' === TL_MODE) {
 /**
  * Front end modules
  */
-array_insert($GLOBALS['FE_MOD'], 2, array
-(
-	'wem_portfolio' => array
-	(
-		'wem_portfolio_list' 		=> 'WEM\Portfolio\Module\PortfolioList',
-		'wem_portfolio_reader'  	=> 'WEM\Portfolio\Module\PortfolioReader',
-	)
-));
+array_insert(
+    $GLOBALS['FE_MOD'],
+    2,
+    array(
+        'wem_portfolio' => array(
+            'wem_portfolio_list'        => 'WEM\Portfolio\Module\PortfolioList',
+            'wem_portfolio_reader'      => 'WEM\Portfolio\Module\PortfolioReader',
+        )
+    )
+);
 
 /**
  * Models
  */
-$GLOBALS['TL_MODELS']["tl_wem_portfolio_item"] 				= 'WEM\Portfolio\Model\Item';
-$GLOBALS['TL_MODELS']["tl_wem_portfolio_item_attribute"] 	= 'WEM\Portfolio\Model\ItemAttribute';
-$GLOBALS['TL_MODELS']["tl_wem_portfolio_attribute"] 		= 'WEM\Portfolio\Model\Attribute';
+$GLOBALS['TL_MODELS']["tl_wem_portfolio_item"]              = 'WEM\Portfolio\Model\Item';
+$GLOBALS['TL_MODELS']["tl_wem_portfolio_item_attribute"]    = 'WEM\Portfolio\Model\ItemAttribute';
+$GLOBALS['TL_MODELS']["tl_wem_portfolio_attribute"]         = 'WEM\Portfolio\Model\Attribute';

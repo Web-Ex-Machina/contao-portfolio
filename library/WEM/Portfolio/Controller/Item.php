@@ -19,127 +19,133 @@ use WEM\Portfolio\Model\Item as ItemModel;
  */
 class Item extends \Controller
 {
-	/**
-	 * Get Items
-	 * @param  [Array]   $arrConfig  [Configuration wanted for the list]
-	 * @param  [Integer] $intLimit   [Query Limit]
-	 * @param  [Integer] $intOffset  [Query Offset]
-	 * @param  [Array]   $arrOptions [Query Options]
-	 * @return [Array]               [Items list as Array]
-	 */
-	public static function getItems($arrConfig, $intLimit = 0, $intOffset = 0, $arrOptions = array()){
-		try{
-			$objItems = ItemModel::findItems($arrConfig, $intLimit, $intOffset, $arrOptions);
+    /**
+     * Get Items
+     * @param  [Array]   $arrConfig  [Configuration wanted for the list]
+     * @param  [Integer] $intLimit   [Query Limit]
+     * @param  [Integer] $intOffset  [Query Offset]
+     * @param  [Array]   $arrOptions [Query Options]
+     * @return [Array]               [Items list as Array]
+     */
+    public static function getItems($arrConfig, $intLimit = 0, $intOffset = 0, $arrOptions = array())
+    {
+        try {
+            $objItems = ItemModel::findItems($arrConfig, $intLimit, $intOffset, $arrOptions);
 
-			if(!$objItems)
-				return;
+            if (!$objItems) {
+                return;
+            }
 
-			$arrItems = array();
+            $arrItems = array();
 
-			while($objItems->next())
-				$arrItems[] = static::getItem($objItems->row(), $arrConfig["getItem"]);
+            while ($objItems->next()) {
+                $arrItems[] = static::getItem($objItems->row(), $arrConfig["getItem"]);
+            }
 
-			return $arrItems;
-		}
-		catch(Exception $e){
-			throw $e;
-		}
-	}
+            return $arrItems;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 
-	/**
-	 * Get Item
-	 * @param  [Mixed] $varItem   [Item ID, Alias, Array or Object]
-	 * @param  [Array] $arrConfig [Item configuration]
-	 * @return [Array]            [Item data]
-	 */
-	public static function getItem($varItem, $arrConfig = array()){
-		try{
-			if(is_array($varItem))
-				$arrItem = $varItem;
-			else if($varItem instanceof ItemModel || $varItem = ItemModel::findByIdOrAlias($varItem))
-				$arrItem = $varItem->row();
-			else
-				return;
+    /**
+     * Get Item
+     * @param  [Mixed] $varItem   [Item ID, Alias, Array or Object]
+     * @param  [Array] $arrConfig [Item configuration]
+     * @return [Array]            [Item data]
+     */
+    public static function getItem($varItem, $arrConfig = array())
+    {
+        try {
+            if (is_array($varItem)) {
+                $arrItem = $varItem;
+            } elseif ($varItem instanceof ItemModel || $varItem = ItemModel::findByIdOrAlias($varItem)) {
+                $arrItem = $varItem->row();
+            } else {
+                return;
+            }
 
-			// Parse item dates
-			$arrDates = ["timestamp"=>$arrItem['created_on'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['created_on']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['created_on'])];
-			$arrItem['created_on'] = $arrDates;
-			$arrDates = ["timestamp"=>$arrItem['date'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['date']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])];
-			$arrItem['date'] = $arrDates;
+            // Parse item dates
+            $arrDates = ["timestamp"=>$arrItem['created_on'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['created_on']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['created_on'])];
+            $arrItem['created_on'] = $arrDates;
+            $arrDates = ["timestamp"=>$arrItem['date'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['date']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])];
+            $arrItem['date'] = $arrDates;
 
-			// Fetch item pictures
-			if($arrItem['pictures'] = \StringUtil::deserialize($arrItem['pictures'])){
-				$objFiles = \FilesModel::findMultipleByUuids($arrItem['pictures']);
-				$images = [];
-				while($objFiles->next()){
-					$images[$objFiles->path] = array(
-						'id'         => $objFiles->id,
-						'uuid'       => $objFiles->uuid,
-						'name'       => $objFile->basename,
-						'singleSRC'  => $objFiles->path,
-						'filesModel' => $objFiles->current()
-					);
-				}
+            // Fetch item pictures
+            if ($arrItem['pictures'] = \StringUtil::deserialize($arrItem['pictures'])) {
+                $objFiles = \FilesModel::findMultipleByUuids($arrItem['pictures']);
+                $images = [];
+                while ($objFiles->next()) {
+                    $images[$objFiles->path] = array(
+                        'id'         => $objFiles->id,
+                        'uuid'       => $objFiles->uuid,
+                        'name'       => $objFile->basename,
+                        'singleSRC'  => $objFiles->path,
+                        'filesModel' => $objFiles->current()
+                    );
+                }
 
-				if($arrItem['orderPictures'] != ''){
-					$t = \StringUtil::deserialize($arrItem['orderPictures']);
-					if(!empty($t) && \is_array($t)){
-						// Remove all values
-						$arrOrder = array_map(function () {}, array_flip($t));
+                if ($arrItem['orderPictures'] != '') {
+                    $t = \StringUtil::deserialize($arrItem['orderPictures']);
+                    if (!empty($t) && \is_array($t)) {
+                        // Remove all values
+                        $arrOrder = array_map(function () {
+                        }, array_flip($t));
 
-						// Move the matching elements to their position in $arrOrder
-						foreach($images as $k=>$v){
-							if(array_key_exists($v['uuid'], $arrOrder)){
-								$arrOrder[$v['uuid']] = $v;
-								unset($images[$k]);
-							}
-						}
+                        // Move the matching elements to their position in $arrOrder
+                        foreach ($images as $k => $v) {
+                            if (array_key_exists($v['uuid'], $arrOrder)) {
+                                $arrOrder[$v['uuid']] = $v;
+                                unset($images[$k]);
+                            }
+                        }
 
-						// Append the left-over images at the end
-						if(!empty($images))
-							$arrOrder = array_merge($arrOrder, array_values($images));
+                        // Append the left-over images at the end
+                        if (!empty($images)) {
+                            $arrOrder = array_merge($arrOrder, array_values($images));
+                        }
 
-						// Remove empty (unreplaced) entries
-						$images = array_values(array_filter($arrOrder));
-						unset($arrOrder);
-					}
-				}
+                        // Remove empty (unreplaced) entries
+                        $images = array_values(array_filter($arrOrder));
+                        unset($arrOrder);
+                    }
+                }
 
-				$arrItem['pictures'] = $images;
-			}
+                $arrItem['pictures'] = $images;
+            }
 
-			// Get the item category
-			if($arrConfig["getCategory"])
-				$arrItem['category'] = \PageModel::findByPk($arrItem['category']);
+            // Get the item category
+            if ($arrConfig["getCategory"]) {
+                $arrItem['category'] = \PageModel::findByPk($arrItem['category']);
+            }
 
-			// Get the item attributes
-			$arrConfig["itemAttributes"]["pid"] = $arrItem['id'];
-			if($attributes = ItemAttribute::getItems($arrConfig["itemAttributes"])){
-				$arrItem["attributes"] = [];
-				foreach($attributes as $attribute){
-					$arrItem["attributes"][$attribute['attribute']['alias']] = ['label'=>$attribute['attribute']['title'], 'value'=>$attribute['value']];
-				}
-			}
+            // Get the item attributes
+            $arrConfig["itemAttributes"]["pid"] = $arrItem['id'];
+            if ($attributes = ItemAttribute::getItems($arrConfig["itemAttributes"])) {
+                $arrItem["attributes"] = [];
+                foreach ($attributes as $attribute) {
+                    $arrItem["attributes"][$attribute['attribute']['alias']] = ['label'=>$attribute['attribute']['title'], 'value'=>$attribute['value']];
+                }
+            }
 
-			return $arrItem;
-		}
-		catch(Exception $e){
-			throw $e;
-		}
-	}
+            return $arrItem;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 
-	/**
-	 * Count Items
-	 * @param  [Array]   $arrConfig  [Configuration wanted for the count]
-	 * @param  [Array]   $arrOptions [Query Options]
-	 * @return [Integer]             [Number of items]
-	 */
-	public static function countItems($arrConfig, $arrOptions = array()){
-		try{
-			return ItemModel::countItems($arrConfig, $arrOptions);
-		}
-		catch(Exception $e){
-			throw $e;
-		}
-	}
+    /**
+     * Count Items
+     * @param  [Array]   $arrConfig  [Configuration wanted for the count]
+     * @param  [Array]   $arrOptions [Query Options]
+     * @return [Integer]             [Number of items]
+     */
+    public static function countItems($arrConfig, $arrOptions = array())
+    {
+        try {
+            return ItemModel::countItems($arrConfig, $arrOptions);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
