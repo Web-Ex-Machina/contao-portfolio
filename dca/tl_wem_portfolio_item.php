@@ -8,6 +8,7 @@
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 
+
 /**
  * Table tl_wem_portfolio_item
  */
@@ -19,9 +20,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
         'ctable'                      => array('tl_wem_portfolio_item_attribute', 'tl_content'),
         'switchToEdit'                => true,
         'enableVersioning'            => true,
-        'onload_callback'             => array(
-            array('tl_wem_portfolio_item', 'updatePalettes'),
-        ),
         'sql' => array(
             'keys' => array(
                 'id' => 'primary',
@@ -91,12 +89,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
     // Palettes
     'palettes' => array(
         'default'                     => '
-			{title_legend},title,alias,date,category;
-			{media_legend},pictures;
-			{details_legend},teaser;
-			{attributes_legend},attributes;
-			{publish_legend},published,start,stop
-		'
+            {title_legend},title,alias,date,category;
+            {media_legend},pictures;
+            {details_legend},teaser;
+            {attributes_legend},attributes;
+            {publish_legend},published,start,stop
+        '
     ),
 
     // Fields
@@ -215,11 +213,49 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
             'inputType'               => 'text',
             'eval'                    => array('rgxp'=>'datim', 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
             'sql'                     => "varchar(10) NOT NULL default ''"
-        )
+        ),
+
+
     )
 );
 
+// Handle i18nl10n compatibility
+$bundles = \System::getContainer()->getParameter('kernel.bundles');
+if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
+    // Update palettes
+    $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['palettes']['default'] .= ';{i18nl10n_legend},i18nl10n_lang,i18nl10n_id';
 
+    $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_id'] = array(
+        'label'            => array('I18NL10N_ID'),
+        'sql'              => "int(10) unsigned NOT NULL default '0'",
+        'exclude'          => true,
+        'filter'           => true,
+        'inputType'        => 'select',
+        'foreignKey'       => 'tl_wem_portfolio_item.title',
+        'eval'             => array('tl_class'=>'w50'),
+        'sql'              => "int(10) unsigned NOT NULL default '0'"
+    );
+    $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_lang'] = array(
+        'label'            => &$GLOBALS['TL_LANG']['MSC']['i18nl10n_fields']['language']['label'],
+        'exclude'          => true,
+        'filter'           => true,
+        'inputType'        => 'select',
+        'search'           => true,
+        'options_callback' => array('tl_wem_portfolio_item', 'getAvailableLanguages'),
+        'reference'        => &$GLOBALS['TL_LANG']['LNG'],
+        'eval'             => array(
+            'mandatory'          => true,
+            'rgxp'               => 'language',
+            'maxlength'          => 5,
+            'nospace'            => true,
+            'doNotCopy'          => true,
+            'tl_class'           => 'w50 clr',
+            'includeBlankOption' => true
+        ),
+        'sql'              => "varchar(5) NOT NULL default ''"
+    );
+}
+            
 /**
  * Handle Portfolio Items DCA functions
  *
@@ -252,55 +288,6 @@ class tl_wem_portfolio_item extends Backend
     public function addIcon($row, $label, DataContainer $dc = null, $imageAttribute = '', $blnReturnImage = false, $blnProtected = false)
     {
         return '<img src="assets/contao/images/iconJPG.svg" width="18" height="18" alt="image/jpeg" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
-    }
-
-    /**
-     * Update the DCA palettes
-     *
-     * @param  DataContainer $dc
-     *
-     * @return void
-     */
-    public function updatePalettes(DataContainer $dc)
-    {
-        $bundles = \System::getContainer()->getParameter('kernel.bundles');
-
-        // If 18NL10N extension is loaded
-        if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
-            // Update palettes
-            $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['palettes']['default'] .= ';{i18nl10n_legend},i18nl10n_lang,i18nl10n_id';
-
-            // And fields
-            $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_id'] = array(
-                'label'            => array('I18NL10N_ID'),
-                'sql'              => "int(10) unsigned NOT NULL default '0'",
-                'exclude'          => true,
-                'filter'           => true,
-                'inputType'        => 'select',
-                'foreignKey'       => 'tl_wem_portfolio_item.title',
-                'eval'             => array('tl_class'=>'w50'),
-                'sql'              => "int(10) unsigned NOT NULL default '0'"
-            );
-            $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_lang'] = array(
-                'label'            => &$GLOBALS['TL_LANG']['MSC']['i18nl10n_fields']['language']['label'],
-                'exclude'          => true,
-                'filter'           => true,
-                'inputType'        => 'select',
-                'search'           => true,
-                'options_callback' => array('tl_wem_portfolio_item', 'getAvailableLanguages'),
-                'reference'        => &$GLOBALS['TL_LANG']['LNG'],
-                'eval'             => array(
-                    'mandatory'          => true,
-                    'rgxp'               => 'language',
-                    'maxlength'          => 5,
-                    'nospace'            => true,
-                    'doNotCopy'          => true,
-                    'tl_class'           => 'w50 clr',
-                    'includeBlankOption' => true
-                ),
-                'sql'              => "varchar(5) NOT NULL default ''"
-            );
-        }
     }
 
     /**
@@ -467,5 +454,24 @@ class tl_wem_portfolio_item extends Backend
         }
 
         $objVersions->create();
+    }
+
+    /**
+     * Get available languages, for i18nl10n bundle
+     *
+     * @param DataContainer $dc [Contao DataContainer]
+     *
+     * @return Array            [Languages available, as Array]
+     */
+    public function getAvailableLanguages(DataContainer $dc)
+    {
+        $arrOptions = Verstaerker\I18nl10nBundle\Classes\I18nl10n::getInstance()->getAvailableLanguages(true, true);
+
+        // Add neutral option if available
+        if ($this->User->isAdmin || strpos(implode((array) $this->User->i18nl10n_languages), '::*') !== false) {
+            array_unshift($arrOptions, '');
+        }
+
+        return $arrOptions;
     }
 }
