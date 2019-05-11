@@ -63,7 +63,7 @@ abstract class Portfolio extends \Module
                     
                     // Format the option
                     $option = ['value' => $objItemAttributes->value, 'text' => $objItemAttributes->value, 'selected'=>0];
-                    if (\Input::post($attribute->alias) || \Input::get($attribute->alias)) {
+                    if (\Input::post($attribute->alias) == $objItemAttributes->value || \Input::get($attribute->alias) == $objItemAttributes->value) {
                         $option['selected'] = 1;
                     }
                     

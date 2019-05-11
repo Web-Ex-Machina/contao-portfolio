@@ -89,7 +89,7 @@ class PortfolioList extends Portfolio
                 foreach ($this->filters as $filter) {
                     foreach ($filter['options'] as $option) {
                         if ($option['selected']) {
-                            $arrConfig['attributes'][] = ["attribute"=>$filter['id'], "value"=>$filter["value"]];
+                            $arrConfig['attributes'][] = ["attribute"=>$filter['attribute'], "value"=>$option["value"]];
                         }
                     }
                 }

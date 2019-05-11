@@ -9,21 +9,23 @@
 			<p class="empty"><?= $this->empty ?></p>
 		<?php else: ?>
 			<?php if($this->filters): ?>
-			<div class="filters row">
-				<div class="col-md-2 col-sm-2 col-xs-12"><?= $this->filterBy ?> :</div>
-				<?php foreach($this->filters['attributes'] as $filter): ?>
-				<?php if($filter['options']): ?>
-				<div class="filter col-md-2 col-sm-4 col-xs-12">
-					<select name="<?= $filter['alias'] ?>">
-						<option value=""><?= $filter['title'] ?></option>
-						<?php foreach($filter['options'] as $option): ?>
-						<option value="<?= $option ?>"<?= ($filter['selected'] && $filter['value'] == $option) ? ' selected' : '' ?>><?= $option ?></option>
-						<?php endforeach; ?>
-					</select>
+			<form action="{{env::request}}" method="get">
+				<label class=""><?= $this->filterBy ?> :</label>
+				<div class="filters row">
+					<?php foreach($this->filters as $key=>$filter): ?>
+					<?php if($filter['options']): ?>
+					<div class="filter col-md-2 col-md-4 col-12">
+						<select name="<?= $key ?>" onchange="this.form.submit()">
+							<option value="">- <?= $filter['label'] ?> -</option>
+							<?php foreach($filter['options'] as $option): ?>
+								<option value="<?= $option['value'] ?>"<?= ($option['selected'] && $option['value']) ? ' selected' : '' ?>><?= $option['text'] ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					<?php endif; ?>
+					<?php endforeach; ?>
 				</div>
-				<?php endif; ?>
-				<?php endforeach; ?>
-			</div>
+			</form>
 			<?php endif; ?>
 
 			<?= implode('', $this->items) ?>
