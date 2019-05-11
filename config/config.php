@@ -9,6 +9,11 @@
  */
 
 /**
+ * Load Contao 4 Bundles
+ */
+$bundles = \System::getContainer()->getParameter('kernel.bundles');
+
+/**
  * Back end modules
  */
 array_insert(
@@ -57,3 +62,10 @@ array_insert(
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_item"]              = 'WEM\Portfolio\Model\Item';
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_item_attribute"]    = 'WEM\Portfolio\Model\ItemAttribute';
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_attribute"]         = 'WEM\Portfolio\Model\Attribute';
+
+/**
+ * Hooks
+ */
+if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
+    $GLOBALS['TL_HOOKS']['i18nl10nUpdateLanguageSelectionItem'][] = array("WEM\Portfolio\Controller\Item", "getFrontendUrl");
+}

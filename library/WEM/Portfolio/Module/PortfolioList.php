@@ -64,6 +64,7 @@ class PortfolioList extends Portfolio
             $limit = null;
             $offset = intval($this->skipFirst);
             $arrOptions = array();
+            $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
             // Maximum number of items
             if ($this->numberOfItems > 0) {
@@ -83,6 +84,11 @@ class PortfolioList extends Portfolio
 
             global $objPage;
             $arrConfig["page"] = $objPage->id;
+
+            // If i18nl10n bundle is active, add the current language as filter
+            if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
+                $arrConfig["lang"] = $GLOBALS["TL_LANGUAGE"];
+            }
 
             // Adjust the config
             if ($this->filters) {

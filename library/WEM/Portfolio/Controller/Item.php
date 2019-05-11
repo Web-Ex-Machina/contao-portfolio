@@ -148,4 +148,37 @@ class Item extends \Controller
             throw $e;
         }
     }
+
+    /**
+     * Adjusts the way Portfolio items URLs are generated
+     * (useful for i18nl10n plugin)
+     *
+     * @param Array $item | Item sent by module
+     *
+     * @return Array
+     */
+    public function getFrontendUrl($item)
+    {
+        $objCurrentItem = ItemModel::findByIdOrAlias(\Input::get('auto_item'));
+
+        if (!$objCurrentItem) {
+            return $item;
+        }
+
+        $objItem = ItemModel::findItems(["i18nl10n_id"=>$objCurrentItem->i18nl10n_id, "lang"=>$item["language"]], 1);
+        global $objPage;
+        $row = $objItem->row();
+
+        return array(
+            'id'               => empty($row['id']) ? $objPage->id : $row['id'],
+            'alias'            => $item['alias']."/".$row['alias'],
+            'title'            => empty($row['title']) ? $objPage->title : $row['title'],
+            'pageTitle'        => empty($row['pageTitle'])
+                ? $objPage->pageTitle
+                : $row['pageTitle'],
+            'language'         => $item["language"],
+            'isActive'         => $item["language"] === $GLOBALS['TL_LANGUAGE'],
+            'forceRowLanguage' => true
+        );
+    }
 }

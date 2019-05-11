@@ -19,6 +19,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
         'ctable'                      => array('tl_wem_portfolio_item_attribute', 'tl_content'),
         'switchToEdit'                => true,
         'enableVersioning'            => true,
+        'onload_callback'             => array(
+            array('tl_wem_portfolio_item', 'updatePalettes'),
+        ),
         'sql' => array(
             'keys' => array(
                 'id' => 'primary',
@@ -249,6 +252,55 @@ class tl_wem_portfolio_item extends Backend
     public function addIcon($row, $label, DataContainer $dc = null, $imageAttribute = '', $blnReturnImage = false, $blnProtected = false)
     {
         return '<img src="assets/contao/images/iconJPG.svg" width="18" height="18" alt="image/jpeg" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
+    }
+
+    /**
+     * Update the DCA palettes
+     *
+     * @param  DataContainer $dc
+     *
+     * @return void
+     */
+    public function updatePalettes(DataContainer $dc)
+    {
+        $bundles = \System::getContainer()->getParameter('kernel.bundles');
+
+        // If 18NL10N extension is loaded
+        if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
+            // Update palettes
+            $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['palettes']['default'] .= ';{i18nl10n_legend},i18nl10n_lang,i18nl10n_id';
+
+            // And fields
+            $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_id'] = array(
+                'label'            => array('I18NL10N_ID'),
+                'sql'              => "int(10) unsigned NOT NULL default '0'",
+                'exclude'          => true,
+                'filter'           => true,
+                'inputType'        => 'select',
+                'foreignKey'       => 'tl_wem_portfolio_item.title',
+                'eval'             => array('tl_class'=>'w50'),
+                'sql'              => "int(10) unsigned NOT NULL default '0'"
+            );
+            $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_lang'] = array(
+                'label'            => &$GLOBALS['TL_LANG']['MSC']['i18nl10n_fields']['language']['label'],
+                'exclude'          => true,
+                'filter'           => true,
+                'inputType'        => 'select',
+                'search'           => true,
+                'options_callback' => array('tl_wem_portfolio_item', 'getAvailableLanguages'),
+                'reference'        => &$GLOBALS['TL_LANG']['LNG'],
+                'eval'             => array(
+                    'mandatory'          => true,
+                    'rgxp'               => 'language',
+                    'maxlength'          => 5,
+                    'nospace'            => true,
+                    'doNotCopy'          => true,
+                    'tl_class'           => 'w50 clr',
+                    'includeBlankOption' => true
+                ),
+                'sql'              => "varchar(5) NOT NULL default ''"
+            );
+        }
     }
 
     /**

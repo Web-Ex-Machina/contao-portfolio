@@ -93,6 +93,10 @@ class Item extends Model
                 $arrColumns[] = "$t.alias = '". $arrConfig["alias"] ."'";
             }
 
+            if ($arrConfig["lang"]) {
+                $arrColumns[] = "$t.i18nl10n_lang = '". $arrConfig["lang"] ."'";
+            }
+
             if ($arrConfig["attributes"]) {
                 $i = 1;
                 foreach ($arrConfig["attributes"] as $attribute) {
