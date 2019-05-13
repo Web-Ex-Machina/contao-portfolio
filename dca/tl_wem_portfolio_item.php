@@ -31,10 +31,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
     // List
     'list' => array(
         'sorting' => array(
-            'mode'                    => 1,
+            'mode'                    => 2,
             'fields'                  => array('date DESC'),
             'flag'                    => 1,
-            'panelLayout'             => 'filter;search',
+            'panelLayout'             => 'filter;sort,search,limit'
         ),
         'label' => array(
             'fields'                  => array('title', 'date'),
@@ -146,6 +146,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
         'category' => array(
             'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['category'],
             'exclude'                 => true,
+            'sorting'                 => true,
+            'flag'                    => 11,
             'inputType'               => 'pageTree',
             'foreignKey'              => 'tl_page.title',
             'eval'                    => array('mandatory'=>true, 'fieldType'=>'radio', 'tl_class'=>'w50'),
@@ -240,7 +242,8 @@ if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
         'exclude'          => true,
         'filter'           => true,
         'inputType'        => 'select',
-        'search'           => true,
+        'sorting'          => true,
+        'flag'             => 11,
         'options_callback' => array('tl_wem_portfolio_item', 'getAvailableLanguages'),
         'reference'        => &$GLOBALS['TL_LANG']['LNG'],
         'eval'             => array(
