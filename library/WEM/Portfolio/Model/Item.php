@@ -97,6 +97,14 @@ class Item extends Model
                 $arrColumns[] = "$t.i18nl10n_lang = '". $arrConfig["lang"] ."'";
             }
 
+            if ($arrConfig["not_lang"]) {
+                $arrColumns[] = "$t.i18nl10n_lang != '". $arrConfig["not_lang"] ."'";
+            }
+
+            if ($arrConfig["i18nl10n_id"]) {
+                $arrColumns[] = "$t.i18nl10n_id = ". $arrConfig["i18nl10n_id"];
+            }
+
             if ($arrConfig["attributes"]) {
                 $i = 1;
                 foreach ($arrConfig["attributes"] as $attribute) {

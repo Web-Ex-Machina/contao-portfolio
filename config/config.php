@@ -64,8 +64,12 @@ $GLOBALS['TL_MODELS']["tl_wem_portfolio_item_attribute"]    = 'WEM\Portfolio\Mod
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_attribute"]         = 'WEM\Portfolio\Model\Attribute';
 
 /**
- * Hooks
+ * i18nl10n specific items
  */
 if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
+    // Hooks
     $GLOBALS['TL_HOOKS']['i18nl10nUpdateLanguageSelectionItem'][] = array("WEM\Portfolio\Controller\Item", "getFrontendUrl");
+
+    // Wizards
+    $GLOBALS['BE_FFL']['i18nl10nAssociatedLocationsWizard'] = 'WEM\Portfolio\Widget\I18nl10nAssociatedLocationsWizard';
 }

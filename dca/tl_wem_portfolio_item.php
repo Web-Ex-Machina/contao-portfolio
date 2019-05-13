@@ -229,11 +229,8 @@ if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
 
     $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_id'] = array(
         'label'            => array('I18NL10N_ID'),
-        'sql'              => "int(10) unsigned NOT NULL default '0'",
         'exclude'          => true,
-        'filter'           => true,
-        'inputType'        => 'select',
-        'foreignKey'       => 'tl_wem_portfolio_item.title',
+        'inputType'        => 'i18nl10nAssociatedLocationsWizard',
         'eval'             => array('tl_class'=>'w50'),
         'sql'              => "int(10) unsigned NOT NULL default '0'"
     );
