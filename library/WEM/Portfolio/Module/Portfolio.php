@@ -48,7 +48,7 @@ abstract class Portfolio extends \Module
                 }
 
                 // Prepare the filter
-                $arrFilters[$attribute->alias] = ['label'=>$attribute->title, 'options'=>[]];
+                $arrFilters[$attribute->alias] = ['id'=>$attribute->id, 'label'=>$attribute->title, 'options'=>[]];
 
                 // Get the options
                 $arrValues = array();
