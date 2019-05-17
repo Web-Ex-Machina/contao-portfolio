@@ -167,7 +167,11 @@ class Item extends \Controller
 
         $objItem = ItemModel::findItems(["i18nl10n_id"=>$objCurrentItem->i18nl10n_id, "lang"=>$item["language"]], 1);
         global $objPage;
-        $row = $objItem->row();
+        
+        // If no equivalent item, return nothing to hide the change language module
+        if (!$objItem) {
+            return [];
+        }
 
         return array(
             'id'               => empty($row['id']) ? $objPage->id : $row['id'],
