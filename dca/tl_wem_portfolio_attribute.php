@@ -73,7 +73,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array(
 
     // Palettes
     'palettes' => array(
-        'default'                     => '{title_legend},title,alias'
+        'default'                     => '
+            {title_legend},title,alias;
+            {config_legend},useAsFilter,displayInFrontend
+        '
     ),
 
     // Fields
@@ -107,6 +110,25 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array(
                 array('tl_wem_portfolio_attribute', 'generateAlias')
             ),
             'sql'                     => "varchar(128) BINARY NOT NULL default ''"
+        ),
+
+        'useAsFilter' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['useAsFilter'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'w50'),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'displayInFrontend' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['displayInFrontend'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'w50'),
+            'sql'                     => "char(1) NOT NULL default ''"
         ),
     )
 );
