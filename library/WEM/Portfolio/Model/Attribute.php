@@ -89,6 +89,18 @@ class Attribute extends Model
                 $arrColumns[] = "$t.title = '". $arrConfig["title"] ."'";
             }
 
+            if (1 === $arrConfig["useAsFilter"]) {
+                $arrColumns[] = "$t.useAsFilter = '1'";
+            } elseif (0 === $arrConfig["useAsFilter"]) {
+                $arrColumns[] = "$t.useAsFilter = ''";
+            }
+
+            if (1 === $arrConfig["displayInFrontend"]) {
+                $arrColumns[] = "$t.displayInFrontend = '1'";
+            } elseif (0 === $arrConfig["displayInFrontend"]) {
+                $arrColumns[] = "$t.displayInFrontend = ''";
+            }
+
             if ($arrConfig["not"]) {
                 $arrColumns[] = $arrConfig["not"];
             }

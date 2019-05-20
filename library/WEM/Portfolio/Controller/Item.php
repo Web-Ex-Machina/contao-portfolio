@@ -121,6 +121,7 @@ class Item extends \Controller
 
             // Get the item attributes
             $arrConfig["itemAttributes"]["pid"] = $arrItem['id'];
+            $arrConfig["itemAttributes"]["displayInFrontend"] = 1;
             if ($attributes = ItemAttribute::getItems($arrConfig["itemAttributes"])) {
                 $arrItem["attributes"] = [];
                 foreach ($attributes as $attribute) {

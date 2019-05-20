@@ -18,6 +18,23 @@
         <target>Saisissez l'alias de l'attribut - Il sera généré automatiquement, en rapport avec l'intitulé de l'attribut.</target>
       </trans-unit>
 
+      <trans-unit id="tl_wem_portfolio_attribute.useAsFilter.0">
+        <source>Use as filter</source>
+        <target>Utiliser comme filtre</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.useAsFilter.1">
+        <source>Check to use this attribute as filter</source>
+        <target>Cocher pour utiliser cet attribut comme un filtre</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.displayInFrontend.0">
+        <source>Display in Frontend</source>
+        <target>Afficher en Frontend</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.displayInFrontend.1">
+        <source>Check to display this attribute in frontend</source>
+        <target>Cocher pour afficher cet attribut en frontend</target>
+      </trans-unit>
+
       <trans-unit id="tl_wem_portfolio_attribute.created_on.0">
         <source>Created on</source>
         <target>Créé le</target>

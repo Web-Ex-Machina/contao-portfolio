@@ -27,7 +27,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters'] = array(
     'label'                   => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_filters'],
     'exclude'                 => true,
     'inputType'               => 'select',
-    'foreignKey'              => 'tl_wem_portfolio_attribute.title',
+    'options_callback'        => array('tl_module_wem_portfolio', 'getPortfolioFilters'),
     'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'w50', 'chosen'=>true, 'multiple'=>true),
     'sql'                     => "blob NULL"
 );
@@ -57,5 +57,27 @@ class tl_module_wem_portfolio extends Backend
     public function getPortfolioTemplates()
     {
         return $this->getTemplateGroup('wem_portfolio_');
+    }
+
+    /**
+     * Return all attributes usable as filters
+     *
+     * @return array
+     */
+    public function getPortfolioFilters()
+    {
+        $objAttributes = \WEM\Portfolio\Model\Attribute::findItems(["useAsFilter"=>1]);
+
+        if (!$objAttributes || 0 == $objAttributes->count()) {
+            \Message::addInfo($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['noFiltersAvailable']);
+            return [];
+        }
+
+        $arrFilters = [];
+        while ($objAttributes->next()) {
+            $arrFilters[$objAttributes->id] = $objAttributes->title;
+        }
+
+        return $arrFilters;
     }
 }
