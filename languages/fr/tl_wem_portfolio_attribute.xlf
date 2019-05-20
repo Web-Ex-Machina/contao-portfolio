@@ -35,6 +35,23 @@
         <target>Cocher pour afficher cet attribut en frontend</target>
       </trans-unit>
 
+      <trans-unit id="tl_wem_portfolio_attribute.i18nl10n_lang.0">
+        <source>Language</source>
+        <target>Langue</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.i18nl10n_lang.1">
+        <source>Select the item language</source>
+        <target>Sélectionnez le langage de cet élément</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.i18nl10n_id.0">
+        <source>Associated items</source>
+        <target>Éléments associés</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.i18nl10n_id.1">
+        <source>Select the items associated to this item</source>
+        <target>Sélectionnez les éléments associés à cet élément</target>
+      </trans-unit>
+
       <trans-unit id="tl_wem_portfolio_attribute.created_on.0">
         <source>Created on</source>
         <target>Créé le</target>
@@ -47,6 +64,10 @@
       <trans-unit id="tl_wem_portfolio_attribute.title_legend">
         <source>Global informations</source>
         <target>Informations générales</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.i18nl10n_legend">
+        <source>Language &amp; Translations</source>
+        <target>Langue &amp; Traductions</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_attribute.new.0">

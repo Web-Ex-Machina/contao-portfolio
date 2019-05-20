@@ -31,10 +31,11 @@ class I18nl10nAssociatedLocationsWizard extends \Widget
         // Get the items IDs sent and apply the current ID as their i18nl10n_id value
         $ids = $this->getPost($this->strName);
         $this->import('Database');
+        $stdModel = \Model::getClassFromTable($this->strTable);
 
         if ($ids) {
             foreach ($ids as $id) {
-                $objModel = Item::findByPk($id);
+                $objModel = $stdModel::findByPk($id);
                 $objModel->tstamp = time();
                 $objModel->i18nl10n_id = $this->activeRecord->id;
                 $objModel->save();
@@ -73,7 +74,8 @@ class I18nl10nAssociatedLocationsWizard extends \Widget
         // Add the existing entries
         if (!empty($this->varValue)) {
             // Get all available items for the lang
-            $objItems = Item::findItems(["not_lang"=>$this->activeRecord->i18nl10n_lang]);
+            $stdModel = \Model::getClassFromTable($this->strTable);
+            $objItems = $stdModel::findItems(["not_lang"=>$this->activeRecord->i18nl10n_lang]);
 
             if (!$objItems || 0 == $objItems->count()) {
                 return '<p class="tl_info">Aucune alternative existante trouvée</p>';
@@ -81,7 +83,7 @@ class I18nl10nAssociatedLocationsWizard extends \Widget
 
             $itemsOptions = '';
             while ($objItems->next()) {
-                $selected = ($objItems->i18nl10n_id == $this->activeRecord->id) ? ' selected' : '';
+                $selected = ($objItems->i18nl10n_id == $this->activeRecord->id || $objItems->id == $this->activeRecord->i18nl10n_id) ? ' selected' : '';
                 $itemsOptions .= '
                 <option value="'.$objItems->id.'"'.$selected.'>'.$objItems->title.' ('.$objItems->i18nl10n_lang.')</option>
                 ';
@@ -89,11 +91,11 @@ class I18nl10nAssociatedLocationsWizard extends \Widget
 
             $return = '
             <div id="ctrl_' . $this->strId . '" class="tl_i18nl10nAssociatedLocationsWizard dcapicker">
-				<select name="' . $this->strId . '[]" class="tl_select tl_chosen multiple" multiple>
-					<option value="">-</option>
-					'.$itemsOptions.'
-				</select>
-			</div>
+                <select name="' . $this->strId . '[]" class="tl_select tl_chosen multiple" multiple>
+                    <option value="">-</option>
+                    '.$itemsOptions.'
+                </select>
+            </div>
             ';
         }
         
