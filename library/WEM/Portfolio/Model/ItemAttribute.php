@@ -92,6 +92,14 @@ class ItemAttribute extends Model
                 $arrColumns[] = "$t.attribute = ". $arrConfig["attribute"];
             }
 
+            if (1 === $arrConfig["displayInFrontend"]) {
+                $i++;
+                $arrColumns[] = "$t.attribute IN(SELECT t".$i.".id FROM tl_wem_portfolio_attribute AS t".$i." WHERE t".$i.".displayInFrontend = '1')";
+            } elseif (0 === $arrConfig["displayInFrontend"]) {
+                $i++;
+                $arrColumns[] = "$t.attribute IN(SELECT t".$i.".id FROM tl_wem_portfolio_attribute AS t".$i." WHERE t".$i.".displayInFrontend = '')";
+            }
+
             if ($arrConfig["not"]) {
                 $arrColumns[] = $arrConfig["not"];
             }

@@ -9,6 +9,11 @@
         <source>Filter by</source>
         <target>Filtrer par</target>
       </trans-unit>
+
+      <trans-unit id="WEM.PORTFOLIO.noFiltersAvailable">
+        <source>No filters available</source>
+        <target>Pas de filtres disponibles</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
