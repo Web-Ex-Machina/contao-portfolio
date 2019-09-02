@@ -25,13 +25,13 @@
         <source>Enter a date for this item</source>
         <target>Saisissez une date pour cet élément</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.category.0">
-        <source>Category</source>
-        <target>Catégorie</target>
+      <trans-unit id="tl_wem_portfolio_item.categories.0">
+        <source>Categories</source>
+        <target>Catégories</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.category.1">
-        <source>Select the item's category</source>
-        <target>Sélectionnez la catégorie de l'élément</target>
+      <trans-unit id="tl_wem_portfolio_item.categories.1">
+        <source>Select the item's categories</source>
+        <target>Sélectionnez les catégories de l'élément</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.pictures.0">

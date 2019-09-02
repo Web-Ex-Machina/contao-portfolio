@@ -17,7 +17,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
     // Config
     'config' => array(
         'dataContainer'               => 'Table',
-        'ctable'                      => array('tl_wem_portfolio_item_attribute', 'tl_content'),
+        'ctable'                      => array('tl_wem_portfolio_item_attribute_page', 'tl_wem_portfolio_item_attribute', 'tl_content'),
         'switchToEdit'                => true,
         'enableVersioning'            => true,
         'sql' => array(
@@ -89,7 +89,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
     // Palettes
     'palettes' => array(
         'default'                     => '
-            {title_legend},title,alias,date,category;
+            {title_legend},title,alias,date,categories;
             {media_legend},pictures;
             {details_legend},teaser;
             {attributes_legend},attributes;
@@ -143,16 +143,23 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
             'eval'                    => array('rgxp'=>'date', 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ),
-        'category' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['category'],
-            'exclude'                 => true,
-            'sorting'                 => true,
-            'flag'                    => 11,
-            'inputType'               => 'pageTree',
-            'foreignKey'              => 'tl_page.title',
-            'eval'                    => array('mandatory'=>true, 'fieldType'=>'radio', 'tl_class'=>'w50'),
-            'sql'                     => "int(10) unsigned NOT NULL default '0'",
-            'relation'                => array('type'=>'hasOne', 'load'=>'eager')
+        'categories' => array(
+            'label'                 => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['categories'],
+            'inputType'             => 'dcaWizard',
+            'foreignTable'          => 'tl_wem_portfolio_item_page',
+            'foreignField'          => 'pid',
+            'params'                  => array(
+                'do'                  => 'wem_portfolio_item',
+            ),
+            'eval'                  => array(
+                'fields' => array('page'),
+                'editButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['edit_page'],
+                'applyButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['apply_page'],
+                'orderField' => 'page',
+                'showOperations' => true,
+                'operations' => array('edit', 'delete'),
+                'tl_class'=>'clr',
+            ),
         ),
         'pictures' => array(
             'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['pictures'],
