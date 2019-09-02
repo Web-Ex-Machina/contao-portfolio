@@ -117,7 +117,7 @@ class Item extends \Controller
             // Get the item category
             if ($arrConfig["getCategories"]) {
                 $arrCategories = unserialize($arrItem["categories"]);
-                if($arrCategories && is_array($arrCategories) && !empty($arrCategories)) {
+                if ($arrCategories && is_array($arrCategories) && !empty($arrCategories)) {
                     $arrItem['categories'] = [];
                     foreach ($arrCategories as $c) {
                         $arrItem['categories'][] = \PageModel::findByPk($c);

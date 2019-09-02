@@ -17,7 +17,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
     // Config
     'config' => array(
         'dataContainer'               => 'Table',
-        'ctable'                      => array('tl_wem_portfolio_item_attribute_page', 'tl_wem_portfolio_item_attribute', 'tl_content'),
+        'ctable'                      => array('tl_wem_portfolio_item_page', 'tl_wem_portfolio_item_attribute', 'tl_content'),
         'switchToEdit'                => true,
         'enableVersioning'            => true,
         'sql' => array(
@@ -145,21 +145,15 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
         ),
         'categories' => array(
             'label'                 => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['categories'],
-            'inputType'             => 'dcaWizard',
-            'foreignTable'          => 'tl_wem_portfolio_item_page',
-            'foreignField'          => 'pid',
-            'params'                  => array(
-                'do'                  => 'wem_portfolio_item',
+            'exclude'                 => true,
+            'inputType'               => 'pageTree',
+            'foreignKey'              => 'tl_page.title',
+            'save_callback'           => array(
+                array('tl_wem_portfolio_item', 'saveCategories'),
             ),
-            'eval'                  => array(
-                'fields' => array('page'),
-                'editButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['edit_page'],
-                'applyButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['apply_page'],
-                'orderField' => 'page',
-                'showOperations' => true,
-                'operations' => array('edit', 'delete'),
-                'tl_class'=>'clr',
-            ),
+            'eval'                    => array('multiple'=>true, 'fieldType'=>'checkbox', 'tl_class'=>'w50'),
+            'sql'                     => "blob NULL",
+            'relation'                => array('type'=>'hasMany', 'load'=>'lazy')
         ),
         'pictures' => array(
             'label'                   => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['pictures'],
@@ -295,6 +289,49 @@ class tl_wem_portfolio_item extends Backend
     public function addIcon($row, $label, DataContainer $dc = null, $imageAttribute = '', $blnReturnImage = false, $blnProtected = false)
     {
         return '<img src="assets/contao/images/iconJPG.svg" width="18" height="18" alt="image/jpeg" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
+    }
+
+    /**
+     * Save item categories in the child table
+     * ip stands for ItemPage
+     *
+     * @param [Mixed] $varValue [Item value]
+     * @param [Array] $dc       [Datacontainer]
+     *
+     * @return [Array]          [Understandable values]
+     */
+    public function saveCategories($varValue, $dc)
+    {
+        if ($varValue) {
+            $arrPages = unserialize($varValue);
+
+            $ips = \WEM\Portfolio\Model\ItemPage::findItems(["pid"=>$dc->activeRecord->id]);
+
+            if ($ips && 0 < $ips->count()) {
+                while ($ips->next()) {
+                    if (!in_array($ips->page, $arrPages)) {
+                        $ips->delete();
+                    }
+                }
+            }
+            
+            foreach ($arrPages as $p) {
+                $ip = \WEM\Portfolio\Model\ItemPage::findItems(["pid"=>$dc->activeRecord->id, "page"=>$p], 1);
+                
+                // If we did not found an ItemPage, create it
+                if (!$ip) {
+                    $ip = new \WEM\Portfolio\Model\ItemPage();
+                    $ip->pid = $dc->activeRecord->id;
+                    $ip->created_on = time();
+                    $ip->page = $p;
+                }
+
+                $ip->tstamp = time();
+                $ip->save();
+            }
+        }
+
+        return $varValue;
     }
 
     /**
