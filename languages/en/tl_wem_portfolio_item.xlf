@@ -1,0 +1,211 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/wem-contao-portfolio/languages/en/tl_wem_portfolio_item.php" source-language="en" target-language="fr">
+    <body>
+      <trans-unit id="tl_wem_portfolio_item.title.0">
+        <source>Title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.title.1">
+        <source>Enter the item title</source>
+        <target>Enter the item title</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.alias.0">
+        <source>Alias</source>
+        <target>Alias</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.alias.1">
+        <source>Enter the item alias - it will be automaticly generated, based on item title.</source>
+        <target>Enter the item alias - it will be automaticly generated, based on item title.</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.date.0">
+        <source>Date</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.date.1">
+        <source>Enter a date for this item</source>
+        <target>Enter a date for this item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.categories.0">
+        <source>Categories</source>
+        <target>Categories</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.categories.1">
+        <source>Select the item's categories</source>
+        <target>Select the item's categories</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.pictures.0">
+        <source>Pictures</source>
+        <target>Pictures</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.pictures.1">
+        <source>Add additionnal pictures to the item</source>
+        <target>Add additionnal pictures to the item</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.teaser.0">
+        <source>Teaser</source>
+        <target>Teaser</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.teaser.1">
+        <source>Enter the item teaser</source>
+        <target>Enter the item teaser</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.attributes.0">
+        <source>Attributes</source>
+        <target>Attributes</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.attributes.1">
+        <source>Enter the item attributes</source>
+        <target>Enter the item attributes</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.published.0">
+        <source>Publish item</source>
+        <target>Publish item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.published.1">
+        <source>Make the item publicly visible on the website.</source>
+        <target>Make the item publicly visible on the website.</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.start.0">
+        <source>Show from</source>
+        <target>Show from</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.start.1">
+        <source>Do not show the item on the website before this day.</source>
+        <target>Do not show the item on the website before this day.</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.stop.0">
+        <source>Show until</source>
+        <target>Show until</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.stop.1">
+        <source>Do not show the item on the website on and after this day.</source>
+        <target>Do not show the item on the website on and after this day.</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_lang.0">
+        <source>Language</source>
+        <target>Language</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_lang.1">
+        <source>Select the item language</source>
+        <target>Select the item language</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_id.0">
+        <source>Associated items</source>
+        <target>Associated items</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_id.1">
+        <source>Select the items associated to this item</source>
+        <target>Select the items associated to this item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_legend">
+        <source>Language &amp; Translations</source>
+        <target>Language &amp; Translations</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.created_on.0">
+        <source>Created on</source>
+        <target>Created on</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.created_on.1">
+        <source>Enter the date when the item has been created.</source>
+        <target>Enter the date when the item has been created.</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.title_legend">
+        <source>Global informations</source>
+        <target>Global informations</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.media_legend">
+        <source>Medias</source>
+        <target>Medias</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.details_legend">
+        <source>Item data</source>
+        <target>Item data</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.attributes_legend">
+        <source>Item attributes</source>
+        <target>Item attributes</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.publish_legend">
+        <source>Publication settings</source>
+        <target>Publication settings</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.dcaLabel">
+        <source>Portfolio categories</source>
+        <target>Portfolio categories</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.new.0">
+        <source>New item</source>
+        <target>New item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.new.1">
+        <source>Add a new item</source>
+        <target>Add a new item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.edit.0">
+        <source>Edit item contents</source>
+        <target>Edit item contents</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.edit.1">
+        <source>Edit item ID %s contents</source>
+        <target>Edit item ID %s contents</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.header.0">
+        <source>Edit item</source>
+        <target>Edit item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.header.1">
+        <source>Edit item ID %s</source>
+        <target>Edit item ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.copy.0">
+        <source>Duplicate item</source>
+        <target>Duplicate item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.copy.1">
+        <source>Duplicate item ID %s</source>
+        <target>Duplicate item ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.cut.0">
+        <source>Move item</source>
+        <target>Move item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.cut.1">
+        <source>Move item ID %s</source>
+        <target>Move item ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.delete.0">
+        <source>Delete item</source>
+        <target>Delete item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.delete.1">
+        <source>Delete item ID %s</source>
+        <target>Delete item ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.show.0">
+        <source>Publish/Unpublish item</source>
+        <target>Publish/Unpublish item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.show.1">
+        <source>Publish/Unpublish item ID %s</source>
+        <target>Publish/Unpublish item ID %s</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.show.0">
+        <source>Show item</source>
+        <target>Show item</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.show.1">
+        <source>Show item ID %s</source>
+        <target>Show item ID %s</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
