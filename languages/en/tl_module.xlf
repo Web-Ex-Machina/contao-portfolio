@@ -1,0 +1,40 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="src/Resources/contao/languages/en/tl_module.php" source-language="en" target-language="fr">
+    <body>
+      <trans-unit id="tl_module.wem_portfolio_template.0">
+        <source>Items template</source>
+        <target>Items template</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_template.1">
+        <source>Please select the portfolio item template.</source>
+        <target>Please select the portfolio item template.</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_attributes.0">
+        <source>Retrieve attributes</source>
+        <target>Retrieve attributes</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_attributes.1">
+        <source>Check to retrieve item attributes.</source>
+        <target>Check to retrieve item attributes.</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_tags.0">
+        <source>Retrieve tags</source>
+        <target>Retrieve tags</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_tags.1">
+        <source>Check to retrieve item tags.</source>
+        <target>Check to retrieve item tags.</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_filters.0">
+        <source>Add filters</source>
+        <target>Add filters</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_filters.1">
+        <source>Allow user to filter items depending on attributes</source>
+        <target>Allow user to filter items depending on attributes</target>
+      </trans-unit>
+
+      
+    </body>
+  </file>
+</xliff>
