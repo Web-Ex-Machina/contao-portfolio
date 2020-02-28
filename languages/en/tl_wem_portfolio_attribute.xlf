@@ -65,6 +65,10 @@
         <source>Global informations</source>
         <target>Global informations</target>
       </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.config_legend">
+        <source>Attribute settings</source>
+        <target>Attribute settings</target>
+      </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.i18nl10n_legend">
         <source>Language &amp; Translations</source>
         <target>Language &amp; Translations</target>

@@ -119,6 +119,18 @@ class Attribute extends Model
                 $arrColumns[] = $arrConfig['not'];
             }
 
+            if ($arrConfig['lang']) {
+                $arrColumns[] = "$t.i18nl10n_lang = '".$arrConfig['lang']."'";
+            }
+
+            if ($arrConfig['not_lang']) {
+                $arrColumns[] = "$t.i18nl10n_lang != '".$arrConfig['not_lang']."'";
+            }
+
+            if ($arrConfig['i18nl10n_id']) {
+                $arrColumns[] = "$t.i18nl10n_id = ".$arrConfig['i18nl10n_id'];
+            }
+
             return $arrColumns;
         } catch (Exception $e) {
             throw $e;

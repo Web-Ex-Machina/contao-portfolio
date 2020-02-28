@@ -138,6 +138,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array(
 // Handle i18nl10n compatibility
 $bundles = \System::getContainer()->getParameter('kernel.bundles');
 if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
+    \System::loadLanguageFile('languages');
     // Update palettes
     $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute']['palettes']['default'] .= ';{i18nl10n_legend},i18nl10n_lang,i18nl10n_id';
 

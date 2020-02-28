@@ -227,11 +227,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
 // Handle i18nl10n compatibility
 $bundles = \System::getContainer()->getParameter('kernel.bundles');
 if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
+    \System::loadLanguageFile('languages');
     // Update palettes
     $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['palettes']['default'] .= ';{i18nl10n_legend},i18nl10n_lang,i18nl10n_id';
 
     $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_id'] = array(
-        'label'            => array('I18NL10N_ID'),
+        'label'            => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['i18nl10n_id'],
         'exclude'          => true,
         'inputType'        => 'i18nl10nAssociatedLocationsWizard',
         'eval'             => array('tl_class'=>'w50'),
