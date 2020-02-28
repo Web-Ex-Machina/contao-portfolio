@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Module Portfolio for Contao Open Source CMS
+ * Module Portfolio for Contao Open Source CMS.
  *
  * Copyright (c) 2015-2019 Web ex Machina
  *
@@ -10,23 +10,36 @@
 
 namespace WEM\Portfolio\Module;
 
-use \RuntimeException as Exception;
-use Contao\CoreBundle\Exception\PageNotFoundException;
-use Patchwork\Utf8;
-
+use RuntimeException as Exception;
 use WEM\Portfolio\Controller\Item;
 use WEM\Portfolio\Model\ItemAttribute;
 use WEM\Portfolio\Model\Attribute;
 
 /**
- * Handle generic Portfolio functions
+ * Handle generic Portfolio functions.
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 abstract class Portfolio extends \Module
 {
     /**
-     * Retrieve module filters
+     * Load generic stuff.
+     *
+     * @return string
+     */
+    public function generate()
+    {
+        $bundles = \System::getContainer()->getParameter('kernel.bundles');
+        if (array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
+            $this->hasI18nl10n = true;
+        }
+
+        return parent::generate();
+    }
+
+    /**
+     * Retrieve module filters.
+     *
      * @return [Array] [Attributes available]
      */
     protected function getAvailableFilters()
@@ -43,8 +56,8 @@ abstract class Portfolio extends \Module
 
                 // i18nl10n compatibility : if the current attribute isn't in the current language, try to find the translation
                 // Else, skip
-                if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles) && $GLOBALS['TL_LANGUAGE'] != $attribute->i18nl10n_lang) {
-                    $i18nl10nAttribute = Attribute::findItems(["lang"=>$GLOBALS['TL_LANGUAGE'], "i18nl10n_id"=>$attribute->i18nl10n_id], 1);
+                if ($this->hasI18nl10n && $GLOBALS['TL_LANGUAGE'] != $attribute->i18nl10n_lang) {
+                    $i18nl10nAttribute = Attribute::findItems(['lang' => $GLOBALS['TL_LANGUAGE'], 'i18nl10n_id' => $attribute->i18nl10n_id], 1);
 
                     if (!$i18nl10nAttribute) {
                         continue;
@@ -54,16 +67,16 @@ abstract class Portfolio extends \Module
                 }
 
                 // Get the filter options & skip if there is no options available
-                $objItemAttributes = ItemAttribute::findItems(['attribute'=>$id]);
+                $objItemAttributes = ItemAttribute::findItems(['attribute' => $id]);
                 if (!$objItemAttributes || 0 == $objItemAttributes->count()) {
                     continue;
                 }
 
                 // Prepare the filter
-                $arrFilters[$attribute->alias] = ['id'=>$attribute->id, 'label'=>$attribute->title, 'options'=>[]];
+                $arrFilters[$attribute->alias] = ['id' => $attribute->id, 'label' => $attribute->title, 'options' => []];
 
                 // Get the options
-                $arrValues = array();
+                $arrValues = [];
                 while ($objItemAttributes->next()) {
                     // Skip if we already know this value
                     if (in_array($objItemAttributes->value, $arrValues)) {
@@ -72,13 +85,13 @@ abstract class Portfolio extends \Module
 
                     // Store the value
                     $arrValues[] = $objItemAttributes->value;
-                    
+
                     // Format the option
-                    $option = ['value' => $objItemAttributes->value, 'text' => $objItemAttributes->value, 'selected'=>0];
+                    $option = ['value' => $objItemAttributes->value, 'text' => $objItemAttributes->value, 'selected' => 0];
                     if (\Input::post($attribute->alias) == $objItemAttributes->value || \Input::get($attribute->alias) == $objItemAttributes->value) {
                         $option['selected'] = 1;
                     }
-                    
+
                     $arrFilters[$attribute->alias]['options'][] = $option;
                 }
             }
@@ -90,24 +103,26 @@ abstract class Portfolio extends \Module
     }
 
     /**
-     * Parse multiple items
-     * @param Array
-     * @return String
+     * Parse multiple items.
+     *
+     * @param array
+     *
+     * @return string
      */
-    protected function parseItems($arrItems, $strTemplate = "wem_portfolio_item")
+    protected function parseItems($arrItems, $strTemplate = 'wem_portfolio_item')
     {
         try {
             $limit = count($arrItems);
             if ($limit < 1) {
-                return array();
+                return [];
             }
 
             $count = 0;
-            $arrElements = array();
+            $arrElements = [];
             foreach ($arrItems as $arrItem) {
-                $arrElements[] = $this->parseItem($arrItem, $strTemplate, ((++$count == 1) ? ' first' : '') . (($count == $limit) ? ' last' : '') . ((($count % 2) == 0) ? ' odd' : ' even'), $count);
+                $arrElements[] = $this->parseItem($arrItem, $strTemplate, ((1 == ++$count) ? ' first' : '').(($count == $limit) ? ' last' : '').((0 == ($count % 2)) ? ' odd' : ' even'), $count);
             }
-            
+
             return $arrElements;
         } catch (Exception $e) {
             throw $e;
@@ -115,26 +130,28 @@ abstract class Portfolio extends \Module
     }
 
     /**
-     * Parse an item
-     * @param Array
-     * @param String
-     * @return String
+     * Parse an item.
+     *
+     * @param array
+     * @param string
+     *
+     * @return string
      */
-    public function parseItem($arrItem, $strTemplate = "wem_portfolio_item", $strClass = '', $intCount = 0)
+    public function parseItem($arrItem, $strTemplate = 'wem_portfolio_item', $strClass = '', $intCount = 0)
     {
         try {
-            /** @var \PageModel $objPage */
+            /* @var \PageModel $objPage */
             global $objPage;
-            
+
             /** @var \FrontendTemplate|object $objTemplate */
             $objTemplate = new \FrontendTemplate($strTemplate);
             $objTemplate->setData($arrItem);
-            $objTemplate->class = (($arrItem['cssClass'] != '') ? ' ' . $arrItem['cssClass'] : '') . $strClass;
+            $objTemplate->class = (('' != $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
             $objTemplate->count = $intCount;
 
             // Build the item's link
             if ($this->jumpTo instanceof \PageModel) {
-                $objTemplate->link = $this->jumpTo->getFrontendUrl("/".$arrItem['alias']);
+                $objTemplate->link = $this->jumpTo->getFrontendUrl('/'.$arrItem['alias']);
             }
 
             // Add an image
@@ -154,7 +171,7 @@ abstract class Portfolio extends \Module
             }
 
             // Parse the others images, in a easier way
-            for ($i=1; $i<count($arrItem['pictures']); $i++) {
+            for ($i = 1; $i < count($arrItem['pictures']); ++$i) {
                 $strPath = $arrItem['pictures'][$i]['singleSRC'];
                 if ($size || $arrItem['pictures'][$i]->imgSize) {
                     if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
@@ -174,7 +191,7 @@ abstract class Portfolio extends \Module
 
             $strContent = '';
             $objElement = \ContentModel::findPublishedByPidAndTable($arrItem['id'], 'tl_wem_portfolio_item');
-            if ($objElement !== null) {
+            if (null !== $objElement) {
                 while ($objElement->next()) {
                     $strContent .= $this->getContentElement($objElement->current());
                 }
