@@ -50,7 +50,11 @@ class Attribute extends Model
                 $arrOptions['order'] = "$t.title ASC";
             }
 
+            if (empty($arrColumns)) {
+            return static::findAll($arrOptions);
+        } else {
             return static::findBy($arrColumns, null, $arrOptions);
+        }
         } catch (Exception $e) {
             throw $e;
         }

@@ -50,7 +50,11 @@ class Item extends Model
                 $arrOptions['order'] = "$t.date DESC";
             }
 
+            if (empty($arrColumns)) {
+            return static::findAll($arrOptions);
+        } else {
             return static::findBy($arrColumns, null, $arrOptions);
+        }
         } catch (Exception $e) {
             throw $e;
         }
