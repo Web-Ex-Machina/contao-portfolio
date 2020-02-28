@@ -29,10 +29,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array(
     // List
     'list' => array(
         'sorting' => array(
-            'mode'                    => 1,
+            'mode'                    => 2,
             'fields'                  => array('title'),
             'flag'                    => 1,
-            'panelLayout'             => 'filter;search,limit'
+            'panelLayout'             => 'filter;sort,search,limit'
         ),
         'label' => array(
             'fields'                  => array('title'),
@@ -98,6 +98,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = array(
             'exclude'                 => true,
             'inputType'               => 'text',
             'search'                  => true,
+            'sorting'                 => true,
+            'flag'                    => 1,
             'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'decodeEntities'=>true, 'tl_class'=>'w50'),
             'sql'                     => "varchar(255) NOT NULL default ''"
         ),

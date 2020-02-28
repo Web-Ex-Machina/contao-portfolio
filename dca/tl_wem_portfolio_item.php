@@ -119,6 +119,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = array(
             'exclude'                 => true,
             'inputType'               => 'text',
             'search'                  => true,
+            'sorting'                 => true,
+            'flag'                    => 1,
             'eval'                    => array('mandatory'=>true, 'decodeEntities'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
             'sql'                     => "varchar(255) NOT NULL default ''"
         ),
