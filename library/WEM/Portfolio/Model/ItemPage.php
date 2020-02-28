@@ -71,7 +71,11 @@ class ItemPage extends Model
         try {
             $t = static::$strTable;
             $arrColumns = static::formatColumns($arrConfig);
+            if (empty($arrColumns)) {
+            return static::countAll($arrOptions);
+        } else {
             return static::countBy($arrColumns, null, $arrOptions);
+        }
         } catch (Exception $e) {
             throw $e;
         }
