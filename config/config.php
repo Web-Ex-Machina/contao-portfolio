@@ -59,6 +59,7 @@ array_insert(
 /**
  * Hooks
  */
+$GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\WEM\Portfolio\Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\Portfolio\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
 
 /**
