@@ -57,6 +57,11 @@ array_insert(
 );
 
 /**
+ * Hooks
+ */
+$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\Portfolio\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
+
+/**
  * Models
  */
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_item"]              = 'WEM\Portfolio\Model\Item';
