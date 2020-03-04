@@ -1,30 +1,37 @@
 <?php
 
-namespace WEM\Portfolio\Widget;
+declare(strict_types=1);
 
-use WEM\Portfolio\Model\Item;
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
+namespace WEM\Portfolio\Widget;
 
 class I18nl10nAssociatedLocationsWizard extends \Widget
 {
-
     /**
-     * Submit user input
-     * @var boolean
+     * Submit user input.
+     *
+     * @var bool
      */
     protected $blnSubmitInput = true;
 
     /**
-     * Template
+     * Template.
+     *
      * @var string
      */
     protected $strTemplate = 'be_widget';
 
     /**
-     * Trim the values and add new languages if necessary
-     *
-     * @param mixed $varInput
-     *
-     * @return mixed
+     * Trim the values and add new languages if necessary.
      */
     public function validate()
     {
@@ -47,7 +54,7 @@ class I18nl10nAssociatedLocationsWizard extends \Widget
     }
 
     /**
-     * Generate the widget and return it as string
+     * Generate the widget and return it as string.
      *
      * @return string
      */
@@ -65,9 +72,9 @@ class I18nl10nAssociatedLocationsWizard extends \Widget
         if (empty($this->varValue) || !\is_array($this->varValue)) {
             if (\count($languages) > 0) {
                 $key = isset($languages[$GLOBALS['TL_LANGUAGE']]) ? $GLOBALS['TL_LANGUAGE'] : key($languages);
-                $this->varValue = array($key=>array());
+                $this->varValue = [$key => []];
             } else {
-                return '<p class="tl_info">' . $GLOBALS['TL_LANG']['MSC']['metaNoLanguages'] . '</p>';
+                return '<p class="tl_info">'.$GLOBALS['TL_LANG']['MSC']['metaNoLanguages'].'</p>';
             }
         }
 
@@ -75,30 +82,30 @@ class I18nl10nAssociatedLocationsWizard extends \Widget
         if (!empty($this->varValue)) {
             // Get all available items for the lang
             $stdModel = \Model::getClassFromTable($this->strTable);
-            $objItems = $stdModel::findItems(["not_lang"=>$this->activeRecord->i18nl10n_lang]);
+            $objItems = $stdModel::findItems(['not_lang' => $this->activeRecord->i18nl10n_lang]);
 
-            if (!$objItems || 0 == $objItems->count()) {
+            if (!$objItems || 0 === $objItems->count()) {
                 return '<p class="tl_info">Aucune alternative existante trouvée</p>';
             }
 
             $itemsOptions = '';
             while ($objItems->next()) {
-                $selected = ($objItems->i18nl10n_id == $this->activeRecord->id || $objItems->id == $this->activeRecord->i18nl10n_id) ? ' selected' : '';
+                $selected = ($objItems->i18nl10n_id === $this->activeRecord->id || $objItems->id === $this->activeRecord->i18nl10n_id) ? ' selected' : '';
                 $itemsOptions .= '
                 <option value="'.$objItems->id.'"'.$selected.'>'.$objItems->title.' ('.$objItems->i18nl10n_lang.')</option>
                 ';
             }
 
             $return = '
-            <div id="ctrl_' . $this->strId . '" class="tl_i18nl10nAssociatedLocationsWizard dcapicker">
-                <select name="' . $this->strId . '[]" class="tl_select tl_chosen multiple" multiple>
+            <div id="ctrl_'.$this->strId.'" class="tl_i18nl10nAssociatedLocationsWizard dcapicker">
+                <select name="'.$this->strId.'[]" class="tl_select tl_chosen multiple" multiple>
                     <option value="">-</option>
                     '.$itemsOptions.'
                 </select>
             </div>
             ';
         }
-        
+
         return $return;
     }
 }

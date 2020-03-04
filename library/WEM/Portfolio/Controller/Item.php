@@ -1,33 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Module Portfolio for Contao Open Source CMS
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
  *
- * Copyright (c) 2015-2018 Web ex Machina
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\Portfolio\Controller;
 
-use \RuntimeException as Exception;
-
+use RuntimeException as Exception;
 use WEM\Portfolio\Model\Item as ItemModel;
 
 /**
- * Class Item - Handle Portfolio Items functions
+ * Class Item - Handle Portfolio Items functions.
  */
 class Item extends \Controller
 {
     /**
-     * Get Items
-     * @param  [Array]   $arrConfig  [Configuration wanted for the list]
-     * @param  [Integer] $intLimit   [Query Limit]
-     * @param  [Integer] $intOffset  [Query Offset]
-     * @param  [Array]   $arrOptions [Query Options]
-     * @return [Array]               [Items list as Array]
+     * Get Items.
+     *
+     * @param [Array]   $arrConfig  [Configuration wanted for the list]
+     * @param [Integer] $intLimit   [Query Limit]
+     * @param [Integer] $intOffset  [Query Offset]
+     * @param [Array]   $arrOptions [Query Options]
+     *
+     * @return [Array] [Items list as Array]
      */
-    public static function getItems($arrConfig, $intLimit = 0, $intOffset = 0, $arrOptions = array())
+    public static function getItems($arrConfig, $intLimit = 0, $intOffset = 0, $arrOptions = [])
     {
         try {
             $objItems = ItemModel::findItems($arrConfig, $intLimit, $intOffset, $arrOptions);
@@ -36,10 +41,10 @@ class Item extends \Controller
                 return;
             }
 
-            $arrItems = array();
+            $arrItems = [];
 
             while ($objItems->next()) {
-                $arrItems[] = static::getItem($objItems->row(), $arrConfig["getItem"]);
+                $arrItems[] = static::getItem($objItems->row(), $arrConfig['getItem']);
             }
 
             return $arrItems;
@@ -49,15 +54,17 @@ class Item extends \Controller
     }
 
     /**
-     * Get Item
-     * @param  [Mixed] $varItem   [Item ID, Alias, Array or Object]
-     * @param  [Array] $arrConfig [Item configuration]
-     * @return [Array]            [Item data]
+     * Get Item.
+     *
+     * @param [Mixed] $varItem   [Item ID, Alias, Array or Object]
+     * @param [Array] $arrConfig [Item configuration]
+     *
+     * @return [Array] [Item data]
      */
-    public static function getItem($varItem, $arrConfig = array())
+    public static function getItem($varItem, $arrConfig = [])
     {
         try {
-            if (is_array($varItem)) {
+            if (\is_array($varItem)) {
                 $arrItem = $varItem;
             } elseif ($varItem instanceof ItemModel || $varItem = ItemModel::findByIdOrAlias($varItem)) {
                 $arrItem = $varItem->row();
@@ -66,9 +73,9 @@ class Item extends \Controller
             }
 
             // Parse item dates
-            $arrDates = ["timestamp"=>$arrItem['created_on'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['created_on']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['created_on'])];
+            $arrDates = ['timestamp' => $arrItem['created_on'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['created_on']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['created_on'])];
             $arrItem['created_on'] = $arrDates;
-            $arrDates = ["timestamp"=>$arrItem['date'], "date"=>\Date::parse(\Config::get('datimFormat'), $arrItem['date']), "datetime"=>\Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])];
+            $arrDates = ['timestamp' => $arrItem['date'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['date']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])];
             $arrItem['date'] = $arrDates;
 
             // Fetch item pictures
@@ -76,25 +83,25 @@ class Item extends \Controller
                 $objFiles = \FilesModel::findMultipleByUuids($arrItem['pictures']);
                 $images = [];
                 while ($objFiles->next()) {
-                    $images[$objFiles->path] = array(
-                        'id'         => $objFiles->id,
-                        'uuid'       => $objFiles->uuid,
-                        'name'       => $objFile->basename,
-                        'singleSRC'  => $objFiles->path,
-                        'filesModel' => $objFiles->current()
-                    );
+                    $images[$objFiles->path] = [
+                        'id' => $objFiles->id,
+                        'uuid' => $objFiles->uuid,
+                        'name' => $objFile->basename,
+                        'singleSRC' => $objFiles->path,
+                        'filesModel' => $objFiles->current(),
+                    ];
                 }
 
-                if ($arrItem['orderPictures'] != '') {
+                if ('' !== $arrItem['orderPictures']) {
                     $t = \StringUtil::deserialize($arrItem['orderPictures']);
                     if (!empty($t) && \is_array($t)) {
                         // Remove all values
-                        $arrOrder = array_map(function () {
+                        $arrOrder = array_map(function (): void {
                         }, array_flip($t));
 
                         // Move the matching elements to their position in $arrOrder
                         foreach ($images as $k => $v) {
-                            if (array_key_exists($v['uuid'], $arrOrder)) {
+                            if (\array_key_exists($v['uuid'], $arrOrder)) {
                                 $arrOrder[$v['uuid']] = $v;
                                 unset($images[$k]);
                             }
@@ -115,9 +122,9 @@ class Item extends \Controller
             }
 
             // Get the item category
-            if ($arrConfig["getCategories"]) {
-                $arrCategories = unserialize($arrItem["categories"]);
-                if ($arrCategories && is_array($arrCategories) && !empty($arrCategories)) {
+            if ($arrConfig['getCategories']) {
+                $arrCategories = unserialize($arrItem['categories']);
+                if ($arrCategories && \is_array($arrCategories) && !empty($arrCategories)) {
                     $arrItem['categories'] = [];
                     foreach ($arrCategories as $c) {
                         $arrItem['categories'][] = \PageModel::findByPk($c);
@@ -126,12 +133,12 @@ class Item extends \Controller
             }
 
             // Get the item attributes
-            $arrConfig["itemAttributes"]["pid"] = $arrItem['id'];
-            $arrConfig["itemAttributes"]["displayInFrontend"] = 1;
-            if ($attributes = ItemAttribute::getItems($arrConfig["itemAttributes"])) {
-                $arrItem["attributes"] = [];
+            $arrConfig['itemAttributes']['pid'] = $arrItem['id'];
+            $arrConfig['itemAttributes']['displayInFrontend'] = 1;
+            if ($attributes = ItemAttribute::getItems($arrConfig['itemAttributes'])) {
+                $arrItem['attributes'] = [];
                 foreach ($attributes as $attribute) {
-                    $arrItem["attributes"][$attribute['attribute']['alias']] = ['label'=>$attribute['attribute']['title'], 'value'=>$attribute['value']];
+                    $arrItem['attributes'][$attribute['attribute']['alias']] = ['label' => $attribute['attribute']['title'], 'value' => $attribute['value']];
                 }
             }
 
@@ -142,12 +149,14 @@ class Item extends \Controller
     }
 
     /**
-     * Count Items
-     * @param  [Array]   $arrConfig  [Configuration wanted for the count]
-     * @param  [Array]   $arrOptions [Query Options]
-     * @return [Integer]             [Number of items]
+     * Count Items.
+     *
+     * @param [Array] $arrConfig  [Configuration wanted for the count]
+     * @param [Array] $arrOptions [Query Options]
+     *
+     * @return [Integer] [Number of items]
      */
-    public static function countItems($arrConfig, $arrOptions = array())
+    public static function countItems($arrConfig, $arrOptions = [])
     {
         try {
             return ItemModel::countItems($arrConfig, $arrOptions);
@@ -158,11 +167,11 @@ class Item extends \Controller
 
     /**
      * Adjusts the way Portfolio items URLs are generated
-     * (useful for i18nl10n plugin)
+     * (useful for i18nl10n plugin).
      *
-     * @param Array $item | Item sent by module
+     * @param array $item | Item sent by module
      *
-     * @return Array
+     * @return array
      */
     public function getFrontendUrl($item)
     {
@@ -172,24 +181,24 @@ class Item extends \Controller
             return $item;
         }
 
-        $objItem = ItemModel::findItems(["i18nl10n_id"=>$objCurrentItem->i18nl10n_id, "lang"=>$item["language"]], 1);
+        $objItem = ItemModel::findItems(['i18nl10n_id' => $objCurrentItem->i18nl10n_id, 'lang' => $item['language']], 1);
         global $objPage;
-        
+
         // If no equivalent item, return nothing to hide the change language module
         if (!$objItem) {
             return [];
         }
 
-        return array(
-            'id'               => empty($row['id']) ? $objPage->id : $row['id'],
-            'alias'            => $item['alias']."/".$row['alias'],
-            'title'            => empty($row['title']) ? $objPage->title : $row['title'],
-            'pageTitle'        => empty($row['pageTitle'])
+        return [
+            'id' => empty($row['id']) ? $objPage->id : $row['id'],
+            'alias' => $item['alias'].'/'.$row['alias'],
+            'title' => empty($row['title']) ? $objPage->title : $row['title'],
+            'pageTitle' => empty($row['pageTitle'])
                 ? $objPage->pageTitle
                 : $row['pageTitle'],
-            'language'         => $item["language"],
-            'isActive'         => $item["language"] === $GLOBALS['TL_LANGUAGE'],
-            'forceRowLanguage' => true
-        );
+            'language' => $item['language'],
+            'isActive' => $item['language'] === $GLOBALS['TL_LANGUAGE'],
+            'forceRowLanguage' => true,
+        ];
     }
 }

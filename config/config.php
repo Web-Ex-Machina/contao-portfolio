@@ -1,36 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Module Portfolio for Contao Open Source CMS
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
  *
- * Copyright (c) 2015-2019 Web ex Machina
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 /**
- * Load Contao 4 Bundles
+ * Load Contao 4 Bundles.
  */
 $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
-/**
+/*
  * Back end modules
  */
 array_insert(
     $GLOBALS['BE_MOD'],
     1,
-    array(
-    'wem_portfolio' => array(
-        'wem_portfolio_item' => array(
-            'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_page', 'tl_wem_portfolio_item_attribute', 'tl_content'),
-            'icon'      => 'system/modules/wem-portfolio/assets/icon_item.png'
-        ),
-        'wem_portfolio_attribute' => array(
-            'tables'    => array('tl_wem_portfolio_attribute'),
-            'icon'      => 'system/modules/wem-portfolio/assets/icon_tag.png'
-        ),
-    )
-    )
+    [
+        'wem_portfolio' => [
+            'wem_portfolio_item' => [
+                'tables' => ['tl_wem_portfolio_item', 'tl_wem_portfolio_item_page', 'tl_wem_portfolio_item_attribute', 'tl_content'],
+                'icon' => 'system/modules/wem-portfolio/assets/icon_item.png',
+            ],
+            'wem_portfolio_attribute' => [
+                'tables' => ['tl_wem_portfolio_attribute'],
+                'icon' => 'system/modules/wem-portfolio/assets/icon_tag.png',
+            ],
+        ],
+    ]
 );
 
 // Load icon in Contao 4.2 backend
@@ -42,40 +46,40 @@ if ('BE' === TL_MODE) {
     }
 }
 
-/**
+/*
  * Front end modules
  */
 array_insert(
     $GLOBALS['FE_MOD'],
     2,
-    array(
-        'wem_portfolio' => array(
-            'wem_portfolio_list'        => 'WEM\Portfolio\Module\PortfolioList',
-            'wem_portfolio_reader'      => 'WEM\Portfolio\Module\PortfolioReader',
-        )
-    )
+    [
+        'wem_portfolio' => [
+            'wem_portfolio_list' => 'WEM\Portfolio\Module\PortfolioList',
+            'wem_portfolio_reader' => 'WEM\Portfolio\Module\PortfolioReader',
+        ],
+    ]
 );
 
-/**
+/*
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\WEM\Portfolio\Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\Portfolio\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
 
-/**
+/*
  * Models
  */
-$GLOBALS['TL_MODELS']["tl_wem_portfolio_item"]              = 'WEM\Portfolio\Model\Item';
-$GLOBALS['TL_MODELS']["tl_wem_portfolio_item_attribute"]    = 'WEM\Portfolio\Model\ItemAttribute';
-$GLOBALS['TL_MODELS']["tl_wem_portfolio_item_page"]         = 'WEM\Portfolio\Model\ItemPage';
-$GLOBALS['TL_MODELS']["tl_wem_portfolio_attribute"]         = 'WEM\Portfolio\Model\Attribute';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\Portfolio\Model\Item';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\Portfolio\Model\ItemAttribute';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_page'] = 'WEM\Portfolio\Model\ItemPage';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\Portfolio\Model\Attribute';
 
-/**
+/*
  * i18nl10n specific items
  */
-if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
+if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
     // Hooks
-    $GLOBALS['TL_HOOKS']['i18nl10nUpdateLanguageSelectionItem'][] = array("WEM\Portfolio\Controller\Item", "getFrontendUrl");
+    $GLOBALS['TL_HOOKS']['i18nl10nUpdateLanguageSelectionItem'][] = ["WEM\Portfolio\Controller\Item", 'getFrontendUrl'];
 
     // Wizards
     $GLOBALS['BE_FFL']['i18nl10nAssociatedLocationsWizard'] = 'WEM\Portfolio\Widget\I18nl10nAssociatedLocationsWizard';

@@ -1,6 +1,16 @@
 <?php
 
-// src/EventListener/ReplaceInsertTagsListener.php
+declare(strict_types=1);
+
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
 
 namespace WEM\Portfolio\Hooks;
 
@@ -21,7 +31,7 @@ class ReplaceInsertTagsListener
         $arrTag = explode('::', $tag);
 
         // Ignore if the tag is not for this module
-        if ('wemportfolio' != $arrTag[0]) {
+        if ('wemportfolio' !== $arrTag[0]) {
             return false;
         }
 
@@ -30,7 +40,7 @@ class ReplaceInsertTagsListener
 
         switch ($arrTag[1]) {
             case 'attr':
-                if (!$arrTag[2] || !is_array($item['attributes']) || !array_key_exists($arrTag[2], $item['attributes'])) {
+                if (!$arrTag[2] || !\is_array($item['attributes']) || !\array_key_exists($arrTag[2], $item['attributes'])) {
                     return false;
                 }
 
@@ -39,7 +49,7 @@ class ReplaceInsertTagsListener
 
             default:
                 // Check if the value exist in portfolio table
-                if (!array_key_exists($arrTag[1], $item)) {
+                if (!\array_key_exists($arrTag[1], $item)) {
                     return false;
                 }
 

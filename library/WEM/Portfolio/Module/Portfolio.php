@@ -1,19 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Module Portfolio for Contao Open Source CMS.
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
  *
- * Copyright (c) 2015-2019 Web ex Machina
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\Portfolio\Module;
 
 use RuntimeException as Exception;
 use WEM\Portfolio\Controller\Item;
-use WEM\Portfolio\Model\ItemAttribute;
 use WEM\Portfolio\Model\Attribute;
+use WEM\Portfolio\Model\ItemAttribute;
 
 /**
  * Handle generic Portfolio functions.
@@ -30,103 +34,11 @@ abstract class Portfolio extends \Module
     public function generate()
     {
         $bundles = \System::getContainer()->getParameter('kernel.bundles');
-        if (array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
+        if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
             $this->hasI18nl10n = true;
         }
 
         return parent::generate();
-    }
-
-    /**
-     * Retrieve module filters.
-     *
-     * @return [Array] [Attributes available]
-     */
-    protected function getAvailableFilters()
-    {
-        try {
-            $arrFilters = [];
-
-            foreach (unserialize($this->wem_portfolio_filters) as $id) {
-                $attribute = Attribute::findByPk($id);
-
-                if (!$attribute) {
-                    continue;
-                }
-
-                // i18nl10n compatibility : if the current attribute isn't in the current language, try to find the translation
-                // Else, skip
-                if ($this->hasI18nl10n && $GLOBALS['TL_LANGUAGE'] != $attribute->i18nl10n_lang) {
-                    $i18nl10nAttribute = Attribute::findItems(['lang' => $GLOBALS['TL_LANGUAGE'], 'i18nl10n_id' => $attribute->i18nl10n_id], 1);
-
-                    if (!$i18nl10nAttribute) {
-                        continue;
-                    }
-
-                    $attribute = $i18nl10nAttribute;
-                }
-
-                // Get the filter options & skip if there is no options available
-                $objItemAttributes = ItemAttribute::findItems(['attribute' => $id]);
-                if (!$objItemAttributes || 0 == $objItemAttributes->count()) {
-                    continue;
-                }
-
-                // Prepare the filter
-                $arrFilters[$attribute->alias] = ['id' => $attribute->id, 'label' => $attribute->title, 'options' => []];
-
-                // Get the options
-                $arrValues = [];
-                while ($objItemAttributes->next()) {
-                    // Skip if we already know this value
-                    if (in_array($objItemAttributes->value, $arrValues)) {
-                        continue;
-                    }
-
-                    // Store the value
-                    $arrValues[] = $objItemAttributes->value;
-
-                    // Format the option
-                    $option = ['value' => $objItemAttributes->value, 'text' => $objItemAttributes->value, 'selected' => 0];
-                    if (\Input::post($attribute->alias) == $objItemAttributes->value || \Input::get($attribute->alias) == $objItemAttributes->value) {
-                        $option['selected'] = 1;
-                    }
-
-                    $arrFilters[$attribute->alias]['options'][] = $option;
-                }
-            }
-
-            return $arrFilters;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Parse multiple items.
-     *
-     * @param array
-     *
-     * @return string
-     */
-    protected function parseItems($arrItems, $strTemplate = 'wem_portfolio_item')
-    {
-        try {
-            $limit = count($arrItems);
-            if ($limit < 1) {
-                return [];
-            }
-
-            $count = 0;
-            $arrElements = [];
-            foreach ($arrItems as $arrItem) {
-                $arrElements[] = $this->parseItem($arrItem, $strTemplate, ((1 == ++$count) ? ' first' : '').(($count == $limit) ? ' last' : '').((0 == ($count % 2)) ? ' odd' : ' even'), $count);
-            }
-
-            return $arrElements;
-        } catch (Exception $e) {
-            throw $e;
-        }
     }
 
     /**
@@ -146,7 +58,7 @@ abstract class Portfolio extends \Module
             /** @var \FrontendTemplate|object $objTemplate */
             $objTemplate = new \FrontendTemplate($strTemplate);
             $objTemplate->setData($arrItem);
-            $objTemplate->class = (('' != $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
+            $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
             $objTemplate->count = $intCount;
 
             // Build the item's link
@@ -171,7 +83,7 @@ abstract class Portfolio extends \Module
             }
 
             // Parse the others images, in a easier way
-            for ($i = 1; $i < count($arrItem['pictures']); ++$i) {
+            for ($i = 1; $i < \count($arrItem['pictures']); ++$i) {
                 $strPath = $arrItem['pictures'][$i]['singleSRC'];
                 if ($size || $arrItem['pictures'][$i]->imgSize) {
                     if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
@@ -199,6 +111,98 @@ abstract class Portfolio extends \Module
             $objTemplate->text = $strContent;
 
             return $objTemplate->parse();
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Retrieve module filters.
+     *
+     * @return [Array] [Attributes available]
+     */
+    protected function getAvailableFilters()
+    {
+        try {
+            $arrFilters = [];
+
+            foreach (unserialize($this->wem_portfolio_filters) as $id) {
+                $attribute = Attribute::findByPk($id);
+
+                if (!$attribute) {
+                    continue;
+                }
+
+                // i18nl10n compatibility : if the current attribute isn't in the current language, try to find the translation
+                // Else, skip
+                if ($this->hasI18nl10n && $GLOBALS['TL_LANGUAGE'] !== $attribute->i18nl10n_lang) {
+                    $i18nl10nAttribute = Attribute::findItems(['lang' => $GLOBALS['TL_LANGUAGE'], 'i18nl10n_id' => $attribute->i18nl10n_id], 1);
+
+                    if (!$i18nl10nAttribute) {
+                        continue;
+                    }
+
+                    $attribute = $i18nl10nAttribute;
+                }
+
+                // Get the filter options & skip if there is no options available
+                $objItemAttributes = ItemAttribute::findItems(['attribute' => $id]);
+                if (!$objItemAttributes || 0 === $objItemAttributes->count()) {
+                    continue;
+                }
+
+                // Prepare the filter
+                $arrFilters[$attribute->alias] = ['id' => $attribute->id, 'label' => $attribute->title, 'options' => []];
+
+                // Get the options
+                $arrValues = [];
+                while ($objItemAttributes->next()) {
+                    // Skip if we already know this value
+                    if (\in_array($objItemAttributes->value, $arrValues, true)) {
+                        continue;
+                    }
+
+                    // Store the value
+                    $arrValues[] = $objItemAttributes->value;
+
+                    // Format the option
+                    $option = ['value' => $objItemAttributes->value, 'text' => $objItemAttributes->value, 'selected' => 0];
+                    if (\Input::post($attribute->alias) === $objItemAttributes->value || \Input::get($attribute->alias) === $objItemAttributes->value) {
+                        $option['selected'] = 1;
+                    }
+
+                    $arrFilters[$attribute->alias]['options'][] = $option;
+                }
+            }
+
+            return $arrFilters;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Parse multiple items.
+     *
+     * @param array
+     *
+     * @return string
+     */
+    protected function parseItems($arrItems, $strTemplate = 'wem_portfolio_item')
+    {
+        try {
+            $limit = \count($arrItems);
+            if ($limit < 1) {
+                return [];
+            }
+
+            $count = 0;
+            $arrElements = [];
+            foreach ($arrItems as $arrItem) {
+                $arrElements[] = $this->parseItem($arrItem, $strTemplate, ((1 === ++$count) ? ' first' : '').(($count === $limit) ? ' last' : '').((0 === ($count % 2)) ? ' odd' : ' even'), $count);
+            }
+
+            return $arrElements;
         } catch (Exception $e) {
             throw $e;
         }

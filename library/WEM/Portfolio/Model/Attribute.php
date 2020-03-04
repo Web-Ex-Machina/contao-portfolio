@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Module Portfolio for Contao Open Source CMS.
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
  *
- * Copyright (c) 2015-2018 Web ex Machina
- *
- * @author Web ex Machina <http://www.webexmachina.fr>
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\Portfolio\Model;
 
-use RuntimeException as Exception;
 use Contao\Model;
+use RuntimeException as Exception;
 
 /**
  * Reads and writes attributes.
@@ -55,9 +59,9 @@ class Attribute extends Model
 
             if (empty($arrColumns)) {
                 return static::findAll($arrOptions);
-            } else {
-                return static::findBy($arrColumns, null, $arrOptions);
             }
+
+            return static::findBy($arrColumns, null, $arrOptions);
         } catch (Exception $e) {
             throw $e;
         }
@@ -78,9 +82,9 @@ class Attribute extends Model
             $arrColumns = static::formatColumns($arrConfig);
             if (empty($arrColumns)) {
                 return static::countAll($arrOptions);
-            } else {
-                return static::countBy($arrColumns, null, $arrOptions);
             }
+
+            return static::countBy($arrColumns, null, $arrOptions);
         } catch (Exception $e) {
             throw $e;
         }

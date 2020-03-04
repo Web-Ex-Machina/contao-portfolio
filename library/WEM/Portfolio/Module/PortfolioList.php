@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Module Portfolio for Contao Open Source CMS.
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
  *
- * Copyright (c) 2015-2019 Web ex Machina
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\Portfolio\Module;
 
-use RuntimeException as Exception;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Patchwork\Utf8;
+use RuntimeException as Exception;
 use WEM\Portfolio\Controller\Item;
 
 /**
@@ -34,7 +38,7 @@ class PortfolioList extends Portfolio
      */
     public function generate()
     {
-        if (TL_MODE == 'BE') {
+        if (TL_MODE === 'BE') {
             /** @var BackendTemplate|object $objTemplate */
             $objTemplate = new \BackendTemplate('be_wildcard');
 
@@ -58,11 +62,11 @@ class PortfolioList extends Portfolio
     /**
      * Generate the module.
      */
-    protected function compile()
+    protected function compile(): void
     {
         try {
             $limit = null;
-            $offset = intval($this->skipFirst);
+            $offset = (int) ($this->skipFirst);
             $arrOptions = [];
             $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
@@ -86,7 +90,7 @@ class PortfolioList extends Portfolio
             $arrConfig['category'] = $objPage->id;
 
             // If i18nl10n bundle is active, add the current language as filter
-            if (array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
+            if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
                 $arrConfig['lang'] = $GLOBALS['TL_LANGUAGE'];
             }
 
@@ -129,7 +133,7 @@ class PortfolioList extends Portfolio
                 // Set limit and offset
                 $limit = $this->perPage;
                 $offset += (max($page, 1) - 1) * $this->perPage;
-                $skip = intval($this->skipFirst);
+                $skip = (int) ($this->skipFirst);
 
                 // Overall limit
                 if ($offset + $limit > $total + $skip) {
@@ -157,7 +161,8 @@ class PortfolioList extends Portfolio
                 $arrResponse = ['status' => 'success', 'items' => $arrItems, 'rt' => $this->Template->rt];
                 echo json_encode($arrResponse);
                 die;
-            } elseif (null !== $arrItems) {
+            }
+            if (null !== $arrItems) {
                 $this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_template);
             }
 
@@ -169,11 +174,10 @@ class PortfolioList extends Portfolio
                 $arrResponse = ['status' => 'error', 'error' => $e->getMessage(), 'trace' => $e->getTrace()];
                 echo json_encode($arrResponse);
                 die;
-            } else {
-                $this->Template->error = true;
-                $this->Template->message = $e->getMessage();
-                $this->Template->trace = $e->getTrace();
             }
+            $this->Template->error = true;
+            $this->Template->message = $e->getMessage();
+            $this->Template->trace = $e->getTrace();
         }
     }
 }

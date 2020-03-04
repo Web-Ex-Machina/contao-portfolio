@@ -1,33 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Module Portfolio for Contao Open Source CMS
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
  *
- * Copyright (c) 2015-2019 Web ex Machina
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\Portfolio\Controller;
 
-use \RuntimeException as Exception;
-
+use RuntimeException as Exception;
 use WEM\Portfolio\Model\Attribute as AttributeModel;
 
 /**
- * Class Attribute - Handle Portfolio ItemAttributes functions
+ * Class Attribute - Handle Portfolio ItemAttributes functions.
  */
 class Attribute extends \Controller
 {
     /**
-     * Get Attributes
-     * @param  [Array]   $arrConfig  [Configuration wanted for the list]
-     * @param  [Integer] $intLimit   [Query Limit]
-     * @param  [Integer] $intOffset  [Query Offset]
-     * @param  [Array]   $arrOptions [Query Options]
-     * @return [Array]               [Items list as Array]
+     * Get Attributes.
+     *
+     * @param [Array]   $arrConfig  [Configuration wanted for the list]
+     * @param [Integer] $intLimit   [Query Limit]
+     * @param [Integer] $intOffset  [Query Offset]
+     * @param [Array]   $arrOptions [Query Options]
+     *
+     * @return [Array] [Items list as Array]
      */
-    public static function getItems($arrConfig, $intLimit = 0, $intOffset = 0, $arrOptions = array())
+    public static function getItems($arrConfig, $intLimit = 0, $intOffset = 0, $arrOptions = [])
     {
         try {
             $objItems = AttributeModel::findItems($arrConfig, $intLimit, $intOffset, $arrOptions);
@@ -36,10 +41,10 @@ class Attribute extends \Controller
                 return;
             }
 
-            $arrItems = array();
+            $arrItems = [];
 
             while ($objItems->next()) {
-                $arrItems[] = static::getItem($objItems->row(), $arrConfig["getItem"]);
+                $arrItems[] = static::getItem($objItems->row(), $arrConfig['getItem']);
             }
 
             return $arrItems;
@@ -49,15 +54,17 @@ class Attribute extends \Controller
     }
 
     /**
-     * Get Attribute
-     * @param  [Mixed] $varItem   [ItemAttribute ID, Alias, Array or Object]
-     * @param  [Array] $arrConfig [ItemAttribute configuration]
-     * @return [Array]            [ItemAttribute data]
+     * Get Attribute.
+     *
+     * @param [Mixed] $varItem   [ItemAttribute ID, Alias, Array or Object]
+     * @param [Array] $arrConfig [ItemAttribute configuration]
+     *
+     * @return [Array] [ItemAttribute data]
      */
-    public static function getItem($varItem, $arrConfig = array())
+    public static function getItem($varItem, $arrConfig = [])
     {
         try {
-            if (is_array($varItem)) {
+            if (\is_array($varItem)) {
                 $arrItem = $varItem;
             } elseif ($varItem instanceof AttributeModel || $varItem = AttributeModel::findByPk($varItem)) {
                 $arrItem = $varItem->row();
@@ -72,12 +79,14 @@ class Attribute extends \Controller
     }
 
     /**
-     * Count Attributes
-     * @param  [Array]   $arrConfig  [Configuration wanted for the count]
-     * @param  [Array]   $arrOptions [Query Options]
-     * @return [Integer]             [Number of items]
+     * Count Attributes.
+     *
+     * @param [Array] $arrConfig  [Configuration wanted for the count]
+     * @param [Array] $arrOptions [Query Options]
+     *
+     * @return [Integer] [Number of items]
      */
-    public static function countItems($arrConfig, $arrOptions = array())
+    public static function countItems($arrConfig, $arrOptions = [])
     {
         try {
             return AttributeModel::countItems($arrConfig, $arrOptions);

@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Module Portfolio for Contao Open Source CMS.
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
  *
- * Copyright (c) 2015-2018 Web ex Machina
- *
- * @author Web ex Machina <http://www.webexmachina.fr>
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\Portfolio\Module;
@@ -37,7 +41,7 @@ class PortfolioReader extends Portfolio
      */
     public function generate()
     {
-        if (TL_MODE == 'BE') {
+        if (TL_MODE === 'BE') {
             /** @var BackendTemplate|object $objTemplate */
             $objTemplate = new \BackendTemplate('be_wildcard');
 
@@ -72,7 +76,7 @@ class PortfolioReader extends Portfolio
     /**
      * Generate the module.
      */
-    protected function compile()
+    protected function compile(): void
     {
         /* @var PageModel $objPage */
         global $objPage;
@@ -93,12 +97,12 @@ class PortfolioReader extends Portfolio
         $this->Template->articles = $this->parseItem($arrItem, $this->wem_portfolio_template);
 
         // Overwrite the page title (see #2853 and #4955)
-        if ('' != $arrItem['title']) {
+        if ('' !== $arrItem['title']) {
             $objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($arrItem['title']));
         }
 
         // Overwrite the page description
-        if ('' != $arrItem['teaser']) {
+        if ('' !== $arrItem['teaser']) {
             $objPage->description = $this->prepareMetaDescription($arrItem['teaser']);
         }
     }

@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Module Portfolio for Contao Open Source CMS
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
  *
- * Copyright (c) 2015-2019 Web ex Machina
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 // Dynamically add the permission check and parent table
-if (Input::get('do') == 'wem_portfolio_item') {
+if ('wem_portfolio_item' === Input::get('do')) {
     $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_wem_portfolio_item';
 }

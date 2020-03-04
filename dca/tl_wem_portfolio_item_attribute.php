@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Module Portfolio for Contao Open Source CMS.
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2020 Web ex Machina
  *
- * Copyright (c) 2015-2018 Web ex Machina
- *
- * @author Web ex Machina <http://www.webexmachina.fr>
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 /**
@@ -121,7 +125,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
 
 // Handle i18nl10n compatibility
 $bundles = \System::getContainer()->getParameter('kernel.bundles');
-if (array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
+if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
     $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute']['fields']['attribute']['options_callback'] = ['tl_wem_portfolio_item_attribute', 'getOptionsByLanguage'];
 }
 
@@ -165,7 +169,7 @@ class tl_wem_portfolio_item_attribute extends Backend
         $objItem = \WEM\Portfolio\Model\Item::findByPk($dc->activeRecord->pid);
         $objAttributes = \WEM\Portfolio\Model\Attribute::findItems(['lang' => $objItem->i18nl10n_lang], 0, 0, ['title ASC']);
 
-        if (!$objAttributes || 0 == $objAttributes->count()) {
+        if (!$objAttributes || 0 === $objAttributes->count()) {
             return [];
         }
 
