@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Module Portfolio for Contao Open Source CMS
+ * Module Portfolio for Contao Open Source CMS.
  *
  * Copyright (c) 2015-2018 Web ex Machina
  *
@@ -10,29 +10,28 @@
 
 namespace WEM\Portfolio\Module;
 
-use \RuntimeException as Exception;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Patchwork\Utf8;
-
 use WEM\Portfolio\Controller\Item;
 
 /**
  * Front end module "portfolio reader".
  *
- * @property array  $portfolio_categories
+ * @property array $portfolio_categories
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
 class PortfolioReader extends Portfolio
 {
     /**
-     * Template
+     * Template.
+     *
      * @var string
      */
     protected $strTemplate = 'mod_wem_portfolio_reader';
 
     /**
-     * Display a wildcard in the back end
+     * Display a wildcard in the back end.
      *
      * @return string
      */
@@ -42,11 +41,11 @@ class PortfolioReader extends Portfolio
             /** @var BackendTemplate|object $objTemplate */
             $objTemplate = new \BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_reader'][0]) . ' ###';
+            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_reader'][0]).' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
         }
@@ -58,7 +57,7 @@ class PortfolioReader extends Portfolio
 
         // Do not index or cache the page if no news item has been specified
         if (!\Input::get('items')) {
-            /** @var PageModel $objPage */
+            /* @var PageModel $objPage */
             global $objPage;
 
             $objPage->noSearch = 1;
@@ -71,11 +70,11 @@ class PortfolioReader extends Portfolio
     }
 
     /**
-     * Generate the module
+     * Generate the module.
      */
     protected function compile()
     {
-        /** @var PageModel $objPage */
+        /* @var PageModel $objPage */
         global $objPage;
 
         $this->Template->articles = '';
@@ -88,18 +87,18 @@ class PortfolioReader extends Portfolio
         $arrItem = Item::getItem(\Input::get('items'), $arrConfig);
 
         if (null === $arrItem) {
-            throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
+            throw new PageNotFoundException('Page not found: '.\Environment::get('uri'));
         }
 
         $this->Template->articles = $this->parseItem($arrItem, $this->wem_portfolio_template);
 
         // Overwrite the page title (see #2853 and #4955)
-        if ($arrItem['title'] != '') {
+        if ('' != $arrItem['title']) {
             $objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($arrItem['title']));
         }
 
         // Overwrite the page description
-        if ($arrItem['teaser'] != '') {
+        if ('' != $arrItem['teaser']) {
             $objPage->description = $this->prepareMetaDescription($arrItem['teaser']);
         }
     }

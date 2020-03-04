@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Module Portfolio for Contao Open Source CMS
+ * Module Portfolio for Contao Open Source CMS.
  *
  * Copyright (c) 2015-2019 Web ex Machina
  *
@@ -10,29 +10,32 @@
 
 namespace WEM\Portfolio\Model;
 
-use \RuntimeException as Exception;
+use RuntimeException as Exception;
 use Contao\Model;
 
 /**
- * Reads and writes item attributes
+ * Reads and writes item attributes.
  */
 class ItemAttribute extends Model
 {
     /**
-     * Table name
+     * Table name.
+     *
      * @var string
      */
     protected static $strTable = 'tl_wem_portfolio_item_attribute';
 
     /**
-     * Find item attributes, depends on the arguments
-     * @param Array
-     * @param Int
-     * @param Int
-     * @param Array
+     * Find item attributes, depends on the arguments.
+     *
+     * @param array
+     * @param int
+     * @param int
+     * @param array
+     *
      * @return Collection
      */
-    public static function findItems($arrConfig = array(), $intLimit = 0, $intOffset = 0, array $arrOptions = array())
+    public static function findItems($arrConfig = [], $intLimit = 0, $intOffset = 0, array $arrOptions = [])
     {
         try {
             $t = static::$strTable;
@@ -50,50 +53,70 @@ class ItemAttribute extends Model
                 $arrOptions['order'] = "$t.attribute ASC";
             }
 
-            return static::findBy($arrColumns, null, $arrOptions);
+            if (empty($arrColumns)) {
+                return static::findAll($arrOptions);
+            } else {
+                return static::findBy($arrColumns, null, $arrOptions);
+            }
         } catch (Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Count item attributes, depends on the arguments
-     * @param Array
-     * @param Array
-     * @return Integer
+     * Count item attributes, depends on the arguments.
+     *
+     * @param array
+     * @param array
+     *
+     * @return int
      */
-    public static function countItems($arrConfig = array(), array $arrOptions = array())
+    public static function countItems($arrConfig = [], array $arrOptions = [])
     {
         try {
             $t = static::$strTable;
             $arrColumns = static::formatColumns($arrConfig);
-            return static::countBy($arrColumns, null, $arrOptions);
+            if (empty($arrColumns)) {
+                return static::countAll($arrOptions);
+            } else {
+                return static::countBy($arrColumns, null, $arrOptions);
+            }
         } catch (Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Format ItemAttributeModel columns
-     * @param  [Array] $arrConfig [Configuration to format]
-     * @return [Array]            [The Model columns]
+     * Format ItemAttributeModel columns.
+     *
+     * @param [Array] $arrConfig [Configuration to format]
+     *
+     * @return [Array] [The Model columns]
      */
     public static function formatColumns($arrConfig)
     {
         try {
             $t = static::$strTable;
-            $arrColumns = array();
+            $arrColumns = [];
 
-            if ($arrConfig["pid"]) {
-                $arrColumns[] = "$t.pid = ". $arrConfig["pid"];
+            if ($arrConfig['pid']) {
+                $arrColumns[] = "$t.pid = ".$arrConfig['pid'];
             }
 
-            if ($arrConfig["attribute"]) {
-                $arrColumns[] = "$t.attribute = ". $arrConfig["attribute"];
+            if ($arrConfig['attribute']) {
+                $arrColumns[] = "$t.attribute = ".$arrConfig['attribute'];
             }
 
-            if ($arrConfig["not"]) {
-                $arrColumns[] = $arrConfig["not"];
+            if (1 === $arrConfig['displayInFrontend']) {
+                ++$i;
+                $arrColumns[] = "$t.attribute IN(SELECT t".$i.'.id FROM tl_wem_portfolio_attribute AS t'.$i.' WHERE t'.$i.".displayInFrontend = '1')";
+            } elseif (0 === $arrConfig['displayInFrontend']) {
+                ++$i;
+                $arrColumns[] = "$t.attribute IN(SELECT t".$i.'.id FROM tl_wem_portfolio_attribute AS t'.$i.' WHERE t'.$i.".displayInFrontend = '')";
+            }
+
+            if ($arrConfig['not']) {
+                $arrColumns[] = $arrConfig['not'];
             }
 
             return $arrColumns;

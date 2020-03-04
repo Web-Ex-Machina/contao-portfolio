@@ -25,13 +25,13 @@
         <source>Enter a date for this item</source>
         <target>Saisissez une date pour cet élément</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.category.0">
-        <source>Category</source>
-        <target>Catégorie</target>
+      <trans-unit id="tl_wem_portfolio_item.categories.0">
+        <source>Categories</source>
+        <target>Catégories</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.category.1">
-        <source>Select the item's category</source>
-        <target>Sélectionnez la catégorie de l'élément</target>
+      <trans-unit id="tl_wem_portfolio_item.categories.1">
+        <source>Select the item's categories</source>
+        <target>Sélectionnez les catégories de l'élément</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.pictures.0">
@@ -61,6 +61,23 @@
         <target>Saisissez les attributs de l'élément</target>
       </trans-unit>
 
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_lang.0">
+        <source>Language</source>
+        <target>Langue</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_lang.1">
+        <source>Select the item language</source>
+        <target>Sélectionnez le langage de cet élément</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_id.0">
+        <source>Associated items</source>
+        <target>Éléments associés</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_id.1">
+        <source>Select the items associated to this item</source>
+        <target>Sélectionnez les éléments associés à cet élément</target>
+      </trans-unit>
+
       <trans-unit id="tl_wem_portfolio_item.published.0">
         <source>Publish item</source>
         <target>Publier l'élément</target>
@@ -84,6 +101,27 @@
       <trans-unit id="tl_wem_portfolio_item.stop.1">
         <source>Do not show the item on the website on and after this day.</source>
         <target>Ne plus afficher l'élément sur le site après ce jour.</target>
+      </trans-unit>
+
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_lang.0">
+        <source>Language</source>
+        <target>Langue</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_lang.1">
+        <source>Select the item language</source>
+        <target>Sélectionnez le langage de cet élément</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_id.0">
+        <source>Associated items</source>
+        <target>Éléments associés</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_id.1">
+        <source>Select the items associated to this item</source>
+        <target>Sélectionnez les éléments associés à cet élément</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_item.i18nl10n_legend">
+        <source>Language &amp; Translations</source>
+        <target>Langue &amp; Traductions</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.created_on.0">

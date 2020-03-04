@@ -115,12 +115,19 @@ class Item extends \Controller
             }
 
             // Get the item category
-            if ($arrConfig["getCategory"]) {
-                $arrItem['category'] = \PageModel::findByPk($arrItem['category']);
+            if ($arrConfig["getCategories"]) {
+                $arrCategories = unserialize($arrItem["categories"]);
+                if ($arrCategories && is_array($arrCategories) && !empty($arrCategories)) {
+                    $arrItem['categories'] = [];
+                    foreach ($arrCategories as $c) {
+                        $arrItem['categories'][] = \PageModel::findByPk($c);
+                    }
+                }
             }
 
             // Get the item attributes
             $arrConfig["itemAttributes"]["pid"] = $arrItem['id'];
+            $arrConfig["itemAttributes"]["displayInFrontend"] = 1;
             if ($attributes = ItemAttribute::getItems($arrConfig["itemAttributes"])) {
                 $arrItem["attributes"] = [];
                 foreach ($attributes as $attribute) {
@@ -147,5 +154,42 @@ class Item extends \Controller
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Adjusts the way Portfolio items URLs are generated
+     * (useful for i18nl10n plugin)
+     *
+     * @param Array $item | Item sent by module
+     *
+     * @return Array
+     */
+    public function getFrontendUrl($item)
+    {
+        $objCurrentItem = ItemModel::findByIdOrAlias(\Input::get('auto_item'));
+
+        if (!$objCurrentItem) {
+            return $item;
+        }
+
+        $objItem = ItemModel::findItems(["i18nl10n_id"=>$objCurrentItem->i18nl10n_id, "lang"=>$item["language"]], 1);
+        global $objPage;
+        
+        // If no equivalent item, return nothing to hide the change language module
+        if (!$objItem) {
+            return [];
+        }
+
+        return array(
+            'id'               => empty($row['id']) ? $objPage->id : $row['id'],
+            'alias'            => $item['alias']."/".$row['alias'],
+            'title'            => empty($row['title']) ? $objPage->title : $row['title'],
+            'pageTitle'        => empty($row['pageTitle'])
+                ? $objPage->pageTitle
+                : $row['pageTitle'],
+            'language'         => $item["language"],
+            'isActive'         => $item["language"] === $GLOBALS['TL_LANGUAGE'],
+            'forceRowLanguage' => true
+        );
     }
 }

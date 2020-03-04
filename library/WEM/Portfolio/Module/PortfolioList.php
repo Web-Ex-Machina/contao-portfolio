@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Module Portfolio for Contao Open Source CMS
+ * Module Portfolio for Contao Open Source CMS.
  *
  * Copyright (c) 2015-2019 Web ex Machina
  *
@@ -10,10 +10,9 @@
 
 namespace WEM\Portfolio\Module;
 
-use \RuntimeException as Exception;
+use RuntimeException as Exception;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Patchwork\Utf8;
-
 use WEM\Portfolio\Controller\Item;
 
 /**
@@ -22,13 +21,14 @@ use WEM\Portfolio\Controller\Item;
 class PortfolioList extends Portfolio
 {
     /**
-     * Template
+     * Template.
+     *
      * @var string
      */
     protected $strTemplate = 'mod_wem_portfolio_list';
 
     /**
-     * Display a wildcard in the back end
+     * Display a wildcard in the back end.
      *
      * @return string
      */
@@ -38,11 +38,11 @@ class PortfolioList extends Portfolio
             /** @var BackendTemplate|object $objTemplate */
             $objTemplate = new \BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_list'][0]) . ' ###';
+            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_list'][0]).' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
         }
@@ -56,14 +56,15 @@ class PortfolioList extends Portfolio
     }
 
     /**
-     * Generate the module
+     * Generate the module.
      */
     protected function compile()
     {
         try {
             $limit = null;
             $offset = intval($this->skipFirst);
-            $arrOptions = array();
+            $arrOptions = [];
+            $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
             // Maximum number of items
             if ($this->numberOfItems > 0) {
@@ -75,21 +76,26 @@ class PortfolioList extends Portfolio
                 $this->filters = $this->getAvailableFilters();
             }
 
-            $this->Template->articles = array();
+            $this->Template->articles = [];
             $this->Template->rt = \RequestToken::get();
             $this->Template->request = \Environment::get('request');
             $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
             $this->Template->filterBy = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['filterBy'];
 
             global $objPage;
-            $arrConfig["page"] = $objPage->id;
+            $arrConfig['category'] = $objPage->id;
+
+            // If i18nl10n bundle is active, add the current language as filter
+            if (array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
+                $arrConfig['lang'] = $GLOBALS['TL_LANGUAGE'];
+            }
 
             // Adjust the config
             if ($this->filters) {
                 foreach ($this->filters as $filter) {
                     foreach ($filter['options'] as $option) {
                         if ($option['selected']) {
-                            $arrConfig['attributes'][] = ["attribute"=>$filter['id'], "value"=>$option["value"]];
+                            $arrConfig['attributes'][] = ['attribute' => $filter['id'], 'value' => $option['value']];
                         }
                     }
                 }
@@ -112,12 +118,12 @@ class PortfolioList extends Portfolio
                 }
 
                 // Get the current page
-                $id = 'page_n' . $this->id;
-                $page = (\Input::get($id) !== null) ? \Input::get($id) : 1;
+                $id = 'page_n'.$this->id;
+                $page = (null !== \Input::get($id)) ? \Input::get($id) : 1;
 
                 // Do not index or cache the page if the page number is outside the range
-                if ($page < 1 || $page > max(ceil($total/$this->perPage), 1)) {
-                    throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
+                if ($page < 1 || $page > max(ceil($total / $this->perPage), 1)) {
+                    throw new PageNotFoundException('Page not found: '.\Environment::get('uri'));
                 }
 
                 // Set limit and offset
@@ -147,11 +153,11 @@ class PortfolioList extends Portfolio
             }
 
             // Add the articles
-            if ($arrItems !== null && \Input::post('TL_AJAX')) {
-                $arrResponse = ["status"=>"success", "items"=>$arrItems, "rt"=>$this->Template->rt];
+            if (null !== $arrItems && \Input::post('TL_AJAX')) {
+                $arrResponse = ['status' => 'success', 'items' => $arrItems, 'rt' => $this->Template->rt];
                 echo json_encode($arrResponse);
                 die;
-            } elseif ($arrItems !== null) {
+            } elseif (null !== $arrItems) {
                 $this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_template);
             }
 
@@ -160,7 +166,7 @@ class PortfolioList extends Portfolio
             //dump($arrItems);
         } catch (Exception $e) {
             if (\Input::post('TL_AJAX')) {
-                $arrResponse = ["status"=>"error", "error"=>$e->getMessage(), "trace"=>$e->getTrace()];
+                $arrResponse = ['status' => 'error', 'error' => $e->getMessage(), 'trace' => $e->getTrace()];
                 echo json_encode($arrResponse);
                 die;
             } else {

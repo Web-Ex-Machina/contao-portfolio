@@ -9,6 +9,11 @@
  */
 
 /**
+ * Load Contao 4 Bundles
+ */
+$bundles = \System::getContainer()->getParameter('kernel.bundles');
+
+/**
  * Back end modules
  */
 array_insert(
@@ -17,7 +22,7 @@ array_insert(
     array(
     'wem_portfolio' => array(
         'wem_portfolio_item' => array(
-            'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'),
+            'tables'    => array('tl_wem_portfolio_item', 'tl_wem_portfolio_item_page', 'tl_wem_portfolio_item_attribute', 'tl_content'),
             'icon'      => 'system/modules/wem-portfolio/assets/icon_item.png'
         ),
         'wem_portfolio_attribute' => array(
@@ -56,4 +61,16 @@ array_insert(
  */
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_item"]              = 'WEM\Portfolio\Model\Item';
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_item_attribute"]    = 'WEM\Portfolio\Model\ItemAttribute';
+$GLOBALS['TL_MODELS']["tl_wem_portfolio_item_page"]         = 'WEM\Portfolio\Model\ItemPage';
 $GLOBALS['TL_MODELS']["tl_wem_portfolio_attribute"]         = 'WEM\Portfolio\Model\Attribute';
+
+/**
+ * i18nl10n specific items
+ */
+if (array_key_exists("VerstaerkerI18nl10nBundle", $bundles)) {
+    // Hooks
+    $GLOBALS['TL_HOOKS']['i18nl10nUpdateLanguageSelectionItem'][] = array("WEM\Portfolio\Controller\Item", "getFrontendUrl");
+
+    // Wizards
+    $GLOBALS['BE_FFL']['i18nl10nAssociatedLocationsWizard'] = 'WEM\Portfolio\Widget\I18nl10nAssociatedLocationsWizard';
+}
