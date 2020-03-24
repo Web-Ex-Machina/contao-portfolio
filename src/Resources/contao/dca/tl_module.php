@@ -69,7 +69,7 @@ class tl_module_wem_portfolio extends Backend
      */
     public function getPortfolioFilters()
     {
-        $objAttributes = \WEM\Portfolio\Model\Attribute::findItems(['useAsFilter' => 1]);
+        $objAttributes = \WEM\PortfolioBundle\Model\Attribute::findItems(['useAsFilter' => 1]);
 
         if (!$objAttributes || 0 === $objAttributes->count()) {
             \Message::addInfo($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['noFiltersAvailable']);

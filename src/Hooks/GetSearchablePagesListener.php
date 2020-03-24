@@ -12,9 +12,9 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\Portfolio\Hooks;
+namespace WEM\PortfolioBundle\Hooks;
 
-use WEM\Portfolio\Model\Item as PItemModel;
+use WEM\PortfolioBundle\Model\Item as PItemModel;
 
 class GetSearchablePagesListener
 {

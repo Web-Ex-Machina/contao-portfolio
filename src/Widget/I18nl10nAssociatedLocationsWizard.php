@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\Portfolio\Widget;
+namespace WEM\PortfolioBundle\Widget;
 
 class I18nl10nAssociatedLocationsWizard extends \Widget
 {

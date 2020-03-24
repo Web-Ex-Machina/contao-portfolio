@@ -12,9 +12,9 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\Portfolio\Hooks;
+namespace WEM\PortfolioBundle\Hooks;
 
-use WEM\Portfolio\Controller\Item as PItem;
+use WEM\PortfolioBundle\Controller\Item as PItem;
 
 class ReplaceInsertTagsListener
 {

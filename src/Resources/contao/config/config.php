@@ -54,8 +54,8 @@ array_insert(
     2,
     [
         'wem_portfolio' => [
-            'wem_portfolio_list' => 'WEM\Portfolio\Module\PortfolioList',
-            'wem_portfolio_reader' => 'WEM\Portfolio\Module\PortfolioReader',
+            'wem_portfolio_list' => 'WEM\PortfolioBundle\Module\PortfolioList',
+            'wem_portfolio_reader' => 'WEM\PortfolioBundle\Module\PortfolioReader',
         ],
     ]
 );
@@ -63,24 +63,24 @@ array_insert(
 /*
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\WEM\Portfolio\Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
-$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\Portfolio\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
+$GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\WEM\PortfolioBundle\Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
+$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\PortfolioBundle\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
 
 /*
  * Models
  */
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\Portfolio\Model\Item';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\Portfolio\Model\ItemAttribute';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_page'] = 'WEM\Portfolio\Model\ItemPage';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\Portfolio\Model\Attribute';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\PortfolioBundle\Model\Item';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\PortfolioBundle\Model\ItemAttribute';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_page'] = 'WEM\PortfolioBundle\Model\ItemPage';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\PortfolioBundle\Model\Attribute';
 
 /*
  * i18nl10n specific items
  */
 if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
     // Hooks
-    $GLOBALS['TL_HOOKS']['i18nl10nUpdateLanguageSelectionItem'][] = ["WEM\Portfolio\Controller\Item", 'getFrontendUrl'];
+    $GLOBALS['TL_HOOKS']['i18nl10nUpdateLanguageSelectionItem'][] = ["WEM\PortfolioBundle\Controller\Item", 'getFrontendUrl'];
 
     // Wizards
-    $GLOBALS['BE_FFL']['i18nl10nAssociatedLocationsWizard'] = 'WEM\Portfolio\Widget\I18nl10nAssociatedLocationsWizard';
+    $GLOBALS['BE_FFL']['i18nl10nAssociatedLocationsWizard'] = 'WEM\PortfolioBundle\Widget\I18nl10nAssociatedLocationsWizard';
 }

@@ -166,8 +166,8 @@ class tl_wem_portfolio_item_attribute extends Backend
      */
     public function getOptionsByLanguage($dc)
     {
-        $objItem = \WEM\Portfolio\Model\Item::findByPk($dc->activeRecord->pid);
-        $objAttributes = \WEM\Portfolio\Model\Attribute::findItems(['lang' => $objItem->i18nl10n_lang], 0, 0, ['title ASC']);
+        $objItem = \WEM\PortfolioBundle\Model\Item::findByPk($dc->activeRecord->pid);
+        $objAttributes = \WEM\PortfolioBundle\Model\Attribute::findItems(['lang' => $objItem->i18nl10n_lang], 0, 0, ['title ASC']);
 
         if (!$objAttributes || 0 === $objAttributes->count()) {
             return [];

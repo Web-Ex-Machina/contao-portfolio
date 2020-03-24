@@ -12,11 +12,11 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\Portfolio\Module;
+namespace WEM\PortfolioBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Patchwork\Utf8;
-use WEM\Portfolio\Controller\Item;
+use WEM\PortfolioBundle\Controller\Item;
 
 /**
  * Front end module "portfolio reader".
