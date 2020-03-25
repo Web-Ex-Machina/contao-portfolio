@@ -1,26 +1,31 @@
 ========
 Extension "Portfolio" for Contao Open Source CMS
 ========
+1.3 - 2020-03-25
+- Update structure in SymfonyBundle
+- Update Changelog & Readme
 
-0.1.0 - 2017-11-03
-- Init git repository
+1.2 - 2020-02-06
+- English translation
 
-0.1.1 - 2017-11-06
-- Composer tests
+1.1 - 2019-05-09
+- Syntax update (phpcsfixer)
+- Fixes
 
-0.1.2 - 2017-11-08
-- Add severals fields to extends configuration
-- Start the frontend modules
-
-0.2.0 - 2018-01-06
-- Add generic classes for flexibility purposes
-
-1.0.0 - 2018-01-14
+1.0 - 2018-01-14
 - Handle main porfolio features (list, reader...)
 - Create and attach tags to portfolio items
 - Create attributes and fill values for each items
 - Use the Contao pages as Portfolio categories
 - Attach multiple files to portfolio items and display them in your templates
 
-1.0.1 - 2018-04-19
-- Bugfixes & UX Adjustements
+0.2 - 2018-01-06
+- Add generic classes for flexibility purposes
+
+0.1 - 2017-11-03
+- Init git repository
+- Composer tests
+- Add severals fields to extends configuration
+- Start the frontend modules
+
+

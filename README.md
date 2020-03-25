@@ -14,7 +14,6 @@ Functionnalities
 System requirements
 -------------------
 
- * Contao 3.*
  * Contao 4.* (Manager Edition)
 
 
@@ -22,8 +21,6 @@ Installation
 ------------
 
 Clone the extension from Packagist (Contao Manager)
-or
-Download and paste the folder in system/modules of your Contao Website.
 
 Documentation
 -------------
