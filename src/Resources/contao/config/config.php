@@ -26,12 +26,13 @@ array_insert(
     [
         'wem_portfolio' => [
             'wem_portfolio_item' => [
-                'tables' => ['tl_wem_portfolio_item', 'tl_wem_portfolio_item_page', 'tl_wem_portfolio_item_attribute', 'tl_content'],
-                'icon' => 'system/modules/wem-portfolio/assets/icon_item.png',
+                'tables' => ['tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
             ],
             'wem_portfolio_attribute' => [
                 'tables' => ['tl_wem_portfolio_attribute'],
-                'icon' => 'system/modules/wem-portfolio/assets/icon_tag.png',
+            ],
+            'wem_portfolio_category' => [
+                'tables' => ['tl_wem_portfolio_category', 'tl_wem_portfolio_item_category', 'tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
             ],
         ],
     ]
@@ -39,11 +40,7 @@ array_insert(
 
 // Load icon in Contao 4.2 backend
 if ('BE' === TL_MODE) {
-    if (version_compare(VERSION, '4.4', '<')) {
-        $GLOBALS['TL_CSS'][] = 'system/modules/wem-contao-portfolio/assets/backend.css';
-    } else {
-        $GLOBALS['TL_CSS'][] = 'system/modules/wem-contao-portfolio/assets/backend_svg.css';
-    }
+    $GLOBALS['TL_CSS'][] = 'system/modules/wem-contao-portfolio/assets/backend_svg.css';
 }
 
 /*
@@ -69,10 +66,11 @@ $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\PortfolioBundle\Hooks\Replac
 /*
  * Models
  */
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\PortfolioBundle\Model\Attribute';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_category'] = 'WEM\PortfolioBundle\Model\Category';
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\PortfolioBundle\Model\Item';
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\PortfolioBundle\Model\ItemAttribute';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_page'] = 'WEM\PortfolioBundle\Model\ItemPage';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\PortfolioBundle\Model\Attribute';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\PortfolioBundle\Model\ItemCategory';
 
 /*
  * i18nl10n specific items

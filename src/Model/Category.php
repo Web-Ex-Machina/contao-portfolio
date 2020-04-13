@@ -18,19 +18,19 @@ use Contao\Model;
 use RuntimeException as Exception;
 
 /**
- * Reads and writes item attributes.
+ * Reads and writes items.
  */
-class ItemPage extends Model
+class Category extends Model
 {
     /**
      * Table name.
      *
      * @var string
      */
-    protected static $strTable = 'tl_wem_portfolio_item_page';
+    protected static $strTable = 'tl_wem_portfolio_category';
 
     /**
-     * Find item attributes, depends on the arguments.
+     * Find items, depends on the arguments.
      *
      * @param array
      * @param int
@@ -54,7 +54,7 @@ class ItemPage extends Model
             }
 
             if (!isset($arrOptions['order'])) {
-                $arrOptions['order'] = "$t.page ASC";
+                $arrOptions['order'] = "$t.title ASC";
             }
 
             if (empty($arrColumns)) {
@@ -91,7 +91,7 @@ class ItemPage extends Model
     }
 
     /**
-     * Format ItemAttributeModel columns.
+     * Format ItemModel columns.
      *
      * @param [Array] $arrConfig [Configuration to format]
      *
@@ -101,14 +101,13 @@ class ItemPage extends Model
     {
         try {
             $t = static::$strTable;
-            $arrColumns = [];
 
-            if ($arrConfig['pid']) {
-                $arrColumns[] = "$t.pid = ".$arrConfig['pid'];
+            if ($arrConfig['title']) {
+                $arrColumns[] = "$t.title = '".$arrConfig['title']."'";
             }
 
-            if ($arrConfig['page']) {
-                $arrColumns[] = "$t.page = ".$arrConfig['page'];
+            if ($arrConfig['alias']) {
+                $arrColumns[] = "$t.alias = '".$arrConfig['alias']."'";
             }
 
             if ($arrConfig['not']) {

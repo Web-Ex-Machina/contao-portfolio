@@ -1,6 +1,9 @@
 ========
 Extension "Portfolio" for Contao Open Source CMS
 ========
+2.0 - 2020-04-xx
+- 
+
 1.3 - 2020-03-25
 - Update structure in SymfonyBundle
 - Update Changelog & Readme
@@ -27,5 +30,3 @@ Extension "Portfolio" for Contao Open Source CMS
 - Composer tests
 - Add severals fields to extends configuration
 - Start the frontend modules
-
-
