@@ -17,26 +17,17 @@
         "source":"https://github.com/webexmachina/contao-portfolio"
     },
     "require": {
-        "php": ">=5.5",
+        "php": "^7.1",
         "contao/core-bundle": "~4.4",
-        "terminal42/dcawizard":"2.*"
+        "contao-community-alliance/composer-plugin": "*",
+        "terminal42/dcawizard":"^2.4"
     },
     "autoload":{
-        "psr-0": {
-            "WEM\\": [
-                "library/"
-            ]
-        },
-        "classmap": [""]
-    },
-    "extra": {
-        "contao": {
-            "sources": {
-                "": "system/modules/wem-contao-portfolio"
-            },
-            "runonce": [
-                "system/modules/wem-contao-portfolio/config/runonce.php"
-            ]
+        "psr-4": {
+            "WEM\\PortfolioBundle\\": "src/"
         }
+    },
+    "extra":{
+        "contao-manager-plugin": "WEM\\PortfolioBundle\\ContaoManager\\Plugin"
     }
 }

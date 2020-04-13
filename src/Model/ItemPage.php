@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\Portfolio\Model;
+namespace WEM\PortfolioBundle\Model;
 
 use Contao\Model;
 use RuntimeException as Exception;

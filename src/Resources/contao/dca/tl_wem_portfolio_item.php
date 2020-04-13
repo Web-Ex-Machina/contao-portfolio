@@ -307,7 +307,7 @@ class tl_wem_portfolio_item extends Backend
         if ($varValue) {
             $arrPages = unserialize($varValue);
 
-            $ips = \WEM\Portfolio\Model\ItemPage::findItems(['pid' => $dc->activeRecord->id]);
+            $ips = \WEM\PortfolioBundle\Model\ItemPage::findItems(['pid' => $dc->activeRecord->id]);
 
             if ($ips && 0 < $ips->count()) {
                 while ($ips->next()) {
@@ -318,11 +318,11 @@ class tl_wem_portfolio_item extends Backend
             }
 
             foreach ($arrPages as $p) {
-                $ip = \WEM\Portfolio\Model\ItemPage::findItems(['pid' => $dc->activeRecord->id, 'page' => $p], 1);
+                $ip = \WEM\PortfolioBundle\Model\ItemPage::findItems(['pid' => $dc->activeRecord->id, 'page' => $p], 1);
 
                 // If we did not found an ItemPage, create it
                 if (!$ip) {
-                    $ip = new \WEM\Portfolio\Model\ItemPage();
+                    $ip = new \WEM\PortfolioBundle\Model\ItemPage();
                     $ip->pid = $dc->activeRecord->id;
                     $ip->created_on = time();
                     $ip->page = $p;

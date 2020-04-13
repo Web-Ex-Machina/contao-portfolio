@@ -12,10 +12,10 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\Portfolio\Controller;
+namespace WEM\PortfolioBundle\Controller;
 
 use RuntimeException as Exception;
-use WEM\Portfolio\Model\Attribute as AttributeModel;
+use WEM\PortfolioBundle\Model\Attribute as AttributeModel;
 
 /**
  * Class Attribute - Handle Portfolio ItemAttributes functions.
