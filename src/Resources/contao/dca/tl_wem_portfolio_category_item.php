@@ -53,19 +53,25 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category_item'] = [
             ],
         ],
         'operations' => [
+            'edit' => [
+                'href' => 'act=edit',
+                'icon' => 'edit.svg',
+                'attributes' => 'onclick="Backend.getScrollOffset()"',
+                'button_callback' => ['tl_wem_portfolio_category_item', 'generateEditItemHref'],
+            ],
             'cut' => [
                 'href' => 'act=paste&amp;mode=cut',
                 'icon' => 'cut.svg',
                 'attributes' => 'onclick="Backend.getScrollOffset()"',
             ],
             'delete' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['delete'],
+                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category_item']['delete'],
                 'href' => 'act=delete',
                 'icon' => 'delete.svg',
                 'attributes' => 'onclick="if(!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\'))return false;Backend.getScrollOffset()"',
             ],
             'show' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['show'],
+                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category_item']['show'],
                 'href' => 'act=show',
                 'icon' => 'show.svg',
             ],
@@ -146,5 +152,15 @@ class tl_wem_portfolio_category_item extends Backend
         $objCategoryItem = CategoryItem::findByPk($row['id']);
 
         return sprintf('%s', $objCategoryItem->getRelated('item')->title);
+    }
+
+    public function generateEditItemHref($row, $href, $label, $title, $icon, $attributes) {
+        return sprintf(
+            '<a href="%s" title="%s"%s>%s</a>',
+            str_replace("tl_wem_portfolio_category_item", "tl_wem_portfolio_item", $this->addToUrl($href . '&amp;id=' . $row['item'])),
+            $attributes,
+            Contao\StringUtil::specialchars($title),
+            Contao\Image::getHtml($icon, $label),
+        );
     }
 }
