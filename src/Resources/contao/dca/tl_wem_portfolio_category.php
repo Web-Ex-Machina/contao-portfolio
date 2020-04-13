@@ -21,7 +21,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
     // Config
     'config' => [
         'dataContainer' => 'Table',
-        'ctable' => ['tl_wem_portfolio_item_category'],
+        'ctable' => ['tl_wem_portfolio_category_item'],
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [

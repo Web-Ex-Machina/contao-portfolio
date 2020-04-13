@@ -12,14 +12,16 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-/**
+use WEM\PortfolioBundle\Model\CategoryItem;
+
+/*
  * Table tl_wem_portfolio_item.
  */
 $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
     // Config
     'config' => [
         'dataContainer' => 'Table',
-        'ctable' => ['tl_wem_portfolio_item_page', 'tl_wem_portfolio_item_attribute', 'tl_content'],
+        'ctable' => ['tl_wem_portfolio_item_attribute', 'tl_content'],
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -106,8 +108,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'search' => true,
             'sql' => 'int(10) unsigned NOT NULL auto_increment',
         ],
-        'created_on' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['created_on'],
+        'createdAt' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['createdAt'],
             'default' => time(),
             'flag' => 8,
             'sql' => "int(10) unsigned NOT NULL default '0'",
@@ -148,15 +150,14 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'categories' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['categories'],
-            'exclude' => true,
-            'inputType' => 'pageTree',
-            'foreignKey' => 'tl_page.title',
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['categories'],
+            'inputType' => 'checkbox',
+            'foreignKey' => 'tl_wem_portfolio_category.title',
+            'eval' => ['multiple' => true, 'tl_class' => 'clr'],
+            'sql' => 'blob NULL',
             'save_callback' => [
                 ['tl_wem_portfolio_item', 'saveCategories'],
             ],
-            'eval' => ['multiple' => true, 'fieldType' => 'checkbox', 'tl_class' => 'w50'],
-            'sql' => 'blob NULL',
             'relation' => ['type' => 'hasMany', 'load' => 'lazy'],
         ],
         'pictures' => [
@@ -295,7 +296,7 @@ class tl_wem_portfolio_item extends Backend
 
     /**
      * Save item categories in the child table
-     * ip stands for ItemPage.
+     * ci stands for CategoryItem.
      *
      * @param [Mixed] $varValue [Item value]
      * @param [Array] $dc       [Datacontainer]
@@ -305,31 +306,36 @@ class tl_wem_portfolio_item extends Backend
     public function saveCategories($varValue, $dc)
     {
         if ($varValue) {
-            $arrPages = unserialize($varValue);
+            $arrCategories = unserialize($varValue);
+            $objCategoryItems = CategoryItem::findItems(['item' => $dc->activeRecord->id]);
 
-            $ips = \WEM\PortfolioBundle\Model\ItemPage::findItems(['pid' => $dc->activeRecord->id]);
-
-            if ($ips && 0 < $ips->count()) {
-                while ($ips->next()) {
-                    if (!\in_array($ips->page, $arrPages, true)) {
-                        $ips->delete();
+            if ($objCategoryItems && 0 < $objCategoryItems->count()) {
+                while ($objCategoryItems->next()) {
+                    if (!\in_array($objCategoryItems->pid, $arrCategories, true)) {
+                        $objCategoryItems->delete();
                     }
                 }
             }
 
-            foreach ($arrPages as $p) {
-                $ip = \WEM\PortfolioBundle\Model\ItemPage::findItems(['pid' => $dc->activeRecord->id, 'page' => $p], 1);
+            $lastSorting = CategoryItem::findItems(['pid' => $c], 1);
+            $intSorting = $lastSorting->sorting ?: 0;
 
-                // If we did not found an ItemPage, create it
-                if (!$ip) {
-                    $ip = new \WEM\PortfolioBundle\Model\ItemPage();
-                    $ip->pid = $dc->activeRecord->id;
-                    $ip->created_on = time();
-                    $ip->page = $p;
+            foreach ($arrCategories as $c) {
+                $ci = CategoryItem::findItems(['item' => $dc->activeRecord->id, 'pid' => $c], 1);
+
+                // If we did not found an CategoryItem, create it
+                if (!$ci) {
+                    $intSorting += 256;
+
+                    $ci = new CategoryItem();
+                    $ci->createdAt = time();
+                    $ci->sorting = $intSorting;
+                    $ci->pid = $c;
+                    $ci->item = $dc->activeRecord->id;
                 }
 
-                $ip->tstamp = time();
-                $ip->save();
+                $ci->tstamp = time();
+                $ci->save();
             }
         }
 
@@ -351,11 +357,6 @@ class tl_wem_portfolio_item extends Backend
         if ('' === $varValue) {
             $autoAlias = true;
             $slugOptions = [];
-
-            // Read the slug options from the associated page
-            if (null !== ($objPage = PageModel::findWithDetails($dc->activeRecord->pages))) {
-                $slugOptions = $objPage->getSlugOptions();
-            }
 
             $varValue = System::getContainer()->get('contao.slug.generator')->generate(StringUtil::prepareSlug($dc->activeRecord->title), $slugOptions);
 
