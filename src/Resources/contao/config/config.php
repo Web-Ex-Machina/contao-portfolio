@@ -40,7 +40,7 @@ array_insert(
 
 // Load icon in Contao 4.2 backend
 if ('BE' === TL_MODE) {
-    $GLOBALS['TL_CSS'][] = 'system/modules/wem-contao-portfolio/assets/backend_svg.css';
+    $GLOBALS['TL_CSS'][] = 'bundles/wemportfolio/backend_svg.css';
 }
 
 /*
