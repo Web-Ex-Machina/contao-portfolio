@@ -143,7 +143,7 @@ class tl_wem_portfolio_category_item extends Backend
      */
     public function listItems($row)
     {
-        $objItemCategory = CategoryItem::findByPk($row['id']);
+        $objCategoryItem = CategoryItem::findByPk($row['id']);
 
         return sprintf('%s', $objCategoryItem->getRelated('item')->title);
     }

@@ -76,6 +76,11 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
                 'href' => 'act=show',
                 'icon' => 'show.svg',
             ],
+            'items' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'],
+                'href' => 'table=tl_wem_portfolio_category_item',
+                'icon' => 'bundles/wemportfolio/portfolio_16.png',
+            ],
         ],
     ],
 
