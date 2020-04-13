@@ -20,14 +20,14 @@ use RuntimeException as Exception;
 /**
  * Reads and writes items.
  */
-class ItemCategory extends Model
+class CategoryItem extends Model
 {
     /**
      * Table name.
      *
      * @var string
      */
-    protected static $strTable = 'tl_wem_portfolio_item_category';
+    protected static $strTable = 'tl_wem_portfolio_category_item';
 
     /**
      * Find items, depends on the arguments.
@@ -102,8 +102,8 @@ class ItemCategory extends Model
         try {
             $t = static::$strTable;
 
-            if ($arrConfig['category']) {
-                $arrColumns[] = "$t.category = ".$arrConfig['category'];
+            if ($arrConfig['pid']) {
+                $arrColumns[] = "$t.pid = ".$arrConfig['pid'];
             }
 
             if ($arrConfig['item']) {

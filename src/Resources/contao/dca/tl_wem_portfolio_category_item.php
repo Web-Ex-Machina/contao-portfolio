@@ -12,21 +12,22 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-use WEM\PortfolioBundle\Model\ItemCategory;
+use WEM\PortfolioBundle\Model\CategoryItem;
 
 /*
- * Table tl_wem_portfolio_item_category.
+ * Table tl_wem_portfolio_category_item.
  */
-$GLOBALS['TL_DCA']['tl_wem_portfolio_item_category'] = [
+$GLOBALS['TL_DCA']['tl_wem_portfolio_category_item'] = [
     // Config
     'config' => [
         'dataContainer' => 'Table',
+        'ptable' => 'tl_wem_portfolio_category',
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
             'keys' => [
                 'id' => 'primary',
-                'category' => 'index',
+                'pid' => 'index',
                 'item' => 'index',
             ],
         ],
@@ -37,9 +38,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_category'] = [
         'sorting' => [
             'mode' => 4,
             'fields' => ['sorting'],
-            'headerFields' => ['title', 'pid', 'tstamp', 'createdAt'],
+            'headerFields' => ['title', 'createdAt'],
             'panelLayout' => 'filter;search,limit',
-            'child_record_callback' => ['tl_wem_portfolio_item_category', 'listItemAttributes'],
+            'child_record_callback' => ['tl_wem_portfolio_category_item', 'listItems'],
             'child_record_class' => 'no_padding',
             'disableGrouping' => true,
         ],
@@ -79,8 +80,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_category'] = [
     // Fields
     'fields' => [
         'id' => [
-            'label' => ['ID'],
-            'search' => true,
             'sql' => 'int(10) unsigned NOT NULL auto_increment',
         ],
         'createdAt' => [
@@ -95,7 +94,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_category'] = [
         ],
 
         'pid' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['pid'],
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category_item']['pid'],
             'exclude' => true,
             'filter' => true,
             'flag' => 11,
@@ -106,7 +105,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_category'] = [
             'relation' => ['type' => 'hasOne', 'load' => 'eager'],
         ],
         'item' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['item'],
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category_item']['item'],
             'exclude' => true,
             'filter' => true,
             'flag' => 11,
@@ -124,7 +123,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_category'] = [
  *
  * @author Web ex Machina <contact@webexmachina.fr>
  */
-class tl_wem_portfolio_item_category extends Backend
+class tl_wem_portfolio_category_item extends Backend
 {
     /**
      * Import the back end user object.
@@ -142,10 +141,10 @@ class tl_wem_portfolio_item_category extends Backend
      *
      * @return [String]
      */
-    public function listItemCategories($row)
+    public function listItems($row)
     {
-        $objItemCategory = ItemCategory::findByPk($row['id']);
+        $objItemCategory = CategoryItem::findByPk($row['id']);
 
-        return sprintf('%s', $objItemCategory->getRelated('item')->title);
+        return sprintf('%s', $objCategoryItem->getRelated('item')->title);
     }
 }

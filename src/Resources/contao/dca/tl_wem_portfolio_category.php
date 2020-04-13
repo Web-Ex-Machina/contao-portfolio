@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-use WEM\PortfolioBundle\Model\ItemCategory;
+use WEM\PortfolioBundle\Model\CategoryItem;
 
 /*
  * Table tl_wem_portfolio_category.
@@ -21,7 +21,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
     // Config
     'config' => [
         'dataContainer' => 'Table',
-        'ctable' => ['tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
+        'ctable' => ['tl_wem_portfolio_item_category'],
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -123,7 +123,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
         ],
 
         'picture' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['pictures'],
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['picture'],
             'exclude' => true,
             'inputType' => 'fileTree',
             'eval' => ['files' => true, 'extensions' => Config::get('validImageTypes'), 'fieldType' => 'radio'],
@@ -179,7 +179,7 @@ class tl_wem_portfolio_category extends Backend
      */
     public function addItems($row, $label, DataContainer $dc = null, $imageAttribute = '', $blnReturnImage = false, $blnProtected = false)
     {
-        $intItems = ItemCategory::countItems(['category' => $row['id']]);
+        $intItems = CategoryItem::countItems(['pid' => $row['id']]);
         return $label . sprintf(' (%s items)', $intItems);
     }
 

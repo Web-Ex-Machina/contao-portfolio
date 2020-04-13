@@ -32,7 +32,7 @@ array_insert(
                 'tables' => ['tl_wem_portfolio_attribute'],
             ],
             'wem_portfolio_category' => [
-                'tables' => ['tl_wem_portfolio_category', 'tl_wem_portfolio_item_category', 'tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
+                'tables' => ['tl_wem_portfolio_category', 'tl_wem_portfolio_category_item', 'tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
             ],
         ],
     ]
@@ -68,9 +68,9 @@ $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\PortfolioBundle\Hooks\Replac
  */
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\PortfolioBundle\Model\Attribute';
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_category'] = 'WEM\PortfolioBundle\Model\Category';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_category_item'] = 'WEM\PortfolioBundle\Model\CategoryItem';
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\PortfolioBundle\Model\Item';
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\PortfolioBundle\Model\ItemAttribute';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\PortfolioBundle\Model\ItemCategory';
 
 /*
  * i18nl10n specific items
