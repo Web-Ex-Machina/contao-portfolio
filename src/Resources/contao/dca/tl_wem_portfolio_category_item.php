@@ -54,12 +54,14 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category_item'] = [
         ],
         'operations' => [
             'edit' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category_item']['edit'],
                 'href' => 'act=edit',
                 'icon' => 'edit.svg',
                 'attributes' => 'onclick="Backend.getScrollOffset()"',
                 'button_callback' => ['tl_wem_portfolio_category_item', 'generateEditItemHref'],
             ],
             'cut' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category_item']['cut'],
                 'href' => 'act=paste&amp;mode=cut',
                 'icon' => 'cut.svg',
                 'attributes' => 'onclick="Backend.getScrollOffset()"',
@@ -89,7 +91,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category_item'] = [
             'sql' => 'int(10) unsigned NOT NULL auto_increment',
         ],
         'createdAt' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category_item']['createdAt'],
             'default' => time(),
+            'flag' => 5,
+            'eval' => ['rgxp'=>'datim'],
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [

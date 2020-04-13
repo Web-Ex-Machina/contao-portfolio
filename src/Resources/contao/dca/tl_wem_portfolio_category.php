@@ -99,7 +99,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
             'sql' => 'int(10) unsigned NOT NULL auto_increment',
         ],
         'createdAt' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['createdAt'],
             'default' => time(),
+            'flag' => 5,
+            'eval' => ['rgxp'=>'datim'],
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [

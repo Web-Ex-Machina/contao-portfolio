@@ -124,11 +124,11 @@
         <target>Langue &amp; Traductions</target>
       </trans-unit>
 
-      <trans-unit id="tl_wem_portfolio_item.created_on.0">
+      <trans-unit id="tl_wem_portfolio_item.createdAt.0">
         <source>Created on</source>
         <target>Créé le</target>
       </trans-unit>
-      <trans-unit id="tl_wem_portfolio_item.created_on.1">
+      <trans-unit id="tl_wem_portfolio_item.createdAt.1">
         <source>Enter the date when the item has been created.</source>
         <target>Saisissez la date à laquelle le contenu a été créé.</target>
       </trans-unit>
