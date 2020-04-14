@@ -49,8 +49,8 @@
         <target>Attributs</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_category.attributes.1">
-        <source>Select the category attributes (Leave empty to allow everything)</source>
-        <target>Sélectionnez les attributs de la catégorie (laisser vide pour tout autoriser)</target>
+        <source>Select the category attributes</source>
+        <target>Sélectionnez les attributs de la catégorie</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_category.title_legend">
