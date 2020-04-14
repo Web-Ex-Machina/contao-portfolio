@@ -183,7 +183,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'sql' => 'text NULL',
         ],
 
-        'attributes' => [
+        /*'attributes' => [
             'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['attributes'],
             'inputType' => 'dcaWizard',
             'foreignTable' => 'tl_wem_portfolio_item_attribute',
@@ -200,6 +200,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
                 'operations' => ['edit', 'delete'],
                 'tl_class' => 'clr',
             ],
+        ],*/
+
+        'attributes' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['attributes'],
+            'inputType' => 'wemPortfolioAttributeWizard',
+            'eval' => ['tl_class' => 'clr'],
         ],
 
         'published' => [
@@ -298,26 +304,27 @@ class tl_wem_portfolio_item extends Backend
     }
 
     /**
-     * Add an icon to access categories sorting
-     * 
+     * Add an icon to access categories sorting.
+     *
      * @param DataContainer $dc [description]
      *
      * @return [String] [Categories DCA]
      */
-    public function getCategories(DataContainer $dc) {
+    public function getCategories(DataContainer $dc)
+    {
         $objCategories = Category::findItems();
 
-        if(!$objCategories || 0 == $objCategories->count()) {
+        if (!$objCategories || 0 === $objCategories->count()) {
             return [];
         }
 
         \System::loadLanguageFile('tl_wem_portfolio_category');
 
         $arrData = [];
-        while($objCategories->next()) {
+        while ($objCategories->next()) {
             $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'][1], $objCategories->id);
             $strHref = sprintf(
-                "contao?do=wem_portfolio_category&table=tl_wem_portfolio_category_item&id=%s&popup=1&rt=%s&ref=%s",
+                'contao?do=wem_portfolio_category&table=tl_wem_portfolio_category_item&id=%s&popup=1&rt=%s&ref=%s',
                 $objCategories->id,
                 REQUEST_TOKEN,
                 \Input::get('ref')
@@ -328,7 +335,7 @@ class tl_wem_portfolio_item extends Backend
                 $strHref,
                 $strTitle,
                 "Backend.openModalIframe({'title':'".$strTitle."','url':this.href});return false",
-                "bundles/wemportfolio/portfolio_16.png",
+                'bundles/wemportfolio/portfolio_16.png',
                 $strTitle
             );
 

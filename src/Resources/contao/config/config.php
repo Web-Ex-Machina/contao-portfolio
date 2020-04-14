@@ -72,6 +72,9 @@ $GLOBALS['TL_MODELS']['tl_wem_portfolio_category_item'] = 'WEM\PortfolioBundle\M
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\PortfolioBundle\Model\Item';
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\PortfolioBundle\Model\ItemAttribute';
 
+// Wizards
+$GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = 'WEM\PortfolioBundle\Widget\AttributeWizard';
+
 /*
  * i18nl10n specific items
  */
