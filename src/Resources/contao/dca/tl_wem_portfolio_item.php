@@ -12,6 +12,7 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
+use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\CategoryItem;
 use WEM\PortfolioBundle\Model\Item;
 
@@ -154,13 +155,11 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['categories'],
             'inputType' => 'checkbox',
             'foreignKey' => 'tl_wem_portfolio_category.title',
+            'options_callback' => ['tl_wem_portfolio_item', 'getCategories'],
             'eval' => ['multiple' => true, 'tl_class' => 'clr'],
             'sql' => 'blob NULL',
             'save_callback' => [
                 ['tl_wem_portfolio_item', 'saveCategories'],
-            ],
-            'xlabel' => [
-                ['tl_wem_portfolio_item', 'addCategoriesIcon'],
             ],
             'relation' => ['type' => 'hasMany', 'load' => 'lazy'],
         ],
@@ -305,38 +304,38 @@ class tl_wem_portfolio_item extends Backend
      *
      * @return [String] [Categories DCA]
      */
-    public function addCategoriesIcon(DataContainer $dc) {
-        // Get the current model
-        $objCategories = CategoryItem::findItems(['item'=>$dc->id]);
+    public function getCategories(DataContainer $dc) {
+        $objCategories = Category::findItems();
 
         if(!$objCategories || 0 == $objCategories->count()) {
-            return '';
-        } else
-        if(1 == $objCategories->count()) {
+            return [];
+        }
+
+        \System::loadLanguageFile('tl_wem_portfolio_category');
+
+        $arrData = [];
+        while($objCategories->next()) {
+            $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'][1], $objCategories->id);
             $strHref = sprintf(
-            "contao?do=wem_portfolio_category&table=tl_wem_portfolio_category_item&id=%s&popup=1&rt=%s&ref=%s",
-                $objCategories->pid,
+                "contao?do=wem_portfolio_category&table=tl_wem_portfolio_category_item&id=%s&popup=1&rt=%s&ref=%s",
+                $objCategories->id,
                 REQUEST_TOKEN,
                 \Input::get('ref')
             );
-        } else {
-            $strHref = sprintf(
-                "contao?do=wem_portfolio_category&popup=1&ref=%s",
-                \Input::get('ref')
+
+            $href = sprintf(
+                ' <a href="%s" title="%s" onclick="%s"><img src="%s" alt="%s" /></a>',
+                $strHref,
+                $strTitle,
+                "Backend.openModalIframe({'title':'".$strTitle."','url':this.href});return false",
+                "bundles/wemportfolio/portfolio_16.png",
+                $strTitle
             );
-        }        
 
-        \System::loadLanguageFile('tl_wem_portfolio_category');
-        $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'][1], $intCategory);
+            $arrData[$objCategories->id] = $objCategories->title.$href;
+        }
 
-        return sprintf(
-            ' <a href="%s" title="%s" onclick="%s"><img src="%s" alt="%s" /></a>',
-            $strHref,
-            $strTitle,
-            "Backend.openModalIframe({'title':'".$strTitle."','url':this.href});return false",
-            "bundles/wemportfolio/portfolio_16.png",
-            $strTitle
-        );
+        return $arrData;
     }
 
     /**
