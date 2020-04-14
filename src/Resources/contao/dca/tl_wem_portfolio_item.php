@@ -13,6 +13,7 @@ declare(strict_types=1);
  */
 
 use WEM\PortfolioBundle\Model\CategoryItem;
+use WEM\PortfolioBundle\Model\Item;
 
 /*
  * Table tl_wem_portfolio_item.
@@ -158,6 +159,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'save_callback' => [
                 ['tl_wem_portfolio_item', 'saveCategories'],
             ],
+            'xlabel' => [
+                ['tl_wem_portfolio_item', 'addCategoriesIcon'],
+            ],
             'relation' => ['type' => 'hasMany', 'load' => 'lazy'],
         ],
         'pictures' => [
@@ -292,6 +296,47 @@ class tl_wem_portfolio_item extends Backend
     public function addIcon($row, $label, DataContainer $dc = null, $imageAttribute = '', $blnReturnImage = false, $blnProtected = false)
     {
         return '<img src="assets/contao/images/iconJPG.svg" width="18" height="18" alt="image/jpeg" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
+    }
+
+    /**
+     * Add an icon to access categories sorting
+     * 
+     * @param DataContainer $dc [description]
+     *
+     * @return [String] [Categories DCA]
+     */
+    public function addCategoriesIcon(DataContainer $dc) {
+        // Get the current model
+        $objCategories = CategoryItem::findItems(['item'=>$dc->id]);
+
+        if(!$objCategories || 0 == $objCategories->count()) {
+            return '';
+        } else
+        if(1 == $objCategories->count()) {
+            $strHref = sprintf(
+            "contao?do=wem_portfolio_category&table=tl_wem_portfolio_category_item&id=%s&popup=1&rt=%s&ref=%s",
+                $objCategories->pid,
+                REQUEST_TOKEN,
+                \Input::get('ref')
+            );
+        } else {
+            $strHref = sprintf(
+                "contao?do=wem_portfolio_category&popup=1&ref=%s",
+                \Input::get('ref')
+            );
+        }        
+
+        \System::loadLanguageFile('tl_wem_portfolio_category');
+        $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'][1], $intCategory);
+
+        return sprintf(
+            ' <a href="%s" title="%s" onclick="%s"><img src="%s" alt="%s" /></a>',
+            $strHref,
+            $strTitle,
+            "Backend.openModalIframe({'title':'".$strTitle."','url':this.href});return false",
+            "bundles/wemportfolio/portfolio_16.png",
+            $strTitle
+        );
     }
 
     /**
