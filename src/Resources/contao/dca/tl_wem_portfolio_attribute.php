@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-/**
+/*
  * Table tl_wem_portfolio_attribute.
  */
 $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
@@ -75,10 +75,17 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
 
     // Palettes
     'palettes' => [
+        '__selector__' => ['type'],
         'default' => '
             {title_legend},title,alias;
+            {values_legend},type;
             {config_legend},useAsFilter,displayInFrontend
         ',
+    ],
+
+    // Subpalettes
+    'subpalettes' => [
+        'type_select' => 'options',
     ],
 
     // Fields
@@ -114,6 +121,26 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
                 ['tl_wem_portfolio_attribute', 'generateAlias'],
             ],
             'sql' => "varchar(128) BINARY NOT NULL default ''",
+        ],
+
+        'type' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['type'],
+            'exclude' => true,
+            'default' => 'text',
+            'filter' => true,
+            'flag' => 11,
+            'inputType' => 'select',
+            'options' => ['text', 'select'],
+            'reference' => $GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['type'],
+            'eval' => ['chosen' => true, 'mandatory' => true, 'tl_class' => 'w50', 'submitOnChange' => true],
+            'sql' => "varchar(16) NOT NULL default 'text'",
+        ],
+        'options' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['options'],
+            'exclude' => true,
+            'inputType' => 'listWizard',
+            'eval' => ['mandatory' => true, 'allowHtml' => true],
+            'sql' => 'blob NULL',
         ],
 
         'useAsFilter' => [

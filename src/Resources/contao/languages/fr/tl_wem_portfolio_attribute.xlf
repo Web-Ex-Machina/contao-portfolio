@@ -18,6 +18,31 @@
         <target>Saisissez l'alias de l'attribut - Il sera généré automatiquement, en rapport avec l'intitulé de l'attribut.</target>
       </trans-unit>
 
+      <trans-unit id="tl_wem_portfolio_attribute.type.0">
+        <source>Type</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.type.1">
+        <source>Select the attribute type</source>
+        <target>Sélectionnez le type d'attribut</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.type.text">
+        <source>Text</source>
+        <target>Texte</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.type.select">
+        <source>Values list</source>
+        <target>Liste de valeurs</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.options.0">
+        <source>Options</source>
+        <target>Options</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.options.1">
+        <source>Enter the available values</source>
+        <target>Saisissez les valeurs disponibles</target>
+      </trans-unit>
+
       <trans-unit id="tl_wem_portfolio_attribute.useAsFilter.0">
         <source>Use as filter</source>
         <target>Utiliser comme filtre</target>
@@ -64,6 +89,14 @@
       <trans-unit id="tl_wem_portfolio_attribute.title_legend">
         <source>Global informations</source>
         <target>Informations générales</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.values_legend">
+        <source>Values settings</source>
+        <target>Paramètres des valeurs</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.config_legend">
+        <source>Attribute settings</source>
+        <target>Paramètres de l'attribut</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.i18nl10n_legend">
         <source>Language &amp; Translations</source>
