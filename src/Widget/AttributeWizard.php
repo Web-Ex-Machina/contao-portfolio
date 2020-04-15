@@ -42,21 +42,29 @@ class AttributeWizard extends \Widget
     public function validate(): void
     {
         // Get the items IDs sent and apply the current ID as their i18nl10n_id value
-        $ids = $this->getPost($this->strName);
-        $this->import('Database');
-        $stdModel = \Model::getClassFromTable($this->strTable);
+        $attributes = $this->getPost($this->strName);
 
-        if ($ids) {
-            foreach ($ids as $id) {
-                $objModel = $stdModel::findByPk($id);
+        if ($attributes) {
+            $arrSavedIds = [];
+            foreach ($attributes as $a => $v) {
+                $objModel = ItemAttribute::findItems(['pid' => $this->activeRecord->id, 'attribute' => $a], 1);
+
+                if (!$objModel) {
+                    $objModel = new ItemAttribute();
+                    $objModel->createdAt = time();
+                    $objModel->pid = $this->activeRecord->id;
+                    $objModel->attribute = $a;
+                }
+
                 $objModel->tstamp = time();
-                $objModel->i18nl10n_id = $this->activeRecord->id;
+                $objModel->value = $v;
                 $objModel->save();
-            }
-        }
+                $arrSavedIds[] = $objModel->id;
 
-        // Always save the current ID
-        $this->varValue = $this->activeRecord->id;
+            }
+
+            \Database::getInstance()->prepare('DELETE FROM tl_wem_portfolio_item_attribute WHERE pid = ? AND id NOT IN (?)')->execute($this->activeRecord->id, implode(',', $arrSavedIds));
+        }
     }
 
     /**
@@ -112,7 +120,7 @@ class AttributeWizard extends \Widget
             $objItemAttribute = ItemAttribute::findItems(['pid' => $dc->activeRecord->id, 'attribute' => $a['id']], 1);
 
             $strField = sprintf(
-                '<label for="%s">%s</label>',
+                '<br /><label for="%s">%s</label>',
                 'ctrl_'.$this->strName.'_attribute_'.$a['id'],
                 $a['title']
             );
