@@ -10,6 +10,14 @@
         <target>Filtrer par</target>
       </trans-unit>
 
+      <trans-unit id="WEM.PORTFOLIO.noCategories">
+        <source>No categories selected</source>
+        <target>Pas de catégories sélectionnées</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.noAttributes">
+        <source>No attributes available</source>
+        <target>Pas d'attributs disponibles</target>
+      </trans-unit>
       <trans-unit id="WEM.PORTFOLIO.noFiltersAvailable">
         <source>No filters available</source>
         <target>Pas de filtres disponibles</target>

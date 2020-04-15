@@ -45,7 +45,8 @@ class AttributeWizard extends \Widget
         $attributes = $this->getPost($this->strName);
 
         if ($attributes) {
-            $arrSavedIds = [];
+            $arrSavedAttrs = [];
+
             foreach ($attributes as $a => $v) {
                 $objModel = ItemAttribute::findItems(['pid' => $this->activeRecord->id, 'attribute' => $a], 1);
 
@@ -59,11 +60,15 @@ class AttributeWizard extends \Widget
                 $objModel->tstamp = time();
                 $objModel->value = $v;
                 $objModel->save();
-                $arrSavedIds[] = $objModel->id;
-
+                $arrSavedAttrs[] = $a;
             }
 
-            \Database::getInstance()->prepare('DELETE FROM tl_wem_portfolio_item_attribute WHERE pid = ? AND id NOT IN (?)')->execute($this->activeRecord->id, implode(',', $arrSavedIds));
+            $strSql = sprintf(
+                'DELETE FROM tl_wem_portfolio_item_attribute WHERE pid = %s AND attribute NOT IN (%s)',
+                $this->activeRecord->id,
+                implode(',', $arrSavedAttrs)
+            );
+            \Database::getInstance()->prepare($strSql)->execute();
         }
     }
 
@@ -76,6 +81,11 @@ class AttributeWizard extends \Widget
     {
         // First retrieve the categories of the current item
         $objItemCategories = CategoryItem::findItems(['item' => $this->activeRecord->id]);
+
+        // If we do not have categories selected yet
+        if (!$objItemCategories || 0 === $objItemCategories->count()) {
+            return '<p class="tl_info">'.$GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['noCategories'].'</p>';
+        }
 
         // Then retrieve all the attributes
         $objAttributes = Attribute::findItems();
@@ -117,7 +127,7 @@ class AttributeWizard extends \Widget
         $arrFields = [];
         foreach ($arrAttributes as $a) {
             // Try to find an existing value for this attribute/item
-            $objItemAttribute = ItemAttribute::findItems(['pid' => $dc->activeRecord->id, 'attribute' => $a['id']], 1);
+            $objItemAttribute = ItemAttribute::findItems(['pid' => $this->activeRecord->id, 'attribute' => $a['id']], 1);
 
             $strField = sprintf(
                 '<br /><label for="%s">%s</label>',
