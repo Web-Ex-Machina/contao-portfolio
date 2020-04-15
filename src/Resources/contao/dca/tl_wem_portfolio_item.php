@@ -156,7 +156,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'inputType' => 'checkbox',
             'foreignKey' => 'tl_wem_portfolio_category.title',
             'options_callback' => ['tl_wem_portfolio_item', 'getCategories'],
-            'eval' => ['multiple' => true, 'tl_class' => 'clr'],
+            'eval' => ['multiple' => true, 'tl_class' => 'clr', 'mandatory' => true, 'submitOnChange' => true],
             'sql' => 'blob NULL',
             'save_callback' => [
                 ['tl_wem_portfolio_item', 'saveCategories'],
@@ -357,6 +357,7 @@ class tl_wem_portfolio_item extends Backend
     public function saveCategories($varValue, $dc)
     {
         if ($varValue) {
+            $arrSavedAttrs = [];
             $arrCategories = unserialize($varValue);
             $objCategoryItems = CategoryItem::findItems(['item' => $dc->activeRecord->id]);
 
@@ -388,6 +389,8 @@ class tl_wem_portfolio_item extends Backend
                 $ci->tstamp = time();
                 $ci->save();
             }
+        } else {
+            \Database::getInstance()->prepare('DELETE FROM tl_wem_portfolio_category_item WHERE item = ?')->execute($dc->activeRecord->id);
         }
 
         return $varValue;
@@ -447,7 +450,7 @@ class tl_wem_portfolio_item extends Backend
      */
     public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
     {
-        if (\strlen(Input::get('tid'))) {
+        if (Input::get('tid') && \strlen(Input::get('tid'))) {
             $this->toggleVisibility(Input::get('tid'), (1 === Input::get('state')), (@func_get_arg(12) ?: null));
             $this->redirect($this->getReferer());
         }
