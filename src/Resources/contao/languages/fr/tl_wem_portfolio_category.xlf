@@ -26,6 +26,14 @@
         <source>Enter the category alias - it will be automaticly generated, based on category title.</source>
         <target>Saisissez l'alias de la catégorie - Il sera généré automatiquement, en rapport avec l'intitulé de la catégorie.</target>
       </trans-unit>
+      <trans-unit id="tl_wem_portfolio_category.jumpTo.0">
+        <source>Redirect page</source>
+        <target>Page de redirection</target>
+      </trans-unit>
+      <trans-unit id="tl_wem_portfolio_category.jumpTo.1">
+        <source>Please choose the portfolio reader page to which visitors will be redirected when clicking a portfolio item.</source>
+        <target>Choisir la page vers laquelle les visiteurs seront réorientés en cliquant sur un élément du portfolio.</target>
+      </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_category.picture.0">
         <source>Picture</source>

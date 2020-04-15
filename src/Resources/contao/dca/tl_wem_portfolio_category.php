@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
     // Palettes
     'palettes' => [
         'default' => '
-            {title_legend},title,alias;
+            {title_legend},title,alias,jumpTo;
             {media_legend},picture,teaser;
             {attributes_legend},attributes
         ',
@@ -102,7 +102,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['createdAt'],
             'default' => time(),
             'flag' => 5,
-            'eval' => ['rgxp'=>'datim'],
+            'eval' => ['rgxp' => 'datim'],
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [
@@ -128,6 +128,15 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
                 ['tl_wem_portfolio_category', 'generateAlias'],
             ],
             'sql' => "varchar(128) BINARY NOT NULL default ''",
+        ],
+        'jumpTo' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['jumpTo'],
+            'exclude' => true,
+            'inputType' => 'pageTree',
+            'foreignKey' => 'tl_page.title',
+            'eval' => ['mandatory' => true, 'fieldType' => 'radio', 'tl_class' => 'clr'],
+            'sql' => 'int(10) unsigned NOT NULL default 0',
+            'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
         ],
 
         'picture' => [
@@ -174,7 +183,7 @@ class tl_wem_portfolio_category extends Backend
     }
 
     /**
-     * Add the number of items found for this category
+     * Add the number of items found for this category.
      *
      * @param array         $row
      * @param string        $label
@@ -188,7 +197,8 @@ class tl_wem_portfolio_category extends Backend
     public function addItems($row, $label, DataContainer $dc = null, $imageAttribute = '', $blnReturnImage = false, $blnProtected = false)
     {
         $intItems = CategoryItem::countItems(['pid' => $row['id']]);
-        return $label . sprintf(' (%s items)', $intItems);
+
+        return $label.sprintf(' (%s items)', $intItems);
     }
 
     /**
