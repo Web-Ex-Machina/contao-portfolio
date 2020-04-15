@@ -91,8 +91,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
             'relation' => ['type' => 'belongsTo', 'load' => 'lazy'],
         ],
-        'created_on' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['created_on'],
+        'createdAt' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['createdAt'],
             'default' => time(),
             'flag' => 8,
             'sql' => "int(10) unsigned NOT NULL default '0'",
