@@ -159,10 +159,6 @@ class PortfolioList extends Portfolio
                 $this->Template->pagination = $objPagination->generate("\n  ");
             }
 
-            if ($this->jumpTo && $objRedirectPage = \PageModel::findByPk($this->jumpTo)) {
-                $this->jumpTo = $objRedirectPage;
-            }
-
             $arrItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
 
             // Add the filters
