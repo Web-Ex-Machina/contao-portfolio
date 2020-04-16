@@ -17,6 +17,7 @@ namespace WEM\PortfolioBundle\Module;
 use RuntimeException as Exception;
 use WEM\PortfolioBundle\Controller\Item;
 use WEM\PortfolioBundle\Model\Attribute;
+use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\ItemAttribute;
 
 /**
@@ -111,6 +112,44 @@ abstract class Portfolio extends \Module
             $objTemplate->text = $strContent;
 
             return $objTemplate->parse();
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get a category with associated data.
+     *
+     * @param int $intId [Category ID]
+     *
+     * @return array [Category data, with picture and attributes]
+     */
+    protected function getCategory($intId)
+    {
+        try {
+            $objCategory = Category::findByPk($intId);
+            $r = $objCategory->row();
+
+            // Load category picture
+            if ($objFile = \FilesModel::findByUuid($r['picture'])) {
+                $r['picture'] = $objFile->row();
+            } else {
+                $r['picture'] = null;
+            }
+
+            // Load category attributes
+            $objAttributes = $objCategory->getRelated('attributes');
+
+            if (0 === $objAttributes->count()) {
+                $r['attributes'] = null;
+            } else {
+                $r['attributes'] = [];
+                while ($objAttributes->next()) {
+                    $r['attributes'][] = $objAttributes->row();
+                }
+            }
+
+            return $r;
         } catch (Exception $e) {
             throw $e;
         }

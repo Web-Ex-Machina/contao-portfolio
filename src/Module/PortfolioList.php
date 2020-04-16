@@ -23,7 +23,14 @@ use WEM\PortfolioBundle\Controller\Item;
  * Front end module "portfolio list".
  */
 class PortfolioList extends Portfolio
-{
+{   
+    /**
+     * List of categories
+     * 
+     * @var array
+     */
+    protected $arrCategories = [];
+
     /**
      * Template.
      *
@@ -70,6 +77,13 @@ class PortfolioList extends Portfolio
             $arrOptions = [];
             $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
+            // Load categories
+            if($this->wem_portfolio_categories) {
+                foreach(deserialize($this->wem_portfolio_categories) as $c) {
+                    $this->arrCategories[] = $this->getCategory($c);
+                }
+            }
+
             // Maximum number of items
             if ($this->numberOfItems > 0) {
                 $limit = $this->numberOfItems;
@@ -87,7 +101,7 @@ class PortfolioList extends Portfolio
             $this->Template->filterBy = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['filterBy'];
 
             global $objPage;
-            $arrConfig['category'] = $objPage->id;
+            $arrConfig['categories'] = deserialize($this->wem_portfolio_categories);
 
             // If i18nl10n bundle is active, add the current language as filter
             if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {

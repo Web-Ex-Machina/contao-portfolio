@@ -104,11 +104,11 @@ class Item extends Model
             $arrColumns = ["$t.published=1"];
 
             if ($arrConfig['category']) {
-                $arrColumns[] = "$t.id IN (SELECT t2.pid FROM tl_wem_portfolio_item_page AS t2 WHERE t2.page = ".$arrConfig['category'].')';
+                $arrColumns[] = "$t.id IN (SELECT t2.pid FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid = ".$arrConfig['category'].')';
             }
 
             if ($arrConfig['categories']) {
-                $arrColumns[] = "$t.id IN (SELECT t2.pid FROM tl_wem_portfolio_item_page AS t2 WHERE t2.page IN (".implode(',', $arrConfig['categories']).'))';
+                $arrColumns[] = "$t.id IN (SELECT t2.pid FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid IN (".implode(',', $arrConfig['categories']).'))';
             }
 
             if ($arrConfig['alias']) {
