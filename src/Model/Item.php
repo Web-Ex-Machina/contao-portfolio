@@ -139,8 +139,6 @@ class Item extends Model
                 $arrColumns[] = $arrConfig['not'];
             }
 
-            dump($arrColumns);
-
             return $arrColumns;
         } catch (Exception $e) {
             throw $e;
