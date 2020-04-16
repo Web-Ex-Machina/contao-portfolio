@@ -72,7 +72,7 @@ class PortfolioList extends Portfolio
     protected function compile(): void
     {
         try {
-            $limit = null;
+            $limit = 0;
             $offset = (int) ($this->skipFirst);
             $arrOptions = [];
             $bundles = \System::getContainer()->getParameter('kernel.bundles');
