@@ -50,6 +50,14 @@
         <source>Display a list of portfolio items</source>
         <target>Afficher une liste d'éléments du portfolio</target>
       </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_list_categories.0">
+        <source>Categories List</source>
+        <target>Liste de catégories</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_list_categories.1">
+        <source>Display a list of portfolio categories</source>
+        <target>Afficher une liste de catégories du portfolio</target>
+      </trans-unit>
       <trans-unit id="FMD.wem_portfolio_reader.0">
         <source>Item Reader</source>
         <target>Lecteur d'élément</target>

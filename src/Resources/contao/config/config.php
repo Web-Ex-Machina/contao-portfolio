@@ -52,6 +52,7 @@ array_insert(
     [
         'wem_portfolio' => [
             'wem_portfolio_list' => 'WEM\PortfolioBundle\Module\PortfolioList',
+            'wem_portfolio_list_categories' => 'WEM\PortfolioBundle\Module\ListCategories',
             'wem_portfolio_reader' => 'WEM\PortfolioBundle\Module\PortfolioReader',
         ],
     ]

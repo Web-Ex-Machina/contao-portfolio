@@ -50,7 +50,7 @@ abstract class Portfolio extends \Module
      *
      * @return string
      */
-    public function parseItem($arrItem, $strTemplate = 'wem_portfolio_item', $strClass = '', $intCount = 0)
+    public function parseItem($arrItem, $strTemplate = 'wem_portfolio_item_default', $strClass = '', $intCount = 0)
     {
         try {
             /* @var \PageModel $objPage */
@@ -222,7 +222,7 @@ abstract class Portfolio extends \Module
      *
      * @return string
      */
-    protected function parseItems($arrItems, $strTemplate = 'wem_portfolio_item')
+    protected function parseItems($arrItems, $strTemplate = 'wem_portfolio_item_default')
     {
         try {
             $limit = \count($arrItems);

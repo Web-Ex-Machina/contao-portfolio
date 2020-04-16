@@ -9,13 +9,21 @@
         <source>Please select the portfolio categories to display.</source>
         <target>Sélectionner les catégories du portfolio à afficher.</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_template.0">
+      <trans-unit id="tl_module.wem_portfolio_item_template.0">
         <source>Items template</source>
         <target>Modèle des éléments</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_template.1">
+      <trans-unit id="tl_module.wem_portfolio_item_template.1">
         <source>Please select the portfolio item template.</source>
         <target>Sélectionner le modèle pour les éléments du portfolio.</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_category_template.0">
+        <source>Categories template</source>
+        <target>Modèle des catégories</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_category_template.1">
+        <source>Please select the portfolio categories template.</source>
+        <target>Sélectionner le modèle pour les catégories du portfolio.</target>
       </trans-unit>
       <trans-unit id="tl_module.wem_portfolio_attributes.0">
         <source>Retrieve attributes</source>

@@ -173,7 +173,7 @@ class PortfolioList extends Portfolio
                 die;
             }
             if (null !== $arrItems) {
-                $this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_template);
+                $this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_item_template);
             }
 
             $this->Template->raw_items = $arrItems;
