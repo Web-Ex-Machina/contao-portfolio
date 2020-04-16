@@ -18,6 +18,7 @@ use RuntimeException as Exception;
 use WEM\PortfolioBundle\Controller\Item;
 use WEM\PortfolioBundle\Model\Attribute;
 use WEM\PortfolioBundle\Model\Category;
+use WEM\PortfolioBundle\Model\CategoryItem;
 use WEM\PortfolioBundle\Model\ItemAttribute;
 
 /**
@@ -143,6 +144,9 @@ abstract class Portfolio extends \Module
                     $r['attributes'][] = $objAttributes->row();
                 }
             }
+
+            // Get the number of items
+            $r['nbItems'] = CategoryItem::countItems(['pid' => $intId]);
 
             return $r;
         } catch (Exception $e) {

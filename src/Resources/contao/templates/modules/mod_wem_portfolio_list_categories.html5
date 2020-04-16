@@ -1,0 +1,15 @@
+<?php $this->extend('block_unsearchable'); ?>
+
+<?php $this->block('content'); ?>
+	
+	<?php if($this->blnError): ?>
+		<p class="error"><?= $this->strError ?></p>
+	<?php else: ?>
+		<?php if (empty($this->items)): ?>
+			<p class="empty"><?= $this->empty ?></p>
+		<?php else: ?>
+			<?= implode('', $this->items) ?>
+		<?php endif; ?>
+	<?php endif; ?>
+
+<?php $this->endblock(); ?>
