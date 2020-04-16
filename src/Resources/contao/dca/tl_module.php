@@ -12,12 +12,20 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-/**
+/*
  * Add palettes to tl_module.
  */
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_filters,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_categories,wem_portfolio_filters,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '{title_legend},name,headline,type;{template_legend:hide},wem_portfolio_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_categories'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_categories'],
+    'inputType' => 'checkbox',
+    'foreignKey' => 'tl_wem_portfolio_category.title',
+    'eval' => ['multiple' => true, 'tl_class' => 'clr', 'mandatory' => true],
+    'sql' => 'blob NULL',
+    'relation' => ['type' => 'hasMany', 'load' => 'lazy'],
+];
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_template'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_template'],
     'default' => 'wem_portfolio_item',
@@ -32,7 +40,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters'] = [
     'exclude' => true,
     'inputType' => 'select',
     'options_callback' => ['tl_module_wem_portfolio', 'getPortfolioFilters'],
-    'eval' => ['doNotCopy' => true, 'tl_class' => 'w50', 'chosen' => true, 'multiple' => true],
+    'eval' => ['doNotCopy' => true, 'tl_class' => 'clr', 'chosen' => true, 'multiple' => true],
     'sql' => 'blob NULL',
 ];
 
