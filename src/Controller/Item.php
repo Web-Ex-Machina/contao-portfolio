@@ -73,8 +73,8 @@ class Item extends \Controller
             }
 
             // Parse item dates
-            $arrDates = ['timestamp' => $arrItem['created_on'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['created_on']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['created_on'])];
-            $arrItem['created_on'] = $arrDates;
+            $arrDates = ['timestamp' => $arrItem['createdAt'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['createdAt']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['createdAt'])];
+            $arrItem['createdAt'] = $arrDates;
             $arrDates = ['timestamp' => $arrItem['date'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['date']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])];
             $arrItem['date'] = $arrDates;
 
@@ -121,15 +121,22 @@ class Item extends \Controller
                 $arrItem['pictures'] = $images;
             }
 
-            // Get the item category
-            if ($arrConfig['getCategories']) {
-                $arrCategories = unserialize($arrItem['categories']);
-                if ($arrCategories && \is_array($arrCategories) && !empty($arrCategories)) {
-                    $arrItem['categories'] = [];
-                    foreach ($arrCategories as $c) {
-                        $arrItem['categories'][] = \PageModel::findByPk($c);
-                    }
+            // Load item categories
+            $objItem = ItemModel::findByPk($arrItem['id']);
+            $objCategories = $objItem->getRelated('categories');
+
+            if (0 === $objCategories->count()) {
+                $arrItem['categories'] = null;
+            } else {
+                $arrItem['categories'] = [];
+                while ($objCategories->next()) {
+                    $arrItem['categories'][] = $objCategories->row();
                 }
+            }
+
+            // Generate item link (category jumpTo page + item alias)*
+            if (null !== $arrItem['categories'] && !empty($arrItem['categories']) && $objPage = \PageModel::findByPk($arrItem['categories'][0]['jumpTo'])) {
+                $arrItem['link'] = $objPage->getFrontendUrl('/'.$arrItem['alias']);
             }
 
             // Get the item attributes

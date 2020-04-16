@@ -62,11 +62,6 @@ abstract class Portfolio extends \Module
             $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
             $objTemplate->count = $intCount;
 
-            // Build the item's link
-            if ($this->jumpTo instanceof \PageModel) {
-                $objTemplate->link = $this->jumpTo->getFrontendUrl('/'.$arrItem['alias']);
-            }
-
             // Add an image
             if ($arrItem['pictures'][0]) {
                 $size = \StringUtil::deserialize($this->imgSize);
