@@ -58,12 +58,60 @@ class ListCategories extends Portfolio
             return $objTemplate->parse();
         }
 
-        // Do not display the module if there is an auto_item
+        // Check if we have an existing category
+        if (\Input::get('auto_item') && $objCategory = Category::findByIdOrAlias(\Input::get('auto_item'))) {
+            $objModel = new \ModuleModel();
+            $objModel->type = 'wem_portfolio_list';
+            $objModel->imgSize = $this->imgSize;
+            $objModel->numberOfItems = $this->numberOfItems;
+            $objModel->perPage = $this->perPage;
+            $objModel->skipFirst = $this->skipFirst;
+            $objModel->wem_portfolio_item_template = $this->wem_portfolio_item_template;
+            $objModel->wem_portfolio_categories = serialize([0 => $objCategory->id]);
+            $objModule = new PortfolioList($objModel);
+
+            return $objModule->generate();
+        }
         if (\Input::get('auto_item')) {
             return '';
         }
 
         return parent::generate();
+    }
+
+    /**
+     * Parse an item.
+     *
+     * @param array
+     * @param string
+     *
+     * @return string
+     */
+    public function parseItem($arrItem, $strTemplate = 'wem_portfolio_category_default', $strClass = '', $intCount = 0)
+    {
+        try {
+            /* @var \PageModel $objPage */
+            global $objPage;
+
+            /** @var \FrontendTemplate|object $objTemplate */
+            $objTemplate = new \FrontendTemplate($strTemplate);
+            $objTemplate->setData($arrItem);
+            $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
+            $objTemplate->count = $intCount;
+
+            // Add an image
+            if ($arrItem['picture']) {
+                $arrArticle['singleSRC'] = $arrItem['picture']['path'];
+                $this->addImageToTemplate($objTemplate, $arrArticle, null, null, null);
+            }
+
+            // Generate a link to the items list of this category
+            $objTemplate->link = $objPage->getFrontendUrl('/'.$arrItem['alias']);
+
+            return $objTemplate->parse();
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -159,41 +207,6 @@ class ListCategories extends Portfolio
             $this->Template->error = true;
             $this->Template->message = $e->getMessage();
             $this->Template->trace = $e->getTrace();
-        }
-    }
-
-    /**
-     * Parse an item.
-     *
-     * @param array
-     * @param string
-     *
-     * @return string
-     */
-    protected function parseItem($arrItem, $strTemplate = 'wem_portfolio_category_default', $strClass = '', $intCount = 0)
-    {
-        try {
-            /* @var \PageModel $objPage */
-            global $objPage;
-
-            /** @var \FrontendTemplate|object $objTemplate */
-            $objTemplate = new \FrontendTemplate($strTemplate);
-            $objTemplate->setData($arrItem);
-            $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
-            $objTemplate->count = $intCount;
-
-            // Add an image
-            if ($arrItem['picture']) {
-                $arrArticle['singleSRC'] = $arrItem['picture']['path'];
-                $this->addImageToTemplate($objTemplate, $arrArticle, null, null, null);
-            }
-
-            // Generate a link to the items list of this category
-            $objTemplate->link = $objPage->getFrontendUrl('/'.$arrItem['alias']);
-
-            return $objTemplate->parse();
-        } catch (Exception $e) {
-            throw $e;
         }
     }
 }

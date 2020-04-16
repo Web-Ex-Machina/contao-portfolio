@@ -58,11 +58,6 @@ class PortfolioList extends Portfolio
             return $objTemplate->parse();
         }
 
-        // Do not display the module if there is an auto_item
-        if (\Input::get('auto_item')) {
-            return '';
-        }
-
         return parent::generate();
     }
 
