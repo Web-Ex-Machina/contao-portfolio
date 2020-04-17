@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Hooks;
 
 use WEM\PortfolioBundle\Model\Category;
+use WEM\PortfolioBundle\Model\Item;
 
 class GenerateBreadcrumbListener
 {
@@ -39,6 +40,13 @@ class GenerateBreadcrumbListener
                 'link' => $objCategory->title,
                 'class' => '',
             ];
+        } elseif (\Input::get('auto_item') && $objItem = Item::findByIdOrAlias(\Input::get('auto_item'))) {
+            global $objPage;
+
+            // Update the last item
+            end($items);
+            $items[key($items)]['title'] = $objItem->title;
+            $items[key($items)]['link'] = $objItem->title;
         }
 
         return $items;
