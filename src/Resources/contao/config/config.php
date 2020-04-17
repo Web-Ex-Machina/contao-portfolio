@@ -38,9 +38,14 @@ array_insert(
     ]
 );
 
-// Load icon in Contao 4.2 backend
+// Load icon in Contao backend
 if ('BE' === TL_MODE) {
     $GLOBALS['TL_CSS'][] = 'bundles/wemportfolio/backend_svg.css';
+}
+
+// Add JS Logic only if we are in the items DCA
+if ('wem_portfolio_item' === \Input::get('do')) {
+    $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/wemportfolio/backend.js';
 }
 
 /*
@@ -64,6 +69,10 @@ array_insert(
 $GLOBALS['TL_HOOKS']['generateBreadcrumb'][] = [\WEM\PortfolioBundle\Hooks\GenerateBreadcrumbListener::class, 'onGenerateBreadcrumb'];
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\WEM\PortfolioBundle\Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\PortfolioBundle\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
+
+if ('BE' === TL_MODE) {
+    $GLOBALS['TL_HOOKS']['executePreActions'][] = [\WEM\PortfolioBundle\Hooks\ExecutePreActionsListener::class, 'onExecutePreActions'];
+}
 
 /*
  * Models

@@ -37,10 +37,11 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 2,
-            'fields' => ['date DESC'],
+            'mode' => 1,
+            'fields' => ['sorting'],
             'flag' => 1,
             'panelLayout' => 'filter;sort,search,limit',
+            'disableGrouping' => true,
         ],
         'label' => [
             'fields' => ['title', 'date'],
@@ -89,6 +90,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
                 'href' => 'act=show',
                 'icon' => 'show.svg',
             ],
+            'drag' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['drag'],
+                'attributes' => 'class="drag-handle"',
+                'icon' => 'drag.svg',
+                'button_callback' => ['tl_wem_portfolio_item', 'parseDragButton'],
+            ],
         ],
     ],
 
@@ -117,6 +124,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'sorting' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
 
@@ -182,25 +192,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'eval' => ['rte' => 'tinyMCE', 'tl_class' => 'clr'],
             'sql' => 'text NULL',
         ],
-
-        /*'attributes' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['attributes'],
-            'inputType' => 'dcaWizard',
-            'foreignTable' => 'tl_wem_portfolio_item_attribute',
-            'foreignField' => 'pid',
-            'params' => [
-                'do' => 'wem_portfolio_item',
-            ],
-            'eval' => [
-                'fields' => ['attribute', 'value'],
-                'editButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['edit_attribute'],
-                'applyButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['apply_attribute'],
-                'orderField' => 'attribute',
-                'showOperations' => true,
-                'operations' => ['edit', 'delete'],
-                'tl_class' => 'clr',
-            ],
-        ],*/
 
         'attributes' => [
             'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['attributes'],
@@ -434,6 +425,11 @@ class tl_wem_portfolio_item extends Backend
         }
 
         return $varValue;
+    }
+
+    public function parseDragButton($row, $href, $label, $title, $icon, $attributes)
+    {
+        return '<button type="button" '.$attributes.' title=" '.$title.' " aria-hidden="true">'.Image::getHtml($icon, $label, 'data-item="'.$row['id'].'"').'</button>';
     }
 
     /**
