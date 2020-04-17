@@ -61,6 +61,7 @@ array_insert(
 /*
  * Hooks
  */
+$GLOBALS['TL_HOOKS']['generateBreadcrumb'][] = [\WEM\PortfolioBundle\Hooks\GenerateBreadcrumbListener::class, 'onGenerateBreadcrumb'];
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\WEM\PortfolioBundle\Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\PortfolioBundle\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
 
