@@ -49,8 +49,38 @@
         <source>Allow user to filter items depending on attributes</source>
         <target>Permet à l'utilisateur de filtrer les éléments selon les attributs</target>
       </trans-unit>
-
-      
+      <trans-unit id="tl_module.wem_portfolio_sort.0">
+        <source>Sort by</source>
+        <target>Trier par</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_sort.1">
+        <source>Please select the sort mode</source>
+        <target>Sélectionnez le mode de tri</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_sort.global">
+        <source>Custom (globally)</source>
+        <target>Manuel (globalement)</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_sort.category">
+        <source>Custom (in category)</source>
+        <target>Manuel (dans la catégorie)</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_sort.date_ASC">
+        <source>Date (Asc.)</source>
+        <target>Date (Asc.)</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_sort.date_DESC">
+        <source>Date (Desc.)</source>
+        <target>Date (Desc.)</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_sort.title_ASC">
+        <source>Title (Asc.)</source>
+        <target>Intitulé (Asc.)</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_sort.title_DESC">
+        <source>Title (Desc.)</source>
+        <target>Intitulé (Desc.)</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

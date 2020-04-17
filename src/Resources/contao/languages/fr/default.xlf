@@ -26,6 +26,10 @@
         <source>No filters available</source>
         <target>Pas de filtres disponibles</target>
       </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.cannotUseCategorySorting">
+        <source>You cannot use category sorting if you use more than one category.</source>
+        <target>Vous ne pouvez pas utiliser le tri par catégorie si vous utilisez plus d'une catégorie.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

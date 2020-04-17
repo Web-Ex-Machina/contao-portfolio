@@ -68,6 +68,7 @@ class ListCategories extends Portfolio
             $objModel->skipFirst = $this->skipFirst;
             $objModel->wem_portfolio_item_template = $this->wem_portfolio_item_template;
             $objModel->wem_portfolio_categories = serialize([0 => $objCategory->id]);
+            $objModel->wem_portfolio_sort = $this->wem_portfolio_sort;
             $objModule = new PortfolioList($objModel);
 
             return $objModule->generate();
@@ -123,6 +124,7 @@ class ListCategories extends Portfolio
             $limit = null;
             $offset = (int) ($this->skipFirst);
             $arrOptions = [];
+            $arrOptions['order'] = $this->getSortingValue();
             $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
             // Maximum number of items

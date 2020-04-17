@@ -70,6 +70,7 @@ class PortfolioList extends Portfolio
             $limit = null;
             $offset = (int) ($this->skipFirst);
             $arrOptions = [];
+            $arrOptions['order'] = $this->getSortingValue();
             $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
             // Load categories

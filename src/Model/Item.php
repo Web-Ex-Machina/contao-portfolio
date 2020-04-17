@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
-use Contao\Model;
 use RuntimeException as Exception;
+use Contao\Model;
+use WEM\PortfolioBundle\Classes\QueryBuilder;
 
 /**
  * Reads and writes items.
@@ -55,6 +56,9 @@ class Item extends Model
 
             if (!isset($arrOptions['order'])) {
                 $arrOptions['order'] = "$t.date DESC";
+            } else if('category' == $arrOptions['order']) {
+                $arrOptions['join'][] = "JOIN tl_wem_portfolio_category_item AS twpci ON $t.id = twpci.item";
+                $arrOptions['order'] = "twpci.sorting ASC";
             }
 
             if (empty($arrColumns)) {
@@ -143,5 +147,29 @@ class Item extends Model
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Build a query based on the given options
+     *
+     * @param array $arrOptions The options array
+     *
+     * @return string The query string
+     */
+    protected static function buildFindQuery(array $arrOptions)
+    {
+        return QueryBuilder::find($arrOptions);
+    }
+
+    /**
+     * Build a query based on the given options to count the number of records
+     *
+     * @param array $arrOptions The options array
+     *
+     * @return string The query string
+     */
+    protected static function buildCountQuery(array $arrOptions)
+    {
+        return QueryBuilder::count($arrOptions);
     }
 }
