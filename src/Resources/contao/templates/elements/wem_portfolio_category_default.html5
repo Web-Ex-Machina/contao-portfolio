@@ -1,0 +1,20 @@
+<div class="portfolio_item block-list col autoSize block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article">
+  <<?= $this->link?'a href="'.$this->link.'" title="'.$GLOBALS['TL_LANG']['MSC']['more'].'"':'div' ?>  class="block-list__wrapper">
+    <div class="block-list__figure r_2-1">
+      <?php if ($this->addImage): ?>
+        <?php $this->insert('image', $this->arrData); ?>
+      <?php endif; ?>
+    </div>
+    <div class="block-list__headline">
+      <div itemprop="name"><?= $this->title ?></div>
+      <?php if($this->nbItems): ?>
+        <div class="info"><?= sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['nbItems'], $this->nbItems) ?></div>
+      <?php endif; ?>
+    </div>
+    <div class="block-list__content txt-center">
+      <div class="block-list__text" itemprop="description">
+        <?= strlen($this->teaser)>150?substr($this->teaser, 0,150).'...':$this->teaser ?>
+      </div>
+    </div>
+  </<?= $this->link?'a':'div' ?>>
+</div>

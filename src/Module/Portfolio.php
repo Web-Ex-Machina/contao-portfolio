@@ -17,6 +17,8 @@ namespace WEM\PortfolioBundle\Module;
 use RuntimeException as Exception;
 use WEM\PortfolioBundle\Controller\Item;
 use WEM\PortfolioBundle\Model\Attribute;
+use WEM\PortfolioBundle\Model\Category;
+use WEM\PortfolioBundle\Model\CategoryItem;
 use WEM\PortfolioBundle\Model\ItemAttribute;
 
 /**
@@ -49,7 +51,7 @@ abstract class Portfolio extends \Module
      *
      * @return string
      */
-    public function parseItem($arrItem, $strTemplate = 'wem_portfolio_item', $strClass = '', $intCount = 0)
+    public function parseItem($arrItem, $strTemplate = 'wem_portfolio_item_default', $strClass = '', $intCount = 0)
     {
         try {
             /* @var \PageModel $objPage */
@@ -60,11 +62,6 @@ abstract class Portfolio extends \Module
             $objTemplate->setData($arrItem);
             $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
             $objTemplate->count = $intCount;
-
-            // Build the item's link
-            if ($this->jumpTo instanceof \PageModel) {
-                $objTemplate->link = $this->jumpTo->getFrontendUrl('/'.$arrItem['alias']);
-            }
 
             // Add an image
             if ($arrItem['pictures'][0]) {
@@ -111,6 +108,47 @@ abstract class Portfolio extends \Module
             $objTemplate->text = $strContent;
 
             return $objTemplate->parse();
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get a category with associated data.
+     *
+     * @param int $intId [Category ID]
+     *
+     * @return array [Category data, with picture and attributes]
+     */
+    protected function getCategory($intId)
+    {
+        try {
+            $objCategory = Category::findByPk($intId);
+            $r = $objCategory->row();
+
+            // Load category picture
+            if ($objFile = \FilesModel::findByUuid($r['picture'])) {
+                $r['picture'] = $objFile->row();
+            } else {
+                $r['picture'] = null;
+            }
+
+            // Load category attributes
+            $objAttributes = $objCategory->getRelated('attributes');
+
+            if (0 === $objAttributes->count()) {
+                $r['attributes'] = null;
+            } else {
+                $r['attributes'] = [];
+                while ($objAttributes->next()) {
+                    $r['attributes'][] = $objAttributes->row();
+                }
+            }
+
+            // Get the number of items
+            $r['nbItems'] = CategoryItem::countItems(['pid' => $intId]);
+
+            return $r;
         } catch (Exception $e) {
             throw $e;
         }
@@ -188,7 +226,7 @@ abstract class Portfolio extends \Module
      *
      * @return string
      */
-    protected function parseItems($arrItems, $strTemplate = 'wem_portfolio_item')
+    protected function parseItems($arrItems, $strTemplate = 'wem_portfolio_item_default')
     {
         try {
             $limit = \count($arrItems);
@@ -205,6 +243,28 @@ abstract class Portfolio extends \Module
             return $arrElements;
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+
+    /**
+     * Apply logic to retrieve sorting rule.
+     *
+     * @return [String] [Sorting value wanted]
+     */
+    protected function getSortingValue()
+    {
+        switch ($this->wem_portfolio_sort) {
+            case 'global':
+                return 'sorting ASC';
+                break;
+
+            case 'category':
+                return $this->wem_portfolio_sort;
+                break;
+
+            default:
+                return str_replace('_', ' ', $this->wem_portfolio_sort);
+                break;
         }
     }
 }

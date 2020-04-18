@@ -94,7 +94,7 @@ class PortfolioReader extends Portfolio
             throw new PageNotFoundException('Page not found: '.\Environment::get('uri'));
         }
 
-        $this->Template->articles = $this->parseItem($arrItem, $this->wem_portfolio_template);
+        $this->Template->articles = $this->parseItem($arrItem, $this->wem_portfolio_item_template);
 
         // Overwrite the page title (see #2853 and #4955)
         if ('' !== $arrItem['title']) {

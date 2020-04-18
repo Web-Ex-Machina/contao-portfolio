@@ -1,0 +1,48 @@
+<div class="portfolio_full block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article">
+	<div class="d-grid cols-3 cols-md-1 m-bottom">
+		<div class="gallery cols-span-2 cols-span-md-1">
+			<?php $nbCols = (count($this->pictures) - 1 >4)?(count($this->pictures) - 1):4; ?>
+			<?php if (count($this->pictures)>1): ?>
+				<div class="d-grid cols-<?= $nbCols ?>">
+				<?php foreach ($this->pictures as $key => $picture): ?>
+					<a href="<?= $picture["singleSRC"] ?>" data-modal="modalPicture_<?= $picture["id"] ?>" class="img-container <?= ($key != 0) ? "r_1-1":"r_2-1 cols-span-".$nbCols ?>">
+					    <img src="<?= $picture["singleSRC"] ?>" alt="<?= $picture["filesModel"]->meta?:$picture["filesModel"]->name ?>" itemprop="image">
+					</a>
+				<?php endforeach ?>
+				</div>
+			<?php endif ?>
+		</div>
+		<div class="content">
+		  	<h1 itemprop="name" class="m-bottom"><?= $this->title ?></h1>
+		  	<?php if($this->date): ?>
+		        <div class="info counter-top m-bottom ft-0-8-em opa-6" style="padding-top: 0.5em;"><time datetime="<?= $this->date['datetime'] ?>" itemprop="datePublished"><?= $this->date['date'] ?></time></div>
+		    <?php endif; ?>
+		    <div class="clear m-bottom">
+				<span class="ft-0-9-em opa-6">Catégorie<?= (count($this->categories)>1)?"s":"" ?></span><br>
+				<?php foreach ($this->categories as $key => $categorie): ?>
+					<?= ($key!=0?', ':'').$categorie['title'] ?>
+				<?php endforeach ?>
+		    </div>
+			<?php foreach ($this->attributes as $key => $attribute): ?>
+	    		<div class="clear m-bottom">
+					<span class="ft-0-9-em opa-6"><?= $attribute['label'] ?></span><br>
+					<?= $attribute['value'] ?>
+				</div>
+			<?php endforeach ?>
+		</div>
+	</div>
+	<?php if ($this->teaser): ?>
+		<span class="ft-0-9-em opa-6"><?= $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['description'] ?></span><br>
+		<div class="bd-top-greylight-1 m-bottom-x2">
+			<div class="ce_text block">
+				<?= $this->teaser ?>
+			</div>
+		</div>
+	<?php endif ?>
+	<?php if ($this->text): ?>
+		<div class="block-std">
+			<?= $this->text ?>	
+		</div>
+	<?php endif; ?>
+	<pre class="hidden"><?php var_dump($this->pictures[0]); ?></pre>
+</div>

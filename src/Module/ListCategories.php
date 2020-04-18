@@ -17,16 +17,16 @@ namespace WEM\PortfolioBundle\Module;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Patchwork\Utf8;
 use RuntimeException as Exception;
-use WEM\PortfolioBundle\Controller\Item;
+use WEM\PortfolioBundle\Model\Category;
 
 /**
- * Front end module "portfolio list".
+ * Front end module "wem_portfolio_list_categories".
  */
-class PortfolioList extends Portfolio
-{   
+class ListCategories extends Portfolio
+{
     /**
-     * List of categories
-     * 
+     * List of categories.
+     *
      * @var array
      */
     protected $arrCategories = [];
@@ -36,7 +36,7 @@ class PortfolioList extends Portfolio
      *
      * @var string
      */
-    protected $strTemplate = 'mod_wem_portfolio_list';
+    protected $strTemplate = 'mod_wem_portfolio_list_categories';
 
     /**
      * Display a wildcard in the back end.
@@ -49,7 +49,7 @@ class PortfolioList extends Portfolio
             /** @var BackendTemplate|object $objTemplate */
             $objTemplate = new \BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_list'][0]).' ###';
+            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_list_categories'][0]).' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
@@ -58,7 +58,61 @@ class PortfolioList extends Portfolio
             return $objTemplate->parse();
         }
 
+        // Check if we have an existing category
+        if (\Input::get('auto_item') && $objCategory = Category::findByIdOrAlias(\Input::get('auto_item'))) {
+            $objModel = new \ModuleModel();
+            $objModel->type = 'wem_portfolio_list';
+            $objModel->imgSize = $this->imgSize;
+            $objModel->numberOfItems = $this->numberOfItems;
+            $objModel->perPage = $this->perPage;
+            $objModel->skipFirst = $this->skipFirst;
+            $objModel->wem_portfolio_item_template = $this->wem_portfolio_item_template;
+            $objModel->wem_portfolio_categories = serialize([0 => $objCategory->id]);
+            $objModel->wem_portfolio_sort = $this->wem_portfolio_sort;
+            $objModule = new PortfolioList($objModel);
+
+            return $objModule->generate();
+        }
+        if (\Input::get('auto_item')) {
+            return '';
+        }
+
         return parent::generate();
+    }
+
+    /**
+     * Parse an item.
+     *
+     * @param array
+     * @param string
+     *
+     * @return string
+     */
+    public function parseItem($arrItem, $strTemplate = 'wem_portfolio_category_default', $strClass = '', $intCount = 0)
+    {
+        try {
+            /* @var \PageModel $objPage */
+            global $objPage;
+
+            /** @var \FrontendTemplate|object $objTemplate */
+            $objTemplate = new \FrontendTemplate($strTemplate);
+            $objTemplate->setData($arrItem);
+            $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
+            $objTemplate->count = $intCount;
+
+            // Add an image
+            if ($arrItem['picture']) {
+                $arrArticle['singleSRC'] = $arrItem['picture']['path'];
+                $this->addImageToTemplate($objTemplate, $arrArticle, null, null, null);
+            }
+
+            // Generate a link to the items list of this category
+            $objTemplate->link = $objPage->getFrontendUrl('/'.$arrItem['alias']);
+
+            return $objTemplate->parse();
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -73,50 +127,26 @@ class PortfolioList extends Portfolio
             $arrOptions['order'] = $this->getSortingValue();
             $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
-            // Load categories
-            if($this->wem_portfolio_categories) {
-                foreach(deserialize($this->wem_portfolio_categories) as $c) {
-                    $this->arrCategories[] = $this->getCategory($c);
-                }
-            }
-
             // Maximum number of items
             if ($this->numberOfItems > 0) {
                 $limit = $this->numberOfItems;
-            }
-
-            // If we want filters
-            if ($this->wem_portfolio_filters) {
-                $this->filters = $this->getAvailableFilters();
             }
 
             $this->Template->articles = [];
             $this->Template->rt = \RequestToken::get();
             $this->Template->request = \Environment::get('request');
             $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
-            $this->Template->filterBy = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['filterBy'];
 
             global $objPage;
-            $arrConfig['categories'] = deserialize($this->wem_portfolio_categories);
+            $arrConfig = [];
 
             // If i18nl10n bundle is active, add the current language as filter
             if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
                 $arrConfig['lang'] = $GLOBALS['TL_LANGUAGE'];
             }
 
-            // Adjust the config
-            if ($this->filters) {
-                foreach ($this->filters as $filter) {
-                    foreach ($filter['options'] as $option) {
-                        if ($option['selected']) {
-                            $arrConfig['attributes'][] = ['attribute' => $filter['id'], 'value' => $option['value']];
-                        }
-                    }
-                }
-            }
-
             // Get the total number of items
-            $intTotal = Item::countItems($arrConfig, $arrOptions);
+            $intTotal = Category::countItems($arrConfig, $arrOptions);
 
             if ($intTotal < 1) {
                 return;
@@ -155,21 +185,16 @@ class PortfolioList extends Portfolio
                 $this->Template->pagination = $objPagination->generate("\n  ");
             }
 
-            $arrItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
+            $objItems = Category::findItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
+            $arrItems = [];
 
-            // Add the filters
-            if ($this->wem_portfolio_filters && !empty($this->filters)) {
-                $this->Template->filters = $this->filters;
+            while ($objItems->next()) {
+                $arrItems[] = $this->getCategory($objItems->id);
             }
 
             // Add the articles
-            if (null !== $arrItems && \Input::post('TL_AJAX')) {
-                $arrResponse = ['status' => 'success', 'items' => $arrItems, 'rt' => $this->Template->rt];
-                echo json_encode($arrResponse);
-                die;
-            }
             if (null !== $arrItems) {
-                $this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_item_template);
+                $this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_category_template);
             }
 
             $this->Template->raw_items = $arrItems;

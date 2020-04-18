@@ -26,24 +26,26 @@ array_insert(
     [
         'wem_portfolio' => [
             'wem_portfolio_item' => [
-                'tables' => ['tl_wem_portfolio_item', 'tl_wem_portfolio_item_page', 'tl_wem_portfolio_item_attribute', 'tl_content'],
-                'icon' => 'system/modules/wem-portfolio/assets/icon_item.png',
+                'tables' => ['tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
             ],
             'wem_portfolio_attribute' => [
                 'tables' => ['tl_wem_portfolio_attribute'],
-                'icon' => 'system/modules/wem-portfolio/assets/icon_tag.png',
+            ],
+            'wem_portfolio_category' => [
+                'tables' => ['tl_wem_portfolio_category', 'tl_wem_portfolio_category_item', 'tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
             ],
         ],
     ]
 );
 
-// Load icon in Contao 4.2 backend
+// Load icon in Contao backend
 if ('BE' === TL_MODE) {
-    if (version_compare(VERSION, '4.4', '<')) {
-        $GLOBALS['TL_CSS'][] = 'system/modules/wem-contao-portfolio/assets/backend.css';
-    } else {
-        $GLOBALS['TL_CSS'][] = 'system/modules/wem-contao-portfolio/assets/backend_svg.css';
-    }
+    $GLOBALS['TL_CSS'][] = 'bundles/wemportfolio/backend_svg.css';
+}
+
+// Add JS Logic only if we are in the items DCA
+if ('wem_portfolio_item' === \Input::get('do')) {
+    $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/wemportfolio/backend.js';
 }
 
 /*
@@ -55,6 +57,7 @@ array_insert(
     [
         'wem_portfolio' => [
             'wem_portfolio_list' => 'WEM\PortfolioBundle\Module\PortfolioList',
+            'wem_portfolio_list_categories' => 'WEM\PortfolioBundle\Module\ListCategories',
             'wem_portfolio_reader' => 'WEM\PortfolioBundle\Module\PortfolioReader',
         ],
     ]
@@ -63,16 +66,25 @@ array_insert(
 /*
  * Hooks
  */
+$GLOBALS['TL_HOOKS']['generateBreadcrumb'][] = [\WEM\PortfolioBundle\Hooks\GenerateBreadcrumbListener::class, 'onGenerateBreadcrumb'];
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\WEM\PortfolioBundle\Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\PortfolioBundle\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
+
+if ('BE' === TL_MODE) {
+    $GLOBALS['TL_HOOKS']['executePreActions'][] = [\WEM\PortfolioBundle\Hooks\ExecutePreActionsListener::class, 'onExecutePreActions'];
+}
 
 /*
  * Models
  */
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\PortfolioBundle\Model\Attribute';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_category'] = 'WEM\PortfolioBundle\Model\Category';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_category_item'] = 'WEM\PortfolioBundle\Model\CategoryItem';
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\PortfolioBundle\Model\Item';
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\PortfolioBundle\Model\ItemAttribute';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_page'] = 'WEM\PortfolioBundle\Model\ItemPage';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\PortfolioBundle\Model\Attribute';
+
+// Wizards
+$GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = 'WEM\PortfolioBundle\Widget\AttributeWizard';
 
 /*
  * i18nl10n specific items

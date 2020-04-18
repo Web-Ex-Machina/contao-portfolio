@@ -1,4 +1,12 @@
-#tl_navigation .tl_level_1_group .group-wem_portfolio {
+.tl_right_nowrap button{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    height: 17px;
+    background: 0 0;
+}
+
+#tl_navigation .group-wem_portfolio {
     background: url(portfolio.png) 3px 2px no-repeat;
     background-size:13px auto;
 }

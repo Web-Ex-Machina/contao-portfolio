@@ -14,21 +14,20 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
-use RuntimeException as Exception;
 use Contao\Model;
-use WEM\PortfolioBundle\Classes\QueryBuilder;
+use RuntimeException as Exception;
 
 /**
  * Reads and writes items.
  */
-class Item extends Model
+class CategoryItem extends Model
 {
     /**
      * Table name.
      *
      * @var string
      */
-    protected static $strTable = 'tl_wem_portfolio_item';
+    protected static $strTable = 'tl_wem_portfolio_category_item';
 
     /**
      * Find items, depends on the arguments.
@@ -55,10 +54,7 @@ class Item extends Model
             }
 
             if (!isset($arrOptions['order'])) {
-                $arrOptions['order'] = "$t.date DESC";
-            } else if('category' == $arrOptions['order']) {
-                $arrOptions['join'][] = "JOIN tl_wem_portfolio_category_item AS twpci ON $t.id = twpci.item";
-                $arrOptions['order'] = "twpci.sorting ASC";
+                $arrOptions['order'] = "$t.sorting ASC";
             }
 
             if (empty($arrColumns)) {
@@ -105,38 +101,13 @@ class Item extends Model
     {
         try {
             $t = static::$strTable;
-            $arrColumns = ["$t.published=1"];
 
-            if ($arrConfig['category']) {
-                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid = ".$arrConfig['category'].')';
+            if ($arrConfig['pid']) {
+                $arrColumns[] = "$t.pid = ".$arrConfig['pid'];
             }
 
-            if ($arrConfig['categories']) {
-                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid IN (".implode(',', $arrConfig['categories']).'))';
-            }
-
-            if ($arrConfig['alias']) {
-                $arrColumns[] = "$t.alias = '".$arrConfig['alias']."'";
-            }
-
-            if ($arrConfig['lang']) {
-                $arrColumns[] = "$t.i18nl10n_lang = '".$arrConfig['lang']."'";
-            }
-
-            if ($arrConfig['not_lang']) {
-                $arrColumns[] = "$t.i18nl10n_lang != '".$arrConfig['not_lang']."'";
-            }
-
-            if ($arrConfig['i18nl10n_id']) {
-                $arrColumns[] = "$t.i18nl10n_id = ".$arrConfig['i18nl10n_id'];
-            }
-
-            if ($arrConfig['attributes']) {
-                $i = 1;
-                foreach ($arrConfig['attributes'] as $attribute) {
-                    ++$i;
-                    $arrColumns[] = "$t.id IN(SELECT t".$i.'.pid FROM tl_wem_portfolio_item_attribute AS t'.$i.' WHERE t'.$i.'.attribute = '.$attribute['attribute'].' AND t'.$i.".value = '".$attribute['value']."')";
-                }
+            if ($arrConfig['item']) {
+                $arrColumns[] = "$t.item = ".$arrConfig['item'];
             }
 
             if ($arrConfig['not']) {
@@ -147,29 +118,5 @@ class Item extends Model
         } catch (Exception $e) {
             throw $e;
         }
-    }
-
-    /**
-     * Build a query based on the given options
-     *
-     * @param array $arrOptions The options array
-     *
-     * @return string The query string
-     */
-    protected static function buildFindQuery(array $arrOptions)
-    {
-        return QueryBuilder::find($arrOptions);
-    }
-
-    /**
-     * Build a query based on the given options to count the number of records
-     *
-     * @param array $arrOptions The options array
-     *
-     * @return string The query string
-     */
-    protected static function buildCountQuery(array $arrOptions)
-    {
-        return QueryBuilder::count($arrOptions);
     }
 }

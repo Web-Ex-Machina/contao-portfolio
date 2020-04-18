@@ -5,7 +5,7 @@
   <?= $this->articles ?>
 
   <!-- indexer::stop -->
-  <p class="back"><a href="<?= $this->referer ?>" title="<?= $this->back ?>"><?= $this->back ?></a></p>
+  <a class="btn center" href="<?= $this->referer ?>" title="<?= $this->back ?>"><?= $this->back ?></a>
   <!-- indexer::continue -->
 
 <?php $this->endblock(); ?>

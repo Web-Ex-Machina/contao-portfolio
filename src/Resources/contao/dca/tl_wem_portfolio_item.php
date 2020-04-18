@@ -12,14 +12,18 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-/**
+use WEM\PortfolioBundle\Model\Category;
+use WEM\PortfolioBundle\Model\CategoryItem;
+use WEM\PortfolioBundle\Model\Item;
+
+/*
  * Table tl_wem_portfolio_item.
  */
 $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
     // Config
     'config' => [
         'dataContainer' => 'Table',
-        'ctable' => ['tl_wem_portfolio_item_page', 'tl_wem_portfolio_item_attribute', 'tl_content'],
+        'ctable' => ['tl_wem_portfolio_item_attribute', 'tl_content'],
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -33,10 +37,11 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 2,
-            'fields' => ['date DESC'],
+            'mode' => 1,
+            'fields' => ['sorting'],
             'flag' => 1,
             'panelLayout' => 'filter;sort,search,limit',
+            'disableGrouping' => true,
         ],
         'label' => [
             'fields' => ['title', 'date'],
@@ -85,6 +90,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
                 'href' => 'act=show',
                 'icon' => 'show.svg',
             ],
+            'drag' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['drag'],
+                'attributes' => 'class="drag-handle"',
+                'icon' => 'drag.svg',
+                'button_callback' => ['tl_wem_portfolio_item', 'parseDragButton'],
+            ],
         ],
     ],
 
@@ -106,13 +117,16 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'search' => true,
             'sql' => 'int(10) unsigned NOT NULL auto_increment',
         ],
-        'created_on' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['created_on'],
+        'createdAt' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['createdAt'],
             'default' => time(),
             'flag' => 8,
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'sorting' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
 
@@ -148,15 +162,15 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'categories' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['categories'],
-            'exclude' => true,
-            'inputType' => 'pageTree',
-            'foreignKey' => 'tl_page.title',
+            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['categories'],
+            'inputType' => 'checkbox',
+            'foreignKey' => 'tl_wem_portfolio_category.title',
+            'options_callback' => ['tl_wem_portfolio_item', 'getCategories'],
+            'eval' => ['multiple' => true, 'tl_class' => 'clr', 'mandatory' => true, 'submitOnChange' => true],
+            'sql' => 'blob NULL',
             'save_callback' => [
                 ['tl_wem_portfolio_item', 'saveCategories'],
             ],
-            'eval' => ['multiple' => true, 'fieldType' => 'checkbox', 'tl_class' => 'w50'],
-            'sql' => 'blob NULL',
             'relation' => ['type' => 'hasMany', 'load' => 'lazy'],
         ],
         'pictures' => [
@@ -181,21 +195,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
 
         'attributes' => [
             'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['attributes'],
-            'inputType' => 'dcaWizard',
-            'foreignTable' => 'tl_wem_portfolio_item_attribute',
-            'foreignField' => 'pid',
-            'params' => [
-                'do' => 'wem_portfolio_item',
-            ],
-            'eval' => [
-                'fields' => ['attribute', 'value'],
-                'editButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['edit_attribute'],
-                'applyButtonLabel' => $GLOBALS['TL_LANG']['tl_wem_portfolio_item']['apply_attribute'],
-                'orderField' => 'attribute',
-                'showOperations' => true,
-                'operations' => ['edit', 'delete'],
-                'tl_class' => 'clr',
-            ],
+            'inputType' => 'wemPortfolioAttributeWizard',
+            'eval' => ['tl_class' => 'clr'],
         ],
 
         'published' => [
@@ -294,8 +295,50 @@ class tl_wem_portfolio_item extends Backend
     }
 
     /**
+     * Add an icon to access categories sorting.
+     *
+     * @param DataContainer $dc [description]
+     *
+     * @return [String] [Categories DCA]
+     */
+    public function getCategories(DataContainer $dc)
+    {
+        $objCategories = Category::findItems();
+
+        if (!$objCategories || 0 === $objCategories->count()) {
+            return [];
+        }
+
+        \System::loadLanguageFile('tl_wem_portfolio_category');
+
+        $arrData = [];
+        while ($objCategories->next()) {
+            $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'][1], $objCategories->id);
+            $strHref = sprintf(
+                'contao?do=wem_portfolio_category&table=tl_wem_portfolio_category_item&id=%s&popup=1&rt=%s&ref=%s',
+                $objCategories->id,
+                REQUEST_TOKEN,
+                \Input::get('ref')
+            );
+
+            $href = sprintf(
+                ' <a href="%s" title="%s" onclick="%s"><img src="%s" alt="%s" /></a>',
+                $strHref,
+                $strTitle,
+                "Backend.openModalIframe({'title':'".$strTitle."','url':this.href});return false",
+                'bundles/wemportfolio/portfolio_16.png',
+                $strTitle
+            );
+
+            $arrData[$objCategories->id] = $objCategories->title.$href;
+        }
+
+        return $arrData;
+    }
+
+    /**
      * Save item categories in the child table
-     * ip stands for ItemPage.
+     * ci stands for CategoryItem.
      *
      * @param [Mixed] $varValue [Item value]
      * @param [Array] $dc       [Datacontainer]
@@ -305,32 +348,40 @@ class tl_wem_portfolio_item extends Backend
     public function saveCategories($varValue, $dc)
     {
         if ($varValue) {
-            $arrPages = unserialize($varValue);
+            $arrSavedAttrs = [];
+            $arrCategories = unserialize($varValue);
+            $objCategoryItems = CategoryItem::findItems(['item' => $dc->activeRecord->id]);
 
-            $ips = \WEM\PortfolioBundle\Model\ItemPage::findItems(['pid' => $dc->activeRecord->id]);
-
-            if ($ips && 0 < $ips->count()) {
-                while ($ips->next()) {
-                    if (!\in_array($ips->page, $arrPages, true)) {
-                        $ips->delete();
+            if ($objCategoryItems && 0 < $objCategoryItems->count()) {
+                while ($objCategoryItems->next()) {
+                    if (!\in_array($objCategoryItems->pid, $arrCategories, true)) {
+                        $objCategoryItems->delete();
                     }
                 }
             }
 
-            foreach ($arrPages as $p) {
-                $ip = \WEM\PortfolioBundle\Model\ItemPage::findItems(['pid' => $dc->activeRecord->id, 'page' => $p], 1);
+            $lastSorting = CategoryItem::findItems(['pid' => $c], 1);
+            $intSorting = $lastSorting->sorting ?: 0;
 
-                // If we did not found an ItemPage, create it
-                if (!$ip) {
-                    $ip = new \WEM\PortfolioBundle\Model\ItemPage();
-                    $ip->pid = $dc->activeRecord->id;
-                    $ip->created_on = time();
-                    $ip->page = $p;
+            foreach ($arrCategories as $c) {
+                $ci = CategoryItem::findItems(['item' => $dc->activeRecord->id, 'pid' => $c], 1);
+
+                // If we did not found an CategoryItem, create it
+                if (!$ci) {
+                    $intSorting += 256;
+
+                    $ci = new CategoryItem();
+                    $ci->createdAt = time();
+                    $ci->sorting = $intSorting;
+                    $ci->pid = $c;
+                    $ci->item = $dc->activeRecord->id;
                 }
 
-                $ip->tstamp = time();
-                $ip->save();
+                $ci->tstamp = time();
+                $ci->save();
             }
+        } else {
+            \Database::getInstance()->prepare('DELETE FROM tl_wem_portfolio_category_item WHERE item = ?')->execute($dc->activeRecord->id);
         }
 
         return $varValue;
@@ -351,11 +402,6 @@ class tl_wem_portfolio_item extends Backend
         if ('' === $varValue) {
             $autoAlias = true;
             $slugOptions = [];
-
-            // Read the slug options from the associated page
-            if (null !== ($objPage = PageModel::findWithDetails($dc->activeRecord->pages))) {
-                $slugOptions = $objPage->getSlugOptions();
-            }
 
             $varValue = System::getContainer()->get('contao.slug.generator')->generate(StringUtil::prepareSlug($dc->activeRecord->title), $slugOptions);
 
@@ -381,6 +427,11 @@ class tl_wem_portfolio_item extends Backend
         return $varValue;
     }
 
+    public function parseDragButton($row, $href, $label, $title, $icon, $attributes)
+    {
+        return '<button type="button" '.$attributes.' title=" '.$title.' " aria-hidden="true">'.Image::getHtml($icon, $label, 'data-item="'.$row['id'].'"').'</button>';
+    }
+
     /**
      * Return the "toggle visibility" button.
      *
@@ -395,7 +446,7 @@ class tl_wem_portfolio_item extends Backend
      */
     public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
     {
-        if (\strlen(Input::get('tid'))) {
+        if (Input::get('tid') && \strlen(Input::get('tid'))) {
             $this->toggleVisibility(Input::get('tid'), (1 === Input::get('state')), (@func_get_arg(12) ?: null));
             $this->redirect($this->getReferer());
         }
