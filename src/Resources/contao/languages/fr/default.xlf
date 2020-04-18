@@ -14,6 +14,11 @@
         <target>Filtrer par</target>
       </trans-unit>
 
+      <trans-unit id="WEM.PORTFOLIO.description">
+        <source>Description</source>
+        <target>Description</target>
+      </trans-unit>
+
       <trans-unit id="WEM.PORTFOLIO.noCategories">
         <source>No categories selected</source>
         <target>Pas de catégories sélectionnées</target>
