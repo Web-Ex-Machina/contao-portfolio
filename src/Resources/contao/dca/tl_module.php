@@ -90,10 +90,15 @@ class tl_module_wem_portfolio extends Backend
      */
     public function getSortingCategories(DataContainer $dc)
     {
-        $options = ['global', 'category', 'date_ASC', 'date_DESC', 'title_ASC', 'title_DESC'];
+        $arrOptions = ['global', 'category', 'date_ASC', 'date_DESC', 'title_ASC', 'title_DESC'];
 
         if ($dc->activeRecord->wem_portfolio_categories && 1 < \count(deserialize($dc->activeRecord->wem_portfolio_categories))) {
-            unset($options[array_search('category', $options, true)]);
+            unset($arrOptions[array_search('category', $arrOptions, true)]);
+        }
+
+        $options = [];
+        foreach ($arrOptions as $o) {
+            $options[$o] = $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'][$o];
         }
 
         return $options;
