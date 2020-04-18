@@ -136,7 +136,7 @@ abstract class Portfolio extends \Module
             // Load category attributes
             $objAttributes = $objCategory->getRelated('attributes');
 
-            if (0 === $objAttributes->count()) {
+            if (!$objAttributes || 0 === $objAttributes->count()) {
                 $r['attributes'] = null;
             } else {
                 $r['attributes'] = [];
