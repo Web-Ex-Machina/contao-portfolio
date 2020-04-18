@@ -27,8 +27,10 @@
 				</div>
 			</form>
 			<?php endif; ?>
-
-			<?= implode('', $this->items) ?>
+			
+			<div class="row flex-justifycontent--center">
+				<?= implode('', $this->items) ?>
+			</div>
 			<?= $this->pagination ?>
 		<?php endif; ?>
 	<?php endif; ?>

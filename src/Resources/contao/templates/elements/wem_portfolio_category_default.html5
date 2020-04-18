@@ -1,21 +1,20 @@
-<div class="portfolio_item block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article">
-
-  <h2 itemprop="name"><?= $this->title ?></h2>
-  
-  <?php if ($this->addImage): ?>
-    <?php $this->insert('image', $this->arrData); ?>
-  <?php endif; ?>
-
-  <?php if($this->nbItems): ?>
-    <p class="info"><?= sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['nbItems'], $this->nbItems) ?></p>
-  <?php endif; ?>
-
-  <div class="ce_text block" itemprop="description">
-    <?= $this->teaser ?>
-  </div>
-
-  <?php if ($this->link): ?>
-    <p class="more"><a href="<?= $this->link ?>" title="<?= $GLOBALS['TL_LANG']['MSC']['more'] ?>"><?= $GLOBALS['TL_LANG']['MSC']['more'] ?></a></p>
-  <?php endif; ?>
-
+<div class="portfolio_item block-list col autoSize block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article">
+  <<?= $this->link?'a href="'.$this->link.'" title="'.$GLOBALS['TL_LANG']['MSC']['more'].'"':'div' ?>  class="block-list__wrapper">
+    <div class="block-list__figure r_2-1">
+      <?php if ($this->addImage): ?>
+        <?php $this->insert('image', $this->arrData); ?>
+      <?php endif; ?>
+    </div>
+    <div class="block-list__headline">
+      <div itemprop="name"><?= $this->title ?></div>
+      <?php if($this->nbItems): ?>
+        <div class="info"><?= sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['nbItems'], $this->nbItems) ?></div>
+      <?php endif; ?>
+    </div>
+    <div class="block-list__content txt-center">
+      <div class="block-list__text" itemprop="description">
+        <?= strlen($this->teaser)>150?substr($this->teaser, 0,150).'...':$this->teaser ?>
+      </div>
+    </div>
+  </<?= $this->link?'a':'div' ?>>
 </div>
