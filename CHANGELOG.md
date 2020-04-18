@@ -1,8 +1,11 @@
 ========
 Extension "Portfolio" for Contao Open Source CMS
 ========
-2.0 - 2020-04-xx
-- Add Portfolio categories
+2.0 - 2020-04-18
+- Add categories
+- Add categories listing
+- Improve attributes system
+- Improve items listing
 
 1.3 - 2020-03-25
 - Update structure in SymfonyBundle

@@ -44,12 +44,12 @@
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.teaser.0">
-        <source>Teaser</source>
-        <target>Accroche</target>
+        <source>Description</source>
+        <target>Description</target>
       </trans-unit>
       <trans-unit id="tl_wem_portfolio_item.teaser.1">
-        <source>Enter the item teaser</source>
-        <target>Saisissez l'accroche de l'élément</target>
+        <source>Enter a short description of the item</source>
+        <target>Saisissez une description courte de l'élément</target>
       </trans-unit>
 
       <trans-unit id="tl_wem_portfolio_item.attributes.0">
