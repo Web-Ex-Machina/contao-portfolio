@@ -1,6 +1,10 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
+## 2.1 - 2020-04-20
+- Add custom sorting system for categories
+- Improve categories listing
+
 ## 2.0 - 2020-04-18
 - Add categories
 - Add categories listing
