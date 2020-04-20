@@ -124,7 +124,7 @@ class ListCategories extends Portfolio
             $limit = null;
             $offset = (int) ($this->skipFirst);
             $arrOptions = [];
-            $arrOptions['order'] = $this->getSortingValue();
+            $arrOptions['order'] = $this->getSortingValue($this->wem_portfolio_category_sort);
             $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
             // Maximum number of items

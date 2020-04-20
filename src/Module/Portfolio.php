@@ -249,21 +249,23 @@ abstract class Portfolio extends \Module
     /**
      * Apply logic to retrieve sorting rule.
      *
+     * @param [String] Module sorting value
+     *
      * @return [String] [Sorting value wanted]
      */
-    protected function getSortingValue()
+    protected function getSortingValue($strField)
     {
-        switch ($this->wem_portfolio_sort) {
+        switch ($strField) {
             case 'global':
                 return 'sorting ASC';
                 break;
 
             case 'category':
-                return $this->wem_portfolio_sort;
+                return $strField;
                 break;
 
             default:
-                return str_replace('_', ' ', $this->wem_portfolio_sort);
+                return str_replace('_', ' ', $strField);
                 break;
         }
     }
