@@ -15,8 +15,8 @@ declare(strict_types=1);
 /*
  * Add palettes to tl_module.
  */
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list_categories'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_sort,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_category_template,wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_categories,wem_portfolio_filters,wem_portfolio_sort,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list_categories'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_category_sort,numberOfItems,perPage,skipFirst;{list_legend},wem_portfolio_list_module;{template_legend:hide},wem_portfolio_category_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_categories,wem_portfolio_filters,wem_portfolio_item_sort,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '{title_legend},name,headline,type;{template_legend:hide},wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_categories'] = [
@@ -53,18 +53,37 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters'] = [
     'eval' => ['doNotCopy' => true, 'tl_class' => 'clr', 'chosen' => true, 'multiple' => true],
     'sql' => 'blob NULL',
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_sort'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'],
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_category_sort'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_category_sort'],
     'default' => 'global',
     'exclude' => true,
     'inputType' => 'select',
-    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'],
+    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_category_sort'],
+    'options' => ['global', 'title_ASC', 'title_DESC'],
+    'eval' => ['tl_class' => 'w50'],
+    'sql' => "varchar(64) NOT NULL default ''",
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_item_sort'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_sort'],
+    'default' => 'global',
+    'exclude' => true,
+    'inputType' => 'select',
+    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_sort'],
     'options_callback' => ['tl_module_wem_portfolio', 'getSortingCategories'],
     'save_callback' => [
         ['tl_module_wem_portfolio', 'checkIfMultiCategories'],
     ],
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(64) NOT NULL default ''",
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_list_module'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_list_module'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'options_callback' => ['tl_module_wem_portfolio', 'getListModules'],
+    'reference' => &$GLOBALS['TL_LANG']['tl_module'],
+    'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
+    'sql' => 'int(10) unsigned NOT NULL default 0',
 ];
 
 /**
@@ -84,6 +103,23 @@ class tl_module_wem_portfolio extends Backend
     }
 
     /**
+     * Get all portfolio list modules and return them as array.
+     *
+     * @return array
+     */
+    public function getListModules()
+    {
+        $arrModules = [];
+        $objModules = $this->Database->execute("SELECT m.id, m.name, t.name AS theme FROM tl_module m LEFT JOIN tl_theme t ON m.pid=t.id WHERE m.type='wem_portfolio_list' ORDER BY t.name, m.name");
+
+        while ($objModules->next()) {
+            $arrModules[$objModules->theme][$objModules->id] = $objModules->name.' (ID '.$objModules->id.')';
+        }
+
+        return $arrModules;
+    }
+
+    /**
      * Remove "category" option from sorting options if we have several categories to display.
      *
      * @return array
@@ -98,7 +134,7 @@ class tl_module_wem_portfolio extends Backend
 
         $options = [];
         foreach ($arrOptions as $o) {
-            $options[$o] = $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'][$o];
+            $options[$o] = $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_sort'][$o];
         }
 
         return $options;
