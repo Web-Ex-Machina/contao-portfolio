@@ -81,8 +81,9 @@ var WEMPortfolio =
 		list.addEvent('complete', function(el) {
 			if (!list.active) return;
 
-			var elPrevious, posAfter, id;
+			var elPrevious, posAfter, id, table;
 			id = el.getChildren('td.tl_right_nowrap > .drag-handle > img')[0].get('data-item');
+			table = el.getChildren('td.tl_right_nowrap > .drag-handle > img')[0].get('data-table');
 			elPrevious = el.getPrevious('tr');
 
 			if(!elPrevious) {
@@ -91,7 +92,7 @@ var WEMPortfolio =
 				posAfter = elPrevious.getChildren('td.tl_right_nowrap > .drag-handle > img')[0].get('data-sorting');
 			}
 
-			new Request.Contao({ url: window.location.href }).post({'action':'WemPortfolioSortItems', 'id':id, 'posAfter':posAfter, 'REQUEST_TOKEN':Contao.request_token});
+			new Request.Contao({ url: window.location.href }).post({'action':'WemPortfolioSortItems', 'id':id, 'posAfter':posAfter, 'table':table, 'REQUEST_TOKEN':Contao.request_token});
 		});
 	},
 }

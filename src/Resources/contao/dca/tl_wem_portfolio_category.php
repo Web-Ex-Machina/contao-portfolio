@@ -36,9 +36,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
     'list' => [
         'sorting' => [
             'mode' => 1,
-            'fields' => ['title ASC'],
-            'flag' => 3,
+            'fields' => ['sorting'],
+            'flag' => 1,
             'panelLayout' => 'filter;sort,search,limit',
+            'disableGrouping' => true,
         ],
         'label' => [
             'fields' => ['title'],
@@ -81,6 +82,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
                 'href' => 'table=tl_wem_portfolio_category_item',
                 'icon' => 'bundles/wemportfolio/portfolio_16.png',
             ],
+            'drag' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['drag'],
+                'attributes' => 'class="drag-handle"',
+                'icon' => 'drag.svg',
+                'button_callback' => ['tl_wem_portfolio_category', 'parseDragButton'],
+            ],
         ],
     ],
 
@@ -106,6 +113,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'sorting' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
 
@@ -199,6 +209,11 @@ class tl_wem_portfolio_category extends Backend
         $intItems = CategoryItem::countItems(['pid' => $row['id']]);
 
         return $label.sprintf(' (%s items)', $intItems);
+    }
+
+    public function parseDragButton($row, $href, $label, $title, $icon, $attributes)
+    {
+        return '<button type="button" '.$attributes.' title=" '.$title.' " aria-hidden="true">'.Image::getHtml($icon, $label, 'data-item="'.$row['id'].'" data-sorting="'.$row['sorting'].'" data-table="tl_wem_portfolio_category"').'</button>';
     }
 
     /**

@@ -429,7 +429,7 @@ class tl_wem_portfolio_item extends Backend
 
     public function parseDragButton($row, $href, $label, $title, $icon, $attributes)
     {
-        return '<button type="button" '.$attributes.' title=" '.$title.' " aria-hidden="true">'.Image::getHtml($icon, $label, 'data-item="'.$row['id'].'" data-sorting="'.$row['sorting'].'"').'</button>';
+        return '<button type="button" '.$attributes.' title=" '.$title.' " aria-hidden="true">'.Image::getHtml($icon, $label, 'data-item="'.$row['id'].'" data-sorting="'.$row['sorting'].'" data-table="tl_wem_portfolio_item"').'</button>';
     }
 
     /**
