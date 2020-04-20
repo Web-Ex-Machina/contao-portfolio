@@ -26,8 +26,8 @@ class ExecutePreActionsListener implements ServiceAnnotationInterface
     {
         if ('WemPortfolioSortItems' === $action) {
             $objDb = \Database::getInstance();
-            $objDb->prepare('UPDATE tl_wem_portfolio_item SET sorting = sorting+1 WHERE sorting > ?')->execute(\Input::post('posAfter'));
-            $objDb->prepare("UPDATE tl_wem_portfolio_item SET sorting = ? WHERE id = ?")->execute(\Input::post('posAfter')+1, \Input::post('id'));
+            $objDb->prepare(sprintf('UPDATE %s SET sorting = sorting+1 WHERE sorting > ?', \Input::post('table')))->execute(\Input::post('posAfter'));
+            $objDb->prepare(sprintf('UPDATE %s SET sorting = ? WHERE id = ?', \Input::post('table')))->execute(\Input::post('posAfter') + 1, \Input::post('id'));
         }
     }
 }

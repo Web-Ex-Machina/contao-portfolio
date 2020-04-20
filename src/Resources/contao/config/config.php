@@ -44,7 +44,7 @@ if ('BE' === TL_MODE) {
 }
 
 // Add JS Logic only if we are in the items DCA
-if ('wem_portfolio_item' === \Input::get('do')) {
+if ('wem_portfolio_item' === \Input::get('do') || 'wem_portfolio_category' === \Input::get('do')) {
     $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/wemportfolio/backend.js';
 }
 
