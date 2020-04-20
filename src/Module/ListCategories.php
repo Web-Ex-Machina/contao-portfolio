@@ -103,7 +103,17 @@ class ListCategories extends Portfolio
             // Add an image
             if ($arrItem['picture']) {
                 $arrArticle['singleSRC'] = $arrItem['picture']['path'];
-                $this->addImageToTemplate($objTemplate, $arrArticle, null, null, null);
+
+                // Override the default image size
+                if ('' !== $this->imgSize) {
+                    $size = \StringUtil::deserialize($this->imgSize);
+
+                    if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]) || '_' === ($size[2][0] ?? null)) {
+                        $arrArticle['size'] = $this->imgSize;
+                    }
+                }
+
+                $this->addImageToTemplate($objTemplate, $arrArticle);
             }
 
             // Generate a link to the items list of this category
