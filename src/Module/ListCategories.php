@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
+use Contao\ModuleModel;
 use Patchwork\Utf8;
 use RuntimeException as Exception;
 use WEM\PortfolioBundle\Model\Category;
@@ -60,19 +61,18 @@ class ListCategories extends Portfolio
 
         // Check if we have an existing category
         if (\Input::get('auto_item') && $objCategory = Category::findByIdOrAlias(\Input::get('auto_item'))) {
-            $objModel = new \ModuleModel();
-            $objModel->type = 'wem_portfolio_list';
-            $objModel->imgSize = $this->imgSize;
-            $objModel->numberOfItems = $this->numberOfItems;
-            $objModel->perPage = $this->perPage;
-            $objModel->skipFirst = $this->skipFirst;
-            $objModel->wem_portfolio_item_template = $this->wem_portfolio_item_template;
+            $objModel = ModuleModel::findByPk($this->wem_portfolio_list_module);
+
+            if (!$objModel) {
+                throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
+            }
+
             $objModel->wem_portfolio_categories = serialize([0 => $objCategory->id]);
-            $objModel->wem_portfolio_sort = $this->wem_portfolio_sort;
             $objModule = new PortfolioList($objModel);
 
             return $objModule->generate();
         }
+
         if (\Input::get('auto_item')) {
             return '';
         }
