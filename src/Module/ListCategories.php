@@ -64,7 +64,7 @@ class ListCategories extends Portfolio
             $objModel = ModuleModel::findByPk($this->wem_portfolio_list_module);
 
             if (!$objModel) {
-                throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
+                throw new PageNotFoundException('Page not found: '.\Environment::get('uri'));
             }
 
             $objModel->wem_portfolio_categories = serialize([0 => $objCategory->id]);
