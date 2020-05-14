@@ -23,10 +23,10 @@ use WEM\PortfolioBundle\Controller\Item;
  * Front end module "portfolio list".
  */
 class PortfolioList extends Portfolio
-{   
+{
     /**
-     * List of categories
-     * 
+     * List of categories.
+     *
      * @var array
      */
     protected $arrCategories = [];
@@ -74,8 +74,8 @@ class PortfolioList extends Portfolio
             $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
             // Load categories
-            if($this->wem_portfolio_categories) {
-                foreach(deserialize($this->wem_portfolio_categories) as $c) {
+            if ($this->wem_portfolio_categories) {
+                foreach (deserialize($this->wem_portfolio_categories) as $c) {
                     $this->arrCategories[] = $this->getCategory($c);
                 }
             }
@@ -108,11 +108,18 @@ class PortfolioList extends Portfolio
             if ($this->filters) {
                 foreach ($this->filters as $filter) {
                     foreach ($filter['options'] as $option) {
-                        if ($option['selected']) {
+                        if ('categories' === $filter['id'] && $option['selected']) {
+                            $arrConfig['category'] = $option['value'];
+                        } elseif ($option['selected']) {
                             $arrConfig['attributes'][] = ['attribute' => $filter['id'], 'value' => $option['value']];
                         }
                     }
                 }
+            }
+
+            // Add the filters
+            if ($this->wem_portfolio_filters && !empty($this->filters)) {
+                $this->Template->filters = $this->filters;
             }
 
             // Get the total number of items
@@ -156,11 +163,6 @@ class PortfolioList extends Portfolio
             }
 
             $arrItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
-
-            // Add the filters
-            if ($this->wem_portfolio_filters && !empty($this->filters)) {
-                $this->Template->filters = $this->filters;
-            }
 
             // Add the articles
             if (null !== $arrItems && \Input::post('TL_AJAX')) {

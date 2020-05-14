@@ -1,33 +1,33 @@
 <?php $this->extend('block_unsearchable'); ?>
 
 <?php $this->block('content'); ?>
+
+	<?php if($this->filters): ?>
+	<form action="{{env::request}}" method="get">
+		<label class=""><?= $this->filterBy ?> :</label>
+		<div class="filters row">
+			<?php foreach($this->filters as $key=>$filter): ?>
+			<?php if($filter['options']): ?>
+			<div class="filter col-md-2 col-md-4 col-12">
+				<select name="<?= $key ?>" onchange="this.form.submit()">
+					<option value="">- <?= $filter['label'] ?> -</option>
+					<?php foreach($filter['options'] as $option): ?>
+						<option value="<?= $option['value'] ?>"<?= ($option['selected'] && $option['value']) ? ' selected' : '' ?>><?= $option['text'] ?></option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+			<?php endif; ?>
+			<?php endforeach; ?>
+		</div>
+	</form>
+	<?php endif; ?>
 	
 	<?php if($this->blnError): ?>
 		<p class="error"><?= $this->strError ?></p>
 	<?php else: ?>
 		<?php if (empty($this->items)): ?>
 			<p class="empty"><?= $this->empty ?></p>
-		<?php else: ?>
-			<?php if($this->filters): ?>
-			<form action="{{env::request}}" method="get">
-				<label class=""><?= $this->filterBy ?> :</label>
-				<div class="filters row">
-					<?php foreach($this->filters as $key=>$filter): ?>
-					<?php if($filter['options']): ?>
-					<div class="filter col-md-2 col-md-4 col-12">
-						<select name="<?= $key ?>" onchange="this.form.submit()">
-							<option value="">- <?= $filter['label'] ?> -</option>
-							<?php foreach($filter['options'] as $option): ?>
-								<option value="<?= $option['value'] ?>"<?= ($option['selected'] && $option['value']) ? ' selected' : '' ?>><?= $option['text'] ?></option>
-							<?php endforeach; ?>
-						</select>
-					</div>
-					<?php endif; ?>
-					<?php endforeach; ?>
-				</div>
-			</form>
-			<?php endif; ?>
-			
+		<?php else: ?>			
 			<div class="row flex-justifycontent--center">
 				<?= implode('', $this->items) ?>
 			</div>

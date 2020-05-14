@@ -195,6 +195,7 @@ class tl_module_wem_portfolio extends Backend
         }
 
         $arrFilters = [];
+        $arrFilters['categories'] = 'Catégorie';
         while ($objAttributes->next()) {
             $arrFilters[$objAttributes->id] = $objAttributes->title;
         }

@@ -165,6 +165,19 @@ abstract class Portfolio extends \Module
             $arrFilters = [];
 
             foreach (unserialize($this->wem_portfolio_filters) as $id) {
+                // Retrieve available categories for this module
+                if('categories' == $id) {
+                    $arrFilters['categories'] = ['id' => 'categories', 'label' => 'Category', 'options' => []];
+                    foreach($this->arrCategories as $c) {
+                        $option = ['value' => $c['id'], 'text' => $c['title'], 'selected' => 0];
+                        if (\Input::post('categories') === $c['id'] || \Input::get('categories') === $c['id']) {
+                            $option['selected'] = 1;
+                        }
+
+                        $arrFilters['categories']['options'][] = $option;
+                    }
+                }
+
                 $attribute = Attribute::findByPk($id);
 
                 if (!$attribute) {
