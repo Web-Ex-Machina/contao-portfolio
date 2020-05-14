@@ -14,10 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Hooks;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
-use Terminal42\ServiceAnnotationBundle\ServiceAnnotationInterface;
-
-class ExecutePreActionsListener implements ServiceAnnotationInterface
+class ExecutePreActionsListener
 {
     /**
      * @Hook("executePreActions")
