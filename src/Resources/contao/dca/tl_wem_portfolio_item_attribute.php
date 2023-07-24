@@ -125,7 +125,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
 
 // Handle i18nl10n compatibility
 $bundles = \System::getContainer()->getParameter('kernel.bundles');
-if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
+if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
     $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute']['fields']['attribute']['options_callback'] = ['tl_wem_portfolio_item_attribute', 'getOptionsByLanguage'];
 }
 
