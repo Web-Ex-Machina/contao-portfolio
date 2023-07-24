@@ -23,10 +23,10 @@ use WEM\PortfolioBundle\Controller\Item;
  * Front end module "portfolio list".
  */
 class PortfolioList extends Portfolio
-{   
+{
     /**
      * List of categories
-     * 
+     *
      * @var array
      */
     protected $arrCategories = [];
@@ -74,8 +74,8 @@ class PortfolioList extends Portfolio
             $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
             // Load categories
-            if($this->wem_portfolio_categories) {
-                foreach(deserialize($this->wem_portfolio_categories) as $c) {
+            if ($this->wem_portfolio_categories) {
+                foreach (deserialize($this->wem_portfolio_categories) as $c) {
                     $this->arrCategories[] = $this->getCategory($c);
                 }
             }
@@ -100,7 +100,7 @@ class PortfolioList extends Portfolio
             $arrConfig['categories'] = deserialize($this->wem_portfolio_categories);
 
             // If i18nl10n bundle is active, add the current language as filter
-            if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
+            if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
                 $arrConfig['lang'] = $GLOBALS['TL_LANGUAGE'];
             }
 

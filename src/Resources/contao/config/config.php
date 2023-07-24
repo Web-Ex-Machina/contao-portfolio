@@ -89,9 +89,9 @@ $GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = 'WEM\PortfolioBundle\Widget\
 /*
  * i18nl10n specific items
  */
-if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
+if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
     // Hooks
-    $GLOBALS['TL_HOOKS']['i18nl10nUpdateLanguageSelectionItem'][] = ["WEM\PortfolioBundle\Controller\Item", 'getFrontendUrl'];
+    $GLOBALS['TL_HOOKS']['changelanguageNavigation'][] = ["WEM\PortfolioBundle\Controller\Item", 'getFrontendUrl'];
 
     // Wizards
     $GLOBALS['BE_FFL']['i18nl10nAssociatedLocationsWizard'] = 'WEM\PortfolioBundle\Widget\I18nl10nAssociatedLocationsWizard';

@@ -38,10 +38,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
     'list' => [
         'sorting' => [
             'mode' => 1,
-            'fields' => ['sorting'],
+            'fields' => ['date'],
             'flag' => 1,
-            'panelLayout' => 'filter;sort,search,limit',
-            'disableGrouping' => true,
+            'panelLayout' => 'filter;sort,search,limit'
         ],
         'label' => [
             'fields' => ['title', 'date'],
@@ -90,12 +89,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
                 'href' => 'act=show',
                 'icon' => 'show.svg',
             ],
-            'drag' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['drag'],
-                'attributes' => 'class="drag-handle"',
-                'icon' => 'drag.svg',
-                'button_callback' => ['tl_wem_portfolio_item', 'parseDragButton'],
-            ],
         ],
     ],
 
@@ -124,9 +117,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [
-            'sql' => "int(10) unsigned NOT NULL default '0'",
-        ],
-        'sorting' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
 
@@ -227,7 +217,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
 
 // Handle i18nl10n compatibility
 $bundles = \System::getContainer()->getParameter('kernel.bundles');
-if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
+if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
     \System::loadLanguageFile('languages');
     // Update palettes
     $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['palettes']['default'] .= ';{i18nl10n_legend},i18nl10n_lang,i18nl10n_id';
@@ -235,8 +225,9 @@ if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
     $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_id'] = [
         'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item']['i18nl10n_id'],
         'exclude' => true,
-        'inputType' => 'i18nl10nAssociatedLocationsWizard',
-        'eval' => ['tl_class' => 'w50'],
+        'inputType' => 'select',
+        'options_callback' => ['tl_wem_portfolio_item', 'getItemsInOtherLanguage'],
+        'eval' => ['chosen' => true, 'tl_class' => 'w50', 'includeBlankOption' => true],
         'sql' => "int(10) unsigned NOT NULL default '0'",
     ];
     $GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['i18nl10n_lang'] = [
@@ -249,6 +240,7 @@ if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
         'options_callback' => ['tl_wem_portfolio_item', 'getAvailableLanguages'],
         'reference' => &$GLOBALS['TL_LANG']['LNG'],
         'eval' => [
+            'chosen' => true,
             'mandatory' => true,
             'rgxp' => 'language',
             'maxlength' => 5,
@@ -291,6 +283,12 @@ class tl_wem_portfolio_item extends Backend
      */
     public function addIcon($row, $label, DataContainer $dc = null, $imageAttribute = '', $blnReturnImage = false, $blnProtected = false)
     {
+        $bundles = \System::getContainer()->getParameter('kernel.bundles');
+        if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
+            $lng = $row['i18nl10n_lang'] ?: 'No language';
+            $label .= ' ('. $lng .')';
+        }
+
         return '<img src="assets/contao/images/iconJPG.svg" width="18" height="18" alt="image/jpeg" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
     }
 
@@ -427,11 +425,6 @@ class tl_wem_portfolio_item extends Backend
         return $varValue;
     }
 
-    public function parseDragButton($row, $href, $label, $title, $icon, $attributes)
-    {
-        return '<button type="button" '.$attributes.' title=" '.$title.' " aria-hidden="true">'.Image::getHtml($icon, $label, 'data-item="'.$row['id'].'" data-sorting="'.$row['sorting'].'" data-table="tl_wem_portfolio_item"').'</button>';
-    }
-
     /**
      * Return the "toggle visibility" button.
      *
@@ -559,11 +552,39 @@ class tl_wem_portfolio_item extends Backend
      */
     public function getAvailableLanguages(DataContainer $dc)
     {
-        $arrOptions = Verstaerker\I18nl10nBundle\Classes\I18nl10n::getInstance()->getAvailableLanguages(true, true);
+        $arrOptions = \System::getLanguages();
 
         // Add neutral option if available
         if ($this->User->isAdmin || false !== strpos(implode('', (array) $this->User->i18nl10n_languages), '::*')) {
             array_unshift($arrOptions, '');
+        }
+
+        return $arrOptions;
+    }
+
+    /**
+     * Get available languages, for i18nl10n bundle.
+     *
+     * @param DataContainer $dc [Contao DataContainer]
+     *
+     * @return array [Languages available, as Array]
+     */
+    public function getItemsInOtherLanguage(DataContainer $dc)
+    {
+        if (!$dc->activeRecord->i18nl10n_lang) {
+            Message::addInfo("Veuillez sélectionner une langue pour cet item");
+            return [];
+        }
+
+        $arrItems = Item::findItems(['not_lang' => $dc->activeRecord->i18nl10n_lang]);
+
+        if (!$arrItems) {
+            return [];
+        }
+
+        $arrOptions = [];
+        foreach ($arrItems as $i) {
+            $arrOptions[$i->id] = $i->title;
         }
 
         return $arrOptions;
