@@ -180,32 +180,32 @@ class Item extends \Controller
      *
      * @return array
      */
-    public function getFrontendUrl($item)
+    public function getFrontendUrl(\Terminal42\ChangeLanguage\Event\ChangelanguageNavigationEvent $event)
     {
+        // The target root page for current event
+        $targetRoot = $event->getNavigationItem()->getRootPage();
+        $language   = $targetRoot->rootLanguage; // The target language
+
+        if ($language === $GLOBALS['TL_LANGUAGE']) {
+            return;
+        }
+
         $objCurrentItem = ItemModel::findByIdOrAlias(\Input::get('auto_item'));
 
         if (!$objCurrentItem) {
-            return $item;
+            return;
         }
 
-        $objItem = ItemModel::findItems(['i18nl10n_id' => $objCurrentItem->i18nl10n_id, 'lang' => $item['language']], 1);
-        global $objPage;
+        // Find your current and new alias from the current URL
+        $objItem = ItemModel::findByPk($objCurrentItem->i18nl10n_id);
 
-        // If no equivalent item, return nothing to hide the change language module
-        if (!$objItem) {
-            return [];
+        if (null === $objItem) {
+            return;
         }
 
-        return [
-            'id' => empty($row['id']) ? $objPage->id : $row['id'],
-            'alias' => $item['alias'].'/'.$row['alias'],
-            'title' => empty($row['title']) ? $objPage->title : $row['title'],
-            'pageTitle' => empty($row['pageTitle'])
-                ? $objPage->pageTitle
-                : $row['pageTitle'],
-            'language' => $item['language'],
-            'isActive' => $item['language'] === $GLOBALS['TL_LANGUAGE'],
-            'forceRowLanguage' => true,
-        ];
+        $newAlias = $objItem->alias;
+
+        // Pass the new alias to ChangeLanguage
+        $event->getUrlParameterBag()->setUrlAttribute('items', $newAlias);
     }
 }
