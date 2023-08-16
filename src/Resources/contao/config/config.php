@@ -76,14 +76,3 @@ $GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\PortfolioBundle\
 
 // Wizards
 $GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = 'WEM\PortfolioBundle\Widget\AttributeWizard';
-
-/*
- * i18nl10n specific items
- */
-if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
-    // Hooks
-    $GLOBALS['TL_HOOKS']['changelanguageNavigation'][] = ["WEM\PortfolioBundle\Controller\Item", 'getFrontendUrl'];
-
-    // Wizards
-    $GLOBALS['BE_FFL']['i18nl10nAssociatedLocationsWizard'] = 'WEM\PortfolioBundle\Widget\I18nl10nAssociatedLocationsWizard';
-}

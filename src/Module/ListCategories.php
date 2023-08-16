@@ -150,11 +150,6 @@ class ListCategories extends Portfolio
             global $objPage;
             $arrConfig = [];
 
-            // If i18nl10n bundle is active, add the current language as filter
-            if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
-                $arrConfig['lang'] = $GLOBALS['TL_LANGUAGE'];
-            }
-
             // Get the total number of items
             $intTotal = Category::countItems($arrConfig, $arrOptions);
 

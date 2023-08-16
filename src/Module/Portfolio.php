@@ -35,11 +35,6 @@ abstract class Portfolio extends \Module
      */
     public function generate()
     {
-        $bundles = \System::getContainer()->getParameter('kernel.bundles');
-        if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
-            $this->hasI18nl10n = true;
-        }
-
         return parent::generate();
     }
 
@@ -169,18 +164,6 @@ abstract class Portfolio extends \Module
 
                 if (!$attribute) {
                     continue;
-                }
-
-                // i18nl10n compatibility : if the current attribute isn't in the current language, try to find the translation
-                // Else, skip
-                if ($this->hasI18nl10n && $GLOBALS['TL_LANGUAGE'] !== $attribute->i18nl10n_lang) {
-                    $i18nl10nAttribute = Attribute::findItems(['lang' => $GLOBALS['TL_LANGUAGE'], 'i18nl10n_id' => $attribute->i18nl10n_id], 1);
-
-                    if (!$i18nl10nAttribute) {
-                        continue;
-                    }
-
-                    $attribute = $i18nl10nAttribute;
                 }
 
                 // Get the filter options & skip if there is no options available

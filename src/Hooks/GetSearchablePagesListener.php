@@ -60,41 +60,11 @@ class GetSearchablePagesListener
             }
             $p->forceRowLanguage = true;
             $arrPages[$p->language][] = $p->loadDetails();
-
-            $bundles = \System::getContainer()->getParameter('kernel.bundles');
-            if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
-                $objInstance = \Verstaerker\I18nl10nBundle\Classes\I18nl10n::getInstance();
-                $objTranslations = \Database::getInstance()->prepare('
-                    SELECT tpi.*
-                    FROM tl_page_i18nl10n AS tpi
-                    LEFT JOIN tl_page AS tp ON tpi.pid = tp.id
-                    WHERE tp.id = ?
-                ')->execute($p->id);
-
-                if (!$objTranslations || 0 === $objTranslations->count()) {
-                    continue;
-                }
-
-                while ($objTranslations->next()) {
-                    if (!\array_key_exists($objTranslations->language, $arrPages)) {
-                        $arrPages[$objTranslations->language] = [];
-                    }
-
-                    $pl = $objInstance->findL10nWithDetails($p->id, $objTranslations->language);
-                    $pl->forceRowLanguage = true;
-
-                    $arrPages[$objTranslations->language][] = $pl;
-                }
-            }
         }
 
         while ($objItems->next()) {
             foreach ($arrPages as $l => $arrPage) {
                 foreach ($arrPage as $k => $pl) {
-                    if ($objItems->i18nl10n_lang && $l !== $objItems->i18nl10n_lang) {
-                        continue;
-                    }
-
                     $pages[] = \Environment::get('base').$pl->getFrontendUrl('/'.$objItems->alias, $l);
                 }
             }

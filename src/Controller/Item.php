@@ -171,41 +171,4 @@ class Item extends \Controller
             throw $e;
         }
     }
-
-    /**
-     * Adjusts the way Portfolio items URLs are generated
-     * (useful for i18nl10n plugin).
-     *
-     * @param array $item | Item sent by module
-     *
-     * @return array
-     */
-    public function getFrontendUrl(\Terminal42\ChangeLanguage\Event\ChangelanguageNavigationEvent $event)
-    {
-        // The target root page for current event
-        $targetRoot = $event->getNavigationItem()->getRootPage();
-        $language   = $targetRoot->rootLanguage; // The target language
-
-        if ($language === $GLOBALS['TL_LANGUAGE']) {
-            return;
-        }
-
-        $objCurrentItem = ItemModel::findByIdOrAlias(\Input::get('auto_item'));
-
-        if (!$objCurrentItem) {
-            return;
-        }
-
-        // Find your current and new alias from the current URL
-        $objItem = ItemModel::findByPk($objCurrentItem->i18nl10n_id);
-
-        if (null === $objItem) {
-            return;
-        }
-
-        $newAlias = $objItem->alias;
-
-        // Pass the new alias to ChangeLanguage
-        $event->getUrlParameterBag()->setUrlAttribute('items', $newAlias);
-    }
 }
