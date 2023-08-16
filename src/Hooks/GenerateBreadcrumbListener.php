@@ -36,7 +36,7 @@ class GenerateBreadcrumbListener
                 'isRoot' => false,
                 'isActive' => true,
                 'href' => \Environment::get('request'),
-                'title' => 'Portfolio | '.$objCategory->title,
+                'title' => $objCategory->title,
                 'link' => $objCategory->title,
                 'class' => '',
             ];
