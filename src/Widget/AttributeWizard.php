@@ -108,6 +108,7 @@ class AttributeWizard extends \Widget
         }
 
         $arrAuthorizedAttributes = array_unique($arrAuthorizedAttributes);
+        $arrAuthorizedAttributes = array_map('intval', $arrAuthorizedAttributes);
 
         // Filter if we have restrictions per category
         $arrAttributes = [];
