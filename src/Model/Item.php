@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
+use Contao\PageModel;
 use Exception;
 use WEM\UtilsBundle\Model\Model;
 
@@ -75,5 +76,18 @@ class Item extends Model
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Generate item url
+     * @param  boolean $blnAbsolute
+     * @return string
+     */
+    public function getUrl($blnAbsolute = false)
+    {
+        $objCategories = $this->getRelated('categories');
+        $objFirstCategory = $objCategories->first();
+        $objPage = PageModel::findByPk($objFirstCategory->jumpTo);
+        return $blnAbsolute ? $objPage->getAbsoluteUrl('/'.$this->alias) : $objPage->getFrontendUrl('/'.$this->alias);
     }
 }

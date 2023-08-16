@@ -108,10 +108,8 @@ abstract class Portfolio extends \Module
                 $arrItem['categories'] = $objCategories->fetchAll();
             }
 
-            // Generate item link (category jumpTo page + item alias)*
-            if (null !== $arrItem['categories'] && !empty($arrItem['categories']) && $objPage = \PageModel::findByPk($arrItem['categories'][0]['jumpTo'])) {
-                $arrItem['link'] = $objPage->getFrontendUrl('/'.$arrItem['alias']);
-            }
+            // Generate item link
+            $arrItem['link'] = $objItem->getUrl();
 
             // Get the item attributes
             if ($attributes = ItemAttribute::findItems(['pid' => $arrItem['id'], 'displayInFrontend' => 1])) {
