@@ -164,42 +164,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
     ],
 ];
 
-// Handle i18nl10n compatibility
-$bundles = \System::getContainer()->getParameter('kernel.bundles');
-if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
-    \System::loadLanguageFile('languages');
-    // Update palettes
-    $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute']['palettes']['default'] .= ';{i18nl10n_legend},i18nl10n_lang,i18nl10n_id';
-
-    $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute']['fields']['i18nl10n_id'] = [
-        'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['i18nl10n_id'],
-        'exclude' => true,
-        'inputType' => 'i18nl10nAssociatedLocationsWizard',
-        'eval' => ['tl_class' => 'w50'],
-        'sql' => "int(10) unsigned NOT NULL default '0'",
-    ];
-    $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute']['fields']['i18nl10n_lang'] = [
-        'label' => &$GLOBALS['TL_LANG']['MSC']['i18nl10n_fields']['language']['label'],
-        'exclude' => true,
-        'filter' => true,
-        'inputType' => 'select',
-        'sorting' => true,
-        'flag' => 11,
-        'options_callback' => ['tl_wem_portfolio_attribute', 'getAvailableLanguages'],
-        'reference' => &$GLOBALS['TL_LANG']['LNG'],
-        'eval' => [
-            'mandatory' => true,
-            'rgxp' => 'language',
-            'maxlength' => 5,
-            'nospace' => true,
-            'doNotCopy' => true,
-            'tl_class' => 'w50 clr',
-            'includeBlankOption' => true,
-        ],
-        'sql' => "varchar(5) NOT NULL default ''",
-    ];
-}
-
 /**
  * Handle Portfolio Customers DCA functions.
  *
@@ -259,24 +223,5 @@ class tl_wem_portfolio_attribute extends Backend
         }
 
         return $varValue;
-    }
-
-    /**
-     * Get available languages, for i18nl10n bundle.
-     *
-     * @param DataContainer $dc [Contao DataContainer]
-     *
-     * @return array [Languages available, as Array]
-     */
-    public function getAvailableLanguages(DataContainer $dc)
-    {
-        $arrOptions = Verstaerker\I18nl10nBundle\Classes\I18nl10n::getInstance()->getAvailableLanguages(true, true);
-
-        // Add neutral option if available
-        if ($this->User->isAdmin || false !== strpos(implode('', (array) $this->User->i18nl10n_languages), '::*')) {
-            array_unshift($arrOptions, '');
-        }
-
-        return $arrOptions;
     }
 }

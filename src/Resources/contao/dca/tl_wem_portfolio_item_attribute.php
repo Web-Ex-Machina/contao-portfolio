@@ -123,12 +123,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
     ],
 ];
 
-// Handle i18nl10n compatibility
-$bundles = \System::getContainer()->getParameter('kernel.bundles');
-if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
-    $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute']['fields']['attribute']['options_callback'] = ['tl_wem_portfolio_item_attribute', 'getOptionsByLanguage'];
-}
-
 /**
  * Handle Portfolio DCA functions.
  *
@@ -157,27 +151,5 @@ class tl_wem_portfolio_item_attribute extends Backend
         $objAttribute = $this->Database->prepare('SELECT * FROM tl_wem_portfolio_attribute WHERE id = ?')->limit(1)->execute($arrRow['attribute']);
 
         return sprintf('%s -> %s', $objAttribute->title, $arrRow['value']);
-    }
-
-    /**
-     * Limit attributes by their languages.
-     *
-     * @return [Array] [<description>]
-     */
-    public function getOptionsByLanguage($dc)
-    {
-        $objItem = \WEM\PortfolioBundle\Model\Item::findByPk($dc->activeRecord->pid);
-        $objAttributes = \WEM\PortfolioBundle\Model\Attribute::findItems(['lang' => $objItem->i18nl10n_lang], 0, 0, ['title ASC']);
-
-        if (!$objAttributes || 0 === $objAttributes->count()) {
-            return [];
-        }
-
-        $r = [];
-        while ($objAttributes->next()) {
-            $r[$objAttributes->id] = $objAttributes->title;
-        }
-
-        return $r;
     }
 }
