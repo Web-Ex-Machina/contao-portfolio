@@ -256,14 +256,6 @@ abstract class Portfolio extends \Module
     protected function getSortingValue($strField)
     {
         switch ($strField) {
-            case 'global':
-                return 'sorting ASC';
-                break;
-
-            case 'category':
-                return $strField;
-                break;
-
             default:
                 return str_replace('_', ' ', $strField);
                 break;

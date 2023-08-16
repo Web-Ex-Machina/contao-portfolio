@@ -56,9 +56,6 @@ class Item extends Model
 
             if (!isset($arrOptions['order'])) {
                 $arrOptions['order'] = "$t.date DESC";
-            } else if('category' == $arrOptions['order']) {
-                $arrOptions['join'][] = "JOIN tl_wem_portfolio_category_item AS twpci ON $t.id = twpci.item";
-                $arrOptions['order'] = "twpci.sorting ASC";
             }
 
             if (empty($arrColumns)) {

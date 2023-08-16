@@ -59,7 +59,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_category_sort'] = [
     'exclude' => true,
     'inputType' => 'select',
     'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_category_sort'],
-    'options' => ['global', 'title_ASC', 'title_DESC'],
+    'options' => ['title_ASC', 'title_DESC'],
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(64) NOT NULL default ''",
 ];
@@ -126,7 +126,7 @@ class tl_module_wem_portfolio extends Backend
      */
     public function getSortingCategories(DataContainer $dc)
     {
-        $arrOptions = ['global', 'category', 'date_ASC', 'date_DESC', 'title_ASC', 'title_DESC'];
+        $arrOptions = ['date_ASC', 'date_DESC', 'title_ASC', 'title_DESC'];
 
         if ($dc->activeRecord->wem_portfolio_categories && 1 < \count(deserialize($dc->activeRecord->wem_portfolio_categories))) {
             unset($arrOptions[array_search('category', $arrOptions, true)]);
