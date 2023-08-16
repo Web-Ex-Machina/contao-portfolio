@@ -13,13 +13,14 @@
     ],
     "support":{
         "website":"https://www.webexmachina.fr/",
-        "issues":"https://github.com/webexmachina/contao-portfolio/issues",
-        "source":"https://github.com/webexmachina/contao-portfolio"
+        "issues":"https://github.com/web-ex-machina/contao-portfolio/issues",
+        "source":"https://github.com/web-ex-machina/contao-portfolio"
     },
     "require": {
-        "php": ">=7.4",
-        "contao/core-bundle": "~4.9",
-        "terminal42/dcawizard":"^2.5"
+        "contao/core-bundle": "^4.13",
+        "terminal42/dcawizard": "~2.7",
+        "webexmachina/contao-utils": "^1.0",
+        "menatwork/contao-multicolumnwizard-bundle": "^3.6"
     },
     "autoload":{
         "psr-4": {
