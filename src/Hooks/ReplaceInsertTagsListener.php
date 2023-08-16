@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Hooks;
 
-use WEM\PortfolioBundle\Controller\Item as PItem;
+use WEM\PortfolioBundle\Model\Item as Item;
 
 class ReplaceInsertTagsListener
 {
@@ -36,24 +36,19 @@ class ReplaceInsertTagsListener
         }
 
         // Load the current item
-        $item = PItem::getItem(\Input::get('auto_item'));
+        $objItem = Item::findByIdOrAlias(\Input::get('auto_item'));
 
         switch ($arrTag[1]) {
             case 'attr':
-                if (!$arrTag[2] || !\is_array($item['attributes']) || !\array_key_exists($arrTag[2], $item['attributes'])) {
+                if (!$arrTag[2] || !\is_array($objItem['attributes']) || !\array_key_exists($arrTag[2], $objItem['attributes'])) {
                     return false;
                 }
 
-                return $item['attributes'][$arrTag[2]][$arrTag[3] ?: 'value'];
+                return $objItem->getAttribute($arrTag[2]);
             break;
 
             default:
-                // Check if the value exist in portfolio table
-                if (!\array_key_exists($arrTag[1], $item)) {
-                    return false;
-                }
-
-                return $item[$arrTag[1]];
+                return $objItem->{$arrTag[1]} ?: '';
         }
 
         return false;

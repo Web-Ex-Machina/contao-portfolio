@@ -90,4 +90,15 @@ class Item extends Model
         $objPage = PageModel::findByPk($objFirstCategory->jumpTo);
         return $blnAbsolute ? $objPage->getAbsoluteUrl('/'.$this->alias) : $objPage->getFrontendUrl('/'.$this->alias);
     }
+
+    public function getAttributes()
+    {
+        return ItemAttribute::findItems(['pid' => $this->id, 'displayInFrontend' => 1]);
+    }
+
+    public function getAttribute($strName) {
+        $objAttribute = ItemAttribute::findItems(['pid' => $this->id, 'name' => $strName]);
+
+        return $objAttribute ? $objAttribute->value : '';
+    }
 }

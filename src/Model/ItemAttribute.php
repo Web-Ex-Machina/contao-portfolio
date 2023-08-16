@@ -50,13 +50,15 @@ class ItemAttribute extends Model
             $t = static::$strTable;
 
             switch ($strField) {
+                case 'name':
+                    $arrColumns[] = "$t.attribute IN(SELECT t3.id FROM tl_wem_portfolio_attribute AS t3 WHERE t3.name = '".$varValue."')";
+                break;
+
                 case 'displayInFrontend':
                     if (1 === $varValue) {
-                        ++$i;
-                        $arrColumns[] = "$t.attribute IN(SELECT t".$i.'.id FROM tl_wem_portfolio_attribute AS t'.$i.' WHERE t'.$i.".displayInFrontend = '1')";
+                        $arrColumns[] = "$t.attribute IN(SELECT t1.id FROM tl_wem_portfolio_attribute AS t1 WHERE t1.displayInFrontend = '1')";
                     } elseif (0 === $varValue) {
-                        ++$i;
-                        $arrColumns[] = "$t.attribute IN(SELECT t".$i.'.id FROM tl_wem_portfolio_attribute AS t'.$i.' WHERE t'.$i.".displayInFrontend = '')";
+                        $arrColumns[] = "$t.attribute IN(SELECT t2.id FROM tl_wem_portfolio_attribute AS t2 WHERE t2.displayInFrontend = '')";
                     }
                 break;
 
