@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
-use Contao\Model;
-use RuntimeException as Exception;
+use Exception;
+use WEM\UtilsBundle\Model\Model;
 
 /**
  * Reads and writes attributes.
@@ -30,97 +30,45 @@ class Attribute extends Model
     protected static $strTable = 'tl_wem_portfolio_attribute';
 
     /**
-     * Find attributes, depends on the arguments.
+     * Default order column
      *
-     * @param array
-     * @param int
-     * @param int
-     * @param array
-     *
-     * @return Collection
+     * @var string
      */
-    public static function findItems($arrConfig = [], $intLimit = 0, $intOffset = 0, array $arrOptions = [])
-    {
-        try {
-            $t = static::$strTable;
-            $arrColumns = static::formatColumns($arrConfig);
-
-            if ($intLimit > 0) {
-                $arrOptions['limit'] = $intLimit;
-            }
-
-            if ($intOffset > 0) {
-                $arrOptions['offset'] = $intOffset;
-            }
-
-            if (!isset($arrOptions['order'])) {
-                $arrOptions['order'] = "$t.title ASC";
-            }
-
-            if (empty($arrColumns)) {
-                return static::findAll($arrOptions);
-            }
-
-            return static::findBy($arrColumns, null, $arrOptions);
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
+    protected static $strOrderColumn = "title ASC";
 
     /**
-     * Count item attributes, depends on the arguments.
-     *
-     * @param array
-     * @param array
-     *
-     * @return int
+     * [formatStatement description]
+     * @param  [type] $strField    [description]
+     * @param  [type] $varValue    [description]
+     * @param  string $strOperator [description]
+     * @return [type]              [description]
      */
-    public static function countItems($arrConfig = [], array $arrOptions = [])
+    public static function formatStatement($strField, $varValue, $strOperator = '='): array
     {
         try {
-            $t = static::$strTable;
-            $arrColumns = static::formatColumns($arrConfig);
-            if (empty($arrColumns)) {
-                return static::countAll($arrOptions);
-            }
-
-            return static::countBy($arrColumns, null, $arrOptions);
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Format AttributeModel columns.
-     *
-     * @param [Array] $arrConfig [Configuration to format]
-     *
-     * @return [Array] [The Model columns]
-     */
-    public static function formatColumns($arrConfig)
-    {
-        try {
-            $t = static::$strTable;
             $arrColumns = [];
+            $t = static::$strTable;
 
-            if ($arrConfig['title']) {
-                $arrColumns[] = "$t.title = '".$arrConfig['title']."'";
-            }
+            switch ($strField) {
+                case 'useAsFilter':
+                    if (1 === $varValue) {
+                        $arrColumns[] = "$t.useAsFilter = '1'";
+                    } elseif (0 === $varValue) {
+                        $arrColumns[] = "$t.useAsFilter = ''";
+                    }
+                break;
 
-            if (1 === $arrConfig['useAsFilter']) {
-                $arrColumns[] = "$t.useAsFilter = '1'";
-            } elseif (0 === $arrConfig['useAsFilter']) {
-                $arrColumns[] = "$t.useAsFilter = ''";
-            }
+                case 'displayInFrontend':
+                    if (1 === $varValue) {
+                        $arrColumns[] = "$t.displayInFrontend = '1'";
+                    } elseif (0 === $varValue) {
+                        $arrColumns[] = "$t.displayInFrontend = ''";
+                    }
+                break;
 
-            if (1 === $arrConfig['displayInFrontend']) {
-                $arrColumns[] = "$t.displayInFrontend = '1'";
-            } elseif (0 === $arrConfig['displayInFrontend']) {
-                $arrColumns[] = "$t.displayInFrontend = ''";
-            }
-
-            if ($arrConfig['not']) {
-                $arrColumns[] = $arrConfig['not'];
+                // Load parent
+                default:
+                    $arrColumns = array_merge($arrColumns, parent::formatStatement($strField, $varValue, $strOperator));
             }
 
             return $arrColumns;

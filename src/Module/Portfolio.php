@@ -75,17 +75,19 @@ abstract class Portfolio extends \Module
             }
 
             // Parse the others images, in a easier way
-            for ($i = 1; $i < \count($arrItem['pictures']); ++$i) {
-                $strPath = $arrItem['pictures'][$i]['singleSRC'];
-                if ($size || $arrItem['pictures'][$i]->imgSize) {
-                    if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
-                        $arrImages[$i] = \Image::get($strPath, $size[0], $size[1], $size[2]);
-                    } elseif ($arrItem['pictures'][0]->imgSize) {
-                        $imgSize = deserialize($arrItem['pictures'][0]->imgSize);
-                        $arrImages[$i] = \Image::get($strPath, $imgSize[0], $imgSize[1], $imgSize[2]);
+            if (is_countable($arrItem['pictures'])) {
+                for ($i = 1; $i < \count($arrItem['pictures']); ++$i) {
+                    $strPath = $arrItem['pictures'][$i]['singleSRC'];
+                    if ($size || $arrItem['pictures'][$i]->imgSize) {
+                        if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
+                            $arrImages[$i] = \Image::get($strPath, $size[0], $size[1], $size[2]);
+                        } elseif ($arrItem['pictures'][0]->imgSize) {
+                            $imgSize = deserialize($arrItem['pictures'][0]->imgSize);
+                            $arrImages[$i] = \Image::get($strPath, $imgSize[0], $imgSize[1], $imgSize[2]);
+                        }
+                    } else {
+                        $arrImages[$i] = $strPath;
                     }
-                } else {
-                    $arrImages[$i] = $strPath;
                 }
             }
 

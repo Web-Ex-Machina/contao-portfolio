@@ -14,9 +14,8 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
-use RuntimeException as Exception;
-use Contao\Model;
-use WEM\PortfolioBundle\Classes\QueryBuilder;
+use Exception;
+use WEM\UtilsBundle\Model\Model;
 
 /**
  * Reads and writes items.
@@ -31,130 +30,50 @@ class Item extends Model
     protected static $strTable = 'tl_wem_portfolio_item';
 
     /**
-     * Find items, depends on the arguments.
+     * Default order column
      *
-     * @param array
-     * @param int
-     * @param int
-     * @param array
-     *
-     * @return Collection
+     * @var string
      */
-    public static function findItems($arrConfig = [], $intLimit = 0, $intOffset = 0, array $arrOptions = [])
-    {
-        try {
-            $t = static::$strTable;
-            $arrColumns = static::formatColumns($arrConfig);
-
-            if ($intLimit > 0) {
-                $arrOptions['limit'] = $intLimit;
-            }
-
-            if ($intOffset > 0) {
-                $arrOptions['offset'] = $intOffset;
-            }
-
-            if (!isset($arrOptions['order'])) {
-                $arrOptions['order'] = "$t.date DESC";
-            }
-
-            if (empty($arrColumns)) {
-                return static::findAll($arrOptions);
-            }
-
-            return static::findBy($arrColumns, null, $arrOptions);
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
+    protected static $strOrderColumn = "date DESC";
 
     /**
-     * Count item attributes, depends on the arguments.
-     *
-     * @param array
-     * @param array
-     *
-     * @return int
+     * [formatStatement description]
+     * @param  [type] $strField    [description]
+     * @param  [type] $varValue    [description]
+     * @param  string $strOperator [description]
+     * @return [type]              [description]
      */
-    public static function countItems($arrConfig = [], array $arrOptions = [])
+    public static function formatStatement($strField, $varValue, $strOperator = '='): array
     {
         try {
+            $arrColumns = [];
             $t = static::$strTable;
-            $arrColumns = static::formatColumns($arrConfig);
-            if (empty($arrColumns)) {
-                return static::countAll($arrOptions);
-            }
 
-            return static::countBy($arrColumns, null, $arrOptions);
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
+            switch ($strField) {
+                case 'category':
+                    $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid = ".$varValue.')';
+                break;
 
-    /**
-     * Format ItemModel columns.
-     *
-     * @param [Array] $arrConfig [Configuration to format]
-     *
-     * @return [Array] [The Model columns]
-     */
-    public static function formatColumns($arrConfig)
-    {
-        try {
-            $t = static::$strTable;
-            $arrColumns = ["$t.published=1"];
+                case 'categories':
+                    $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid IN (".implode(',', $varValue).'))';
+                break;
 
-            if ($arrConfig['category']) {
-                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid = ".$arrConfig['category'].')';
-            }
+                case 'attributes':
+                    $i = 1;
+                    foreach ($varValue as $a) {
+                        ++$i;
+                        $arrColumns[] = "$t.id IN(SELECT t".$i.'.pid FROM tl_wem_portfolio_item_attribute AS t'.$i.' WHERE t'.$i.'.attribute = '.$a['attribute'].' AND t'.$i.".value = '".$a['value']."')";
+                    }
+                break;
 
-            if ($arrConfig['categories']) {
-                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid IN (".implode(',', $arrConfig['categories']).'))';
-            }
-
-            if ($arrConfig['alias']) {
-                $arrColumns[] = "$t.alias = '".$arrConfig['alias']."'";
-            }
-
-            if ($arrConfig['attributes']) {
-                $i = 1;
-                foreach ($arrConfig['attributes'] as $attribute) {
-                    ++$i;
-                    $arrColumns[] = "$t.id IN(SELECT t".$i.'.pid FROM tl_wem_portfolio_item_attribute AS t'.$i.' WHERE t'.$i.'.attribute = '.$attribute['attribute'].' AND t'.$i.".value = '".$attribute['value']."')";
-                }
-            }
-
-            if ($arrConfig['not']) {
-                $arrColumns[] = $arrConfig['not'];
+                // Load parent
+                default:
+                    $arrColumns = array_merge($arrColumns, parent::formatStatement($strField, $varValue, $strOperator));
             }
 
             return $arrColumns;
         } catch (Exception $e) {
             throw $e;
         }
-    }
-
-    /**
-     * Build a query based on the given options
-     *
-     * @param array $arrOptions The options array
-     *
-     * @return string The query string
-     */
-    protected static function buildFindQuery(array $arrOptions)
-    {
-        return QueryBuilder::find($arrOptions);
-    }
-
-    /**
-     * Build a query based on the given options to count the number of records
-     *
-     * @param array $arrOptions The options array
-     *
-     * @return string The query string
-     */
-    protected static function buildCountQuery(array $arrOptions)
-    {
-        return QueryBuilder::count($arrOptions);
     }
 }
