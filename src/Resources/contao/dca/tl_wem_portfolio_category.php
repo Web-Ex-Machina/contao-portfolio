@@ -36,10 +36,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
     'list' => [
         'sorting' => [
             'mode' => 1,
-            'fields' => ['sorting'],
+            'fields' => ['title'],
             'flag' => 1,
-            'panelLayout' => 'filter;sort,search,limit',
-            'disableGrouping' => true,
+            'panelLayout' => 'filter;sort,search,limit'
         ],
         'label' => [
             'fields' => ['title'],
@@ -107,9 +106,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [
-            'sql' => "int(10) unsigned NOT NULL default '0'",
-        ],
-        'sorting' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
 
