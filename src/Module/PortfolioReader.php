@@ -16,7 +16,7 @@ namespace WEM\PortfolioBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Patchwork\Utf8;
-use WEM\PortfolioBundle\Controller\Item;
+use WEM\PortfolioBundle\Model\Item;
 
 /**
  * Front end module "portfolio reader".

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Module;
 
 use RuntimeException as Exception;
-use WEM\PortfolioBundle\Controller\Item;
+use WEM\PortfolioBundle\Model\Item;
 use WEM\PortfolioBundle\Model\Attribute;
 use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\CategoryItem;
@@ -49,8 +49,77 @@ abstract class Portfolio extends \Module
     public function parseItem($arrItem, $strTemplate = 'wem_portfolio_item_default', $strClass = '', $intCount = 0)
     {
         try {
-            /* @var \PageModel $objPage */
-            global $objPage;
+            // Parse dates
+            $arrDates = ['timestamp' => $arrItem['createdAt'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['createdAt']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['createdAt'])];
+            $arrItem['createdAt'] = $arrDates;
+            $arrDates = ['timestamp' => $arrItem['date'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['date']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])];
+            $arrItem['date'] = $arrDates;
+
+            // Fetch item pictures
+            if ($arrItem['pictures'] = \StringUtil::deserialize($arrItem['pictures'])) {
+                $objFiles = \FilesModel::findMultipleByUuids($arrItem['pictures']);
+                $images = [];
+                while ($objFiles->next()) {
+                    $images[$objFiles->path] = [
+                        'id' => $objFiles->id,
+                        'uuid' => $objFiles->uuid,
+                        'name' => $objFile->basename,
+                        'singleSRC' => $objFiles->path,
+                        'filesModel' => $objFiles->current(),
+                    ];
+                }
+
+                if ('' !== $arrItem['orderPictures']) {
+                    $t = \StringUtil::deserialize($arrItem['orderPictures']);
+                    if (!empty($t) && \is_array($t)) {
+                        // Remove all values
+                        $arrOrder = array_map(function (): void {
+                        }, array_flip($t));
+
+                        // Move the matching elements to their position in $arrOrder
+                        foreach ($images as $k => $v) {
+                            if (\array_key_exists($v['uuid'], $arrOrder)) {
+                                $arrOrder[$v['uuid']] = $v;
+                                unset($images[$k]);
+                            }
+                        }
+
+                        // Append the left-over images at the end
+                        if (!empty($images)) {
+                            $arrOrder = array_merge($arrOrder, array_values($images));
+                        }
+
+                        // Remove empty (unreplaced) entries
+                        $images = array_values(array_filter($arrOrder));
+                        unset($arrOrder);
+                    }
+                }
+
+                $arrItem['pictures'] = $images;
+            }
+
+            // Load item categories
+            $objItem = Item::findByPk($arrItem['id']);
+            $objCategories = $objItem->getRelated('categories');
+
+            if (0 === $objCategories->count()) {
+                $arrItem['categories'] = null;
+            } else {
+                $arrItem['categories'] = $objCategories->fetchAll();
+            }
+
+            // Generate item link (category jumpTo page + item alias)*
+            if (null !== $arrItem['categories'] && !empty($arrItem['categories']) && $objPage = \PageModel::findByPk($arrItem['categories'][0]['jumpTo'])) {
+                $arrItem['link'] = $objPage->getFrontendUrl('/'.$arrItem['alias']);
+            }
+
+            // Get the item attributes
+            if ($attributes = ItemAttribute::findItems(['pid' => $arrItem['id'], 'displayInFrontend' => 1])) {
+                $arrItem['attributes'] = [];
+                foreach ($attributes as $attribute) {
+                    $arrItem['attributes'][$attribute['attribute']['alias']] = ['label' => $attribute['attribute']['title'], 'value' => $attribute['value']];
+                }
+            }
 
             /** @var \FrontendTemplate|object $objTemplate */
             $objTemplate = new \FrontendTemplate($strTemplate);

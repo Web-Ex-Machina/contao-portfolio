@@ -17,7 +17,7 @@ namespace WEM\PortfolioBundle\Module;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Patchwork\Utf8;
 use RuntimeException as Exception;
-use WEM\PortfolioBundle\Controller\Item;
+use WEM\PortfolioBundle\Model\Item;
 
 /**
  * Front end module "portfolio list".
@@ -99,11 +99,6 @@ class PortfolioList extends Portfolio
             global $objPage;
             $arrConfig['categories'] = deserialize($this->wem_portfolio_categories);
 
-            // If i18nl10n bundle is active, add the current language as filter
-            if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
-                $arrConfig['lang'] = $GLOBALS['TL_LANGUAGE'];
-            }
-
             // Adjust the config
             if ($this->filters) {
                 foreach ($this->filters as $filter) {
@@ -155,32 +150,17 @@ class PortfolioList extends Portfolio
                 $this->Template->pagination = $objPagination->generate("\n  ");
             }
 
-            $arrItems = Item::getItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
+            $objItems = Item::findItems($arrConfig, ($limit ?: 0), $offset, $arrOptions);
 
             // Add the filters
             if ($this->wem_portfolio_filters && !empty($this->filters)) {
                 $this->Template->filters = $this->filters;
             }
 
-            // Add the articles
-            if (null !== $arrItems && \Input::post('TL_AJAX')) {
-                $arrResponse = ['status' => 'success', 'items' => $arrItems, 'rt' => $this->Template->rt];
-                echo json_encode($arrResponse);
-                die;
+            if (null !== $objItems) {
+                $this->Template->items = $this->parseItems($objItems->fetchAll(), $this->wem_portfolio_item_template);
             }
-            if (null !== $arrItems) {
-                $this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_item_template);
-            }
-
-            $this->Template->raw_items = $arrItems;
-
-            //dump($arrItems);
         } catch (Exception $e) {
-            if (\Input::post('TL_AJAX')) {
-                $arrResponse = ['status' => 'error', 'error' => $e->getMessage(), 'trace' => $e->getTrace()];
-                echo json_encode($arrResponse);
-                die;
-            }
             $this->Template->error = true;
             $this->Template->message = $e->getMessage();
             $this->Template->trace = $e->getTrace();
