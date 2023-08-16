@@ -203,14 +203,7 @@ class ListCategories extends Portfolio
             }
 
             $this->Template->raw_items = $arrItems;
-
-            //dump($arrItems);
         } catch (Exception $e) {
-            if (\Input::post('TL_AJAX')) {
-                $arrResponse = ['status' => 'error', 'error' => $e->getMessage(), 'trace' => $e->getTrace()];
-                echo json_encode($arrResponse);
-                die;
-            }
             $this->Template->error = true;
             $this->Template->message = $e->getMessage();
             $this->Template->trace = $e->getTrace();
