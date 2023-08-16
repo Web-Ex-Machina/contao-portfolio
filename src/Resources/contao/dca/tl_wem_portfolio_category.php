@@ -81,13 +81,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'],
                 'href' => 'table=tl_wem_portfolio_category_item',
                 'icon' => 'bundles/wemportfolio/portfolio_16.png',
-            ],
-            'drag' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_category']['drag'],
-                'attributes' => 'class="drag-handle"',
-                'icon' => 'drag.svg',
-                'button_callback' => ['tl_wem_portfolio_category', 'parseDragButton'],
-            ],
+            ]
         ],
     ],
 
@@ -209,11 +203,6 @@ class tl_wem_portfolio_category extends Backend
         $intItems = CategoryItem::countItems(['pid' => $row['id']]);
 
         return $label.sprintf(' (%s items)', $intItems);
-    }
-
-    public function parseDragButton($row, $href, $label, $title, $icon, $attributes)
-    {
-        return '<button type="button" '.$attributes.' title=" '.$title.' " aria-hidden="true">'.Image::getHtml($icon, $label, 'data-item="'.$row['id'].'" data-sorting="'.$row['sorting'].'" data-table="tl_wem_portfolio_category"').'</button>';
     }
 
     /**
