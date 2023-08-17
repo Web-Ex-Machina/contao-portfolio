@@ -62,12 +62,7 @@ abstract class Portfolio extends \Module
 
             // Load item categories
             $objCategories = $objItem->getRelated('categories');
-
-            if (0 === $objCategories->count()) {
-                $arrItem['categories'] = null;
-            } else {
-                $arrItem['categories'] = $objCategories->fetchAll();
-            }
+            $arrItem['categories'] = $objCategories ? $objCategories->fetchAll() : null;
 
             // Generate item link
             $arrItem['link'] = $objItem->getUrl();
