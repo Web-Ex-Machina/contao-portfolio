@@ -52,9 +52,21 @@ abstract class Portfolio extends \Module
             $objItem = Item::findByPk($arrItem['id']);
 
             // Parse dates
-            $arrDates = ['timestamp' => $arrItem['createdAt'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['createdAt']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['createdAt'])];
+            $arrDates = [
+                'timestamp' => $arrItem['createdAt'],
+                'date' => \Date::parse(\Config::get('dateFormat'), $arrItem['createdAt']),
+                'time' => \Date::parse(\Config::get('timeFormat'), $arrItem['createdAt']),
+                'datim' => \Date::parse(\Config::get('datimFormat'), $arrItem['createdAt']),
+                'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['createdAt'])
+            ];
             $arrItem['createdAt'] = $arrDates;
-            $arrDates = ['timestamp' => $arrItem['date'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['date']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])];
+            $arrDates = [
+                'timestamp' => $arrItem['date'],
+                'date' => \Date::parse(\Config::get('dateFormat'), $arrItem['date']),
+                'time' => \Date::parse(\Config::get('timeFormat'), $arrItem['date']),
+                'datim' => \Date::parse(\Config::get('datimFormat'), $arrItem['date']),
+                'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])
+            ];
             $arrItem['date'] = $arrDates;
 
             // Fetch item pictures
