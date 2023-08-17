@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
+use Contao\FilesModel;
 use Contao\PageModel;
+use Contao\StringUtil;
 use Exception;
 use WEM\UtilsBundle\Model\Model;
 
@@ -76,6 +78,58 @@ class Item extends Model
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Return item pictures
+     * @return array
+     */
+    public function getPictures()
+    {
+        $images = [];
+
+        // Fetch item pictures
+        if ($arrPictures = StringUtil::deserialize($this->pictures)) {
+            $objFiles = FilesModel::findMultipleByUuids($arrPictures);
+            
+            while ($objFiles->next()) {
+                $images[$objFiles->path] = [
+                    // 'id' => $objFiles->id,
+                    // 'uuid' => $objFiles->uuid,
+                    'name' => $objFile->basename,
+                    'singleSRC' => $objFiles->path,
+                    // 'filesModel' => $objFiles->current(),
+                ];
+            }
+
+            if ('' !== $this->orderPictures) {
+                $t = StringUtil::deserialize($this->orderPictures);
+                if (!empty($t) && \is_array($t)) {
+                    // Remove all values
+                    $arrOrder = array_map(function (): void {
+                    }, array_flip($t));
+
+                    // Move the matching elements to their position in $arrOrder
+                    foreach ($images as $k => $v) {
+                        if (\array_key_exists($v['uuid'], $arrOrder)) {
+                            $arrOrder[$v['uuid']] = $v;
+                            unset($images[$k]);
+                        }
+                    }
+
+                    // Append the left-over images at the end
+                    if (!empty($images)) {
+                        $arrOrder = array_merge($arrOrder, array_values($images));
+                    }
+
+                    // Remove empty (unreplaced) entries
+                    $images = array_values(array_filter($arrOrder));
+                    unset($arrOrder);
+                }
+            }
+        }
+
+        return $images;
     }
 
     /**

@@ -49,6 +49,8 @@ abstract class Portfolio extends \Module
     public function parseItem($arrItem, $strTemplate = 'wem_portfolio_item_default', $strClass = '', $intCount = 0)
     {
         try {
+            $objItem = Item::findByPk($arrItem['id']);
+
             // Parse dates
             $arrDates = ['timestamp' => $arrItem['createdAt'], 'date' => \Date::parse(\Config::get('datimFormat'), $arrItem['createdAt']), 'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['createdAt'])];
             $arrItem['createdAt'] = $arrDates;
@@ -56,50 +58,9 @@ abstract class Portfolio extends \Module
             $arrItem['date'] = $arrDates;
 
             // Fetch item pictures
-            if ($arrItem['pictures'] = \StringUtil::deserialize($arrItem['pictures'])) {
-                $objFiles = \FilesModel::findMultipleByUuids($arrItem['pictures']);
-                $images = [];
-                while ($objFiles->next()) {
-                    $images[$objFiles->path] = [
-                        'id' => $objFiles->id,
-                        'uuid' => $objFiles->uuid,
-                        'name' => $objFile->basename,
-                        'singleSRC' => $objFiles->path,
-                        'filesModel' => $objFiles->current(),
-                    ];
-                }
-
-                if ('' !== $arrItem['orderPictures']) {
-                    $t = \StringUtil::deserialize($arrItem['orderPictures']);
-                    if (!empty($t) && \is_array($t)) {
-                        // Remove all values
-                        $arrOrder = array_map(function (): void {
-                        }, array_flip($t));
-
-                        // Move the matching elements to their position in $arrOrder
-                        foreach ($images as $k => $v) {
-                            if (\array_key_exists($v['uuid'], $arrOrder)) {
-                                $arrOrder[$v['uuid']] = $v;
-                                unset($images[$k]);
-                            }
-                        }
-
-                        // Append the left-over images at the end
-                        if (!empty($images)) {
-                            $arrOrder = array_merge($arrOrder, array_values($images));
-                        }
-
-                        // Remove empty (unreplaced) entries
-                        $images = array_values(array_filter($arrOrder));
-                        unset($arrOrder);
-                    }
-                }
-
-                $arrItem['pictures'] = $images;
-            }
+            $arrItem['pictures'] = $objItem->getPictures();
 
             // Load item categories
-            $objItem = Item::findByPk($arrItem['id']);
             $objCategories = $objItem->getRelated('categories');
 
             if (0 === $objCategories->count()) {
