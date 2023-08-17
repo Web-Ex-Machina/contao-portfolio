@@ -88,22 +88,22 @@ class PortfolioReader extends Portfolio
         // Get the portfolio item
         $arrConfig = [];
         $arrConfig['getCategory'] = true;
-        $arrItem = Item::getItem(\Input::get('items'), $arrConfig);
+        $objItem = Item::findByIdOrAlias(\Input::get('items'));
 
-        if (null === $arrItem) {
+        if (null === $objItem) {
             throw new PageNotFoundException('Page not found: '.\Environment::get('uri'));
         }
 
-        $this->Template->articles = $this->parseItem($arrItem, $this->wem_portfolio_item_template);
+        $this->Template->articles = $this->parseItem($objItem->row(), $this->wem_portfolio_item_template);
 
         // Overwrite the page title (see #2853 and #4955)
-        if ('' !== $arrItem['title']) {
-            $objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($arrItem['title']));
+        if ('' !== $objItem->title) {
+            $objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($objItem->title));
         }
 
         // Overwrite the page description
-        if ('' !== $arrItem['teaser']) {
-            $objPage->description = $this->prepareMetaDescription($arrItem['teaser']);
+        if ('' !== $objItem->teaser) {
+            $objPage->description = $this->prepareMetaDescription($objItem->teaser);
         }
     }
 }
