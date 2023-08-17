@@ -44,5 +44,4 @@
 			<?= $this->text ?>	
 		</div>
 	<?php endif; ?>
-	<pre class="hidden"><?php var_dump($this->pictures[0]); ?></pre>
 </div>
