@@ -94,11 +94,8 @@ class Item extends Model
             
             while ($objFiles->next()) {
                 $images[$objFiles->path] = [
-                    // 'id' => $objFiles->id,
-                    // 'uuid' => $objFiles->uuid,
-                    'name' => $objFile->basename,
-                    'singleSRC' => $objFiles->path,
-                    // 'filesModel' => $objFiles->current(),
+                    'name' => $objFiles->name,
+                    'singleSRC' => $objFiles->path
                 ];
             }
 
