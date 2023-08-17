@@ -68,7 +68,7 @@ abstract class Portfolio extends \Module
             $arrItem['link'] = $objItem->getUrl();
 
             // Get the item attributes
-            if ($attributes = ItemAttribute::findItems(['pid' => $arrItem['id'], 'displayInFrontend' => 1])) {
+            if ($attributes = $objItem->getAttributes()) {
                 $arrItem['attributes'] = [];
                 foreach ($attributes as $attribute) {
                     $arrItem['attributes'][$attribute['attribute']['alias']] = ['label' => $attribute['attribute']['title'], 'value' => $attribute['value']];
