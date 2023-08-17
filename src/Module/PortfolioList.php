@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
-use Patchwork\Utf8;
 use RuntimeException as Exception;
 use WEM\PortfolioBundle\Model\Item;
 
@@ -49,7 +48,7 @@ class PortfolioList extends Portfolio
             /** @var BackendTemplate|object $objTemplate */
             $objTemplate = new \BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_list'][0]).' ###';
+            $objTemplate->wildcard = '### '.utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_list'][0]).' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
