@@ -16,7 +16,7 @@ namespace WEM\PortfolioBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\ModuleModel;
-use RuntimeException as Exception;
+use Exception;
 use WEM\PortfolioBundle\Model\Category;
 
 /**

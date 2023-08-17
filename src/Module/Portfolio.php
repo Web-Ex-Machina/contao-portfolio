@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Module;
 
-use RuntimeException as Exception;
+use Exception;
 use WEM\PortfolioBundle\Model\Item;
 use WEM\PortfolioBundle\Model\Attribute;
 use WEM\PortfolioBundle\Model\Category;

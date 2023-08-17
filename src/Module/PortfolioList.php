@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
-use RuntimeException as Exception;
+use Exception;
 use WEM\PortfolioBundle\Model\Item;
 
 /**
