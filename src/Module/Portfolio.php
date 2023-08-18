@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Module;
 
+use Contao\Input;
 use Exception;
 use WEM\PortfolioBundle\Model\Item;
 use WEM\PortfolioBundle\Model\Attribute;
@@ -35,6 +36,10 @@ abstract class Portfolio extends \Module
      */
     public function generate()
     {
+        if (Input::post('TL_AJAX') && $this->id === Input::post('moduleId')) {
+            $this->handleAjaxRequests();
+        }
+
         return parent::generate();
     }
 
@@ -280,5 +285,45 @@ abstract class Portfolio extends \Module
                 return str_replace('_', ' ', $strField);
                 break;
         }
+    }
+
+    /**
+     * [handleAjaxRequests description].
+     *
+     * @return [type] [description]
+     */
+    protected function handleAjaxRequests($model)
+    {
+        try {
+            switch (Input::post('action')) {
+                case 'getItems':
+                    $objItems = Item::findItems(Input::post('config'), (Input::post('limit') ?: 0), Input::post('offset'), Input::post('options'));
+                    $strBuffer = '';
+                    if (null !== $objItems) {
+                        $strBuffer = $this->parseItems($objItems->fetchAll(), Input::post('template') ?: $this->wem_portfolio_item_template);
+                    }
+
+                    $arrResponse = ['status' => 'success', 'html' => $strBuffer];
+                break;
+                case 'getItem':
+                    $objItem = Item::findByIdOrAlias(Input::post('item'));
+                    $strBuffer = '';
+                    if(null !== $objItem) {
+                        $strBuffer = $this->parseItem($objItem->row(), Input::post('template') ?: $this->wem_portfolio_item_template);
+                    }
+
+                    $arrResponse = ['status' => 'success', 'html' => $strBuffer];
+                break;
+                
+                default:
+                    throw new Exception(sprintf($GLOBALS['TL_LANG']['WEMPORTFOLIO']['ERROR']['unknownAjaxRequest'], Input::post('action')));
+            }
+        } catch (Exception $e) {
+            $arrResponse = ['status' => 'error', 'msg' => $e->getMessage(), 'trace' => $e->getTrace()];
+        }
+
+        $arrResponse['token'] = RequestToken::get();
+        echo json_encode($arrResponse);
+        die;
     }
 }
