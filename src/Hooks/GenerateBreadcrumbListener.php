@@ -26,8 +26,6 @@ class GenerateBreadcrumbListener
     {
         // Check if we have an auto_item and if it's a Portfolio Category
         if (\Input::get('auto_item') && $objCategory = Category::findByIdOrAlias(\Input::get('auto_item'))) {
-            global $objPage;
-
             // Update the last item
             end($items);
             $items[key($items)]['isActive'] = false;
@@ -41,8 +39,6 @@ class GenerateBreadcrumbListener
                 'class' => '',
             ];
         } elseif (\Input::get('auto_item') && $objItem = Item::findByIdOrAlias(\Input::get('auto_item'))) {
-            global $objPage;
-
             // Update the last item
             end($items);
             $items[key($items)]['title'] = $objItem->title;
