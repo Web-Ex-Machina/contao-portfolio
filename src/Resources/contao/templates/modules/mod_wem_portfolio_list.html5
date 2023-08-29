@@ -28,7 +28,7 @@
 			</form>
 			<?php endif; ?>
 			
-			<div class="row flex-justifycontent--center">
+			<div class="block-card__container d-grid cols-autofit p-all gap-1">
 				<?= implode('', $this->items) ?>
 			</div>
 			<?= $this->pagination ?>
