@@ -298,7 +298,7 @@ abstract class Portfolio extends \Module
         try {
             switch (Input::post('action')) {
                 case 'getItems':
-                    $objItems = Item::findItems(Input::post('config'), (Input::post('limit') ?: 0), Input::post('offset'), Input::post('options'));
+                    $objItems = Item::findItems(Input::post('config'), (Input::post('limit') ?: 0), Input::post('offset') ?: 0, Input::post('options') ?: []);
                     $strBuffer = '';
                     if (null !== $objItems) {
                         $strBuffer = $this->parseItems($objItems->fetchAll(), Input::post('template') ?: $this->wem_portfolio_item_template);
