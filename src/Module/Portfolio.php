@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Module;
 
 use Contao\Input;
+use Contao\RequestToken;
 use Exception;
 use WEM\PortfolioBundle\Model\Item;
 use WEM\PortfolioBundle\Model\Attribute;
@@ -36,7 +37,7 @@ abstract class Portfolio extends \Module
      */
     public function generate()
     {
-        if (Input::post('TL_AJAX') && $this->id === Input::post('moduleId')) {
+        if (Input::post('TL_AJAX') && $this->id === (int) Input::post('moduleId')) {
             $this->handleAjaxRequests();
         }
 
@@ -292,7 +293,7 @@ abstract class Portfolio extends \Module
      *
      * @return [type] [description]
      */
-    protected function handleAjaxRequests($model)
+    protected function handleAjaxRequests()
     {
         try {
             switch (Input::post('action')) {
