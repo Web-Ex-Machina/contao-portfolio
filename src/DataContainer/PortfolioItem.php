@@ -7,6 +7,7 @@ namespace WEM\PortfolioBundle\DataContainer;
 use Contao\Backend;
 use Contao\Database;
 use Contao\DataContainer;
+use Contao\Image;
 use Contao\Input;
 use Contao\StringUtil;
 use Contao\System;
@@ -186,11 +187,6 @@ class PortfolioItem extends Backend
         if (Input::get('tid') && \strlen(Input::get('tid'))) {
             $this->toggleVisibility(Input::get('tid'), (1 === Input::get('state')), (@func_get_arg(12) ?: null));
             $this->redirect($this->getReferer());
-        }
-
-        // Check permissions AFTER checking the tid, so hacking attempts are logged
-        if (!$this->User->hasAccess('tl_wem_portfolio_item::published', 'alexf')) {
-            return '';
         }
 
         $href .= '&amp;tid='.$row['id'].'&amp;state='.($row['published'] ? '' : 1);
