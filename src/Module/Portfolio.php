@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Module;
 
+use Contao\Config;
+use Contao\Date;
 use Contao\Input;
 use Contao\RequestToken;
 use Exception;
@@ -60,18 +62,18 @@ abstract class Portfolio extends \Module
             // Parse dates
             $arrDates = [
                 'timestamp' => $arrItem['createdAt'],
-                'date' => \Date::parse(\Config::get('dateFormat'), $arrItem['createdAt']),
-                'time' => \Date::parse(\Config::get('timeFormat'), $arrItem['createdAt']),
-                'datim' => \Date::parse(\Config::get('datimFormat'), $arrItem['createdAt']),
-                'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['createdAt'])
+                'date' => Date::parse(Config::get('dateFormat'), $arrItem['createdAt']),
+                'time' => Date::parse(Config::get('timeFormat'), $arrItem['createdAt']),
+                'datim' => Date::parse(Config::get('datimFormat'), $arrItem['createdAt']),
+                'datetime' => Date::parse('Y-m-d\TH:i:sP', $arrItem['createdAt'])
             ];
             $arrItem['createdAt'] = $arrDates;
             $arrDates = [
                 'timestamp' => $arrItem['date'],
-                'date' => \Date::parse(\Config::get('dateFormat'), $arrItem['date']),
-                'time' => \Date::parse(\Config::get('timeFormat'), $arrItem['date']),
-                'datim' => \Date::parse(\Config::get('datimFormat'), $arrItem['date']),
-                'datetime' => \Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])
+                'date' => Date::parse(Config::get('dateFormat'), $arrItem['date']),
+                'time' => Date::parse(Config::get('timeFormat'), $arrItem['date']),
+                'datim' => Date::parse(Config::get('datimFormat'), $arrItem['date']),
+                'datetime' => Date::parse('Y-m-d\TH:i:sP', $arrItem['date'])
             ];
             $arrItem['date'] = $arrDates;
 
@@ -86,10 +88,12 @@ abstract class Portfolio extends \Module
             $arrItem['link'] = $objItem->getUrl();
 
             // Get the item attributes
-            if ($attributes = $objItem->getAttributes()) {
+            $objAttributes = $objItem->getAttributes();
+            if ($objAttributes) {
                 $arrItem['attributes'] = [];
-                foreach ($attributes as $attribute) {
-                    $arrItem['attributes'][$attribute['attribute']['alias']] = ['label' => $attribute['attribute']['title'], 'value' => $attribute['value']];
+                while($objAttributes->next()) {
+                    $objAttribute = $objAttributes->getRelated('attribute');
+                    $arrItem['attributes'][$objAttribute->alias] = ['label' => $objAttribute->title, 'value' => $objAttributes->value];
                 }
             }
 
