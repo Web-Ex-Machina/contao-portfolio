@@ -14,6 +14,13 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Module;
 
+use Contao\BackendTemplate;
+use Contao\Config;
+use Contao\Environment;
+use Contao\Input;
+use Contao\Pagination;
+use Contao\RequestToken;
+use Contao\System;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Exception;
 use WEM\PortfolioBundle\Model\Category;
@@ -47,7 +54,7 @@ class PortfolioList extends Portfolio
     {
         if (TL_MODE === 'BE') {
             /** @var BackendTemplate|object $objTemplate */
-            $objTemplate = new \BackendTemplate('be_wildcard');
+            $objTemplate = new BackendTemplate('be_wildcard');
 
             $objTemplate->wildcard = '### '.utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_list'][0]).' ###';
             $objTemplate->title = $this->headline;
@@ -71,7 +78,7 @@ class PortfolioList extends Portfolio
             $offset = (int) ($this->skipFirst);
             $arrOptions = [];
             $arrOptions['order'] = $this->getSortingValue($this->wem_portfolio_item_sort);
-            $bundles = \System::getContainer()->getParameter('kernel.bundles');
+            $bundles = System::getContainer()->getParameter('kernel.bundles');
 
             // Load categories
             if ($this->wem_portfolio_categories) {
@@ -91,8 +98,8 @@ class PortfolioList extends Portfolio
             }
 
             $this->Template->articles = [];
-            $this->Template->rt = \RequestToken::get();
-            $this->Template->request = \Environment::get('request');
+            $this->Template->rt = RequestToken::get();
+            $this->Template->request = Environment::get('request');
             $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
             $this->Template->filterBy = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['filterBy'];
 
@@ -136,11 +143,11 @@ class PortfolioList extends Portfolio
 
                 // Get the current page
                 $id = 'page_n'.$this->id;
-                $page = (null !== \Input::get($id)) ? \Input::get($id) : 1;
+                $page = (null !== Input::get($id)) ? Input::get($id) : 1;
 
                 // Do not index or cache the page if the page number is outside the range
                 if ($page < 1 || $page > max(ceil($total / $this->perPage), 1)) {
-                    throw new PageNotFoundException('Page not found: '.\Environment::get('uri'));
+                    throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
                 }
 
                 // Set limit and offset
@@ -154,7 +161,7 @@ class PortfolioList extends Portfolio
                 }
 
                 // Add the pagination menu
-                $objPagination = new \Pagination($total, $this->perPage, \Config::get('maxPaginationLinks'), $id);
+                $objPagination = new Pagination($total, $this->perPage, Config::get('maxPaginationLinks'), $id);
                 $this->Template->pagination = $objPagination->generate("\n  ");
             }
 
