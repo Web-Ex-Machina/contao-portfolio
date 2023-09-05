@@ -93,9 +93,12 @@ class Item extends Model
             $objFiles = FilesModel::findMultipleByUuids($arrPictures);
             
             while ($objFiles->next()) {
+                $arrMeta = deserialize($objFiles->meta);
+
                 $images[$objFiles->path] = [
                     'name' => $objFiles->name,
-                    'singleSRC' => $objFiles->path
+                    'singleSRC' => $objFiles->path,
+                    'meta' => $arrMeta[$GLOBALS['TL_LANGUAGE']]
                 ];
             }
 
