@@ -96,6 +96,7 @@ class PortfolioList extends Portfolio
             $this->Template->filterBy = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['filterBy'];
 
             global $objPage;
+            $arrConfig['published'] = 1;
             $arrConfig['categories'] = deserialize($this->wem_portfolio_categories);
 
             // Adjust the config
