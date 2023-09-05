@@ -16,7 +16,10 @@ namespace WEM\PortfolioBundle\Module;
 
 use Contao\Config;
 use Contao\Date;
+use Contao\Environment;
 use Contao\Input;
+use Contao\StringUtil;
+use Contao\System;
 use Contao\RequestToken;
 use Exception;
 use WEM\PortfolioBundle\Model\Item;
@@ -97,48 +100,38 @@ abstract class Portfolio extends \Module
                 }
             }
 
+            // Resize pictures
+            if ($arrItem['pictures']) {
+                $objImageLibrary = System::getContainer()->get('contao.image.image_factory');
+                $imgSize = $arrItem['size'] ?: null;
+
+                // Override the default image size
+                if ($this->imgSize) {
+                    $size = StringUtil::deserialize($this->imgSize);
+
+                    if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]) || ($size[2][0] ?? null) === '_')
+                    {
+                        $imgSize = $this->imgSize;
+                    }
+                }
+
+                foreach ($arrItem['pictures'] as &$p) {
+                    try {
+                        $p['path'] = str_replace(TL_ROOT . '/', '', $objImageLibrary->create(
+                            TL_ROOT . '/' . $p['singleSRC'],
+                            $imgSize
+                        )->getPath()); 
+                    } catch(Exception $e) {
+                        
+                    }
+                }
+            }
+
             /** @var \FrontendTemplate|object $objTemplate */
             $objTemplate = new \FrontendTemplate($strTemplate);
             $objTemplate->setData($arrItem);
             $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
             $objTemplate->count = $intCount;
-
-            // Add an image
-            if ($arrItem['pictures'][0]) {
-                $size = \StringUtil::deserialize($this->imgSize);
-
-                if ($arrItem['pictures'][0]->imgSize || $size) {
-                    if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
-                        $arrArticle['size'] = $this->imgSize;
-                    } elseif ($arrItem['pictures'][0]->imgSize) {
-                        $arrArticle['size'] = $arrItem['pictures'][0]->imgSize;
-                    }
-                }
-
-                $arrArticle['singleSRC'] = $arrItem['pictures'][0]['singleSRC'];
-                $this->addImageToTemplate($objTemplate, $arrArticle, null, null, null);
-            }
-
-            // Parse the others images, in a easier way
-            if (is_countable($arrItem['pictures'])) {
-                for ($i = 1; $i < \count($arrItem['pictures']); ++$i) {
-                    $strPath = $arrItem['pictures'][$i]['singleSRC'];
-                    if ($size || $arrItem['pictures'][$i]->imgSize) {
-                        if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
-                            $arrImages[$i] = \Image::get($strPath, $size[0], $size[1], $size[2]);
-                        } elseif ($arrItem['pictures'][0]->imgSize) {
-                            $imgSize = deserialize($arrItem['pictures'][0]->imgSize);
-                            $arrImages[$i] = \Image::get($strPath, $imgSize[0], $imgSize[1], $imgSize[2]);
-                        }
-                    } else {
-                        $arrImages[$i] = $strPath;
-                    }
-                }
-            }
-
-            if ($arrImages) {
-                $objTemplate->images = $arrImages;
-            }
 
             $strContent = '';
             $objElement = \ContentModel::findPublishedByPidAndTable($arrItem['id'], 'tl_wem_portfolio_item');
