@@ -91,7 +91,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_list_module'] = [
  *
  * @author Web ex Machina <http://www.webexmachina.fr>
  */
-class tl_module_wem_portfolio extends Backend
+class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer namespace
 {
     /**
      * Import the back end user object.
@@ -186,17 +186,13 @@ class tl_module_wem_portfolio extends Backend
      */
     public function getPortfolioFilters()
     {
+        $arrFilters = ['category' => 'Catégorie']; // @todo: translate
+        
         $objAttributes = \WEM\PortfolioBundle\Model\Attribute::findItems(['useAsFilter' => 1]);
-
-        if (!$objAttributes || 0 === $objAttributes->count()) {
-            \Message::addInfo($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['noFiltersAvailable']);
-
-            return [];
-        }
-
-        $arrFilters = [];
-        while ($objAttributes->next()) {
-            $arrFilters[$objAttributes->id] = $objAttributes->title;
+        if ($objAttributes) {
+            while ($objAttributes->next()) {
+                $arrFilters[$objAttributes->alias] = $objAttributes->title;
+            }
         }
 
         return $arrFilters;

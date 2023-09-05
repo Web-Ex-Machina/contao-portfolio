@@ -16,6 +16,7 @@ namespace WEM\PortfolioBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Exception;
+use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\Item;
 
 /**
@@ -101,10 +102,17 @@ class PortfolioList extends Portfolio
 
             // Adjust the config
             if ($this->filters) {
-                foreach ($this->filters as $filter) {
+                foreach ($this->filters as $f => $filter) {
                     foreach ($filter['options'] as $option) {
                         if ($option['selected']) {
-                            $arrConfig['attributes'][] = ['attribute' => $filter['id'], 'value' => $option['value']];
+                            switch ($f) {
+                                case 'category':
+                                    $objCategory = Category::findByIdOrAlias($option['value']);
+                                    $arrConfig['categories'] = [$objCategory->id];
+                                    break;
+                                default:
+                                    $arrConfig['attributes'][] = ['attribute' => $filter['id'], 'value' => $option['value']];
+                            }
                         }
                     }
                 }

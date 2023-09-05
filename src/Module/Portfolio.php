@@ -199,40 +199,67 @@ abstract class Portfolio extends \Module
         try {
             $arrFilters = [];
 
-            foreach (unserialize($this->wem_portfolio_filters) as $id) {
-                $attribute = Attribute::findByPk($id);
+            foreach (deserialize($this->wem_portfolio_filters) as $id) {
+                switch ($id) {
+                    case 'category':
+                        // Get the filter options & skip if there is no options available
+                        $arrCategories = deserialize($this->wem_portfolio_categories);
+                        if (!$arrCategories || 0 === count($arrCategories)) {
+                            continue;
+                        }
 
-                if (!$attribute) {
-                    continue;
-                }
+                        // Prepare the filter
+                        $arrFilters[$id] = ['label' => 'Catégorie', 'options' => []];
 
-                // Get the filter options & skip if there is no options available
-                $objItemAttributes = ItemAttribute::findItems(['attribute' => $id]);
-                if (!$objItemAttributes || 0 === $objItemAttributes->count()) {
-                    continue;
-                }
+                        // Get the options
+                        foreach($arrCategories as $c) {
+                            $objCategory = Category::findByPk($c);
+                            
+                            // Format the option
+                            $option = ['value' => $objCategory->alias, 'text' => $objCategory->title, 'selected' => 0];
+                            if (\Input::post($id) === $objCategory->alias || \Input::get($id) === $objCategory->alias) {
+                                $option['selected'] = 1;
+                            }
 
-                // Prepare the filter
-                $arrFilters[$attribute->alias] = ['id' => $attribute->id, 'label' => $attribute->title, 'options' => []];
+                            $arrFilters[$id]['options'][] = $option;
+                        }
+                    break;
 
-                // Get the options
-                $arrValues = [];
-                while ($objItemAttributes->next()) {
-                    // Skip if we already know this value
-                    if (\in_array($objItemAttributes->value, $arrValues, true)) {
-                        continue;
-                    }
+                    default:
+                        $attribute = Attribute::findByIdOrAlias($id);
 
-                    // Store the value
-                    $arrValues[] = $objItemAttributes->value;
+                        if (!$attribute) {
+                            continue;
+                        }
 
-                    // Format the option
-                    $option = ['value' => $objItemAttributes->value, 'text' => $objItemAttributes->value, 'selected' => 0];
-                    if (\Input::post($attribute->alias) === $objItemAttributes->value || \Input::get($attribute->alias) === $objItemAttributes->value) {
-                        $option['selected'] = 1;
-                    }
+                        // Get the filter options & skip if there is no options available
+                        $objItemAttributes = ItemAttribute::findItems(['attribute' => $id]);
+                        if (!$objItemAttributes || 0 === $objItemAttributes->count()) {
+                            continue;
+                        }
 
-                    $arrFilters[$attribute->alias]['options'][] = $option;
+                        // Prepare the filter
+                        $arrFilters[$attribute->alias] = ['id' => $attribute->id, 'label' => $attribute->title, 'options' => []];
+
+                        // Get the options
+                        $arrValues = [];
+                        while ($objItemAttributes->next()) {
+                            // Skip if we already know this value
+                            if (\in_array($objItemAttributes->value, $arrValues, true)) {
+                                continue;
+                            }
+
+                            // Store the value
+                            $arrValues[] = $objItemAttributes->value;
+
+                            // Format the option
+                            $option = ['value' => $objItemAttributes->value, 'text' => $objItemAttributes->value, 'selected' => 0];
+                            if (\Input::post($attribute->alias) === $objItemAttributes->value || \Input::get($attribute->alias) === $objItemAttributes->value) {
+                                $option['selected'] = 1;
+                            }
+
+                            $arrFilters[$attribute->alias]['options'][] = $option;
+                        }
                 }
             }
 
