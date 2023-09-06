@@ -322,7 +322,26 @@ abstract class Portfolio extends \Module
         try {
             switch (Input::post('action')) {
                 case 'getItems':
-                    $objItems = Item::findItems(Input::post('config'), (Input::post('limit') ?: 0), Input::post('offset') ?: 0, Input::post('options') ?: []);
+                    $arrConfig = ['published' => 1];
+                    $arrConfig['categories'] = deserialize($this->wem_portfolio_categories);
+
+                    // Catch category post and transform it into array
+                    if (Input::post('category')) {
+                        $arrConfig['categories'] = [Input::post('category')];
+                    }
+
+                    // Check we have an array of IDs
+                    if (Input::post('categories')) {
+                        $arrConfig['categories'] = [];
+                        foreach (Input::post('categories') as $k => $v) {
+                            if (!is_int($v)) {
+                                $objCategory = Category::findByIdOrAlias($v);
+                                $arrConfig['categories'][$k] = $objCategory->id;
+                            }
+                        }
+                    }
+
+                    $objItems = Item::findItems($arrConfig, (Input::post('limit') ?: 0), Input::post('offset') ?: 0, Input::post('options') ?: []);
                     $strBuffer = '';
                     if (null !== $objItems) {
                         $strBuffer = $this->parseItems($objItems->fetchAll(), Input::post('template') ?: $this->wem_portfolio_item_template);
