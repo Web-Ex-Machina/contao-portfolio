@@ -1,6 +1,9 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
+## 3.X - 2024-04-15
+- bundle `webexmachina/contao-utils` upgraded to `^1.0`
+
 ## 2.1 - 2020-04-20
 - Add custom sorting system for categories
 - Improve categories listing
