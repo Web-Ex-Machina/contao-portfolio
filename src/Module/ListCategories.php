@@ -15,12 +15,14 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Module;
 
 use Contao\BackendTemplate;
+use Contao\Config;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Environment;
 use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\ModuleModel;
 use Contao\PageModel;
+use Contao\Pagination;
 use Contao\System;
 use Exception;
 use WEM\PortfolioBundle\Model\Category;
@@ -186,7 +188,7 @@ class ListCategories extends Portfolio
                 }
 
                 // Add the pagination menu
-                $objPagination = new \Pagination($total, $this->perPage, \Config::get('maxPaginationLinks'), $id);
+                $objPagination = new Pagination($total, $this->perPage, Config::get('maxPaginationLinks'), $id);
                 $this->Template->pagination = $objPagination->generate("\n  ");
             }
 
