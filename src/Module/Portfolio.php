@@ -117,8 +117,9 @@ abstract class Portfolio extends \Module
 
                 foreach ($arrItem['pictures'] as &$p) {
                     try {
-                        $p['path'] = str_replace(TL_ROOT . '/', '', $objImageLibrary->create(
-                            TL_ROOT . '/' . $p['singleSRC'],
+                        $rootDir = System::getContainer()->getParameter('kernel.project_dir');
+                        $p['path'] = str_replace($rootDir . '/', '', $objImageLibrary->create(
+                            $rootDir . '/' . $p['singleSRC'],
                             $imgSize
                         )->getPath()); 
                     } catch(Exception $e) {
