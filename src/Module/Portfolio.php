@@ -17,20 +17,19 @@ namespace WEM\PortfolioBundle\Module;
 use Contao\Config;
 use Contao\ContentModel;
 use Contao\Date;
-use Contao\Environment;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\Module;
-use WEM\UtilsBundle\Classes\StringUtil;
-use Contao\System;
 use Contao\RequestToken;
+use Contao\System;
 use Exception;
-use WEM\PortfolioBundle\Model\Item;
 use WEM\PortfolioBundle\Model\Attribute;
 use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\CategoryItem;
+use WEM\PortfolioBundle\Model\Item;
 use WEM\PortfolioBundle\Model\ItemAttribute;
+use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
  * Handle generic Portfolio functions.
@@ -218,7 +217,7 @@ abstract class Portfolio extends Module
 
                         // Format the option
                         $option = ['value' => $objCategory->alias, 'text' => $objCategory->title, 'selected' => 0];
-                        if (\Input::post($id) === $objCategory->alias || \Input::get($id) === $objCategory->alias) {
+                        if (Input::post($id) === $objCategory->alias || Input::get($id) === $objCategory->alias) {
                             $option['selected'] = 1;
                         }
 

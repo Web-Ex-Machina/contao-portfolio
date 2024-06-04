@@ -5,33 +5,35 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\DataContainer;
 
 use Contao\Backend;
+use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\Image;
 use Contao\Input;
-use WEM\UtilsBundle\Classes\StringUtil;
 use Contao\System;
 use Contao\Versions;
-
 use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\CategoryItem;
-use WEM\PortfolioBundle\Model\Item;
+use WEM\UtilsBundle\Classes\StringUtil;
+
 
 class PortfolioItem extends Backend
 {
     /**
      * Add an image to each item in the tree.
      *
-     * @param array         $row
-     * @param string        $label
-     * @param DataContainer $dc
-     * @param string        $imageAttribute
-     * @param bool          $blnReturnImage
-     * @param bool          $blnProtected
+     * @param array $row
+     * @param string $label
+     * @param DataContainer|null $dc
+     * @param string $imageAttribute
+     * @param bool $blnReturnImage
+     * @param bool $blnProtected
      *
      * @return string
      */
-    public function addIcon($row, $label, DataContainer $dc = null, $imageAttribute = '', $blnReturnImage = false, $blnProtected = false)
+    public function addIcon(
+        array $row, string $label, DataContainer $dc = null, string $imageAttribute = '',
+        bool  $blnReturnImage = false, bool $blnProtected = false): string //TODO : many useless var no ?
     {
         return '<img src="assets/contao/images/iconJPG.svg" width="18" height="18" alt="image/jpeg" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
     }
@@ -39,11 +41,12 @@ class PortfolioItem extends Backend
     /**
      * Add an icon to access categories sorting.
      *
-     * @param DataContainer $dc [description]
+     * @param DataContainer $dc
      *
-     * @return [String] [Categories DCA]
+     * @return array  Categories DCA
+     * @throws \Exception
      */
-    public function getCategories(DataContainer $dc)
+    public function getCategories(DataContainer $dc): array
     {
         $objCategories = Category::findItems();
 
@@ -82,15 +85,14 @@ class PortfolioItem extends Backend
      * Save item categories in the child table
      * ci stands for CategoryItem.
      *
-     * @param [Mixed] $varValue [Item value]
-     * @param [Array] $dc       [Datacontainer]
-     *
-     * @return [Array] [Understandable values]
+     * @param $varValue
+     * @param $dc
+     * @return mixed [Array] [Understandable values]
+     * @throws \Exception
      */
     public function saveCategories($varValue, $dc)
     {
         if ($varValue) {
-            $arrSavedAttrs = [];
             $arrCategories = StringUtil::deserialize($varValue);
             $objCategoryItems = CategoryItem::findItems(['item' => $dc->id]);
 
@@ -133,11 +135,12 @@ class PortfolioItem extends Backend
     /**
      * Auto-generate an article alias if it has not been set yet.
      *
-     * @throws Exception
-     *
+     * @param $varValue
+     * @param DataContainer $dc
      * @return string
+     * @throws \Exception
      */
-    public function generateAlias($varValue, DataContainer $dc)
+    public function generateAlias($varValue, DataContainer $dc): string
     {
         $autoAlias = false;
 
@@ -161,7 +164,7 @@ class PortfolioItem extends Backend
         // Check whether the page alias exists
         if ($objAlias->numRows > 1) {
             if (!$autoAlias) {
-                throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+                throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
             }
 
             $varValue .= '-'.$dc->id;
@@ -173,7 +176,7 @@ class PortfolioItem extends Backend
     /**
      * Return the "toggle visibility" button.
      *
-     * @param array  $row
+     * @param array $row
      * @param string $href
      * @param string $label
      * @param string $title
@@ -182,10 +185,12 @@ class PortfolioItem extends Backend
      *
      * @return string
      */
-    public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
+    public function toggleIcon(array  $row, string $href,
+                               string $label, string $title, string $icon, string $attributes): string
     {
         if (Input::get('tid') && \strlen(Input::get('tid'))) {
-            $this->toggleVisibility(Input::get('tid'), (1 === Input::get('state')), (@func_get_arg(12) ?: null));
+            // TODO : check if is ok, Input::get return a string toggleVisibility want int, i added cast to int.
+            $this->toggleVisibility((int)Input::get('tid'), (1 === Input::get('state')), (@func_get_arg(12) ?: null));
             $this->redirect($this->getReferer());
         }
 
@@ -201,13 +206,13 @@ class PortfolioItem extends Backend
     /**
      * Disable/enable a user group.
      *
-     * @param int           $intId
-     * @param bool          $blnVisible
-     * @param DataContainer $dc
+     * @param int $intId
+     * @param bool $blnVisible
+     * @param DataContainer|null $dc
      *
-     * @throws Contao\CoreBundle\Exception\AccessDeniedException
+     * @throw AccessDeniedException
      */
-    public function toggleVisibility($intId, $blnVisible, DataContainer $dc = null): void
+    public function toggleVisibility(int $intId, bool $blnVisible, DataContainer $dc = null): void
     {
         // Set the ID and action
         Input::setGet('id', $intId);
@@ -231,8 +236,9 @@ class PortfolioItem extends Backend
 
         // Check the field access
         if (!$this->User->hasAccess('tl_wem_portfolio_item::published', 'alexf')) {
-            throw new Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to publish/unpublish article ID "'.$intId.'".');
+            throw new AccessDeniedException('Not enough permissions to publish/unpublish article ID "' . $intId . '".');
         }
+        // TODO : deprecated hasAccess
 
         // Set the current record
         if ($dc) {

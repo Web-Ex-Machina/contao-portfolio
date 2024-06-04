@@ -27,7 +27,7 @@ class ReplaceInsertTagsListener
         array $tags,
         array $cache,
         int $_rit,
-        int $_cnt
+        int $_cnt //TODO : many useless var no ?
     ) {
         $arrTag = explode('::', $tag);
 
@@ -53,5 +53,6 @@ class ReplaceInsertTagsListener
         }
 
         return false;
+        //TODO : unreacheable
     }
 }

@@ -21,8 +21,8 @@ use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\ModuleModel;
 use Contao\PageModel;
-use Exception;
 use Contao\System;
+use Exception;
 use WEM\PortfolioBundle\Model\Category;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -180,7 +180,7 @@ class ListCategories extends Portfolio
 
                 // Do not index or cache the page if the page number is outside the range
                 if ($page < 1 || $page > max(ceil($total / $this->perPage), 1)) {
-                    throw new PageNotFoundException('Page not found: '.\Environment::get('uri'));
+                    throw new PageNotFoundException('Page not found: ' . Environment::get('uri'));
                 }
 
                 // Set limit and offset
