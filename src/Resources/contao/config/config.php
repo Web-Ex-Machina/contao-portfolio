@@ -12,9 +12,12 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-use Contao\System;
 use Contao\ArrayUtil;
+use Contao\System;
 use WEM\PortfolioBundle\Hooks;
+use WEM\PortfolioBundle\Model;
+use WEM\PortfolioBundle\Module;
+use WEM\PortfolioBundle\Widget\AttributeWizard;
 
 /**
  * Load Contao 4 Bundles.
@@ -56,9 +59,9 @@ ArrayUtil::arrayInsert(
     2,
     [
         'wem_portfolio' => [
-            'wem_portfolio_list' => 'WEM\PortfolioBundle\Module\PortfolioList',
-            'wem_portfolio_list_categories' => 'WEM\PortfolioBundle\Module\ListCategories',
-            'wem_portfolio_reader' => 'WEM\PortfolioBundle\Module\PortfolioReader',
+            'wem_portfolio_list' => Module\PortfolioList::class,
+            'wem_portfolio_list_categories' => Module\ListCategories::class,
+            'wem_portfolio_reader' => Module\PortfolioReader::class,
         ],
     ]
 );
@@ -73,11 +76,11 @@ $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [Hooks\ReplaceInsertTagsListener::
 /*
  * Models
  */
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\PortfolioBundle\Model\Attribute';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_category'] = 'WEM\PortfolioBundle\Model\Category';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_category_item'] = 'WEM\PortfolioBundle\Model\CategoryItem';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\PortfolioBundle\Model\Item';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\PortfolioBundle\Model\ItemAttribute';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = Model\Attribute::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_category'] = Model\Category::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_category_item'] = Model\CategoryItem::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = Model\Item::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = Model\ItemAttribute::class;
 
 // Wizards
-$GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = 'WEM\PortfolioBundle\Widget\AttributeWizard';
+$GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = AttributeWizard::class;
