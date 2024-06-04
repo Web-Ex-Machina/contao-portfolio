@@ -16,6 +16,8 @@ declare(strict_types=1);
  * Add palettes to tl_module.
  */
 
+use Contao\Backend;
+use Contao\DataContainer;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list_categories'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_category_sort,numberOfItems,perPage,skipFirst;{list_legend},wem_portfolio_list_module;{template_legend:hide},wem_portfolio_category_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
@@ -110,7 +112,7 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
      *
      * @return array
      */
-    public function getListModules()
+    public function getListModules(): array
     {
         $arrModules = [];
         $objModules = $this->Database->execute("SELECT m.id, m.name, t.name AS theme FROM tl_module m LEFT JOIN tl_theme t ON m.pid=t.id WHERE m.type='wem_portfolio_list' ORDER BY t.name, m.name");
@@ -125,9 +127,10 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
     /**
      * Remove "category" option from sorting options if we have several categories to display.
      *
+     * @param DataContainer $dc
      * @return array
      */
-    public function getSortingCategories(DataContainer $dc)
+    public function getSortingCategories(DataContainer $dc): array
     {
         $arrOptions = ['date_ASC', 'date_DESC', 'title_ASC', 'title_DESC'];
 
@@ -167,7 +170,7 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
      *
      * @return array
      */
-    public function getPortfolioItemTemplates()
+    public function getPortfolioItemTemplates(): array
     {
         return $this->getTemplateGroup('wem_portfolio_item_');
     }
@@ -177,7 +180,7 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
      *
      * @return array
      */
-    public function getPortfolioCategoriesTemplates()
+    public function getPortfolioCategoriesTemplates(): array
     {
         return $this->getTemplateGroup('wem_portfolio_category_');
     }
@@ -186,8 +189,9 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
      * Return all attributes usable as filters.
      *
      * @return array
+     * @throws Exception
      */
-    public function getPortfolioFilters()
+    public function getPortfolioFilters(): array
     {
         $arrFilters = ['category' => 'Catégorie']; // @todo: translate
         

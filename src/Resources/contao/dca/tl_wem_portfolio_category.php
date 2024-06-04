@@ -12,7 +12,11 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
+use Contao\Backend;
+use Contao\DataContainer;
+use Contao\System;
 use WEM\PortfolioBundle\Model\CategoryItem;
+use WEM\UtilsBundle\Classes\StringUtil;
 
 /*
  * Table tl_wem_portfolio_category.
@@ -171,7 +175,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category'] = [
  *
  * @author Web ex Machina <contact@webexmachina.fr>
  */
-class tl_wem_portfolio_category extends Backend
+class tl_wem_portfolio_category extends Backend // TODO : move this function ??
 {
     /**
      * Import the back end user object.
@@ -185,16 +189,19 @@ class tl_wem_portfolio_category extends Backend
     /**
      * Add the number of items found for this category.
      *
-     * @param array         $row
-     * @param string        $label
-     * @param DataContainer $dc
-     * @param string        $imageAttribute
-     * @param bool          $blnReturnImage
-     * @param bool          $blnProtected
+     * @param array $row
+     * @param string $label
+     * @param DataContainer|null $dc
+     * @param string $imageAttribute
+     * @param bool $blnReturnImage
+     * @param bool $blnProtected
      *
      * @return string
+     * @throws Exception
      */
-    public function addItems($row, $label, DataContainer $dc = null, $imageAttribute = '', $blnReturnImage = false, $blnProtected = false)
+    public function addItems(array  $row, string $label, DataContainer $dc = null,
+                             string $imageAttribute = '', bool $blnReturnImage = false,
+                             bool   $blnProtected = false): string // TODO : useless var ??
     {
         $intItems = CategoryItem::countItems(['pid' => $row['id']]);
 
@@ -204,11 +211,12 @@ class tl_wem_portfolio_category extends Backend
     /**
      * Auto-generate an article alias if it has not been set yet.
      *
-     * @throws Exception
-     *
+     * @param $varValue
+     * @param DataContainer $dc
      * @return string
+     * @throws Exception
      */
-    public function generateAlias($varValue, DataContainer $dc)
+    public function generateAlias($varValue, DataContainer $dc): string
     {
         $autoAlias = false;
 

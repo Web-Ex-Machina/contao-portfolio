@@ -15,6 +15,13 @@ declare(strict_types=1);
 /*
  * Table tl_wem_portfolio_attribute.
  */
+
+use Contao\Backend;
+use Contao\DataContainer;
+use Contao\PageModel;
+use Contao\StringUtil;
+use Contao\System;
+
 $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
     // Config
     'config' => [
@@ -169,7 +176,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
  *
  * @author Web ex Machina <contact@webexmachina.fr>
  */
-class tl_wem_portfolio_attribute extends Backend
+class tl_wem_portfolio_attribute extends Backend // TODO : move this function ??
 {
     /**
      * Import the back end user object.
@@ -183,11 +190,12 @@ class tl_wem_portfolio_attribute extends Backend
     /**
      * Auto-generate the category alias if it has not been set yet.
      *
-     * @throws Exception
-     *
+     * @param $varValue
+     * @param DataContainer $dc
      * @return string
+     * @throws Exception
      */
-    public function generateAlias($varValue, DataContainer $dc)
+    public function generateAlias($varValue, DataContainer $dc): string
     {
         $autoAlias = false;
 

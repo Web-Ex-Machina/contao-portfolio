@@ -12,6 +12,7 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
+use Contao\Backend;
 use WEM\PortfolioBundle\Model\CategoryItem;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -135,7 +136,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_category_item'] = [
  *
  * @author Web ex Machina <contact@webexmachina.fr>
  */
-class tl_wem_portfolio_category_item extends Backend
+class tl_wem_portfolio_category_item extends Backend // TODO : move this function ??
 {
     /**
      * Import the back end user object.
@@ -149,18 +150,20 @@ class tl_wem_portfolio_category_item extends Backend
     /**
      * Parse row.
      *
-     * @param [Array] $row
+     * @param array $row
      *
-     * @return [String]
+     * @return string [String]
+     * @throws Exception
      */
-    public function listItems($row)
+    public function listItems(array $row): string
     {
         $objCategoryItem = CategoryItem::findByPk($row['id']);
 
         return sprintf('%s', $objCategoryItem->getRelated('item')->title);
     }
 
-    public function generateEditItemHref($row, $href, $label, $title, $icon, $attributes) {
+    public function generateEditItemHref(array $row, string $href, string $title, string $icon, ?string $label, ?string $attributes): string
+    {
         return sprintf(
             '<a href="%s" title="%s"%s>%s</a>',
             str_replace("tl_wem_portfolio_category_item", "tl_wem_portfolio_item", $this->addToUrl($href . '&amp;id=' . $row['item'])),

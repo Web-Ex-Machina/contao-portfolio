@@ -15,6 +15,9 @@ declare(strict_types=1);
 /**
  * Table tl_wem_portfolio_item_attribute.
  */
+
+use Contao\Backend;
+
 $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
     // Config
     'config' => [
@@ -128,7 +131,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
  *
  * @author Web ex Machina <contact@webexmachina.fr>
  */
-class tl_wem_portfolio_item_attribute extends Backend
+class tl_wem_portfolio_item_attribute extends Backend // TODO : move this function ??
 {
     /**
      * Import the back end user object.
@@ -140,13 +143,13 @@ class tl_wem_portfolio_item_attribute extends Backend
     }
 
     /**
-     * Parse row.
+     * Retrieves the attributes of an item and formats them as a string.
      *
-     * @param [Array] $arrRow
+     * @param array $arrRow An array containing the item's attributes.
      *
-     * @return [String]
+     * @return string The formatted string containing the attribute's title and value.
      */
-    public function listItemAttributes($arrRow)
+    public function listItemAttributes(array $arrRow): string
     {
         $objAttribute = $this->Database->prepare('SELECT * FROM tl_wem_portfolio_attribute WHERE id = ?')->limit(1)->execute($arrRow['attribute']);
 
