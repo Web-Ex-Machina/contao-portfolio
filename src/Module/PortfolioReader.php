@@ -53,7 +53,7 @@ class PortfolioReader extends Portfolio
             /** @var BackendTemplate|object $objTemplate */
             $objTemplate = new BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '### '.utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_reader'][0]).' ###';
+            $objTemplate->wildcard = '### ' . mb_strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_reader'][0], 'UTF-8') . ' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
@@ -111,6 +111,7 @@ class PortfolioReader extends Portfolio
 
         // Overwrite the page description
         if ('' !== $objItem->teaser) {
+            // TODO : prepareMetaDescription not found ?
             $objPage->description = $this->prepareMetaDescription($objItem->teaser);
         }
     }
