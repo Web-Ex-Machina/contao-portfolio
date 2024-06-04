@@ -154,6 +154,6 @@ class Item extends Model
     public function getAttribute($strName) {
         $objAttribute = ItemAttribute::findItems(['pid' => $this->id, 'name' => $strName]);
 
-        return $objAttribute ? $objAttribute->value : '';
+        return $objAttribute instanceof Collection ? $objAttribute->value : '';
     }
 }

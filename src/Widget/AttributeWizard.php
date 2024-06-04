@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Widget;
 
 use Contao\Database;
+use Contao\Model\Collection;
 use Contao\Widget;
 use WEM\PortfolioBundle\Model\Attribute;
 use WEM\PortfolioBundle\Model\CategoryItem;
@@ -51,7 +52,7 @@ class AttributeWizard extends Widget
             foreach ($attributes as $a => $v) {
                 $objModel = ItemAttribute::findItems(['pid' => $this->activeRecord->id, 'attribute' => $a], 1);
 
-                if (!$objModel) {
+                if (!$objModel instanceof Collection) {
                     $objModel = new ItemAttribute();
                     $objModel->createdAt = time();
                     $objModel->pid = $this->activeRecord->id;
@@ -76,7 +77,6 @@ class AttributeWizard extends Widget
     /**
      * Generate the widget and return it as string.
      *
-     * @return string
      * @throws \Exception
      */
     public function generate(): string
@@ -124,9 +124,6 @@ class AttributeWizard extends Widget
         if (empty($this->varValue) || !\is_array($this->varValue)) {
             $this->varValue = [];
         }
-
-        // Get all available items for the lang
-        $itemsOptions = '';
         $arrFields = [];
         foreach ($arrAttributes as $a) {
             // Try to find an existing value for this attribute/item

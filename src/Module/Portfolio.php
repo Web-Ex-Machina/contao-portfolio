@@ -334,7 +334,7 @@ abstract class Portfolio extends Module
 
                     $objItems = Item::findItems($arrConfig, (Input::post('limit') ?: 0), Input::post('offset') ?: 0, Input::post('options') ?: []);
                     $strBuffer = '';
-                    if (null !== $objItems) {
+                    if ($objItems instanceof Collection) {
                         $strBuffer = $this->parseItems($objItems->fetchAll(), Input::post('template') ?: $this->wem_portfolio_item_template);
                     }
 

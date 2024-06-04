@@ -176,7 +176,7 @@ class PortfolioList extends Portfolio
                 $this->Template->filters = $this->filters;
             }
 
-            if (null !== $objItems) {
+            if ($objItems instanceof Collection) {
                 $this->Template->items = $this->parseItems($objItems->fetchAll(), $this->wem_portfolio_item_template);
             }
         } catch (Exception $e) {

@@ -112,7 +112,7 @@ class PortfolioItem extends Backend
                 $ci = CategoryItem::findItems(['item' => $dc->activeRecord->id, 'pid' => $c], 1);
 
                 // If we did not found an CategoryItem, create it
-                if (!$ci) {
+                if (!$ci instanceof Collection) {
                     $intSorting += 256;
 
                     $ci = new CategoryItem();
@@ -218,7 +218,7 @@ class PortfolioItem extends Backend
         Input::setGet('id', $intId);
         Input::setGet('act', 'toggle');
 
-        if ($dc) {
+        if ($dc instanceof DataContainer) {
             $dc->id = $intId;
         } // see #8043
 
@@ -241,7 +241,7 @@ class PortfolioItem extends Backend
         // TODO : deprecated hasAccess
 
         // Set the current record
-        if ($dc) {
+        if ($dc instanceof DataContainer) {
             $objRow = $this->Database->prepare('SELECT * FROM tl_wem_portfolio_item WHERE id=?')->limit(1)->execute($intId);
 
             if ($objRow->numRows) {
@@ -269,7 +269,7 @@ class PortfolioItem extends Backend
         // Update the database
         $this->Database->prepare("UPDATE tl_wem_portfolio_item SET tstamp=$time, published='".($blnVisible ? '1' : '')."' WHERE id=?")->execute($intId);
 
-        if ($dc) {
+        if ($dc instanceof DataContainer) {
             $dc->activeRecord->tstamp = $time;
             $dc->activeRecord->published = ($blnVisible ? '1' : '');
         }

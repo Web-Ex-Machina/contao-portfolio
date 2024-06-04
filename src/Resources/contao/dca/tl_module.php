@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 use Contao\Backend;
 use Contao\DataContainer;
+use Contao\Model\Collection;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list_categories'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_category_sort,numberOfItems,perPage,skipFirst;{list_legend},wem_portfolio_list_module;{template_legend:hide},wem_portfolio_category_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
@@ -196,7 +197,7 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
         $arrFilters = ['category' => 'Catégorie']; // @todo: translate
         
         $objAttributes = \WEM\PortfolioBundle\Model\Attribute::findItems(['useAsFilter' => 1]);
-        if ($objAttributes) {
+        if ($objAttributes instanceof Collection) {
             while ($objAttributes->next()) {
                 $arrFilters[$objAttributes->alias] = $objAttributes->title;
             }
