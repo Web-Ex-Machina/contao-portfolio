@@ -144,8 +144,9 @@ class ListCategories extends Portfolio
             }
 
             $this->Template->articles = [];
-            // TODO : deprecated RequestToken
-            $this->Template->rt = RequestToken::get();
+
+            $contaoCsrfTokenManager = System::getContainer()->get('contao.csrf.token_manager');
+            $this->Template->rt = $contaoCsrfTokenManager->getDefaultTokenValue();
             $this->Template->request = Environment::get('request');
             $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
 

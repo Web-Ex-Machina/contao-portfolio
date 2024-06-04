@@ -21,7 +21,6 @@ use Contao\Environment;
 use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Pagination;
-use Contao\RequestToken;
 use Contao\System;
 use Exception;
 use WEM\PortfolioBundle\Model\Category;
@@ -100,7 +99,8 @@ class PortfolioList extends Portfolio
             }
 
             $this->Template->articles = [];
-            $this->Template->rt = RequestToken::get();
+            $contaoCsrfTokenManager = System::getContainer()->get('contao.csrf.token_manager');
+            $this->Template->rt = $contaoCsrfTokenManager->getDefaultTokenValue();
             $this->Template->request = Environment::get('request');
             $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
             $this->Template->filterBy = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['filterBy'];

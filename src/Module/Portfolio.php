@@ -22,7 +22,6 @@ use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Module;
-use Contao\RequestToken;
 use Contao\System;
 use Exception;
 use WEM\PortfolioBundle\Model\Attribute;
@@ -346,8 +345,8 @@ abstract class Portfolio extends Module
             $arrResponse = ['status' => 'error', 'msg' => $exception->getMessage(), 'trace' => $exception->getTrace()];
         }
 
-        // TODO : RequestToken deprecated
-        $arrResponse['token'] = RequestToken::get();
+        $contaoCsrfTokenManager = System::getContainer()->get('contao.csrf.token_manager');
+        $arrResponse['token'] = $contaoCsrfTokenManager->getDefaultTokenValue();
         echo json_encode($arrResponse);
     }
 }
