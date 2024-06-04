@@ -12,15 +12,18 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
+use Contao\System;
+use Contao\ArrayUtil;
+use WEM\PortfolioBundle\Hooks;
 /**
  * Load Contao 4 Bundles.
  */
-$bundles = \System::getContainer()->getParameter('kernel.bundles');
+$bundles = System::getContainer()->getParameter('kernel.bundles');
 
 /*
  * Back end modules
  */
-array_insert(
+ArrayUtil::arrayInsert(
     $GLOBALS['BE_MOD'],
     1,
     [
@@ -46,7 +49,7 @@ if ('BE' === TL_MODE) {
 /*
  * Front end modules
  */
-array_insert(
+ArrayUtil::arrayInsert(
     $GLOBALS['FE_MOD'],
     2,
     [
@@ -61,9 +64,9 @@ array_insert(
 /*
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['generateBreadcrumb'][] = [\WEM\PortfolioBundle\Hooks\GenerateBreadcrumbListener::class, 'onGenerateBreadcrumb'];
-$GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\WEM\PortfolioBundle\Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
-$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\PortfolioBundle\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
+$GLOBALS['TL_HOOKS']['generateBreadcrumb'][] = [Hooks\GenerateBreadcrumbListener::class, 'onGenerateBreadcrumb'];
+$GLOBALS['TL_HOOKS']['getSearchablePages'][] = [Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
+$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
 
 /*
  * Models
