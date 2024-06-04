@@ -105,7 +105,7 @@ class Item extends Model
                 $t = StringUtil::deserialize($this->orderPictures);
                 if (!empty($t) && \is_array($t)) {
                     // Remove all values
-                    $arrOrder = array_map(function (): void {
+                    $arrOrder = array_map(static function (): void {
                     }, array_flip($t));
 
                     // Move the matching elements to their position in $arrOrder

@@ -114,13 +114,11 @@ class PortfolioList extends Portfolio
                 foreach ($this->filters as $f => $filter) {
                     foreach ($filter['options'] as $option) {
                         if ($option['selected']) {
-                            switch ($f) {
-                                case 'category':
-                                    $objCategory = Category::findByIdOrAlias($option['value']);
-                                    $arrConfig['categories'] = [$objCategory->id];
-                                    break;
-                                default:
-                                    $arrConfig['attributes'][] = ['attribute' => $filter['id'], 'value' => $option['value']];
+                            if ($f == 'category') {
+                                $objCategory = Category::findByIdOrAlias($option['value']);
+                                $arrConfig['categories'] = [$objCategory->id];
+                            } else {
+                                $arrConfig['attributes'][] = ['attribute' => $filter['id'], 'value' => $option['value']];
                             }
                         }
                     }
@@ -177,10 +175,10 @@ class PortfolioList extends Portfolio
             if ($objItems instanceof Collection) {
                 $this->Template->items = $this->parseItems($objItems->fetchAll(), $this->wem_portfolio_item_template);
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->Template->error = true;
-            $this->Template->message = $e->getMessage();
-            $this->Template->trace = $e->getTrace();
+            $this->Template->message = $exception->getMessage();
+            $this->Template->trace = $exception->getTrace();
         }
     }
 }

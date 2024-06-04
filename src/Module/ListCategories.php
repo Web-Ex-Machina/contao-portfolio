@@ -203,10 +203,10 @@ class ListCategories extends Portfolio
             }
 
             $this->Template->raw_items = $arrItems;
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->Template->error = true;
-            $this->Template->message = $e->getMessage();
-            $this->Template->trace = $e->getTrace();
+            $this->Template->message = $exception->getMessage();
+            $this->Template->trace = $exception->getTrace();
         }
     }
 }

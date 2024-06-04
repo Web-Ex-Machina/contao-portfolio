@@ -162,11 +162,7 @@ abstract class Portfolio extends Module
         $r = $objCategory->row();
 
         // Load category picture
-        if ($objFile = FilesModel::findByUuid($r['picture'])) {
-            $r['picture'] = $objFile->row();
-        } else {
-            $r['picture'] = null;
-        }
+        $r['picture'] = ($objFile = FilesModel::findByUuid($r['picture'])) ? $objFile->row() : null;
 
         // Load category attributes
         $objAttributes = $objCategory->getRelated('attributes');
@@ -346,8 +342,8 @@ abstract class Portfolio extends Module
                 default:
                     throw new Exception(sprintf($GLOBALS['TL_LANG']['WEMPORTFOLIO']['ERROR']['unknownAjaxRequest'], Input::post('action')));
             }
-        } catch (Exception $e) {
-            $arrResponse = ['status' => 'error', 'msg' => $e->getMessage(), 'trace' => $e->getTrace()];
+        } catch (Exception $exception) {
+            $arrResponse = ['status' => 'error', 'msg' => $exception->getMessage(), 'trace' => $exception->getTrace()];
         }
 
         // TODO : RequestToken deprecated
