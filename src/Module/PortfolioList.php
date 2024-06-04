@@ -52,7 +52,9 @@ class PortfolioList extends Portfolio
      */
     public function generate()
     {
-        if (TL_MODE === 'BE') {
+        $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
+
+        if ($scopeMatcher->isBackend()) {
             /** @var BackendTemplate|object $objTemplate */
             $objTemplate = new BackendTemplate('be_wildcard');
 

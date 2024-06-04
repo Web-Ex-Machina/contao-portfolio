@@ -15,10 +15,12 @@ declare(strict_types=1);
 use Contao\System;
 use Contao\ArrayUtil;
 use WEM\PortfolioBundle\Hooks;
+
 /**
  * Load Contao 4 Bundles.
  */
 $bundles = System::getContainer()->getParameter('kernel.bundles');
+$scopeMatcher = System::getContainer()->get('wem.scope_matcher');
 
 /*
  * Back end modules
@@ -42,7 +44,7 @@ ArrayUtil::arrayInsert(
 );
 
 // Load icon in Contao backend
-if ('BE' === TL_MODE) {
+if ($scopeMatcher->isBackend()) {
     $GLOBALS['TL_CSS'][] = 'bundles/wemportfolio/backend_svg.css';
 }
 
