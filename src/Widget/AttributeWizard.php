@@ -14,14 +14,14 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Widget;
 
+use Contao\Database;
+use Contao\Widget;
 use WEM\PortfolioBundle\Model\Attribute;
-use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\CategoryItem;
-use WEM\PortfolioBundle\Model\Item;
 use WEM\PortfolioBundle\Model\ItemAttribute;
 use WEM\UtilsBundle\Classes\StringUtil;
 
-class AttributeWizard extends \Widget
+class AttributeWizard extends Widget
 {
     /**
      * Submit user input.
@@ -69,7 +69,7 @@ class AttributeWizard extends \Widget
                 $this->activeRecord->id,
                 implode(',', $arrSavedAttrs)
             );
-            \Database::getInstance()->prepare($strSql)->execute();
+            Database::getInstance()->prepare($strSql)->execute();
         }
     }
 
@@ -77,8 +77,9 @@ class AttributeWizard extends \Widget
      * Generate the widget and return it as string.
      *
      * @return string
+     * @throws \Exception
      */
-    public function generate()
+    public function generate(): string
     {
         // First retrieve the categories of the current item
         $objItemCategories = CategoryItem::findItems(['item' => $this->activeRecord->id]);
@@ -169,13 +170,11 @@ class AttributeWizard extends \Widget
             $arrFields[] = '<div class="field row">'.$strField.'</div>';
         }
 
-        $return = '
+        return '
         <div id="ctrl_'.$this->strId.'" class="tl_attributeWizard">
             '.implode('', $arrFields).'
         </div>
         ';
-
-        return $return;
     }
 }
 
