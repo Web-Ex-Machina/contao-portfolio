@@ -171,7 +171,7 @@ class PortfolioItem extends Backend
                                string $label, string $title, string $icon, string $attributes): string
     {
         if (Input::get('tid') && \strlen(Input::get('tid'))) {
-            // TODO : check if is ok, Input::get return a string toggleVisibility want int, i added cast to int.
+            // TODO : check if is ok, Input::get return a string toggleVisibility need an int, i added cast to int.
             $this->toggleVisibility((int)Input::get('tid'), (1 === Input::get('state')), (@func_get_arg(12) ?: null));
             $this->redirect($this->getReferer());
         }
@@ -215,11 +215,10 @@ class PortfolioItem extends Backend
         }
 
         // Check the field access
+        // TODO : deprecated hasAccess in 5.2 removed in 6
         if (!$this->User->hasAccess('tl_wem_portfolio_item::published', 'alexf')) {
             throw new AccessDeniedException('Not enough permissions to publish/unpublish article ID "' . $intId . '".');
         }
-
-        // TODO : deprecated hasAccess
 
         // Set the current record
         if ($dc instanceof DataContainer) {

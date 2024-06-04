@@ -140,7 +140,7 @@ class Item extends Model
         $objCategories = $this->getRelated('categories');
         $objFirstCategory = $objCategories->first();
         $objPage = PageModel::findByPk($objFirstCategory->jumpTo);
-        // TODO : deprecated getAbsoluteUrl getFrontendUrl
+        // TODO : deprecated getAbsoluteUrl getFrontendUrl in 5.3 removed in 6
         return $blnAbsolute ? $objPage->getAbsoluteUrl('/'.$this->alias) : $objPage->getFrontendUrl('/'.$this->alias);
     }
 

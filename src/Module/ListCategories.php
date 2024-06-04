@@ -115,12 +115,12 @@ class ListCategories extends Portfolio
                     $arrArticle['size'] = $this->imgSize;
                 }
             }
-
+            // TODO : addImageToTemplate not found ?
             $this->addImageToTemplate($objTemplate, $arrArticle);
         }
 
         // Generate a link to the items list of this category
-        // TODO : deprecated getAbsoluteUrl getFrontendUrl
+        // TODO : deprecated getAbsoluteUrl getFrontendUrl in 5.3 removed in 6
         $objTemplate->link = $objPage->getFrontendUrl('/'.$arrItem['alias']);
 
         return $objTemplate->parse();
