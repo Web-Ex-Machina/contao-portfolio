@@ -49,13 +49,16 @@ class PortfolioItem extends Backend
 
         System::loadLanguageFile('tl_wem_portfolio_category');
 
+        $contaoCsrfTokenManager = System::getContainer()->get('contao.csrf.token_manager');
+        $requestToken = $contaoCsrfTokenManager->getDefaultTokenValue();
+
         $arrData = [];
         while ($objCategories->next()) {
             $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'][1], $objCategories->id);
             $strHref = sprintf(
                 'contao?do=wem_portfolio_category&table=tl_wem_portfolio_category_item&id=%s&popup=1&rt=%s&ref=%s',
                 $objCategories->id,
-                REQUEST_TOKEN,
+                $requestToken,
                 Input::get('ref')
             );
 
