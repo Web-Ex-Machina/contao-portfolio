@@ -57,6 +57,7 @@ class Attribute extends Model
                 } elseif (0 === $varValue) {
                     $arrColumns[] = "$t.useAsFilter = ''";
                 }
+
             break;
 
             case 'displayInFrontend':
@@ -65,7 +66,8 @@ class Attribute extends Model
                 } elseif (0 === $varValue) {
                     $arrColumns[] = "$t.displayInFrontend = ''";
                 }
-            break;
+
+                break;
 
             // Load parent
             default:

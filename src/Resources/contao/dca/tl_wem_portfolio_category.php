@@ -189,14 +189,8 @@ class tl_wem_portfolio_category extends Backend // TODO : move this function ??
     /**
      * Add the number of items found for this category.
      *
-     * @param array $row
-     * @param string $label
      * @param DataContainer|null $dc
-     * @param string $imageAttribute
-     * @param bool $blnReturnImage
-     * @param bool $blnProtected
      *
-     * @return string
      * @throws Exception
      */
     public function addItems(array  $row, string $label, DataContainer $dc = null,
@@ -212,8 +206,6 @@ class tl_wem_portfolio_category extends Backend // TODO : move this function ??
      * Auto-generate an article alias if it has not been set yet.
      *
      * @param $varValue
-     * @param DataContainer $dc
-     * @return string
      * @throws Exception
      */
     public function generateAlias($varValue, DataContainer $dc): string

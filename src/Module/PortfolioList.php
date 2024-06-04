@@ -16,12 +16,13 @@ namespace WEM\PortfolioBundle\Module;
 
 use Contao\BackendTemplate;
 use Contao\Config;
+use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Environment;
 use Contao\Input;
+use Contao\Model\Collection;
 use Contao\Pagination;
 use Contao\RequestToken;
 use Contao\System;
-use Contao\CoreBundle\Exception\PageNotFoundException;
 use Exception;
 use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\Item;
@@ -34,8 +35,6 @@ class PortfolioList extends Portfolio
 {
     /**
      * List of categories
-     *
-     * @var array
      */
     protected array $arrCategories = [];
 
@@ -49,7 +48,6 @@ class PortfolioList extends Portfolio
     /**
      * Display a wildcard in the back end.
      *
-     * @return string
      * @throws Exception
      */
     public function generate(): string

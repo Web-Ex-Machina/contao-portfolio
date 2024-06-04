@@ -191,8 +191,6 @@ class tl_wem_portfolio_attribute extends Backend // TODO : move this function ??
      * Auto-generate the category alias if it has not been set yet.
      *
      * @param $varValue
-     * @param DataContainer $dc
-     * @return string
      * @throws Exception
      */
     public function generateAlias($varValue, DataContainer $dc): string

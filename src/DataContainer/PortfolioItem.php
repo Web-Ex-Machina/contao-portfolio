@@ -10,6 +10,7 @@ use Contao\Database;
 use Contao\DataContainer;
 use Contao\Image;
 use Contao\Input;
+use Contao\Model\Collection;
 use Contao\System;
 use Contao\Versions;
 use WEM\PortfolioBundle\Model\Category;
@@ -22,14 +23,8 @@ class PortfolioItem extends Backend
     /**
      * Add an image to each item in the tree.
      *
-     * @param array $row
-     * @param string $label
      * @param DataContainer|null $dc
-     * @param string $imageAttribute
-     * @param bool $blnReturnImage
-     * @param bool $blnProtected
      *
-     * @return string
      */
     public function addIcon(
         array $row, string $label, DataContainer $dc = null, string $imageAttribute = '',
@@ -40,8 +35,6 @@ class PortfolioItem extends Backend
 
     /**
      * Add an icon to access categories sorting.
-     *
-     * @param DataContainer $dc
      *
      * @return array  Categories DCA
      * @throws \Exception
@@ -136,8 +129,6 @@ class PortfolioItem extends Backend
      * Auto-generate an article alias if it has not been set yet.
      *
      * @param $varValue
-     * @param DataContainer $dc
-     * @return string
      * @throws \Exception
      */
     public function generateAlias($varValue, DataContainer $dc): string
@@ -175,15 +166,6 @@ class PortfolioItem extends Backend
 
     /**
      * Return the "toggle visibility" button.
-     *
-     * @param array $row
-     * @param string $href
-     * @param string $label
-     * @param string $title
-     * @param string $icon
-     * @param string $attributes
-     *
-     * @return string
      */
     public function toggleIcon(array  $row, string $href,
                                string $label, string $title, string $icon, string $attributes): string
@@ -206,8 +188,6 @@ class PortfolioItem extends Backend
     /**
      * Disable/enable a user group.
      *
-     * @param int $intId
-     * @param bool $blnVisible
      * @param DataContainer|null $dc
      *
      * @throw AccessDeniedException
@@ -238,6 +218,7 @@ class PortfolioItem extends Backend
         if (!$this->User->hasAccess('tl_wem_portfolio_item::published', 'alexf')) {
             throw new AccessDeniedException('Not enough permissions to publish/unpublish article ID "' . $intId . '".');
         }
+
         // TODO : deprecated hasAccess
 
         // Set the current record

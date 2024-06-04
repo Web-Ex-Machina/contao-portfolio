@@ -43,7 +43,6 @@ class PortfolioReader extends Portfolio
     /**
      * Display a wildcard in the back end.
      *
-     * @return string
      * @throws \Exception
      */
     public function generate(): string

@@ -110,8 +110,6 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
 
     /**
      * Get all portfolio list modules and return them as array.
-     *
-     * @return array
      */
     public function getListModules(): array
     {
@@ -127,9 +125,6 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
 
     /**
      * Remove "category" option from sorting options if we have several categories to display.
-     *
-     * @param DataContainer $dc
-     * @return array
      */
     public function getSortingCategories(DataContainer $dc): array
     {
@@ -168,8 +163,6 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
 
     /**
      * Return all news templates as array.
-     *
-     * @return array
      */
     public function getPortfolioItemTemplates(): array
     {
@@ -178,8 +171,6 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
 
     /**
      * Return all news templates as array.
-     *
-     * @return array
      */
     public function getPortfolioCategoriesTemplates(): array
     {
@@ -189,7 +180,6 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
     /**
      * Return all attributes usable as filters.
      *
-     * @return array
      * @throws Exception
      */
     public function getPortfolioFilters(): array

@@ -17,8 +17,8 @@ namespace WEM\PortfolioBundle\Model;
 use Contao\FilesModel;
 use Contao\Model\Collection;
 use Contao\PageModel;
-use WEM\UtilsBundle\Classes\StringUtil;
 use Exception;
+use WEM\UtilsBundle\Classes\StringUtil;
 use WEM\UtilsBundle\Model\Model;
 
 /**
@@ -69,6 +69,7 @@ class Item extends Model
                     ++$i;
                     $arrColumns[] = "$t.id IN(SELECT t".$i.'.pid FROM tl_wem_portfolio_item_attribute AS t'.$i.' WHERE t'.$i.'.attribute = '.$a['attribute'].' AND t'.$i.".value = '".$a['value']."')";
                 }
+
             break;
 
             // Load parent
@@ -81,7 +82,6 @@ class Item extends Model
 
     /**
      * Return item pictures
-     * @return array
      */
     public function getPictures(): array
     {
@@ -133,8 +133,6 @@ class Item extends Model
 
     /**
      * Generate item url
-     * @param boolean $blnAbsolute
-     * @return string
      * @throws Exception
      */
     public function getUrl(bool $blnAbsolute = false): string

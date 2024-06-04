@@ -150,8 +150,6 @@ class tl_wem_portfolio_category_item extends Backend // TODO : move this functio
     /**
      * Parse row.
      *
-     * @param array $row
-     *
      * @return string [String]
      * @throws Exception
      */

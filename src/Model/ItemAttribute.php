@@ -61,7 +61,8 @@ class ItemAttribute extends Model
                 } elseif (0 === $varValue) {
                     $arrColumns[] = "$t.attribute IN(SELECT t2.id FROM tl_wem_portfolio_attribute AS t2 WHERE t2.displayInFrontend = '')";
                 }
-            break;
+
+                break;
 
             // Load parent
             default:

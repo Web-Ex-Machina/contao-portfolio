@@ -20,6 +20,7 @@ use Contao\Date;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
 use Contao\Input;
+use Contao\Model\Collection;
 use Contao\Module;
 use Contao\RequestToken;
 use Contao\System;
@@ -41,7 +42,6 @@ abstract class Portfolio extends Module
     /**
      * Load generic stuff.
      *
-     * @return string
      * @throws Exception
      */
     public function generate(): string
@@ -56,11 +56,6 @@ abstract class Portfolio extends Module
     /**
      * Parse an item.
      *
-     * @param array $arrItem
-     * @param string $strTemplate
-     * @param string $strClass
-     * @param int $intCount
-     * @return string
      * @throws Exception
      */
     public function parseItem(array $arrItem, string $strTemplate = 'wem_portfolio_item_default', string $strClass = '', int $intCount = 0): string
@@ -136,6 +131,7 @@ abstract class Portfolio extends Module
         /** @var FrontendTemplate|object $objTemplate */
         $objTemplate = new FrontendTemplate($strTemplate);
         $objTemplate->setData($arrItem);
+
         $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
         $objTemplate->count = $intCount;
 
@@ -146,6 +142,7 @@ abstract class Portfolio extends Module
                 $strContent .= $this->getContentElement($objElement->current());
             }
         }
+
         $objTemplate->text = $strContent;
 
         return $objTemplate->parse();
@@ -192,7 +189,6 @@ abstract class Portfolio extends Module
     /**
      * Retrieve module filters.
      *
-     * @return array
      * @throws Exception
      */
     protected function getAvailableFilters(): array
@@ -223,7 +219,8 @@ abstract class Portfolio extends Module
 
                         $arrFilters[$id]['options'][] = $option;
                     }
-                break;
+
+                    break;
 
                 default:
                     $attribute = Attribute::findByIdOrAlias($id);
@@ -269,9 +266,6 @@ abstract class Portfolio extends Module
     /**
      * Parse multiple items.
      *
-     * @param array $arrItems
-     * @param string $strTemplate
-     * @return array
      * @throws Exception
      */
     protected function parseItems(array $arrItems, string $strTemplate = 'wem_portfolio_item_default'): array
@@ -305,7 +299,6 @@ abstract class Portfolio extends Module
     /**
      * Handle AJAX requests.
      *
-     * @return void
      * @throws Exception
      */
     protected function handleAjaxRequests(): void

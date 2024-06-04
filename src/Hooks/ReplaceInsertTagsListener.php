@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Hooks;
 
 use Contao\Input;
-use WEM\PortfolioBundle\Model\Item as Item;
+use WEM\PortfolioBundle\Model\Item;
 
 class ReplaceInsertTagsListener
 {

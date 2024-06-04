@@ -33,8 +33,6 @@ class ListCategories extends Portfolio
 {
     /**
      * List of categories.
-     *
-     * @var array
      */
     protected array $arrCategories = [];
 
@@ -48,7 +46,6 @@ class ListCategories extends Portfolio
     /**
      * Display a wildcard in the back end.
      *
-     * @return string
      * @throws Exception
      */
     public function generate(): string
@@ -91,12 +88,6 @@ class ListCategories extends Portfolio
 
     /**
      * Parse an item.
-     *
-     * @param array $arrItem
-     * @param string $strTemplate
-     * @param string $strClass
-     * @param int $intCount
-     * @return string
      */
     public function parseItem(array $arrItem, string $strTemplate = 'wem_portfolio_category_default', string $strClass = '', int $intCount = 0): string
     {
@@ -106,6 +97,7 @@ class ListCategories extends Portfolio
         /** @var FrontendTemplate|object $objTemplate */
         $objTemplate = new FrontendTemplate($strTemplate);
         $objTemplate->setData($arrItem);
+
         $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
         $objTemplate->count = $intCount;
 
