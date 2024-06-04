@@ -22,7 +22,8 @@
         "terminal42/dcawizard": "~2.7",
         "contao/manager-plugin": "^2.0",
         "webexmachina/contao-utils": "dev-php-8-2-preparation",
-        "menatwork/contao-multicolumnwizard-bundle": "^3.6"
+        "menatwork/contao-multicolumnwizard-bundle": "^3.6",
+        "ext-json": "*"
     },
     "require-dev": {
         "rector/rector": "^1.0"

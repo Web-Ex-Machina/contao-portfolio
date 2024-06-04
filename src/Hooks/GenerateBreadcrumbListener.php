@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Hooks;
 
+use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\Environment;
+use Contao\Input;
+use Contao\Module;
 use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\Item;
 
@@ -22,10 +26,10 @@ class GenerateBreadcrumbListener
     /**
      * @Hook("generateBreadcrumb")
      */
-    public function onGenerateBreadcrumb(array $items, \Module $module): array
+    public function onGenerateBreadcrumb(array $items, Module $module): array
     {
         // Check if we have an auto_item and if it's a Portfolio Category
-        if (\Input::get('auto_item') && $objCategory = Category::findByIdOrAlias(\Input::get('auto_item'))) {
+        if (Input::get('auto_item') && $objCategory = Category::findByIdOrAlias(Input::get('auto_item'))) {
             // Update the last item
             end($items);
             $items[key($items)]['isActive'] = false;
@@ -33,12 +37,12 @@ class GenerateBreadcrumbListener
             $items[] = [
                 'isRoot' => false,
                 'isActive' => true,
-                'href' => \Environment::get('request'),
+                'href' => Environment::get('request'),
                 'title' => $objCategory->title,
                 'link' => $objCategory->title,
                 'class' => '',
             ];
-        } elseif (\Input::get('auto_item') && $objItem = Item::findByIdOrAlias(\Input::get('auto_item'))) {
+        } elseif (Input::get('auto_item') && $objItem = Item::findByIdOrAlias(Input::get('auto_item'))) {
             // Update the last item
             end($items);
             $items[key($items)]['title'] = $objItem->title;

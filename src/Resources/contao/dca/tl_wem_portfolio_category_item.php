@@ -13,6 +13,7 @@ declare(strict_types=1);
  */
 
 use WEM\PortfolioBundle\Model\CategoryItem;
+use WEM\UtilsBundle\Classes\StringUtil;
 
 /*
  * Table tl_wem_portfolio_category_item.
@@ -164,7 +165,7 @@ class tl_wem_portfolio_category_item extends Backend
             '<a href="%s" title="%s"%s>%s</a>',
             str_replace("tl_wem_portfolio_category_item", "tl_wem_portfolio_item", $this->addToUrl($href . '&amp;id=' . $row['item'])),
             $attributes,
-            Contao\StringUtil::specialchars($title),
+            StringUtil::specialchars($title),
             Contao\Image::getHtml($icon, $label),
         );
     }

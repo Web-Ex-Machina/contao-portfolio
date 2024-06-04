@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
-use Exception;
 use WEM\UtilsBundle\Model\Model;
 
 /**

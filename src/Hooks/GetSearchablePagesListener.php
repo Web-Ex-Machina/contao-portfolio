@@ -14,12 +14,14 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Hooks;
 
+use Contao\CoreBundle\ServiceAnnotation\Hook;
 use WEM\PortfolioBundle\Model\Item;
 
 class GetSearchablePagesListener
 {
     /**
      * @Hook("getSearchablePages")
+     * @throws \Exception
      */
     public function onGetSearchablePages(array $pages, int $root = null, bool $isSitemap = false, string $language = null): array
     {

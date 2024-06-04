@@ -15,6 +15,9 @@ declare(strict_types=1);
 /*
  * Add palettes to tl_module.
  */
+
+use WEM\UtilsBundle\Classes\StringUtil;
+
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list_categories'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_category_sort,numberOfItems,perPage,skipFirst;{list_legend},wem_portfolio_list_module;{template_legend:hide},wem_portfolio_category_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_categories,wem_portfolio_filters,wem_portfolio_item_sort,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '{title_legend},name,headline,type;{template_legend:hide},wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
@@ -128,7 +131,7 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
     {
         $arrOptions = ['date_ASC', 'date_DESC', 'title_ASC', 'title_DESC'];
 
-        if ($dc->activeRecord->wem_portfolio_categories && 1 < \count(deserialize($dc->activeRecord->wem_portfolio_categories))) {
+        if ($dc->activeRecord->wem_portfolio_categories && 1 < \count(StringUtil::deserialize($dc->activeRecord->wem_portfolio_categories))) {
             unset($arrOptions[array_search('category', $arrOptions, true)]);
         }
 
@@ -152,7 +155,7 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
      */
     public function checkIfMultiCategories($varValue, DataContainer $dc)
     {
-        if ('category' === $varValue && $dc->activeRecord->wem_portfolio_categories && 1 < \count(deserialize($dc->activeRecord->wem_portfolio_categories))) {
+        if ('category' === $varValue && $dc->activeRecord->wem_portfolio_categories && 1 < \count(StringUtil::deserialize($dc->activeRecord->wem_portfolio_categories))) {
             throw new \Exception($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['cannotUseCategorySorting']);
         }
 

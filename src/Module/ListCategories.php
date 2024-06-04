@@ -14,11 +14,17 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Module;
 
+use Contao\BackendTemplate;
 use Contao\CoreBundle\Exception\PageNotFoundException;
+use Contao\Environment;
+use Contao\FrontendTemplate;
+use Contao\Input;
 use Contao\ModuleModel;
+use Contao\PageModel;
 use Exception;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Category;
+use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
  * Front end module "wem_portfolio_list_categories".
@@ -30,7 +36,7 @@ class ListCategories extends Portfolio
      *
      * @var array
      */
-    protected $arrCategories = [];
+    protected array $arrCategories = [];
 
     /**
      * Template.
@@ -43,14 +49,15 @@ class ListCategories extends Portfolio
      * Display a wildcard in the back end.
      *
      * @return string
+     * @throws Exception
      */
-    public function generate()
+    public function generate(): string
     {
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
 
         if ($scopeMatcher->isBackend()) {
             /** @var BackendTemplate|object $objTemplate */
-            $objTemplate = new \BackendTemplate('be_wildcard');
+            $objTemplate = new BackendTemplate('be_wildcard');
 
             $objTemplate->wildcard = '### '.utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_list_categories'][0]).' ###';
             $objTemplate->title = $this->headline;
@@ -62,11 +69,11 @@ class ListCategories extends Portfolio
         }
 
         // Check if we have an existing category
-        if (\Input::get('auto_item') && $objCategory = Category::findByIdOrAlias(\Input::get('auto_item'))) {
+        if (Input::get('auto_item') && $objCategory = Category::findByIdOrAlias(Input::get('auto_item'))) {
             $objModel = ModuleModel::findByPk($this->wem_portfolio_list_module);
 
             if (!$objModel) {
-                throw new PageNotFoundException('Page not found: '.\Environment::get('uri'));
+                throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
             }
 
             $objModel->wem_portfolio_categories = serialize([0 => $objCategory->id]);
@@ -75,7 +82,7 @@ class ListCategories extends Portfolio
             return $objModule->generate();
         }
 
-        if (\Input::get('auto_item')) {
+        if (Input::get('auto_item')) {
             return '';
         }
 
@@ -85,46 +92,44 @@ class ListCategories extends Portfolio
     /**
      * Parse an item.
      *
-     * @param array
-     * @param string
-     *
+     * @param array $arrItem
+     * @param string $strTemplate
+     * @param string $strClass
+     * @param int $intCount
      * @return string
      */
-    public function parseItem($arrItem, $strTemplate = 'wem_portfolio_category_default', $strClass = '', $intCount = 0)
+    public function parseItem(array $arrItem, string $strTemplate = 'wem_portfolio_category_default', string $strClass = '', int $intCount = 0): string
     {
-        try {
-            /* @var \PageModel $objPage */
-            global $objPage;
+        /* @var PageModel $objPage */
+        global $objPage;
 
-            /** @var \FrontendTemplate|object $objTemplate */
-            $objTemplate = new \FrontendTemplate($strTemplate);
-            $objTemplate->setData($arrItem);
-            $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
-            $objTemplate->count = $intCount;
+        /** @var FrontendTemplate|object $objTemplate */
+        $objTemplate = new FrontendTemplate($strTemplate);
+        $objTemplate->setData($arrItem);
+        $objTemplate->class = (('' !== $arrItem['cssClass']) ? ' '.$arrItem['cssClass'] : '').$strClass;
+        $objTemplate->count = $intCount;
 
-            // Add an image
-            if ($arrItem['picture']) {
-                $arrArticle['singleSRC'] = $arrItem['picture']['path'];
+        // Add an image
+        if ($arrItem['picture']) {
+            $arrArticle['singleSRC'] = $arrItem['picture']['path'];
 
-                // Override the default image size
-                if ('' !== $this->imgSize) {
-                    $size = \StringUtil::deserialize($this->imgSize);
+            // Override the default image size
+            if ('' !== $this->imgSize) {
+                $size = StringUtil::deserialize($this->imgSize);
 
-                    if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]) || '_' === ($size[2][0] ?? null)) {
-                        $arrArticle['size'] = $this->imgSize;
-                    }
+                if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]) || '_' === ($size[2][0] ?? null)) {
+                    $arrArticle['size'] = $this->imgSize;
                 }
-
-                $this->addImageToTemplate($objTemplate, $arrArticle);
             }
 
-            // Generate a link to the items list of this category
-            $objTemplate->link = $objPage->getFrontendUrl('/'.$arrItem['alias']);
-
-            return $objTemplate->parse();
-        } catch (Exception $e) {
-            throw $e;
+            $this->addImageToTemplate($objTemplate, $arrArticle);
         }
+
+        // Generate a link to the items list of this category
+        // TODO : deprecated getAbsoluteUrl getFrontendUrl
+        $objTemplate->link = $objPage->getFrontendUrl('/'.$arrItem['alias']);
+
+        return $objTemplate->parse();
     }
 
     /**
@@ -137,7 +142,7 @@ class ListCategories extends Portfolio
             $offset = (int) ($this->skipFirst);
             $arrOptions = [];
             $arrOptions['order'] = $this->getSortingValue($this->wem_portfolio_category_sort);
-            $bundles = \System::getContainer()->getParameter('kernel.bundles');
+            $bundles = System::getContainer()->getParameter('kernel.bundles');
 
             // Maximum number of items
             if ($this->numberOfItems > 0) {
@@ -145,8 +150,9 @@ class ListCategories extends Portfolio
             }
 
             $this->Template->articles = [];
-            $this->Template->rt = \RequestToken::get();
-            $this->Template->request = \Environment::get('request');
+            // TODO : deprecated RequestToken
+            $this->Template->rt = RequestToken::get();
+            $this->Template->request = Environment::get('request');
             $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
 
             global $objPage;
@@ -170,7 +176,7 @@ class ListCategories extends Portfolio
 
                 // Get the current page
                 $id = 'page_n'.$this->id;
-                $page = (null !== \Input::get($id)) ? \Input::get($id) : 1;
+                $page = (null !== Input::get($id)) ? Input::get($id) : 1;
 
                 // Do not index or cache the page if the page number is outside the range
                 if ($page < 1 || $page > max(ceil($total / $this->perPage), 1)) {

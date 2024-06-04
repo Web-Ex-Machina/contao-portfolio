@@ -9,7 +9,7 @@ use Contao\Database;
 use Contao\DataContainer;
 use Contao\Image;
 use Contao\Input;
-use Contao\StringUtil;
+use WEM\UtilsBundle\Classes\StringUtil;
 use Contao\System;
 use Contao\Versions;
 
@@ -91,7 +91,7 @@ class PortfolioItem extends Backend
     {
         if ($varValue) {
             $arrSavedAttrs = [];
-            $arrCategories = deserialize($varValue);
+            $arrCategories = StringUtil::deserialize($varValue);
             $objCategoryItems = CategoryItem::findItems(['item' => $dc->id]);
 
             if ($objCategoryItems && 0 < $objCategoryItems->count()) {

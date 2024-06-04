@@ -25,6 +25,7 @@ use Contao\CoreBundle\Exception\PageNotFoundException;
 use Exception;
 use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\Item;
+use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
  * Front end module "portfolio list".
@@ -36,7 +37,7 @@ class PortfolioList extends Portfolio
      *
      * @var array
      */
-    protected $arrCategories = [];
+    protected array $arrCategories = [];
 
     /**
      * Template.
@@ -49,8 +50,9 @@ class PortfolioList extends Portfolio
      * Display a wildcard in the back end.
      *
      * @return string
+     * @throws Exception
      */
-    public function generate()
+    public function generate(): string
     {
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
 
@@ -84,7 +86,7 @@ class PortfolioList extends Portfolio
 
             // Load categories
             if ($this->wem_portfolio_categories) {
-                foreach (deserialize($this->wem_portfolio_categories) as $c) {
+                foreach (StringUtil::deserialize($this->wem_portfolio_categories) as $c) {
                     $this->arrCategories[] = $this->getCategory($c);
                 }
             }
@@ -107,7 +109,7 @@ class PortfolioList extends Portfolio
 
             global $objPage;
             $arrConfig['published'] = 1;
-            $arrConfig['categories'] = deserialize($this->wem_portfolio_categories);
+            $arrConfig['categories'] = StringUtil::deserialize($this->wem_portfolio_categories);
 
             // Adjust the config
             if ($this->filters) {

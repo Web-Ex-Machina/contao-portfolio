@@ -37,43 +37,41 @@ class Attribute extends Model
     protected static $strOrderColumn = "title ASC";
 
     /**
-     * [formatStatement description]
-     * @param  [type] $strField    [description]
-     * @param  [type] $varValue    [description]
-     * @param  string $strOperator [description]
-     * @return [type]              [description]
+     * Formats the statement for querying the database table.
+     *
+     * @param string $strField The field to use in the statement.
+     * @param mixed $varValue The value to compare against.
+     * @param string $strOperator The comparison operator to use.
+     * @return array The formatted statement.
+     * @throws Exception If an error occurs during the formatting process.
      */
-    public static function formatStatement($strField, $varValue, $strOperator = '='): array
+    public static function formatStatement(string $strField, $varValue, string $strOperator = '='): array
     {
-        try {
-            $arrColumns = [];
-            $t = static::$strTable;
+        $arrColumns = [];
+        $t = static::$strTable;
 
-            switch ($strField) {
-                case 'useAsFilter':
-                    if (1 === $varValue) {
-                        $arrColumns[] = "$t.useAsFilter = '1'";
-                    } elseif (0 === $varValue) {
-                        $arrColumns[] = "$t.useAsFilter = ''";
-                    }
-                break;
+        switch ($strField) {
+            case 'useAsFilter':
+                if (1 === $varValue) {
+                    $arrColumns[] = "$t.useAsFilter = '1'";
+                } elseif (0 === $varValue) {
+                    $arrColumns[] = "$t.useAsFilter = ''";
+                }
+            break;
 
-                case 'displayInFrontend':
-                    if (1 === $varValue) {
-                        $arrColumns[] = "$t.displayInFrontend = '1'";
-                    } elseif (0 === $varValue) {
-                        $arrColumns[] = "$t.displayInFrontend = ''";
-                    }
-                break;
+            case 'displayInFrontend':
+                if (1 === $varValue) {
+                    $arrColumns[] = "$t.displayInFrontend = '1'";
+                } elseif (0 === $varValue) {
+                    $arrColumns[] = "$t.displayInFrontend = ''";
+                }
+            break;
 
-                // Load parent
-                default:
-                    $arrColumns = array_merge($arrColumns, parent::formatStatement($strField, $varValue, $strOperator));
-            }
-
-            return $arrColumns;
-        } catch (Exception $e) {
-            throw $e;
+            // Load parent
+            default:
+                $arrColumns = array_merge($arrColumns, parent::formatStatement($strField, $varValue, $strOperator));
         }
+
+        return $arrColumns;
     }
 }

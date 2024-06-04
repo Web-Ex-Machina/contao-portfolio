@@ -19,6 +19,7 @@ use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\CategoryItem;
 use WEM\PortfolioBundle\Model\Item;
 use WEM\PortfolioBundle\Model\ItemAttribute;
+use WEM\UtilsBundle\Classes\StringUtil;
 
 class AttributeWizard extends \Widget
 {
@@ -103,7 +104,7 @@ class AttributeWizard extends \Widget
                     continue;
                 }
 
-                $arrAuthorizedAttributes = array_merge($arrAuthorizedAttributes, deserialize($attributes));
+                $arrAuthorizedAttributes = array_merge($arrAuthorizedAttributes, StringUtil::deserialize($attributes));
             }
         }
 
@@ -138,7 +139,7 @@ class AttributeWizard extends \Widget
             switch ($a['type']) {
                 case 'select':
                     $options = '';
-                    foreach (deserialize($a['options']) as $o) {
+                    foreach (StringUtil::deserialize($a['options']) as $o) {
                         $options .= sprintf(
                             '<option value="%s"%s>%s</option>',
                             $o,

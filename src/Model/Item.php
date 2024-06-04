@@ -15,8 +15,9 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Model;
 
 use Contao\FilesModel;
+use Contao\Model\Collection;
 use Contao\PageModel;
-use Contao\StringUtil;
+use WEM\UtilsBundle\Classes\StringUtil;
 use Exception;
 use WEM\UtilsBundle\Model\Model;
 
@@ -40,51 +41,49 @@ class Item extends Model
     protected static $strOrderColumn = "date DESC";
 
     /**
-     * [formatStatement description]
-     * @param  [type] $strField    [description]
-     * @param  [type] $varValue    [description]
-     * @param  string $strOperator [description]
-     * @return [type]              [description]
+     * Formats the statement for querying the database table.
+     *
+     * @param string $strField The field to use in the statement.
+     * @param mixed $varValue The value to compare against.
+     * @param string $strOperator The comparison operator to use.
+     * @return array The formatted statement.
+     * @throws Exception If an error occurs during the formatting process.
      */
-    public static function formatStatement($strField, $varValue, $strOperator = '='): array
+    public static function formatStatement(string $strField, $varValue, string $strOperator = '='): array
     {
-        try {
-            $arrColumns = [];
-            $t = static::$strTable;
+        $arrColumns = [];
+        $t = static::$strTable;
 
-            switch ($strField) {
-                case 'category':
-                    $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid = ".$varValue.')';
-                break;
+        switch ($strField) {
+            case 'category':
+                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid = ".$varValue.')';
+            break;
 
-                case 'categories':
-                    $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid IN (".implode(',', $varValue).'))';
-                break;
+            case 'categories':
+                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid IN (".implode(',', $varValue).'))';
+            break;
 
-                case 'attributes':
-                    $i = 1;
-                    foreach ($varValue as $a) {
-                        ++$i;
-                        $arrColumns[] = "$t.id IN(SELECT t".$i.'.pid FROM tl_wem_portfolio_item_attribute AS t'.$i.' WHERE t'.$i.'.attribute = '.$a['attribute'].' AND t'.$i.".value = '".$a['value']."')";
-                    }
-                break;
+            case 'attributes':
+                $i = 1;
+                foreach ($varValue as $a) {
+                    ++$i;
+                    $arrColumns[] = "$t.id IN(SELECT t".$i.'.pid FROM tl_wem_portfolio_item_attribute AS t'.$i.' WHERE t'.$i.'.attribute = '.$a['attribute'].' AND t'.$i.".value = '".$a['value']."')";
+                }
+            break;
 
-                // Load parent
-                default:
-                    $arrColumns = array_merge($arrColumns, parent::formatStatement($strField, $varValue, $strOperator));
-            }
-
-            return $arrColumns;
-        } catch (Exception $e) {
-            throw $e;
+            // Load parent
+            default:
+                $arrColumns = array_merge($arrColumns, parent::formatStatement($strField, $varValue, $strOperator));
         }
+
+        return $arrColumns;
     }
 
     /**
      * Return item pictures
      * @return array
      */
-    public function getPictures()
+    public function getPictures(): array
     {
         $images = [];
 
@@ -93,7 +92,7 @@ class Item extends Model
             $objFiles = FilesModel::findMultipleByUuids($arrPictures);
             
             while ($objFiles->next()) {
-                $arrMeta = deserialize($objFiles->meta);
+                $arrMeta = StringUtil::deserialize($objFiles->meta);
 
                 $images[$objFiles->path] = [
                     'name' => $objFiles->name,
@@ -134,18 +133,20 @@ class Item extends Model
 
     /**
      * Generate item url
-     * @param  boolean $blnAbsolute
+     * @param boolean $blnAbsolute
      * @return string
+     * @throws Exception
      */
-    public function getUrl($blnAbsolute = false)
+    public function getUrl(bool $blnAbsolute = false): string
     {
         $objCategories = $this->getRelated('categories');
         $objFirstCategory = $objCategories->first();
         $objPage = PageModel::findByPk($objFirstCategory->jumpTo);
+        // TODO : deprecated getAbsoluteUrl getFrontendUrl
         return $blnAbsolute ? $objPage->getAbsoluteUrl('/'.$this->alias) : $objPage->getFrontendUrl('/'.$this->alias);
     }
 
-    public function getAttributes()
+    public function getAttributes(): ?Collection
     {
         return ItemAttribute::findItems(['pid' => $this->id, 'displayInFrontend' => 1]);
     }

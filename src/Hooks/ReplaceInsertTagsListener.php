@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Hooks;
 
+use Contao\Input;
 use WEM\PortfolioBundle\Model\Item as Item;
 
 class ReplaceInsertTagsListener
@@ -36,7 +37,7 @@ class ReplaceInsertTagsListener
         }
 
         // Load the current item
-        $objItem = Item::findByIdOrAlias(\Input::get('auto_item'));
+        $objItem = Item::findByIdOrAlias(Input::get('auto_item'));
 
         switch ($arrTag[1]) {
             case 'attr':
