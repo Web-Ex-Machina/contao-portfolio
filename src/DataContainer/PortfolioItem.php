@@ -27,7 +27,7 @@ class PortfolioItem extends Backend
      *
      */
     public function addIcon(
-        array $row, string $label, DataContainer $dc = null, string $imageAttribute = '',
+        array $row, string $label, DataContainer $dc = null, array $imageAttribute = null,
         bool $blnReturnImage = false, bool $blnProtected = false): string
     {
         return '<img src="assets/contao/images/iconJPG.svg" width="18" height="18" alt="image/jpeg" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
