@@ -176,3 +176,4 @@ class AttributeWizard extends Widget
 }
 
 class_alias(AttributeWizard::class, 'AttributeWizard');
+// TODO : à virer ??

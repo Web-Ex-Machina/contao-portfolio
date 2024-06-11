@@ -28,7 +28,7 @@ class PortfolioItem extends Backend
      */
     public function addIcon(
         array $row, string $label, DataContainer $dc = null, string $imageAttribute = '',
-        bool  $blnReturnImage = false, bool $blnProtected = false): string //TODO : many useless var no ?
+        bool $blnReturnImage = false, bool $blnProtected = false): string
     {
         return '<img src="assets/contao/images/iconJPG.svg" width="18" height="18" alt="image/jpeg" style="margin-right:3px"><span style="vertical-align:-1px">'.$label.'</span>';
     }
@@ -132,6 +132,8 @@ class PortfolioItem extends Backend
      * Auto-generate an article alias if it has not been set yet.
      *
      * @param $varValue
+     * @param DataContainer $dc
+     * @return string
      * @throws \Exception
      */
     public function generateAlias($varValue, DataContainer $dc): string

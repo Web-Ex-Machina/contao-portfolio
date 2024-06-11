@@ -195,7 +195,7 @@ class tl_wem_portfolio_category extends Backend // TODO : move this function ??
      */
     public function addItems(array  $row, string $label, DataContainer $dc = null,
                              string $imageAttribute = '', bool $blnReturnImage = false,
-                             bool   $blnProtected = false): string // TODO : useless var ??
+                             bool $blnProtected = false): string
     {
         $intItems = CategoryItem::countItems(['pid' => $row['id']]);
 
