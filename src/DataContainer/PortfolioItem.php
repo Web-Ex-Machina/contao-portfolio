@@ -172,7 +172,7 @@ class PortfolioItem extends Backend
     /**
      * Return the "toggle visibility" button.
      */
-    public function toggleIcon(array  $row, string $href,
+    public function toggleIcon(array $row, ?string $href,
                                string $label, string $title, string $icon, string $attributes): string
     {
         if (Input::get('tid') && \strlen(Input::get('tid'))) {
