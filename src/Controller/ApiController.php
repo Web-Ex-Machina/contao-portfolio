@@ -5,26 +5,26 @@ namespace WEM\PortfolioBundle\Controller;
 use Contao\Model\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
 use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\Item;
-use WEM\PortfolioBundle\Module\PortfolioList;
 
 /**
- * @Route('/api/portfolio')
+ * @Route('/api/portfolio',name="api_portfolio_")
+ * @ServiceTag("controller.service_arguments")
  */
 class ApiController
 {
 
-    private PortfolioList $portfolioList;
-
-    public function __construct(PortfolioList $portfolioList)
+    public function __invoke(Request $request): Response
     {
-        $this->portfolioList = $portfolioList;
+        return new Response('Hello World!');
     }
 
     /**
-     * @Route('/', methods={"GET"})
+     * @Route('/',name="doc", methods={"GET"})
      */
     public function doc(Request $request): JsonResponse
     {
@@ -34,7 +34,7 @@ class ApiController
     }
 
     /**
-     * @Route('/items', methods={"POST"})
+     * @Route('/items',name="items", methods={"POST"})
      */
     public function viewPortfolioList(Request $request, array $categories = [], int $page = 0, int $limit = 20): JsonResponse
     {
@@ -61,7 +61,7 @@ class ApiController
     }
 
     /**
-     * @Route('/item/{id}', methods={"GET"})
+     * @Route('/item/{id}',name="item", methods={"GET"})
      */
     public function viewPortfolioItem($id): JsonResponse
     {
