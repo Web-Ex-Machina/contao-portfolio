@@ -2,6 +2,8 @@
 
 namespace WEM\PortfolioBundle\Controller;
 
+use Contao\Controller;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Model\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +17,18 @@ use WEM\PortfolioBundle\Model\Item;
  * @Route('/api/portfolio',name="api_portfolio_")
  * @ServiceTag("controller.service_arguments")
  */
-class ApiController
+class ApiController extends Controller
 {
+
+    private ContaoFramework $framework;
+
+    public function __construct(ContaoFramework $framework)
+    {
+        Parent::__construct();
+        $this->framework = $framework;
+        $this->framework->initialize();
+    }
+
 
     public function __invoke(Request $request): Response
     {
