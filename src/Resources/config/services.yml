@@ -1,0 +1,12 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+  WEM\PortfolioBundle\:
+    resource: '../../../src/'
+    exclude:
+      - '../../../src/DependencyInjection/'
+      - '../../../src/Config/'
+      - '../../../src/Resources/'
+      - '../../../src/Model/'
+      - '../../../src/Migrations/'
