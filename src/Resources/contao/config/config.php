@@ -72,6 +72,7 @@ ArrayUtil::arrayInsert(
 $GLOBALS['TL_HOOKS']['generateBreadcrumb'][] = [Hooks\GenerateBreadcrumbListener::class, 'onGenerateBreadcrumb'];
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = [Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
+$GLOBALS['TL_HOOKS']['changelanguageNavigation'][] = [Hooks\ChangelanguageNavigationListener::class, 'onChangelanguageNavigation'];
 
 /*
  * Models
