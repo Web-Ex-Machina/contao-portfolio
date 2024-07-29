@@ -35,8 +35,6 @@ class WEMPortfolioExtension extends Extension
             $container,
             new FileLocator(__DIR__.'/../Resources/config')
         );
-
-        $loader->load('routes.yml');
         $loader->load('services.yml');
     }
 }
