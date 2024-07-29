@@ -22,7 +22,7 @@ use WEM\UtilsBundle\Classes\StringUtil;
 $GLOBALS['TL_DCA']['tl_wem_portfolio_category_item'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => \Contao\DC_Table::class,
         'ptable' => 'tl_wem_portfolio_category',
         'switchToEdit' => true,
         'enableVersioning' => true,

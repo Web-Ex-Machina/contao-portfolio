@@ -25,7 +25,7 @@ use Contao\System;
 $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => \Contao\DC_Table::class,
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
