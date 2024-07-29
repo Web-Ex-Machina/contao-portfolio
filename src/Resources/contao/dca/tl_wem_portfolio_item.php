@@ -21,7 +21,7 @@ use WEM\PortfolioBundle\DataContainer\PortfolioItem;
 $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => \Contao\DC_Table::class,
         'ctable' => ['tl_wem_portfolio_item_attribute', 'tl_content'],
         'switchToEdit' => true,
         'enableVersioning' => true,
