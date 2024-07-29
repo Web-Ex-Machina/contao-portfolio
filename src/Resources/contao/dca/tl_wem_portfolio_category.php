@@ -13,6 +13,7 @@ declare(strict_types=1);
  */
 
 use Contao\Backend;
+use Contao\Config;
 use Contao\DataContainer;
 use Contao\System;
 use WEM\PortfolioBundle\Model\CategoryItem;
