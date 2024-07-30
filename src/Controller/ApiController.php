@@ -14,7 +14,7 @@ use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\Item;
 
 /**
- * @Route('/api/portfolio',name="api_portfolio_")
+ * @Route("/api/portfolio",name="api_portfolio_")
  * @ServiceTag("controller.service_arguments")
  */
 class ApiController extends Controller
@@ -36,7 +36,7 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route('/',name="doc", methods={"GET"})
+     * @Route("/",name="doc", methods={"GET"})
      */
     public function doc(Request $request): JsonResponse
     {
@@ -46,7 +46,7 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route('/items',name="items", methods={"POST"})
+     * @Route("/items",name="items", methods={"POST"})
      */
     public function viewPortfolioList(Request $request, array $categories = [], int $page = 0, int $limit = 20): JsonResponse
     {
@@ -73,7 +73,7 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route('/item/{id}',name="item", methods={"GET"})
+     * @Route("/item/{id}",name="item", methods={"GET"})
      */
     public function viewPortfolioItem($id): JsonResponse
     {
