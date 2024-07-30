@@ -2,6 +2,7 @@
 
 namespace WEM\PortfolioBundle\Controller;
 
+use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Model\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -47,30 +48,46 @@ class ApiController
     }
 
     /**
-     * @Route("/items", methods={"POST"})
+     * @Route("/items/{page}/{limit}", methods={"GET"})
      */
-    public function viewPortfolioList(Request $request, array $categories = [], int $page = 0, int $limit = 20): JsonResponse
+    public function viewPortfolioList(Request $request, int $page, int $limit, array $cats = []): JsonResponse
     {
-        $arrConfig['published'] = 1;
-        $request->getPayload();
-        $offset = $page * $limit;
+        $cats = $request->query->get("cats"); //?ids[]=1&ids[]=2
+        $token = $request->query->get("token"); //?token=lol
+        if ($token != "blurp") {
+            return new JsonResponse('{"error":"Forbidden Access"}', Response::HTTP_FORBIDDEN, [], true);
+        }
+        $arrOption['eager'] = true;
+        $arrConfig['published'] = "1";
 
 
-        foreach ($categories as $category) {
+        $offset = ($page - 1) * $limit;
+        if (!is_iterable($cats)) {
+            return new JsonResponse('{"error":"Give at least on category : ?cats[]=1&cats[]=2 "}', Response::HTTP_NOT_ACCEPTABLE, [], true);
+        }
+
+        foreach ($cats as $category) {
             $objCategory = Category::findByIdOrAlias($category);
             if ($objCategory) {
                 $arrConfig['categories'] = [$objCategory->id];
             } else {
-                return new JsonResponse(['data' => "Error : categorie " . $category . " not found."], 418);
+                return new JsonResponse(['data' => "Error : categorie " . $category . " not found."], Response::HTTP_I_AM_A_TEAPOT);
             }
 
         }
 
-        $objItems = Item::findItems($arrConfig, ($limit ?: 30), $offset);
+        $items = [];
+
+        $objItems = Item::findItems($arrConfig, $limit, $offset, $arrOption);
+
         if ($objItems instanceof Collection) {
-            return new JsonResponse($objItems, 200);
+            foreach ($objItems as $item) {
+                $items[$item->row()["id"]] = $item->row();
+            }
+            return new JsonResponse($items, Response::HTTP_OK);
         }
-        return new JsonResponse(null, 404);
+
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -79,12 +96,26 @@ class ApiController
     public function viewPortfolioItem($id): JsonResponse
     {
 
-        $objItem = Item::findByPk($id);
+        $objItem = Item::findByPk($id, ["eager" => true]);
 
         if ($objItem instanceof Item) {
-            return new JsonResponse($objItem, 200);
+            $row = $objItem->row();
+            if ($row["published"] === '1') {
+                $item = $objItem->row();
+                $strContent = '';
+                $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio_item');
+                foreach ($objElement as $element) {
+                    //$strContent .=  $this->controller->getContentElement($objElement->current());
+                    $strContent .= "lol";
+                }
+
+                $item['content'] = $strContent;
+
+                return new JsonResponse($item, Response::HTTP_OK);
+            }
+            return new JsonResponse('{"error":"403"}', Response::HTTP_FORBIDDEN, [], true);
         }
-        return new JsonResponse(null, 404);
+        return new JsonResponse('{"error":"404"}', Response::HTTP_NOT_FOUND, [], true);
     }
 
 }
