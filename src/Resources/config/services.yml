@@ -1,12 +1,11 @@
 services:
-  _defaults:
-    autowire: true
-    autoconfigure: true
-  WEM\PortfolioBundle\:
-    resource: '../../../src/'
-    exclude:
-      - '../../../src/DependencyInjection/'
-      - '../../../src/Config/'
-      - '../../../src/Resources/'
-      - '../../../src/Model/'
-      - '../../../src/Migrations/'
+  WEM\PortfolioBundle\Controller\ApiController:
+    alias: 'wem_portfolio.controller.api_controller'
+    public: true
+
+  wem_portfolio.controller.api_controller:
+    class: WEM\PortfolioBundle\Controller\ApiController
+    arguments:
+      $framework: '@contao.framework'
+    public: true
+    tags: [ 'controller.service_arguments' ]
