@@ -2,7 +2,6 @@
 
 namespace WEM\PortfolioBundle\Controller;
 
-use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Model\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,14 +17,13 @@ use WEM\PortfolioBundle\Model\Item;
  *
  * @ServiceTag("controller.service_arguments")
  */
-class ApiController extends Controller
+class ApiController
 {
 
     private ContaoFramework $framework;
 
     public function __construct(ContaoFramework $framework)
     {
-        Parent::__construct();
         $this->framework = $framework;
         $this->framework->initialize();
     }
