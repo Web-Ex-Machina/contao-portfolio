@@ -2,6 +2,7 @@
 
 namespace WEM\PortfolioBundle\Controller;
 
+use Contao\Config;
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Model\Collection;
@@ -12,6 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
 use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\Item;
+use WEM\UtilsBundle\Classes\Encryption;
 
 /**
  * @Route("/api/portfolio")
@@ -22,11 +24,17 @@ class ApiController
 {
 
     private ContaoFramework $framework;
+    private Encryption $encryption;
 
-    public function __construct(ContaoFramework $framework)
+    private ?string $apiKey;
+
+    public function __construct(ContaoFramework $framework, Encryption $encryption)
     {
+        $this->encryption = $encryption;
         $this->framework = $framework;
         $this->framework->initialize();
+        $this->apiKey = ($this->encryption->decrypt(Config::get('portfolioApiKey'))) ?? null;
+
     }
 
     /**
@@ -52,9 +60,14 @@ class ApiController
      */
     public function viewPortfolioList(Request $request, int $page, int $limit, array $cats = []): JsonResponse
     {
+
         $cats = $request->query->get("cats"); //?ids[]=1&ids[]=2
         $token = $request->query->get("token"); //?token=lol
-        if ($token != "blurp") {
+
+
+        if (!is_string($token) || !is_string($this->apiKey)) {
+            return new JsonResponse('{"error":"Bad Request"}', Response::HTTP_BAD_REQUEST, [], true);
+        } elseif ($this->apiKey === $token) {
             return new JsonResponse('{"error":"Forbidden Access"}', Response::HTTP_FORBIDDEN, [], true);
         }
         $arrOption['eager'] = true;
@@ -101,17 +114,17 @@ class ApiController
         if ($objItem instanceof Item) {
             $row = $objItem->row();
             if ($row["published"] === '1') {
-                $item = $objItem->row();
+
                 $strContent = '';
                 $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio_item');
                 foreach ($objElement as $element) {
                     //$strContent .=  $this->controller->getContentElement($objElement->current());
-                    $strContent .= "lol";
+                    $strContent .= \Contao\Controller::getContentElement($element);
                 }
 
-                $item['content'] = $strContent;
+                $row['content'] = $strContent;
 
-                return new JsonResponse($item, Response::HTTP_OK);
+                return new JsonResponse($row, Response::HTTP_OK);
             }
             return new JsonResponse('{"error":"403"}', Response::HTTP_FORBIDDEN, [], true);
         }
