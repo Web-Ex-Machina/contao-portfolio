@@ -4,6 +4,7 @@ namespace WEM\PortfolioBundle\Controller;
 
 use Contao\Config;
 use Contao\ContentModel;
+use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Model\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,7 +34,7 @@ class ApiController
         $this->encryption = $encryption;
         $this->framework = $framework;
         $this->framework->initialize();
-        $this->apiKey = ($this->encryption->decrypt(Config::get('portfolioApiKey'))) ?? null;
+        $this->apiKey = ($this->encryption->decrypt_b64(Config::get('portfolioApiKey'))) ?? null;
 
     }
 
@@ -56,27 +57,27 @@ class ApiController
     }
 
     /**
-     * @Route("/items/{page}/{limit}", methods={"GET"})
+     * @Route("/items/{page}/{limit}", requirements={"page"="\d+","limit"="\d+"}), methods={"GET"})
      */
     public function viewPortfolioList(Request $request, int $page, int $limit, array $cats = []): JsonResponse
     {
 
-        $cats = $request->query->get("cats"); //?ids[]=1&ids[]=2
-        $token = $request->query->get("token"); //?token=lol
-
-
-        if (!is_string($token) || !is_string($this->apiKey)) {
-            return new JsonResponse('{"error":"Bad Request"}', Response::HTTP_BAD_REQUEST, [], true);
-        } elseif ($this->apiKey === $token) {
-            return new JsonResponse('{"error":"Forbidden Access"}', Response::HTTP_FORBIDDEN, [], true);
+        $check = $this->accessCheck($request);
+        if ($check instanceof JsonResponse) {
+            return $check;
         }
+
+        $limit = ($limit > 20) ? 20 : $limit;
+        $limit = ($limit < 1) ? 1 : $limit;
+        $page = ($page = 0) ? 1 : $page;
+
+        $cats = $request->query->get("cats");
         $arrOption['eager'] = true;
         $arrConfig['published'] = "1";
 
-
         $offset = ($page - 1) * $limit;
         if (!is_iterable($cats)) {
-            return new JsonResponse('{"error":"Give at least on category : ?cats[]=1&cats[]=2 "}', Response::HTTP_NOT_ACCEPTABLE, [], true);
+            return new JsonResponse('{"error":"Give at least on category : ?cats[]=1&cats[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
         }
 
         foreach ($cats as $category) {
@@ -84,7 +85,7 @@ class ApiController
             if ($objCategory) {
                 $arrConfig['categories'] = [$objCategory->id];
             } else {
-                return new JsonResponse(['data' => "Error : categorie " . $category . " not found."], Response::HTTP_I_AM_A_TEAPOT);
+                return new JsonResponse('{"error":"Categorie ' . $category . ' not found"}', Response::HTTP_I_AM_A_TEAPOT, [], true);
             }
 
         }
@@ -104,10 +105,14 @@ class ApiController
     }
 
     /**
-     * @Route("/item/{id}", methods={"GET"})
+     * @Route("/item/{id}", requirements={"id"="\d+"}), methods={"GET"})
      */
-    public function viewPortfolioItem($id): JsonResponse
+    public function viewPortfolioItem(Request $request, $id): JsonResponse
     {
+        $check = $this->accessCheck($request);
+        if ($check instanceof JsonResponse) {
+            return $check;
+        }
 
         $objItem = Item::findByPk($id, ["eager" => true]);
 
@@ -118,17 +123,42 @@ class ApiController
                 $strContent = '';
                 $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio_item');
                 foreach ($objElement as $element) {
-                    //$strContent .=  $this->controller->getContentElement($objElement->current());
-                    $strContent .= \Contao\Controller::getContentElement($element);
+                    $strContent .= Controller::getContentElement($element);
                 }
 
-                $row['content'] = $strContent;
+                $row['content_b64'] = base64_encode($strContent);
 
                 return new JsonResponse($row, Response::HTTP_OK);
             }
-            return new JsonResponse('{"error":"403"}', Response::HTTP_FORBIDDEN, [], true);
+            return new JsonResponse('{"error":"403 : Item not published"}', Response::HTTP_FORBIDDEN, [], true);
         }
-        return new JsonResponse('{"error":"404"}', Response::HTTP_NOT_FOUND, [], true);
+        return new JsonResponse('{"error":"404 : Item not found"}', Response::HTTP_NOT_FOUND, [], true);
+    }
+
+    private function accessCheck($request): ?JsonResponse
+    {
+
+        if (!$this->apiKey) {
+            return new JsonResponse('{"error":"No API KEY Provided"}', Response::HTTP_SERVICE_UNAVAILABLE, [], true);
+        }
+
+        if ($request->headers->get("HTTP_PORTFOLIO_API_KEY")) {
+            $token = $request->headers->get("HTTP_PORTFOLIO_API_KEY");
+        } elseif ($request->query->get("key")) {
+            $token = $request->query->get("key");
+        } else {
+            return new JsonResponse('{"error":"Forbidden Access no token : please provide &key=APIKEY in request OR HTTP_PORTFOLIO_API_KEY in headers"}', Response::HTTP_FORBIDDEN, [], true);
+        }
+
+        if ($token == "") {
+            return new JsonResponse('{"error":"Bad Request empty token"}', Response::HTTP_BAD_REQUEST, [], true);
+        }
+
+        if ($this->apiKey !== $token) {
+            return new JsonResponse('{"error":"Forbidden Access bad token"}', Response::HTTP_FORBIDDEN, [], true);
+        }
+
+        return null;
     }
 
 }
