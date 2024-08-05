@@ -1,0 +1,3 @@
+wem_portfolio.controller:
+  resource: ../../Controller
+  type: annotation

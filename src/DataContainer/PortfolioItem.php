@@ -54,7 +54,7 @@ class PortfolioItem extends Backend
 
         $arrData = [];
         while ($objCategories->next()) {
-            $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'][1], $objCategories->id);
+            $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'][1] ?? "", $objCategories->id);
             $strHref = sprintf(
                 'contao?do=wem_portfolio_category&table=tl_wem_portfolio_category_item&id=%s&popup=1&rt=%s&ref=%s',
                 $objCategories->id,
