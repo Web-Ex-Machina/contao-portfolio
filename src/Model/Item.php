@@ -97,7 +97,7 @@ class Item extends Model
                 $images[$objFiles->path] = [
                     'name' => $objFiles->name,
                     'singleSRC' => $objFiles->path,
-                    'meta' => $arrMeta[$GLOBALS['TL_LANGUAGE']]
+                    'meta' => (is_array($arrMeta)) ? $arrMeta[$GLOBALS['TL_LANGUAGE']] : null
                 ];
             }
 
@@ -110,10 +110,14 @@ class Item extends Model
 
                     // Move the matching elements to their position in $arrOrder
                     foreach ($images as $k => $v) {
-                        if (\array_key_exists($v['uuid'], $arrOrder)) {
-                            $arrOrder[$v['uuid']] = $v;
-                            unset($images[$k]);
+                        try {
+                            if (\array_key_exists($v['uuid'], $arrOrder)) {
+                                $arrOrder[$v['uuid']] = $v;
+                                unset($images[$k]);
+                            }
+                        } catch (\Exception $ex) {
                         }
+
                     }
 
                     // Append the left-over images at the end
