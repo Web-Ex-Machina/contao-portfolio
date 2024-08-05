@@ -6,6 +6,7 @@ use Contao\Config;
 use Contao\ContentModel;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\FilesModel;
 use Contao\Model\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,8 +52,14 @@ class ApiController
      */
     public function doc(Request $request): JsonResponse
     {
-        $infos1 = ["path" => "/items"];
-        $infos2 = ["path" => "/item/{id}"];
+        $infos1 = [
+            "usage" => "For retrieve a list of article based on an categories array",
+            "path" => "/items/{page}/{limit}?cats[]=1&cats[]=2&key=myKey"
+        ];
+        $infos2 = [
+            "usage" => "For retrieve an unique item based on the unique Id",
+            "path" => "/item/{id}&key=myKey"
+        ];
         return new JsonResponse(['data' => [$infos1, $infos2]]);
     }
 
@@ -83,7 +90,7 @@ class ApiController
         foreach ($cats as $category) {
             $objCategory = Category::findByIdOrAlias($category);
             if ($objCategory) {
-                $arrConfig['categories'] = [$objCategory->id];
+                $arrConfig['categories'][] = $objCategory->id;
             } else {
                 return new JsonResponse('{"error":"Categorie ' . $category . ' not found"}', Response::HTTP_I_AM_A_TEAPOT, [], true);
             }
@@ -96,7 +103,31 @@ class ApiController
 
         if ($objItems instanceof Collection) {
             foreach ($objItems as $item) {
-                $items[$item->row()["id"]] = $item->row();
+                $arrayItem = $item->row();
+                $id = $arrayItem["id"];
+                $return = [];
+                if ($arrayItem["published"] === '1') {
+
+                    $return['mainPicture'] = [];
+
+                    $images = $item->getPictures();
+
+                    if (count($images) > 0) {
+                        $return['mainPicture'] = $images[0];
+                    }
+                    $return["createdAt"] = $arrayItem["createdAt"];
+                    $return["title"] = $arrayItem["title"];
+                    $objCategories = $item->getRelated('categories');
+                    $return['categories'] = null;
+                    foreach ($objCategories->fetchAll() as $category) {
+                        $return['categories']['id'] = $category['id'];
+                        $return['categories']['title'] = $category['title'];
+                        $return['categories']['alias'] = $category['alias'];
+                    }
+                    $return['teaser'] = $arrayItem["teaser"];
+                    $return["link"] = $item->getUrl();
+                }
+                $items[$id] = $return;
             }
             return new JsonResponse($items, Response::HTTP_OK);
         }
@@ -117,18 +148,54 @@ class ApiController
         $objItem = Item::findByPk($id, ["eager" => true]);
 
         if ($objItem instanceof Item) {
-            $row = $objItem->row();
-            if ($row["published"] === '1') {
-
+            $arrayItem = $objItem->row();
+            if ($arrayItem["published"] === '1') {
+                $return = [];
                 $strContent = '';
                 $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio_item');
                 foreach ($objElement as $element) {
                     $strContent .= Controller::getContentElement($element);
                 }
+                $return['pictures'] = [];
 
-                $row['content_b64'] = base64_encode($strContent);
+                $images = $objItem->getPictures();
 
-                return new JsonResponse($row, Response::HTTP_OK);
+                if (count($images) > 0) {
+                    $return['pictures'] = $images;
+                }
+                $return["createdAt"] = $arrayItem["createdAt"];
+                $return["tstamp"] = $arrayItem["tstamp"];
+                $return["title"] = $arrayItem["title"];
+                $return["alias"] = $arrayItem["alias"];
+                $return["date"] = $arrayItem["date"];
+                $objCategories = $objItem->getRelated('categories');
+                $return['categories'] = null;
+                foreach ($objCategories->fetchAll() as $category) {
+                    $return['categories']['id'] = $category['id'];
+                    $return['categories']['createdAt'] = $category['createdAt'];
+                    $return['categories']['tstamp'] = $category['tstamp'];
+                    $return['categories']['title'] = $category['title'];
+                    $return['categories']['alias'] = $category['alias'];
+                    $return['categories']['jumpTo'] = $category['jumpTo'];
+                    $return['categories']['picture'] = null;
+                    if ($image = FilesModel::findByUuid($category['picture'])) {
+                        $return['categories']['picture']['path'] = $image->path;
+                        $return['categories']['picture']['tstamp'] = $image->tstamp;
+                        $return['categories']['picture']['hash'] = $image->hash;
+                        $return['categories']['picture']['lastModified'] = $image->lastModified;
+                    }
+                    $return['categories']['teaser'] = $category['teaser'];
+                    $return['categories']['attributes'] = $category['attributes'];
+
+                }
+                $return['teaser'] = $arrayItem["teaser"];
+                $return["link"] = $objItem->getUrl();
+
+                $return["attributes"] = $objItem->getAttributes();
+
+                $return['content_b64'] = base64_encode($strContent);
+
+                return new JsonResponse($return, Response::HTTP_OK);
             }
             return new JsonResponse('{"error":"403 : Item not published"}', Response::HTTP_FORBIDDEN, [], true);
         }
