@@ -252,7 +252,7 @@ class PortfolioItem extends Backend
         $time = time();
 
         // Update the database
-        $this->Database->prepare("UPDATE tl_wem_portfolio_item SET tstamp=$time, published='".($blnVisible ? '1' : '')."' WHERE id=?")->execute($intId);
+        $this->Database->prepare(sprintf('UPDATE tl_wem_portfolio_item SET tstamp=%d, published=\'', $time).($blnVisible ? '1' : '')."' WHERE id=?")->execute($intId);
 
         if ($dc instanceof DataContainer) {
             $dc->activeRecord->tstamp = $time;

@@ -5,6 +5,9 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
+use Rector\Symfony\Set\SymfonySetList;
+use Contao\Rector\Set\ContaoSetList;
+use Rector\CodeQuality\Rector\If_\CombineIfRector;
 
 /* Usage
  * vendor/bin/rector process src --dry-run //permet de faire un test
@@ -18,11 +21,18 @@ return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/src',
     ])
+    ->withSkip([
+        CombineIfRector::class
+    ])
     ->withSets([
         SetList::CODING_STYLE,
         SetList::CODE_QUALITY,
-        LevelSetList::UP_TO_PHP_80,
-        LevelSetList::UP_TO_PHP_81,
+        SetList::DEAD_CODE,
+        SetList::TYPE_DECLARATION,
         LevelSetList::UP_TO_PHP_82,
-        SetList::DEAD_CODE
+        SymfonySetList::SYMFONY_64,
+        ContaoSetList::CONTAO_50,
+        ContaoSetList::CONTAO_53,
+        ContaoSetList::ANNOTATIONS_TO_ATTRIBUTES,
+        ContaoSetList::FQCN,
     ]);

@@ -26,6 +26,7 @@ class ApiController
 {
 
     private ContaoFramework $framework;
+
     private Encryption $encryption;
 
     private ?string $apiKey;
@@ -35,6 +36,7 @@ class ApiController
         $this->encryption = $encryption;
         $this->framework = $framework;
         $this->framework->initialize();
+
         $this->apiKey = ($this->encryption->decrypt_b64(Config::get('portfolioApiKey'))) ?? null;
 
     }
@@ -115,6 +117,7 @@ class ApiController
                     if (count($images) > 0) {
                         $return['mainPicture'] = $images[0];
                     }
+
                     $return["createdAt"] = $arrayItem["createdAt"];
                     $return["title"] = $arrayItem["title"];
                     $objCategories = $item->getRelated('categories');
@@ -124,11 +127,14 @@ class ApiController
                         $return['categories']['title'] = $category['title'];
                         $return['categories']['alias'] = $category['alias'];
                     }
+
                     $return['teaser'] = $arrayItem["teaser"];
                     $return["link"] = $item->getUrl();
                 }
+
                 $items[$id] = $return;
             }
+
             return new JsonResponse($items, Response::HTTP_OK);
         }
 
@@ -156,13 +162,15 @@ class ApiController
                 foreach ($objElement as $element) {
                     $strContent .= Controller::getContentElement($element);
                 }
+
                 $return['pictures'] = [];
 
                 $images = $objItem->getPictures();
 
-                if (count($images) > 0) {
+                if ($images !== []) {
                     $return['pictures'] = $images;
                 }
+
                 $return["createdAt"] = $arrayItem["createdAt"];
                 $return["tstamp"] = $arrayItem["tstamp"];
                 $return["title"] = $arrayItem["title"];
@@ -184,10 +192,12 @@ class ApiController
                         $return['categories']['picture']['hash'] = $image->hash;
                         $return['categories']['picture']['lastModified'] = $image->lastModified;
                     }
+
                     $return['categories']['teaser'] = $category['teaser'];
                     $return['categories']['attributes'] = $category['attributes'];
 
                 }
+
                 $return['teaser'] = $arrayItem["teaser"];
                 $return["link"] = $objItem->getUrl();
 
@@ -197,12 +207,14 @@ class ApiController
 
                 return new JsonResponse($return, Response::HTTP_OK);
             }
+
             return new JsonResponse('{"error":"403 : Item not published"}', Response::HTTP_FORBIDDEN, [], true);
         }
+
         return new JsonResponse('{"error":"404 : Item not found"}', Response::HTTP_NOT_FOUND, [], true);
     }
 
-    private function accessCheck($request): ?JsonResponse
+    private function accessCheck(Request $request): ?JsonResponse
     {
 
         if (!$this->apiKey) {

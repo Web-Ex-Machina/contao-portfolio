@@ -115,6 +115,7 @@ class ListCategories extends Portfolio
                     $arrArticle['size'] = $this->imgSize;
                 }
             }
+
             // TODO : addImageToTemplate not found ?
             $this->addImageToTemplate($objTemplate, $arrArticle);
         }
@@ -171,7 +172,7 @@ class ListCategories extends Portfolio
 
                 // Get the current page
                 $id = 'page_n'.$this->id;
-                $page = (null !== Input::get($id)) ? Input::get($id) : 1;
+                $page = Input::get($id) ?? 1;
 
                 // Do not index or cache the page if the page number is outside the range
                 if ($page < 1 || $page > max(ceil($total / $this->perPage), 1)) {

@@ -121,7 +121,7 @@ class Item extends Model
                     }
 
                     // Append the left-over images at the end
-                    if (!empty($images)) {
+                    if ($images !== []) {
                         $arrOrder = array_merge($arrOrder, array_values($images));
                     }
 

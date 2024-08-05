@@ -2,6 +2,8 @@
     "name": "webexmachina/contao-portfolio",
     "description": "Portfolio for Contao Open Source CMS",
     "keywords": ["portfolio", "webexmachina", "module", "contao"],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "type": "contao-module",
     "license": "LGPL-3.0+",
     "authors": [
@@ -21,12 +23,13 @@
         "contao/core-bundle": "^4.13 || 5.3.x",
         "terminal42/dcawizard": "~2.7",
         "contao/manager-plugin": "^2.0",
-        "webexmachina/contao-utils": "2.x-dev",
+        "webexmachina/contao-utils": "^2.0",
         "menatwork/contao-multicolumnwizard-bundle": "^3.6",
         "ext-json": "*"
     },
     "require-dev": {
-        "rector/rector": "^1.0"
+        "rector/rector": "^1.0",
+        "contao/contao-rector": "dev-main"
     },
     "autoload":{
         "psr-4": {

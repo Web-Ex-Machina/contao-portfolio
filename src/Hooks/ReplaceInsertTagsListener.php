@@ -39,13 +39,14 @@ class ReplaceInsertTagsListener
         // Load the current item
         $objItem = Item::findByIdOrAlias(Input::get('auto_item'));
 
-        if ($arrTag[1] == 'attr') {
+        if ($arrTag[1] === 'attr') {
             if (!$arrTag[2] || !\is_array($objItem['attributes']) || !\array_key_exists($arrTag[2], $objItem['attributes'])) {
                 return false;
             }
 
             return $objItem->getAttribute($arrTag[2]);
         }
+
         return $objItem->{$arrTag[1]} ?: '';
     }
 }

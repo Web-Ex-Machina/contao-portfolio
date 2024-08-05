@@ -124,6 +124,7 @@ class AttributeWizard extends Widget
         if (empty($this->varValue) || !\is_array($this->varValue)) {
             $this->varValue = [];
         }
+
         $arrFields = [];
         foreach ($arrAttributes as $a) {
             // Try to find an existing value for this attribute/item
