@@ -84,7 +84,7 @@ class PortfolioList extends Portfolio
             // Load categories
             if ($this->wem_portfolio_categories) {
                 foreach (StringUtil::deserialize($this->wem_portfolio_categories) as $c) {
-                    $this->arrCategories[] = $this->getCategory($c);
+                    $this->arrCategories[] = $this->getCategory((int)$c);
                 }
             }
 

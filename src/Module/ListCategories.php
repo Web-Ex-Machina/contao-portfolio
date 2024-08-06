@@ -198,7 +198,7 @@ class ListCategories extends Portfolio
             $arrItems = [];
 
             while ($objItems->next()) {
-                $arrItems[] = $this->getCategory($objItems->id);
+                $arrItems[] = $this->getCategory((int)$objItems->id);
             }
 
             // Add the articles
