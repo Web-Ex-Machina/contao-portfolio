@@ -24,7 +24,7 @@
         "terminal42/dcawizard": "~2.7",
         "contao/manager-plugin": "^2.0",
         "webexmachina/contao-utils": "^2.0",
-        "menatwork/contao-multicolumnwizard-bundle": "^3.6",
+        "menatwork/contao-multicolumnwizard-bundle": "3.5.x || 3.6.x",
         "ext-json": "*"
     },
     "require-dev": {
