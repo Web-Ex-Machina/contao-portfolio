@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Uid\Uuid;
 use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
 use WEM\PortfolioBundle\Model\Category;
 use WEM\PortfolioBundle\Model\Item;
@@ -168,6 +169,10 @@ class ApiController
                 $images = $objItem->getPictures();
 
                 if ($images !== []) {
+                    foreach ($images as $key => $image) {
+                        $uuid = Uuid::fromBinary($image['uuid']);
+                        $images[$key]['uuid'] = $uuid->__toString();
+                    }
                     $return['pictures'] = $images;
                 }
 
