@@ -94,14 +94,16 @@ class Item extends Model
             while ($objFiles->next()) {
                 $arrMeta = StringUtil::deserialize($objFiles->meta);
 
-                $images[$objFiles->path] = [
+                $images[$objFiles->id] = [
                     'name' => $objFiles->name,
+                    'uuid' => $objFiles->uuid,
                     'singleSRC' => $objFiles->path,
                     'meta' => (is_array($arrMeta)) ? $arrMeta[$GLOBALS['TL_LANGUAGE']] : null
                 ];
             }
 
             if ('' !== $this->orderPictures) {
+
                 $t = StringUtil::deserialize($this->orderPictures);
                 if (!empty($t) && \is_array($t)) {
                     // Remove all values
