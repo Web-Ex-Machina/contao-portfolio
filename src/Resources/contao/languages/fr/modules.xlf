@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="MOD.wem_portfolio_category.1">
         <source>Manage portfolio structure</source>
-        <target>Gérer l'arborescence de votre portfolio</target>
+        <target>Gérer l’arborescence de votre portfolio</target>
       </trans-unit>
       <trans-unit id="MOD.wem_portfolio_tag.0">
         <source>Tags</source>
@@ -44,11 +44,11 @@
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_list.0">
         <source>Items List</source>
-        <target>Liste d'éléments</target>
+        <target>Liste d’éléments</target>
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_list.1">
         <source>Display a list of portfolio items</source>
-        <target>Afficher une liste d'éléments du portfolio</target>
+        <target>Afficher une liste d’éléments du portfolio</target>
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_list_categories.0">
         <source>Categories List</source>
@@ -60,11 +60,11 @@
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_reader.0">
         <source>Item Reader</source>
-        <target>Lecteur d'élément</target>
+        <target>Lecteur d’élément</target>
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_reader.1">
         <source>Display a reader of portfolio item</source>
-        <target>Afficher un lecteur d'élément du portfolio</target>
+        <target>Afficher un lecteur d’élément du portfolio</target>
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_navigation.0">
         <source>Navigation</source>
