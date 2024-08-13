@@ -34,6 +34,10 @@
         <source>Values list</source>
         <target>Liste de valeurs</target>
       </trans-unit>
+      <trans-unit id="tl_wem_portfolio_attribute.type.picture">
+        <source>picture</source>
+        <target>Image</target>
+      </trans-unit>
       <trans-unit id="tl_wem_portfolio_attribute.options.0">
         <source>Options</source>
         <target>Options</target>

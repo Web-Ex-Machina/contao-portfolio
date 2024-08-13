@@ -17,6 +17,7 @@ declare(strict_types=1);
  */
 
 use Contao\Backend;
+use Contao\Config;
 use Contao\DataContainer;
 use Contao\PageModel;
 use Contao\StringUtil;
@@ -93,6 +94,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
     // Subpalettes
     'subpalettes' => [
         'type_select' => 'options',
+        'type_picture' => 'picture',
     ],
 
     // Fields
@@ -137,7 +139,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
             'filter' => true,
             'flag' => 11,
             'inputType' => 'select',
-            'options' => ['text', 'select'],
+            'options' => ['text', 'select', 'picture'],
             'reference' => $GLOBALS['TL_LANG']['tl_wem_portfolio_attribute']['type'],
             'eval' => ['chosen' => true, 'mandatory' => true, 'tl_class' => 'w50', 'submitOnChange' => true],
             'sql' => "varchar(16) NOT NULL default 'text'",
@@ -147,6 +149,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
             'exclude' => true,
             'inputType' => 'listWizard',
             'eval' => ['mandatory' => true, 'allowHtml' => true],
+            'sql' => 'blob NULL',
+        ],
+        'picture' => [
+            'exclude' => true,
+            'inputType' => 'fileTree',
+            'eval' => ['files' => true, 'extensions' => Config::get('validImageTypes'), 'multiple' => false, 'fieldType' => 'checkbox'],
             'sql' => 'blob NULL',
         ],
 

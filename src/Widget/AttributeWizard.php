@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Widget;
 
+use Contao\Config;
 use Contao\Database;
+use Contao\FileTree;
 use Contao\Model\Collection;
 use Contao\Widget;
 use WEM\PortfolioBundle\Model\Attribute;
@@ -154,13 +156,23 @@ class AttributeWizard extends Widget
                         $options
                     );
                     break;
-
+                case 'picture':
+                    $fileTree = new FileTree();
+                    //$fileTree->wizard;
+                    //dd($fileTree->generate());
+                    $fileTree->__set('extensions', Config::get('validImageTypes'));
+                    $fileTree->__set('showFilePreview', true);
+                    $fileTree->__set('files', true);
+                    $fileTree->__set('id', $this->strName . '_picture_' . $a['id']);
+                    $fileTree->__set('name', $this->strName . '_picture_' . $a['id']);
+                    $strField .= $fileTree->generate();
+                    break;
                 default:
                     $strField .= sprintf(
                         '<input type="text" name="%s" id="%s" class="tl_text" value="%s" />',
                         $this->strName.'['.$a['id'].']',
                         'ctrl_'.$this->strName.'_attribute_'.$a['id'],
-                        $objItemAttribute->value ?: ''
+                        $objItemAttribute ? $objItemAttribute->value : ''
                     );
                     break;
             }
