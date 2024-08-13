@@ -137,7 +137,6 @@ class ApiController
 
                 $items[$id] = $return;
             }
-            dd($items);
             return new JsonResponse($items, Response::HTTP_OK);
         }
 
