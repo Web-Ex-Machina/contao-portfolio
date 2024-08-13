@@ -116,6 +116,8 @@ class ApiController
                     $images = $item->getPictures();
 
                     if (count($images) > 0) {
+                        $uuid = Uuid::fromBinary($images[0]['uuid']);
+                        $images[0]['uuid'] = $uuid->__toString();
                         $return['mainPicture'] = $images[0];
                     }
 
@@ -135,7 +137,7 @@ class ApiController
 
                 $items[$id] = $return;
             }
-
+            dd($items);
             return new JsonResponse($items, Response::HTTP_OK);
         }
 
