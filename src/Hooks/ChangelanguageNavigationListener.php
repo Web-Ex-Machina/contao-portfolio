@@ -2,25 +2,23 @@
 
 namespace WEM\PortfolioBundle\Hooks;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
-use Terminal42\ChangeLanguage\EventListener\Navigation\AbstractNavigationListener;
 
-/**
- * @Hook("changelanguageNavigation")
- */
-class ChangelanguageNavigationListener extends AbstractNavigationListener
+use Contao\Input;
+use Terminal42\ChangeLanguage\Event\ChangelanguageNavigationEvent;
+
+class ChangelanguageNavigationListener
 {
-
-
-    protected function getUrlKey()
+    public function __invoke(ChangelanguageNavigationEvent $event)
     {
+        $event->getUrlParameterBag()->setQueryParameter('uid', $this->getUid());
     }
 
-    protected function findCurrent()
+    private function getUid(): ?string
     {
+        $uid = (string)Input::get('uid', false, true);
+
+        return '' === $uid ? null : $uid;
+
     }
 
-    protected function findPublishedBy(array $columns, array $values = [], array $options = [])
-    {
-    }
 }

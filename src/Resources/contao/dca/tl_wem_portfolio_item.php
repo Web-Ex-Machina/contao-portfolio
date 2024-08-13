@@ -13,6 +13,7 @@ declare(strict_types=1);
  */
 
 use Contao\Config;
+use Contao\System;
 use WEM\PortfolioBundle\DataContainer\PortfolioItem;
 
 /*
@@ -191,5 +192,23 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
             'eval' => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'sql' => "varchar(10) NOT NULL default ''",
         ],
+        'language' =>
+            [
+                'label' => 'test',
+                'search' => true,
+                'filter' => true,
+                'inputType' => 'select',
+                'eval' => ['rgxp' => 'locale', 'multiple' => false, "includeBlankOption" => false, 'mandatory' => true],
+                'sql' => [
+                    'type' => 'string',
+                    'length' => 5,
+                    'fixed' => true,
+                    'default' => null,
+                    'notnull' => false
+                ],
+                'options_callback' => static function () {
+                    return System::getContainer()->get('contao.intl.locales')->getEnabledLocales(null, true);
+                },
+            ],
     ],
 ];
