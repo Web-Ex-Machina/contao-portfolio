@@ -103,7 +103,7 @@ class PortfolioItem extends Backend
 
             foreach ($arrCategories as $c) {
                 $lastSorting = CategoryItem::findItems(['pid' => $c], 1);
-                $intSorting = $lastSorting->sorting ?: 0;
+                $intSorting = ($lastSorting) ? $lastSorting->sorting : 0;
                 
                 $ci = CategoryItem::findItems(['item' => $dc->activeRecord->id, 'pid' => $c], 1);
 
