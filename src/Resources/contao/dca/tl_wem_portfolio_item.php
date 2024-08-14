@@ -167,8 +167,19 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
         ],
 
         'attributes' => [
-            'inputType' => 'wemPortfolioAttributeWizard',
-            'eval' => ['tl_class' => 'clr'],
+            'inputType' => 'dcaWizard',
+            'foreignTable' => 'tl_wem_portfolio_attribute',
+            'foreignField' => 'pid',
+            'params' => [
+                'do' => 'wem-portfolio',
+            ],
+            'eval' => [
+                'fields' => ['name', 'label', 'type', 'isFilter', 'isAlertCondition'],
+                'orderField' => 'name ASC',
+                'showOperations' => true,
+                'operations' => ['edit', 'delete'],
+                'tl_class' => 'clr',
+            ],
         ],
 
         'published' => [

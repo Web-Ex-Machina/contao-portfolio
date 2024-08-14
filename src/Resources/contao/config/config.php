@@ -17,7 +17,8 @@ use Contao\System;
 use WEM\PortfolioBundle\Hooks;
 use WEM\PortfolioBundle\Model;
 use WEM\PortfolioBundle\Module;
-use WEM\PortfolioBundle\Widget\AttributeWizard;
+
+//use WEM\PortfolioBundle\Widget\AttributeWizard;
 
 /**
  * Load Contao 4 Bundles.
@@ -83,4 +84,4 @@ $GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = Model\Item::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = Model\ItemAttribute::class;
 
 // Wizards
-$GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = AttributeWizard::class;
+//$GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = AttributeWizard::class;

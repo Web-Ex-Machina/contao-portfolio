@@ -16,13 +16,11 @@ declare(strict_types=1);
  * Table tl_wem_portfolio_item_attribute.
  */
 
-use Contao\Backend;
-
-$GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
+$GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
     // Config
     'config' => [
-        'dataContainer' => \Contao\DC_Table::class,
-        'ptable' => 'tl_wem_portfolio_item',
+        'dataContainer' => 'Table',
+        'ptable' => 'tl_wem_portfolio',
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -37,12 +35,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
     'list' => [
         'sorting' => [
             'mode' => 4,
-            'fields' => ['attribute DESC'],
-            'headerFields' => ['title', 'pid', 'tstamp', 'date', 'published'],
+            'fields' => ['name ASC'],
+            'headerFields' => ['title'],
             'panelLayout' => 'filter;sort,search,limit',
-            'child_record_callback' => ['tl_wem_portfolio_item_attribute', 'listItemAttributes'],
-            'child_record_class' => 'no_padding',
-            'disableGrouping' => true,
+            'child_record_callback' => [WEM\PortfolioBundle\DataContainer\PortfolioAttributeContainer::class, 'listItems'],
         ],
         'global_operations' => [
             'all' => [
@@ -54,105 +50,185 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
         ],
         'operations' => [
             'edit' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['edit'],
                 'href' => 'act=edit',
-                'icon' => 'edit.svg',
+                'icon' => 'edit.gif',
             ],
             'copy' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['copy'],
-                'href' => 'act=paste&amp;mode=copy',
-                'icon' => 'copy.svg',
+                'href' => 'act=copy',
+                'icon' => 'copy.gif',
             ],
             'delete' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['delete'],
                 'href' => 'act=delete',
-                'icon' => 'delete.svg',
+                'icon' => 'delete.gif',
                 'attributes' => 'onclick="if(!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\'))return false;Backend.getScrollOffset()"',
             ],
             'show' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['show'],
                 'href' => 'act=show',
-                'icon' => 'show.svg',
+                'icon' => 'show.gif',
             ],
         ],
     ],
 
     // Palettes
     'palettes' => [
-        'default' => '{title_legend},attribute,value',
+        '__selector__' => ['type'],
+        'default' => '
+            {title_legend},name,label;
+            {field_legend},type,mandatory;
+            {design_legend},insertInDca,insertType,class
+        ',
+    ],
+
+    // Subpalettes
+    'subpalettes' => [
+        'type_text' => 'value,isFilter,isAlertCondition',
+        'type_select' => 'options,multiple,chosen,isFilter,isAlertCondition',
+        'type_picker' => 'fkey',
+        'type_fileTree' => 'multiple,filesOnly,fieldType,extensions',
+        'type_listWizard' => 'multiple,allowHtml,maxlength,isFilter,isAlertCondition',
     ],
 
     // Fields
     'fields' => [
         'id' => [
-            'label' => ['ID'],
-            'search' => true,
             'sql' => 'int(10) unsigned NOT NULL auto_increment',
-        ],
-        'pid' => [
-            'foreignKey' => 'tl_wem_portfolio_item.title',
-            'sql' => "int(10) unsigned NOT NULL default '0'",
-            'relation' => ['type' => 'belongsTo', 'load' => 'lazy'],
-        ],
-        'createdAt' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['createdAt'],
-            'default' => time(),
-            'flag' => 8,
-            'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
-
-        'attribute' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['attribute'],
-            'exclude' => true,
-            'filter' => true,
-            'flag' => 11,
-            'inputType' => 'select',
-            'foreignKey' => 'tl_wem_portfolio_attribute.title',
-            'eval' => ['chosen' => true, 'mandatory' => true, 'includeBlankOption' => true, 'tl_class' => 'w50'],
+        'pid' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
-            'relation' => ['type' => 'hasOne', 'load' => 'eager'],
         ],
-        'value' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_wem_portfolio_item_attribute']['value'],
+        'createdAt' => [
+            'default' => time(),
+            'flag' => 8,
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+
+        'name' => [
             'exclude' => true,
             'search' => true,
             'inputType' => 'text',
-            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'eval' => ['mandatory' => true, 'rgxp' => 'fieldname', 'spaceToUnderscore' => true, 'maxlength' => 64, 'tl_class' => 'w50 clr'],
+            'sql' => "varchar(64) NOT NULL default ''",
+        ],
+        'label' => [
+            'exclude' => true,
+            'search' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'type' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'select',
+            'options_callback' => [WEM\PortfolioBundle\DataContainer\PortfolioAttributeContainer::class, 'getFieldOptions'],
+            'eval' => ['helpwizard' => true, 'submitOnChange' => true, 'tl_class' => 'w50 clr'],
+            'reference' => &$GLOBALS['TL_LANG']['CTE'],
+            'sql' => ['name' => 'type', 'type' => 'string', 'length' => 64, 'default' => 'text'],
+        ],
+        'value' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'options' => [
+            'exclude' => true,
+            'inputType' => 'optionWizard',
+            'eval' => ['mandatory' => true, 'allowHtml' => true],
+            'sql' => 'blob NULL',
+        ],
+        'fkey' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'multiple' => [
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'chosen' => [
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'filesOnly' => [
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'fieldType' => [
+            'exclude' => true,
+            'inputType' => 'select',
+            'options' => ['radio', 'checkbox'],
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => ['name' => 'fieldType', 'type' => 'string', 'length' => 128, 'default' => 'radio'],
+        ],
+        'extensions' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'maxlength' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'allowHtml' => [
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50 cbx'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'mandatory' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'checkbox',
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'isFilter' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50 cbx'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'isAlertCondition' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50 cbx'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'insertInDca' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'select',
+            'options_callback' => [WEM\PortfolioBundle\DataContainer\PortfolioAttributeContainer::class, 'getFieldsAndLegends'],
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => ['name' => 'insertInDca', 'type' => 'string', 'length' => 255, 'default' => ''],
+        ],
+        'insertType' => [
+            'exclude' => true,
+            'inputType' => 'select',
+            'options' => ['POSITION_BEFORE', 'POSITION_AFTER', 'POSITION_PREPEND', 'POSITION_APPEND'],
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => ['name' => 'insertType', 'type' => 'string', 'length' => 128, 'default' => 'POSITION_APPEND'],
+        ],
+        'class' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
     ],
 ];
-
-/**
- * Handle Portfolio DCA functions.
- *
- * @author Web ex Machina <contact@webexmachina.fr>
- */
-class tl_wem_portfolio_item_attribute extends Backend // TODO : move this function ??
-{
-    /**
-     * Import the back end user object.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->import('BackendUser', 'User');
-    }
-
-    /**
-     * Retrieves the attributes of an item and formats them as a string.
-     *
-     * @param array $arrRow An array containing the item's attributes.
-     *
-     * @return string The formatted string containing the attribute's title and value.
-     */
-    public function listItemAttributes(array $arrRow): string
-    {
-        $objAttribute = $this->Database->prepare('SELECT * FROM tl_wem_portfolio_attribute WHERE id = ?')->limit(1)->execute($arrRow['attribute']);
-
-        return sprintf('%s -> %s', $objAttribute->title, $arrRow['value']);
-    }
-}
