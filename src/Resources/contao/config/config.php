@@ -17,7 +17,6 @@ use Contao\System;
 use WEM\PortfolioBundle\Hooks;
 use WEM\PortfolioBundle\Model;
 use WEM\PortfolioBundle\Module;
-use WEM\PortfolioBundle\Widget\AttributeWizard;
 
 /**
  * Load Contao 4 Bundles.
@@ -33,14 +32,11 @@ ArrayUtil::arrayInsert(
     1,
     [
         'wem_portfolio' => [
-            'wem_portfolio_item' => [
-                'tables' => ['tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
+            'wem_portfolio' => [
+                'tables' => ['tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_content'],
             ],
-            'wem_portfolio_attribute' => [
-                'tables' => ['tl_wem_portfolio_attribute'],
-            ],
-            'wem_portfolio_category' => [
-                'tables' => ['tl_wem_portfolio_category', 'tl_wem_portfolio_category_item', 'tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
+            'wem_portfolio_feed' => [
+                'tables' => ['tl_wem_portfolio_feed', 'tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_content'],
             ],
         ],
     ]
@@ -76,11 +72,6 @@ $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [Hooks\ReplaceInsertTagsListener::
 /*
  * Models
  */
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = Model\Attribute::class;
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_category'] = Model\Category::class;
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_category_item'] = Model\CategoryItem::class;
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = Model\Item::class;
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = Model\ItemAttribute::class;
-
-// Wizards
-$GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = AttributeWizard::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_feed_attribute'] = Model\PortfolioFeedAttribute::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_feed'] = Model\PortfolioFeed::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio'] = Model\Portfolio::class;

@@ -19,19 +19,19 @@ use WEM\UtilsBundle\Model\Model;
 /**
  * Reads and writes items.
  */
-class Category extends Model
+class CategoryItem extends Model
 {
     /**
      * Table name.
      *
      * @var string
      */
-    protected static $strTable = 'tl_wem_portfolio_category';
+    protected static $strTable = 'tl_wem_portfolio_feed_item';
 
     /**
      * Default order column
      *
      * @var string
      */
-    protected static $strOrderColumn = "title ASC";
+    protected static $strOrderColumn = "sorting ASC";
 }

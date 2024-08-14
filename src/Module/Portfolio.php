@@ -57,7 +57,7 @@ abstract class Portfolio extends Module
      *
      * @throws Exception
      */
-    public function parseItem(array $arrItem, string $strTemplate = 'wem_portfolio_item_default', string $strClass = '', int $intCount = 0): string
+    public function parseItem(array $arrItem, string $strTemplate = 'wem_portfolio_default', string $strClass = '', int $intCount = 0): string
     {
         $objItem = Item::findByPk($arrItem['id']);
 
@@ -135,7 +135,7 @@ abstract class Portfolio extends Module
         $objTemplate->count = $intCount;
 
         $strContent = '';
-        $objElement = ContentModel::findPublishedByPidAndTable($arrItem['id'], 'tl_wem_portfolio_item');
+        $objElement = ContentModel::findPublishedByPidAndTable($arrItem['id'], 'tl_wem_portfolio');
         if (null !== $objElement) {
             while ($objElement->next()) {
                 $strContent .= $this->getContentElement($objElement->current());
@@ -263,7 +263,7 @@ abstract class Portfolio extends Module
      *
      * @throws Exception
      */
-    protected function parseItems(array $arrItems, string $strTemplate = 'wem_portfolio_item_default'): array
+    protected function parseItems(array $arrItems, string $strTemplate = 'wem_portfolio_default'): array
     {
         $limit = \count($arrItems);
         if ($limit < 1) {
@@ -323,7 +323,7 @@ abstract class Portfolio extends Module
                     $objItems = Item::findItems($arrConfig, (Input::post('limit') ?: 0), Input::post('offset') ?: 0, Input::post('options') ?: []);
                     $strBuffer = '';
                     if ($objItems instanceof Collection) {
-                        $strBuffer = $this->parseItems($objItems->fetchAll(), Input::post('template') ?: $this->wem_portfolio_item_template);
+                        $strBuffer = $this->parseItems($objItems->fetchAll(), Input::post('template') ?: $this->wem_portfolio_template);
                     }
 
                     $arrResponse = ['status' => 'success', 'html' => $strBuffer];
@@ -332,7 +332,7 @@ abstract class Portfolio extends Module
                     $objItem = Item::findByIdOrAlias(Input::post('item'));
                     $strBuffer = '';
                     if(null !== $objItem) {
-                        $strBuffer = $this->parseItem($objItem->row(), Input::post('template') ?: $this->wem_portfolio_item_template);
+                        $strBuffer = $this->parseItem($objItem->row(), Input::post('template') ?: $this->wem_portfolio_template);
                     }
 
                     $arrResponse = ['status' => 'success', 'html' => $strBuffer];

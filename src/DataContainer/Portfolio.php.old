@@ -18,7 +18,7 @@ use WEM\PortfolioBundle\Model\CategoryItem;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 
-class PortfolioItem extends Backend
+class Portfolio extends Backend
 {
     /**
      * Add an image to each item in the tree.
@@ -47,16 +47,16 @@ class PortfolioItem extends Backend
             return [];
         }
 
-        System::loadLanguageFile('tl_wem_portfolio_category');
+        System::loadLanguageFile('tl_wem_portfolio_feed');
 
         $contaoCsrfTokenManager = System::getContainer()->get('contao.csrf.token_manager');
         $requestToken = $contaoCsrfTokenManager->getDefaultTokenValue();
 
         $arrData = [];
         while ($objCategories->next()) {
-            $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_category']['items'][1] ?? "", $objCategories->id);
+            $strTitle = sprintf($GLOBALS['TL_LANG']['tl_wem_portfolio_feed']['items'][1] ?? "", $objCategories->id);
             $strHref = sprintf(
-                'contao?do=wem_portfolio_category&table=tl_wem_portfolio_category_item&id=%s&popup=1&rt=%s&ref=%s',
+                'contao?do=wem_portfolio_feed&table=tl_wem_portfolio_feed_item&id=%s&popup=1&rt=%s&ref=%s',
                 $objCategories->id,
                 $requestToken,
                 Input::get('ref')
@@ -122,7 +122,7 @@ class PortfolioItem extends Backend
                 $ci->save();
             }
         } else {
-            Database::getInstance()->prepare('DELETE FROM tl_wem_portfolio_category_item WHERE item = ?')->execute($dc->activeRecord->id);
+            Database::getInstance()->prepare('DELETE FROM tl_wem_portfolio_feed_item WHERE item = ?')->execute($dc->activeRecord->id);
         }
 
         return $varValue;
@@ -153,7 +153,7 @@ class PortfolioItem extends Backend
             }
         }
 
-        $objAlias = $this->Database->prepare('SELECT id FROM tl_wem_portfolio_item WHERE id=? OR alias=?')
+        $objAlias = $this->Database->prepare('SELECT id FROM tl_wem_portfolio WHERE id=? OR alias=?')
                                    ->execute($dc->id, $varValue)
         ;
 
@@ -208,8 +208,8 @@ class PortfolioItem extends Backend
         } // see #8043
 
         // Trigger the onload_callback
-        if (\is_array($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onload_callback'])) {
-            foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onload_callback'] as $callback) {
+        if (\is_array($GLOBALS['TL_DCA']['tl_wem_portfolio']['config']['onload_callback'])) {
+            foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['config']['onload_callback'] as $callback) {
                 if (\is_array($callback)) {
                     $this->import($callback[0]);
                     $this->{$callback[0]}->{$callback[1]}($dc);
@@ -221,25 +221,25 @@ class PortfolioItem extends Backend
 
         // Check the field access
         // TODO : deprecated hasAccess in 5.2 removed in 6
-        if (!$this->User->hasAccess('tl_wem_portfolio_item::published', 'alexf')) {
+        if (!$this->User->hasAccess('tl_wem_portfolio::published', 'alexf')) {
             throw new AccessDeniedException('Not enough permissions to publish/unpublish article ID "' . $intId . '".');
         }
 
         // Set the current record
         if ($dc instanceof DataContainer) {
-            $objRow = $this->Database->prepare('SELECT * FROM tl_wem_portfolio_item WHERE id=?')->limit(1)->execute($intId);
+            $objRow = $this->Database->prepare('SELECT * FROM tl_wem_portfolio WHERE id=?')->limit(1)->execute($intId);
 
             if ($objRow->numRows) {
                 $dc->activeRecord = $objRow;
             }
         }
 
-        $objVersions = new Versions('tl_wem_portfolio_item', $intId);
+        $objVersions = new Versions('tl_wem_portfolio', $intId);
         $objVersions->initialize();
 
         // Trigger the save_callback
-        if (\is_array($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['published']['save_callback'])) {
-            foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['fields']['published']['save_callback'] as $callback) {
+        if (\is_array($GLOBALS['TL_DCA']['tl_wem_portfolio']['fields']['published']['save_callback'])) {
+            foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['fields']['published']['save_callback'] as $callback) {
                 if (\is_array($callback)) {
                     $this->import($callback[0]);
                     $blnVisible = $this->{$callback[0]}->{$callback[1]}($blnVisible, $dc);
@@ -252,7 +252,7 @@ class PortfolioItem extends Backend
         $time = time();
 
         // Update the database
-        $this->Database->prepare(sprintf('UPDATE tl_wem_portfolio_item SET tstamp=%d, published=\'', $time).($blnVisible ? '1' : '')."' WHERE id=?")->execute($intId);
+        $this->Database->prepare(sprintf('UPDATE tl_wem_portfolio SET tstamp=%d, published=\'', $time).($blnVisible ? '1' : '')."' WHERE id=?")->execute($intId);
 
         if ($dc instanceof DataContainer) {
             $dc->activeRecord->tstamp = $time;
@@ -260,8 +260,8 @@ class PortfolioItem extends Backend
         }
 
         // Trigger the onsubmit_callback
-        if (\is_array($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onsubmit_callback'])) {
-            foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio_item']['config']['onsubmit_callback'] as $callback) {
+        if (\is_array($GLOBALS['TL_DCA']['tl_wem_portfolio']['config']['onsubmit_callback'])) {
+            foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['config']['onsubmit_callback'] as $callback) {
                 if (\is_array($callback)) {
                     $this->import($callback[0]);
                     $this->{$callback[0]}->{$callback[1]}($dc);

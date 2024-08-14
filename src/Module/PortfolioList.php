@@ -78,7 +78,7 @@ class PortfolioList extends Portfolio
             $limit = null;
             $offset = (int) ($this->skipFirst);
             $arrOptions = [];
-            $arrOptions['order'] = $this->getSortingValue($this->wem_portfolio_item_sort);
+            $arrOptions['order'] = $this->getSortingValue($this->wem_portfolio_sort);
             $bundles = System::getContainer()->getParameter('kernel.bundles');
 
             // Load categories
@@ -173,7 +173,7 @@ class PortfolioList extends Portfolio
             }
 
             if ($objItems instanceof Collection) {
-                $this->Template->items = $this->parseItems($objItems->fetchAll(), $this->wem_portfolio_item_template);
+                $this->Template->items = $this->parseItems($objItems->fetchAll(), $this->wem_portfolio_template);
             }
         } catch (Exception $exception) {
             $this->Template->error = true;

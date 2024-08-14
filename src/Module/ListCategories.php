@@ -91,7 +91,7 @@ class ListCategories extends Portfolio
     /**
      * Parse an item.
      */
-    public function parseItem(array $arrItem, string $strTemplate = 'wem_portfolio_category_default', string $strClass = '', int $intCount = 0): string
+    public function parseItem(array $arrItem, string $strTemplate = 'wem_portfolio_feed_default', string $strClass = '', int $intCount = 0): string
     {
         /* @var PageModel $objPage */
         global $objPage;
@@ -136,7 +136,7 @@ class ListCategories extends Portfolio
             $limit = null;
             $offset = (int) ($this->skipFirst);
             $arrOptions = [];
-            $arrOptions['order'] = $this->getSortingValue($this->wem_portfolio_category_sort);
+            $arrOptions['order'] = $this->getSortingValue($this->wem_portfolio_feed_sort);
             $bundles = System::getContainer()->getParameter('kernel.bundles');
 
             // Maximum number of items
@@ -203,7 +203,7 @@ class ListCategories extends Portfolio
 
             // Add the articles
             if (null !== $arrItems) {
-                $this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_category_template);
+                $this->Template->items = $this->parseItems($arrItems, $this->wem_portfolio_feed_template);
             }
 
             $this->Template->raw_items = $arrItems;

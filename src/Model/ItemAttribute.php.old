@@ -27,7 +27,7 @@ class ItemAttribute extends Model
      *
      * @var string
      */
-    protected static $strTable = 'tl_wem_portfolio_item_attribute';
+    protected static $strTable = 'tl_wem_portfolio_attribute';
 
     /**
      * Default order column

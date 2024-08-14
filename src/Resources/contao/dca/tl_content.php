@@ -15,6 +15,6 @@ declare(strict_types=1);
 // Dynamically add the permission check and parent table
 use Contao\Input;
 
-if ('wem_portfolio_item' === Input::get('do')) {
-    $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_wem_portfolio_item';
+if ('wem_portfolio' === Input::get('do')) {
+    $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_wem_portfolio';
 }

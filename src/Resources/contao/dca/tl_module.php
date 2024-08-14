@@ -21,30 +21,30 @@ use Contao\DataContainer;
 use Contao\Model\Collection;
 use WEM\UtilsBundle\Classes\StringUtil;
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list_categories'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_category_sort,numberOfItems,perPage,skipFirst;{list_legend},wem_portfolio_list_module;{template_legend:hide},wem_portfolio_category_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_categories,wem_portfolio_filters,wem_portfolio_item_sort,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '{title_legend},name,headline,type;{template_legend:hide},wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list_categories'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_feed_sort,numberOfItems,perPage,skipFirst;{list_legend},wem_portfolio_list_module;{template_legend:hide},wem_portfolio_feed_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_categories,wem_portfolio_filters,wem_portfolio_sort,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '{title_legend},name,headline,type;{template_legend:hide},wem_portfolio_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_categories'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_categories'],
     'inputType' => 'checkbox',
-    'foreignKey' => 'tl_wem_portfolio_category.title',
+    'foreignKey' => 'tl_wem_portfolio_feed.title',
     'eval' => ['multiple' => true, 'tl_class' => 'clr', 'mandatory' => true],
     'sql' => 'blob NULL',
     'relation' => ['type' => 'hasMany', 'load' => 'lazy'],
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_item_template'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_template'],
-    'default' => 'wem_portfolio_item_default',
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_template'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_template'],
+    'default' => 'wem_portfolio_default',
     'exclude' => true,
     'inputType' => 'select',
     'options_callback' => ['tl_module_wem_portfolio', 'getPortfolioItemTemplates'],
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(64) NOT NULL default ''",
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_category_template'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_category_template'],
-    'default' => 'wem_portfolio_category_default',
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_feed_template'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_feed_template'],
+    'default' => 'wem_portfolio_feed_default',
     'exclude' => true,
     'inputType' => 'select',
     'options_callback' => ['tl_module_wem_portfolio', 'getPortfolioCategoriesTemplates'],
@@ -59,22 +59,22 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters'] = [
     'eval' => ['doNotCopy' => true, 'tl_class' => 'clr', 'chosen' => true, 'multiple' => true],
     'sql' => 'blob NULL',
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_category_sort'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_category_sort'],
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_feed_sort'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_feed_sort'],
     'default' => 'global',
     'exclude' => true,
     'inputType' => 'select',
-    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_category_sort'],
+    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_feed_sort'],
     'options' => ['title_ASC', 'title_DESC'],
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(64) NOT NULL default ''",
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_item_sort'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_sort'],
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_sort'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'],
     'default' => 'global',
     'exclude' => true,
     'inputType' => 'select',
-    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_sort'],
+    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'],
     'options_callback' => ['tl_module_wem_portfolio', 'getSortingCategories'],
     'save_callback' => [
         ['tl_module_wem_portfolio', 'checkIfMultiCategories'],
@@ -136,7 +136,7 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
 
         $options = [];
         foreach ($arrOptions as $o) {
-            $options[$o] = $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_sort'][$o];
+            $options[$o] = $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'][$o];
         }
 
         return $options;
@@ -166,7 +166,7 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
      */
     public function getPortfolioItemTemplates(): array
     {
-        return $this->getTemplateGroup('wem_portfolio_item_');
+        return $this->getTemplateGroup('wem_portfolio_');
     }
 
     /**
@@ -174,7 +174,7 @@ class tl_module_wem_portfolio extends Backend // @todo: move to DataContainer na
      */
     public function getPortfolioCategoriesTemplates(): array
     {
-        return $this->getTemplateGroup('wem_portfolio_category_');
+        return $this->getTemplateGroup('wem_portfolio_feed_');
     }
 
     /**

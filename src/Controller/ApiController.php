@@ -160,7 +160,7 @@ class ApiController
             if ($arrayItem["published"] === '1') {
                 $return = [];
                 $strContent = '';
-                $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio_item');
+                $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio');
                 foreach ($objElement as $element) {
                     $strContent .= Controller::getContentElement($element);
                 }

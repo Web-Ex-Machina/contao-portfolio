@@ -31,7 +31,7 @@ class Item extends Model
      *
      * @var string
      */
-    protected static $strTable = 'tl_wem_portfolio_item';
+    protected static $strTable = 'tl_wem_portfolio';
 
     /**
      * Default order column
@@ -56,18 +56,18 @@ class Item extends Model
 
         switch ($strField) {
             case 'category':
-                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid = ".$varValue.')';
+                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_feed_item AS t2 WHERE t2.pid = ".$varValue.')';
             break;
 
             case 'categories':
-                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_category_item AS t2 WHERE t2.pid IN (".implode(',', $varValue).'))';
+                $arrColumns[] = "$t.id IN (SELECT t2.item FROM tl_wem_portfolio_feed_item AS t2 WHERE t2.pid IN (".implode(',', $varValue).'))';
             break;
 
             case 'attributes':
                 $i = 1;
                 foreach ($varValue as $a) {
                     ++$i;
-                    $arrColumns[] = "$t.id IN(SELECT t".$i.'.pid FROM tl_wem_portfolio_item_attribute AS t'.$i.' WHERE t'.$i.'.attribute = '.$a['attribute'].' AND t'.$i.".value = '".$a['value']."')";
+                    $arrColumns[] = "$t.id IN(SELECT t".$i.'.pid FROM tl_wem_portfolio_attribute AS t'.$i.' WHERE t'.$i.'.attribute = '.$a['attribute'].' AND t'.$i.".value = '".$a['value']."')";
                 }
 
             break;
