@@ -28,7 +28,7 @@ class LoadDataContainerListener
     {
         try {
             if ('tl_wem_portfolio_item' === $strTable) {
-                // For everytime we load a tl_wem_offer DCA, we want to load all the existing attributes as fields
+                // For everytime we load a tl_wem_portfolio DCA, we want to load all the existing attributes as fields
                 $objAttributes = ItemAttribute::findAll();
 
                 if (!$objAttributes || 0 === $objAttributes->count()) {
@@ -36,7 +36,7 @@ class LoadDataContainerListener
                 }
 
                 while ($objAttributes->next()) {
-                    $GLOBALS['TL_DCA']['tl_wem_offer']['fields'][$objAttributes->name] = $this->parseDcaAttribute($objAttributes->row());
+                    $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$objAttributes->name] = $this->parseDcaAttribute($objAttributes->row());
                 }
             }
         } catch (\Exception $e) {

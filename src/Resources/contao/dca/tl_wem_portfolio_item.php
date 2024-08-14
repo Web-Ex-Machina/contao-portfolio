@@ -168,10 +168,10 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item'] = [
 
         'attributes' => [
             'inputType' => 'dcaWizard',
-            'foreignTable' => 'tl_wem_portfolio_attribute',
+            'foreignTable' => 'tl_wem_portfolio_item_attribute',
             'foreignField' => 'pid',
             'params' => [
-                'do' => 'wem-portfolio',
+                'do' => 'wem_portfolio_item',
             ],
             'eval' => [
                 'fields' => ['name', 'label', 'type', 'isFilter', 'isAlertCondition'],
