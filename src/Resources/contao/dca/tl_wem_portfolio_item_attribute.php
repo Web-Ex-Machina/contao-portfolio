@@ -16,11 +16,11 @@ declare(strict_types=1);
  * Table tl_wem_portfolio_item_attribute.
  */
 
-$GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
+$GLOBALS['TL_DCA']['tl_wem_portfolio_attribute'] = [
     // Config
     'config' => [
         'dataContainer' => 'Table',
-        'ptable' => 'tl_wem_portfolio_item',
+        'ptable' => 'tl_wem_portfolio',
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -38,7 +38,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
             'fields' => ['name ASC'],
             'headerFields' => ['title'],
             'panelLayout' => 'filter;sort,search,limit',
-            'child_record_callback' => [WEM\PortfolioBundle\DataContainer\PortfolioItemAttributeContainer::class, 'listItems'],
+            'child_record_callback' => [WEM\PortfolioBundle\DataContainer\PortfolioAttributeContainer::class, 'listItems'],
         ],
         'global_operations' => [
             'all' => [
@@ -123,7 +123,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options_callback' => [WEM\PortfolioBundle\DataContainer\PortfolioItemAttributeContainer::class, 'getFieldOptions'],
+            'options_callback' => [WEM\PortfolioBundle\DataContainer\PortfolioAttributeContainer::class, 'getFieldOptions'],
             'eval' => ['helpwizard' => true, 'submitOnChange' => true, 'tl_class' => 'w50 clr'],
             'reference' => &$GLOBALS['TL_LANG']['CTE'],
             'sql' => ['name' => 'type', 'type' => 'string', 'length' => 64, 'default' => 'text'],
@@ -213,7 +213,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_item_attribute'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options_callback' => [WEM\PortfolioBundle\DataContainer\PortfolioItemAttributeContainer::class, 'getFieldsAndLegends'],
+            'options_callback' => [WEM\PortfolioBundle\DataContainer\PortfolioAttributeContainer::class, 'getFieldsAndLegends'],
             'eval' => ['tl_class' => 'w50'],
             'sql' => ['name' => 'insertInDca', 'type' => 'string', 'length' => 255, 'default' => ''],
         ],

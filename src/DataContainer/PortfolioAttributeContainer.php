@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\DataContainer;
 
-class PortfolioItemAttributeContainer extends \Contao\Backend
+class PortfolioAttributeContainer extends \Contao\Backend
 {
     /**
      * Format items list.
@@ -49,10 +49,10 @@ class PortfolioItemAttributeContainer extends \Contao\Backend
      */
     public function getFieldsAndLegends()
     {
-        $this->loadDataContainer('tl_wem_portfolio');
+        $this->loadDataContainer('tl_wem_offer');
         $arrOptions = array();
 
-        $strPalette = $GLOBALS['TL_DCA']['tl_wem_portfolio']['palettes']['default'];
+        $strPalette = $GLOBALS['TL_DCA']['tl_wem_offer']['palettes']['default'];
         $arrChunks = explode(';', $strPalette);
 
         if (empty($arrChunks)) {
@@ -96,8 +96,8 @@ class PortfolioItemAttributeContainer extends \Contao\Backend
     {
         $arrFields = [];
 
-        if (array_key_exists('subpalettes', $GLOBALS['TL_DCA']['tl_wem_portfolio']) && array_key_exists($f, $GLOBALS['TL_DCA']['tl_wem_portfolio']['subpalettes'])) {
-            $arrSubfields = explode(',', $GLOBALS['TL_DCA']['tl_wem_portfolio']['subpalettes'][$f]);
+        if (array_key_exists('subpalettes', $GLOBALS['TL_DCA']['tl_wem_offer']) && array_key_exists($f, $GLOBALS['TL_DCA']['tl_wem_offer']['subpalettes'])) {
+            $arrSubfields = explode(',', $GLOBALS['TL_DCA']['tl_wem_offer']['subpalettes'][$f]);
 
             if (empty($arrSubfields)) {
                 return $arrFields;
