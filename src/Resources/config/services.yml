@@ -20,3 +20,11 @@ services:
     class: WEM\PortfolioBundle\Controller\ApiController
     public: true
     tags: [ 'controller.service_arguments' ]
+
+  wem_portfolio.listener.load_datacontainer:
+    class: WEM\PortfolioBundle\EventListener\LoadDataContainerListener
+    arguments:
+      $logger: '@logger'
+    public: true
+    tags:
+      - { name: contao.hook, hook: loadDataContainer, method: addAttributesToPortfolioDca, priority: 100 }

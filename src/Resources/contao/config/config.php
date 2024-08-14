@@ -32,9 +32,6 @@ ArrayUtil::arrayInsert(
     1,
     [
         'wem_portfolio' => [
-            'wem_portfolio' => [
-                'tables' => ['tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_content'],
-            ],
             'wem_portfolio_feed' => [
                 'tables' => ['tl_wem_portfolio_feed', 'tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_content'],
             ],

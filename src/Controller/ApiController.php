@@ -14,8 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
 use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
-use WEM\PortfolioBundle\Model\Category;
-use WEM\PortfolioBundle\Model\Item;
+use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\UtilsBundle\Classes\Encryption;
 
 /**
@@ -91,7 +91,7 @@ class ApiController
         }
 
         foreach ($cats as $category) {
-            $objCategory = Category::findByIdOrAlias($category);
+            $objCategory = PortfolioFeed::findByIdOrAlias($category);
             if ($objCategory) {
                 $arrConfig['categories'][] = $objCategory->id;
             } else {
@@ -102,7 +102,7 @@ class ApiController
 
         $items = [];
 
-        $objItems = Item::findItems($arrConfig, $limit, $offset, $arrOption);
+        $objItems = Portfolio::findItems($arrConfig, $limit, $offset, $arrOption);
 
         if ($objItems instanceof Collection) {
             foreach ($objItems as $item) {
@@ -153,9 +153,9 @@ class ApiController
             return $check;
         }
 
-        $objItem = Item::findByPk($id, ["eager" => true]);
+        $objItem = Portfolio::findByPk($id, ["eager" => true]);
 
-        if ($objItem instanceof Item) {
+        if ($objItem instanceof Portfolio) {
             $arrayItem = $objItem->row();
             if ($arrayItem["published"] === '1') {
                 $return = [];

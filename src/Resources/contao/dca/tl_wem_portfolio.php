@@ -13,7 +13,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
     'config' => [
         'dataContainer' => 'Table',
         'ptable' => 'tl_wem_portfolio_feed',
-        'ctable' => 'tl_content',
+        'ctable' => ['tl_content'],
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -30,10 +30,11 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 1,
-            'fields' => ['date'],
-            'flag' => 1,
-            'panelLayout' => 'filter;sort,search,limit'
+            'mode' => 4,
+            'fields' => ['title ASC'],
+            'headerFields' => ['title'],
+            'panelLayout' => 'filter;sort,search,limit',
+            'child_record_callback' => [PortfolioContainer::class, 'listItems'],
         ],
         'global_operations' => [
             'all' => [
