@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Contao\BackendUser;
+use Contao\Config;
 use Contao\System;
 use WEM\PortfolioBundle\DataContainer\PortfolioContainer;
 
@@ -80,7 +81,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         'default' => '
             {title_legend},code,title,date;
             {content_legend},teaser;
-            {media_legend},addImage;
+            {media_legend},addImage,pictures;
             {publish_legend},published,start,stop
         ',
     ],
@@ -216,7 +217,15 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'eval' => ['cols' => 4, 'tl_class' => 'w50'],
             'reference' => &$GLOBALS['TL_LANG']['MSC'],
             'sql' => "varchar(12) NOT NULL default 'above'"],
-
+        'pictures' => [
+            'exclude' => true,
+            'inputType' => 'fileTree',
+            'eval' => ['files' => true, 'extensions' => Config::get('validImageTypes'), 'multiple' => true, 'fieldType' => 'checkbox', 'orderField' => 'orderPictures'],
+            'sql' => 'blob NULL',
+        ],
+        'orderPictures' => [
+            'sql' => 'blob NULL',
+        ],
         'published' => [
             'exclude' => true,
             'filter' => true,
