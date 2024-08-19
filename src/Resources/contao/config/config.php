@@ -52,9 +52,8 @@ ArrayUtil::arrayInsert(
     2,
     [
         'wem_portfolio' => [
-            'wem_portfolio_list' => Module\PortfolioList::class,
-            'wem_portfolio_list_categories' => Module\ListCategories::class,
-            'wem_portfolio_reader' => Module\PortfolioReader::class,
+            'wem_portfolio_list' => Module\ModulePortfoliosList::class,
+            'wem_portfolio_reader' => Module\ModulePortfolios::class,
         ],
     ]
 );
