@@ -1,76 +1,60 @@
 <?xml version="1.0" ?><xliff version="1.1">
   <file datatype="php" original="system/modules/wem-portfolio/languages/en/modules.php" source-language="en" target-language="fr">
     <body>
-      <trans-unit id="MOD.wem_portfolio">
+      <trans-unit id="MOD.wem_portfolio_feed">
         <source>Portfolio</source>
         <target>Portfolio</target>
       </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_item.0">
+      <trans-unit id="MOD.wem_portfolio_feed.0">
         <source>Items</source>
         <target>Eléments</target>
       </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_item.1">
+      <trans-unit id="MOD.wem_portfolio_feed.1">
         <source>Manage portfolio items</source>
         <target>Gérer les éléments de votre portfolio</target>
       </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_category.0">
-        <source>Categories</source>
-        <target>Catégories</target>
-      </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_category.1">
-        <source>Manage portfolio structure</source>
-        <target>Gérer l’arborescence de votre portfolio</target>
-      </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_tag.0">
-        <source>Tags</source>
-        <target>Tags</target>
-      </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_tag.1">
-        <source>Manage portfolio tags</source>
-        <target>Gérer les tags de votre portfolio</target>
-      </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_attribute.0">
+      <trans-unit id="MOD.wem_portfolio_feed_attribute.0">
         <source>Attributes</source>
         <target>Attributs</target>
       </trans-unit>
-      <trans-unit id="MOD.wem_portfolio_attribute.1">
+      <trans-unit id="MOD.wem_portfolio_feed_attribute.1">
         <source>Manage portfolio attributes</source>
         <target>Gérer les attributs de votre portfolio</target>
       </trans-unit>
-      
-      <trans-unit id="FMD.wem_portfolio">
+
+      <trans-unit id="FMD.wem_portfolio_feed">
         <source>Portfolio</source>
         <target>Portfolio</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_list.0">
+      <trans-unit id="FMD.wem_portfolio_feed_list.0">
         <source>Items List</source>
         <target>Liste d’éléments</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_list.1">
+      <trans-unit id="FMD.wem_portfolio_feed_list.1">
         <source>Display a list of portfolio items</source>
         <target>Afficher une liste d’éléments du portfolio</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_list_categories.0">
+      <trans-unit id="FMD.wem_portfolio_feed_list_categories.0">
         <source>Categories List</source>
         <target>Liste de catégories</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_list_categories.1">
+      <trans-unit id="FMD.wem_portfolio_feed_list_categories.1">
         <source>Display a list of portfolio categories</source>
         <target>Afficher une liste de catégories du portfolio</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_reader.0">
+      <trans-unit id="FMD.wem_portfolio_feed_reader.0">
         <source>Item Reader</source>
         <target>Lecteur d’élément</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_reader.1">
+      <trans-unit id="FMD.wem_portfolio_feed_reader.1">
         <source>Display a reader of portfolio item</source>
         <target>Afficher un lecteur d’élément du portfolio</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_navigation.0">
+      <trans-unit id="FMD.wem_portfolio_feed_navigation.0">
         <source>Navigation</source>
         <target>Navigation</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_navigation.1">
+      <trans-unit id="FMD.wem_portfolio_feed_navigation.1">
         <source>Display a navigation of portfolio categories</source>
         <target>Afficher une navigation de catégories du portfolio</target>
       </trans-unit>
