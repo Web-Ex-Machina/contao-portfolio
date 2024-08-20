@@ -17,6 +17,7 @@ use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\UtilsBundle\Classes\Encryption;
+use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
  * @Route("/api/portfolio")
@@ -102,8 +103,7 @@ class ApiController
 
         $items = [];
 
-        $objItems = Portfolio::findItems($arrConfig, $limit, $offset, $arrOption);
-
+        $objItems = Portfolio::findItems(['pid' => $this->pid]);
         if ($objItems instanceof Collection) {
             foreach ($objItems as $item) {
                 $arrayItem = $item->row();
@@ -160,54 +160,60 @@ class ApiController
             if ($arrayItem["published"] === '1') {
                 $return = [];
                 $strContent = '';
-                $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio');
+                $objElement = (ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio')) ?? [];
+
                 foreach ($objElement as $element) {
                     $strContent .= Controller::getContentElement($element);
                 }
 
-                $return['pictures'] = [];
+                if ($arrayItem['addImage'] === "1") {
+                    $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
+                    $uuidP = Uuid::fromBinary($imageP->uuid);
+                    $return['image_principal'][$uuidP->__toString()]['path'] = $imageP->path;
+                    $return['image_principal'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
+                    $return['image_principal'][$uuidP->__toString()]['hash'] = $imageP->hash;
+                    $return['image_principal'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
+                }
 
-                $images = $objItem->getPictures();
+                $images = $arrayItem['orderPictures'];
 
-                if ($images !== []) {
+                if ($images !== null) {
+
+                    $images = StringUtil::deserialize($images);
+
                     foreach ($images as $key => $image) {
-                        $uuid = Uuid::fromBinary($image['uuid']);
-                        $images[$key]['uuid'] = $uuid->__toString();
+                        $uuid = Uuid::fromBinary($image);
+                        if ($image = FilesModel::findByUuid($image)) {
+                            $return['orderPictures'][$uuid->__toString()]['path'] = $image->path;
+                            $return['orderPictures'][$uuid->__toString()]['tstamp'] = $image->tstamp;
+                            $return['orderPictures'][$uuid->__toString()]['hash'] = $image->hash;
+                            $return['orderPictures'][$uuid->__toString()]['lastModified'] = $image->lastModified;
+                        }
                     }
-                    $return['pictures'] = $images;
+                    //$return['orderPictures'] = $images;
+                } else {
+                    $return['orderPictures'] = [];
                 }
 
                 $return["createdAt"] = $arrayItem["createdAt"];
                 $return["tstamp"] = $arrayItem["tstamp"];
                 $return["title"] = $arrayItem["title"];
-                $return["alias"] = $arrayItem["alias"];
+
                 $return["date"] = $arrayItem["date"];
-                $objCategories = $objItem->getRelated('categories');
-                $return['categories'] = null;
-                foreach ($objCategories->fetchAll() as $category) {
-                    $return['categories']['id'] = $category['id'];
-                    $return['categories']['createdAt'] = $category['createdAt'];
-                    $return['categories']['tstamp'] = $category['tstamp'];
-                    $return['categories']['title'] = $category['title'];
-                    $return['categories']['alias'] = $category['alias'];
-                    $return['categories']['jumpTo'] = $category['jumpTo'];
-                    $return['categories']['picture'] = null;
-                    if ($image = FilesModel::findByUuid($category['picture'])) {
-                        $return['categories']['picture']['path'] = $image->path;
-                        $return['categories']['picture']['tstamp'] = $image->tstamp;
-                        $return['categories']['picture']['hash'] = $image->hash;
-                        $return['categories']['picture']['lastModified'] = $image->lastModified;
-                    }
-
-                    $return['categories']['teaser'] = $category['teaser'];
-                    $return['categories']['attributes'] = $category['attributes'];
-
-                }
-
                 $return['teaser'] = $arrayItem["teaser"];
-                $return["link"] = $objItem->getUrl();
+                $category = $objItem->getRelated('pid');
+                $arrayCategory = $category->row();
 
-                $return["attributes"] = $objItem->getAttributes();
+                $return['categorie']['id'] = $arrayCategory['id'];
+                $return['categorie']['createdAt'] = $arrayCategory['createdAt'];
+                $return['categorie']['tstamp'] = $arrayCategory['tstamp'];
+                $return['categorie']['title'] = $arrayCategory['title'];
+                $return['categorie']['alias'] = $arrayCategory['alias'];
+
+
+                $return["slug"] = $arrayItem["slug"];
+
+                $return["url"] = $objItem->getUrl(true);
 
                 $return['content_b64'] = base64_encode($strContent);
 

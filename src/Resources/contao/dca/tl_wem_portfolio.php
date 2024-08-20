@@ -60,7 +60,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'delete' => [
                 'href' => 'act=delete',
                 'icon' => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+                'attributes' => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
             ],
             'show' => [
                 'href' => 'act=show',
@@ -79,7 +79,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
     'palettes' => [
         '__selector__' => ['addImage', 'overwriteMeta'],
         'default' => '
-            {title_legend},code,title,date;
+            {title_legend},title,slug,date;
             {content_legend},teaser;
             {media_legend},addImage,pictures;
             {publish_legend},published,start,stop
@@ -102,20 +102,27 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         ],
         'pid' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
+            'foreignKey' => 'tl_wem_portfolio_feed.title',
+            'relation' => [
+                'type' => 'belongsTo',
+                'load' => 'eager'
+            ],
         ],
         'createdAt' => [
             'default' => time(),
             'flag' => 8,
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
-
-        'code' => [
+        'slug' => [
             'exclude' => true,
             'search' => true,
             'sorting' => true,
             'flag' => 3,
             'inputType' => 'text',
-            'eval' => ['mandatory' => true, 'tl_class' => 'w50', 'maxlength' => 255],
+            'save_callback' => [
+                [PortfolioContainer::class, 'generateSlug']
+            ],
+            'eval' => ['tl_class' => 'w50', 'maxlength' => 255],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'title' => [

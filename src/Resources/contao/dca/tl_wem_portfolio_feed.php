@@ -69,6 +69,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
     'palettes' => [
         'default' => '
             {title_legend},title,alias;
+            {config_legend},jumpTo;
             {attributes_legend},attributes
         ',
     ],
@@ -104,13 +105,19 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
             ],
             'sql' => "varchar(255) BINARY NOT NULL default ''",
         ],
-
+        'jumpTo' => [
+            'inputType' => 'pageTree',
+            'foreignKey' => 'tl_page.title',
+            'eval' => ['fieldType' => 'radio'],
+            'sql' => "int(10) unsigned NOT NULL default 0",
+            'relation' => ['type' => 'hasOne', 'load' => 'lazy']
+        ],
         'attributes' => [
             'inputType' => 'dcaWizard',
             'foreignTable' => 'tl_wem_portfolio_feed_attribute',
             'foreignField' => 'pid',
             'params' => [
-                'do' => 'wem_portfolio',
+                'do' => 'wem_portfolio_feed',
             ],
             'eval' => [
                 'fields' => ['name', 'label', 'type', 'isFilter', 'isAlertCondition'],

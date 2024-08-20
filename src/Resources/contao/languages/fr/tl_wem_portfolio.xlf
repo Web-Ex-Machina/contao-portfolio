@@ -7,13 +7,13 @@
                 <source>See feed items</source>
                 <target>Voir les éléments du flux</target>
             </trans-unit>
-            <trans-unit id="tl_wem_portfolio.code.0">
-                <source>Code</source>
-                <target>Code</target>
+            <trans-unit id="tl_wem_portfolio.slug.0">
+                <source>slug</source>
+                <target>Permalien</target>
             </trans-unit>
-            <trans-unit id="tl_wem_portfolio.code.1">
-                <source>Enter the item code</source>
-                <target>Saisissez le code de l’élément</target>
+            <trans-unit id="tl_wem_portfolio.slug.1">
+                <source>Enter the item slug</source>
+                <target>Saisissez le permalien</target>
             </trans-unit>
             <trans-unit id="tl_wem_portfolio.header.0">
                 <source>Edit item</source>

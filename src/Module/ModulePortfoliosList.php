@@ -407,7 +407,8 @@ class ModulePortfoliosList extends ModulePortfolios
      */
     public function generate(): string
     {
-        if (TL_MODE === 'BE') {
+        $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
+        if ($scopeMatcher->isBackend()) {
             $objTemplate = new BackendTemplate('be_wildcard');
             $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['portfolioslist'][0]) . ' ###';
             $objTemplate->title = $this->headline;

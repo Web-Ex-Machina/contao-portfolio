@@ -9,6 +9,7 @@ use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\DataContainer;
 use Contao\Image;
 use Contao\Input;
+use Contao\System;
 use Contao\Versions;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
@@ -29,7 +30,7 @@ class PortfolioContainer extends Backend
         return sprintf(
             '%s <span style="color:#888">[%s]</span>',
             $r['title'],
-            $r['code']
+            $r['slug']
         );
     }
 
@@ -158,5 +159,22 @@ class PortfolioContainer extends Backend
 
             $objPalette->applyToPalette('default', 'tl_wem_portfolio');
         }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function generateSlug($varValue, DataContainer $dc): string
+    {
+        $aliasExists = fn(string $slug): bool => $this->Database->prepare('SELECT id FROM tl_wem_portfolio WHERE slug=? AND id!=?')->execute($slug, $dc->id)->numRows > 0;
+
+        // Generate an alias if there is none
+        if (!$varValue) {
+            $varValue = System::getContainer()->get('contao.slug')->generate($dc->activeRecord->title, $dc->activeRecord->id, $aliasExists);
+        } elseif ($aliasExists($varValue)) {
+            throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+        }
+
+        return $varValue;
     }
 }

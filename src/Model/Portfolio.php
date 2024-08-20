@@ -8,7 +8,9 @@ use Contao\Controller;
 use Contao\Date;
 use Contao\FilesModel;
 use Contao\Model\Collection;
+use Contao\PageModel;
 use Contao\System;
+use Exception;
 use WEM\UtilsBundle\Classes\StringUtil;
 use WEM\UtilsBundle\Model\Model;
 
@@ -138,6 +140,8 @@ class Portfolio extends Model
                             $arrColumns = array_merge($arrColumns, parent::formatStatement($strField, $varValue, $strOperator));
                     }
                 } else {
+                    $varValue = is_array($varValue) ? $varValue : [$varValue];
+
                     $arrColumns = array_merge($arrColumns, parent::formatStatement($strField, $varValue, $strOperator));
                 }
         }
@@ -310,5 +314,19 @@ class Portfolio extends Model
         }
 
         return $attributes;
+    }
+
+
+    /**
+     * Generate item url
+     * @throws Exception
+     */
+    public function getUrl(bool $blnAbsolute = false): string
+    {
+        $objCategory = $this->getRelated('pid');
+
+        $objPage = PageModel::findByPk($objCategory->jumpTo);
+        // TODO : deprecated getAbsoluteUrl getFrontendUrl in 5.3 removed in 6
+        return $blnAbsolute ? $objPage->getAbsoluteUrl('/' . $this->slug) : $objPage->getFrontendUrl('/' . $this->slug);
     }
 }
