@@ -82,62 +82,59 @@ class ApiController
         $limit = ($limit < 1) ? 1 : $limit;
         $page = ($page = 0) ? 1 : $page;
 
-        $cats = $request->query->get("cats");
-        $arrOption['eager'] = true;
+        $cats = $request->query->all("cats");
         $arrConfig['published'] = "1";
 
         $offset = ($page - 1) * $limit;
         if (!is_iterable($cats)) {
             return new JsonResponse('{"error":"Give at least on category : ?cats[]=1&cats[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
         }
+        $items = [];
 
         foreach ($cats as $category) {
             $objCategory = PortfolioFeed::findByIdOrAlias($category);
-            if ($objCategory) {
-                $arrConfig['categories'][] = $objCategory->id;
-            } else {
+            if (!$objCategory) {
                 return new JsonResponse('{"error":"Categorie ' . $category . ' not found"}', Response::HTTP_I_AM_A_TEAPOT, [], true);
             }
 
-        }
+            $objItems = Portfolio::findItems(['pid' => $objCategory->id, 'published' => "1"], $limit, $offset);
+            if ($objItems instanceof Collection) {
+                /* @var Portfolio $item */
+                foreach ($objItems as $item) {
+                    $arrayItem = $item->row();
+                    $id = $arrayItem["id"];
+                    $return = [];
+                    if ($arrayItem["published"] === '1') {
 
-        $items = [];
+                        $return['mainPicture'] = [];
 
-        $objItems = Portfolio::findItems(['pid' => $this->pid]);
-        if ($objItems instanceof Collection) {
-            foreach ($objItems as $item) {
-                $arrayItem = $item->row();
-                $id = $arrayItem["id"];
-                $return = [];
-                if ($arrayItem["published"] === '1') {
+                        if ($arrayItem['addImage'] === "1") {
+                            $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
+                            $uuidP = Uuid::fromBinary($imageP->uuid);
+                            $return['image_principal'][$uuidP->__toString()]['path'] = $imageP->path;
+                            $return['image_principal'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
+                            $return['image_principal'][$uuidP->__toString()]['hash'] = $imageP->hash;
+                            $return['image_principal'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
+                        }
 
-                    $return['mainPicture'] = [];
+                        $return["createdAt"] = $arrayItem["createdAt"];
+                        $return["title"] = $arrayItem["title"];
+                        $arrayCategory = $item->getRelated('pid')->row();
+                        $return['categorie']['id'] = $arrayCategory['id'];
+                        $return['categorie']['createdAt'] = $arrayCategory['createdAt'];
+                        $return['categorie']['tstamp'] = $arrayCategory['tstamp'];
+                        $return['categorie']['title'] = $arrayCategory['title'];
+                        $return['categorie']['alias'] = $arrayCategory['alias'];
 
-                    $images = $item->getPictures();
-
-                    if (count($images) > 0) {
-                        $uuid = Uuid::fromBinary($images[0]['uuid']);
-                        $images[0]['uuid'] = $uuid->__toString();
-                        $return['mainPicture'] = $images[0];
+                        $return['teaser'] = $arrayItem["teaser"];
+                        $return["link"] = $item->getUrl();
                     }
 
-                    $return["createdAt"] = $arrayItem["createdAt"];
-                    $return["title"] = $arrayItem["title"];
-                    $objCategories = $item->getRelated('categories');
-                    $return['categories'] = null;
-                    foreach ($objCategories->fetchAll() as $category) {
-                        $return['categories']['id'] = $category['id'];
-                        $return['categories']['title'] = $category['title'];
-                        $return['categories']['alias'] = $category['alias'];
-                    }
-
-                    $return['teaser'] = $arrayItem["teaser"];
-                    $return["link"] = $item->getUrl();
+                    $items[$id] = $return;
                 }
 
-                $items[$id] = $return;
+                return new JsonResponse($items, Response::HTTP_OK);
             }
-            return new JsonResponse($items, Response::HTTP_OK);
         }
 
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
@@ -181,7 +178,7 @@ class ApiController
 
                     $images = StringUtil::deserialize($images);
 
-                    foreach ($images as $key => $image) {
+                    foreach ($images as $image) {
                         $uuid = Uuid::fromBinary($image);
                         if ($image = FilesModel::findByUuid($image)) {
                             $return['orderPictures'][$uuid->__toString()]['path'] = $image->path;
@@ -190,6 +187,7 @@ class ApiController
                             $return['orderPictures'][$uuid->__toString()]['lastModified'] = $image->lastModified;
                         }
                     }
+
                     //$return['orderPictures'] = $images;
                 } else {
                     $return['orderPictures'] = [];
