@@ -8,6 +8,7 @@ use Contao\Controller;
 use Contao\Date;
 use Contao\FilesModel;
 use Contao\Model\Collection;
+use Contao\Model\Registry;
 use Contao\PageModel;
 use Contao\System;
 use Exception;
@@ -150,6 +151,45 @@ class Portfolio extends Model
     }
 
     /**
+     * Find a single record by its ID or code
+     *
+     * @param mixed $varId The ID or code
+     * @param array $arrOptions An optional options array
+     *
+     * @return \Contao\Model|static model or null if the result is empty
+     */
+    public static function findByIdOrCode($varId, array $arrOptions = array())
+    {
+        $isCode = !preg_match('/^[1-9]\d*$/', $varId);
+
+        // Try to load from the registry
+        if (!$isCode && empty($arrOptions)) {
+            $objModel = Registry::getInstance()->fetch(static::$strTable, $varId);
+
+            if ($objModel !== null) {
+                return $objModel;
+            }
+        }
+
+        $t = static::$strTable;
+
+        $arrOptions = array_merge
+        (
+            array
+            (
+                'limit' => 1,
+                'column' => $isCode ? array("$t.code=?") : array("$t.id=?"),
+                'value' => $varId,
+                'return' => 'Model'
+            ),
+            $arrOptions
+        );
+
+        return static::find($arrOptions);
+    }
+
+
+    /**
      * Get offer attributes as array
      * @return array ['attribute_name'=>['label'=>$label, 'raw_value'=>$value,'human_readable_value'=>$human_readable_value]]
      * @throws \Exception
@@ -232,7 +272,7 @@ class Portfolio extends Model
                     $arrArticleData[$varAttribute->name] = StringUtil::deserialize($arrArticleData[$varAttribute->name]);
                     $return = [];
                 }
-
+                $arrArticleData = $this->row();
                 foreach ($options as $option) {
                     if ($varAttribute->multiple && is_array($arrArticleData[$varAttribute->name]) && in_array($option['value'], $arrArticleData[$varAttribute->name])) {
                         $return[] = $option['label'];
