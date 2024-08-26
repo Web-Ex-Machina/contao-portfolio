@@ -21,7 +21,6 @@ use Contao\Environment;
 use Contao\Input;
 use Contao\PageModel;
 use Contao\System;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -32,12 +31,8 @@ use WEM\UtilsBundle\Classes\StringUtil;
  */
 class ModulePortfoliosReader extends ModulePortfolios
 {
-    /**
-     * Portfolio
-     *
-     * @var Portfolio
-     */
-    protected $objPortfolio = null;
+
+    protected ?Portfolio $objPortfolio = null;
 
     /**
      * Template.
@@ -46,20 +41,12 @@ class ModulePortfoliosReader extends ModulePortfolios
      */
     protected $strTemplate = 'mod_portfoliosreader';
 
-    private SessionInterface $session;
-
-    public function __construct($objModule, SessionInterface $session, $strColumn = 'main')
-    {
-        parent::__construct($objModule, $strColumn);
-        $this->session = $session;
-    }
-
     /**
      * Display a wildcard in the back end.
      *
      * @return string
      */
-    public function generate()
+    public function generate(): string
     {
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
         if ($scopeMatcher->isBackend()) {

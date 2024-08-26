@@ -146,6 +146,7 @@ class PortfolioContainer extends Backend
             if (!$objAttributes || 0 == $objAttributes->count()) {
                 exit();
             }
+
             $objPalette = PaletteManipulator::create();
             while ($objAttributes->next()) {
                 if (false === strrpos($GLOBALS['TL_DCA']['tl_wem_portfolio']['palettes']['default'], (string)$objAttributes->name)) {

@@ -41,7 +41,7 @@ class LoadDataContainerListener
         }
     }
 
-    protected function parseDcaAttribute($row): array
+    protected function parseDcaAttribute(array $row): array
     {
         // Generic data
         $data = [

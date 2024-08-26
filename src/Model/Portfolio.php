@@ -24,12 +24,14 @@ class Portfolio extends Model
      * Search fields.
      */
     public static array $arrSearchFields = ['code', 'title', 'teaser'];
+
     /**
      * Table name.
      *
      * @var string
      */
     protected static $strTable = 'tl_wem_portfolio';
+
     /**
      * @var mixed|null
      */
@@ -162,12 +164,12 @@ class Portfolio extends Model
      *
      * @return \Contao\Model|static model or null if the result is empty
      */
-    public static function findByIdOrCode($varId, array $arrOptions = array())
+    public static function findByIdOrCode($varId, array $arrOptions = [])
     {
         $isCode = !preg_match('/^[1-9]\d*$/', $varId);
 
         // Try to load from the registry
-        if (!$isCode && empty($arrOptions)) {
+        if (!$isCode && $arrOptions === []) {
             $objModel = Registry::getInstance()->fetch(static::$strTable, $varId);
 
             if ($objModel !== null) {
@@ -179,13 +181,7 @@ class Portfolio extends Model
 
         $arrOptions = array_merge
         (
-            array
-            (
-                'limit' => 1,
-                'column' => $isCode ? array("$t.code=?") : array("$t.id=?"),
-                'value' => $varId,
-                'return' => 'Model'
-            ),
+            ['limit' => 1, 'column' => $isCode ? [$t . '.code=?'] : [$t . '.id=?'], 'value' => $varId, 'return' => 'Model'],
             $arrOptions
         );
 
@@ -280,6 +276,7 @@ class Portfolio extends Model
                     $arrArticleData[$varAttribute->name] = StringUtil::deserialize($arrArticleData[$varAttribute->name]);
                     $return = [];
                 }
+
                 $arrArticleData = $this->row();
                 foreach ($options as $option) {
                     if ($varAttribute->multiple && is_array($arrArticleData[$varAttribute->name]) && in_array($option['value'], $arrArticleData[$varAttribute->name])) {

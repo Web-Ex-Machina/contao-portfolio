@@ -140,7 +140,7 @@ class ModulePortfoliosList extends ModulePortfolios
         $this->config = ['pid' => $this->portfolio_feeds, 'published' => 1];
 
         // Retrieve filters
-        if (!empty($_GET) || !empty($_POST)) {
+        if ($_GET !== [] || $_POST !== []) {
             foreach ($_GET as $f => $v) {
                 if (false === strpos($f, 'offer_filter_')) {
                     continue;
@@ -166,6 +166,7 @@ class ModulePortfoliosList extends ModulePortfolios
         if ($this->offer_addFilters) {
             $this->Template->filters = $this->getFrontendModule($this->offer_filters_module);
         }
+
         // Get the total number of items
         $intTotal = Portfolio::countItems($this->config);
 

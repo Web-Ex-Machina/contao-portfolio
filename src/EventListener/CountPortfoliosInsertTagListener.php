@@ -30,7 +30,7 @@ class CountPortfoliosInsertTagListener
         $c['published'] = 1;
 
         // Retrieve filters
-        if (!empty($_GET) || !empty($_POST)) {
+        if ($_GET !== [] || $_POST !== []) {
             foreach ($_GET as $f => $v) {
                 if (false === strpos($f, 'portfolio_filter_')) {
                     continue;

@@ -86,7 +86,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
         // Retrieve and format dropdowns filters
         $filters = StringUtil::deserialize($this->portfolio_filters);
 
-        if (\is_array($filters) && !empty($filters)) {
+        if (\is_array($filters) && $filters !== []) {
             foreach ($filters as $f) {
                 $field = $GLOBALS['TL_DCA']['tl_wem_offer']['fields'][$f];
                 $fName = sprintf('portfolio_filter_%s%s', $f, $field['eval']['multiple'] ? '[]' : '');
@@ -97,7 +97,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
                     'label' => $field['label'][0] ?: $GLOBALS['TL_LANG']['tl_wem_offer'][$f][0],
                     'value' => Input::get($fName) ?: '',
                     'options' => [],
-                    'multiple' => isset($field['eval']['multiple']) ? $field['eval']['multiple'] : false,
+                    'multiple' => $field['eval']['multiple'] ?? false,
                 ];
 
                 switch ($field['inputType']) {
@@ -142,6 +142,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
                             if ($filter['multiple']) {
                                 $filter['name'] .= '[]';
                             }
+
                             while ($objOptions->next()) {
                                 if (!$objOptions->{$f}) {
                                     continue;
@@ -159,6 +160,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
                                 }
                             }
                         }
+
                         break;
 
                     case 'text':
@@ -179,7 +181,8 @@ class ModulePortfoliosFilters extends ModulePortfolios
                                 ];
                             }
                         }
-                        break;
+
+                    break;
                 }
 
                 if ('select' === $filter['type'] && 1 >= \count($filter['options'])) {

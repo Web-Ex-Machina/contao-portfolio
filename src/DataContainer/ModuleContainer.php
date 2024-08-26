@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\DataContainer;
 
 use Contao\Backend;
+use Contao\Model\Collection;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -88,7 +89,7 @@ class ModuleContainer extends Backend
 
         $objAttributes = PortfolioFeedAttribute::findItems($c);
 
-        if (!$objAttributes) {
+        if (!$objAttributes instanceof Collection) {
             return [];
         }
 

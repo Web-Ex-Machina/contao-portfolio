@@ -43,12 +43,12 @@ abstract class ModulePortfolios extends Module
                         if (!Input::post('offer')) {
                             throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['OFFERS']['ERROR']['argumentMissing'], 'offer'));
                         }
+
                         $objItem = Portfolio::findByPk(Input::post('offer'));
 
                         $this->offer_template = 'offer_details';
                         echo System::getContainer()->get('contao.insert_tag')->replace($this->parsePortfolio($objItem));
                         exit;
-                        break;
                     default:
                         throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['OFFERS']['ERROR']['unknownRequest'], Input::post('action')));
                 }
@@ -134,7 +134,7 @@ abstract class ModulePortfolios extends Module
         // Retrieve item content
         $id = $objItem->id;
 
-        $objTemplate->text = function () use ($id) {
+        $objTemplate->text = function () use ($id): string {
             $strText = '';
             $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio');
 
@@ -147,7 +147,7 @@ abstract class ModulePortfolios extends Module
             return $strText;
         };
 
-        $objTemplate->hasText = static fn() => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
+        $objTemplate->hasText = static fn(): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
 
         // Retrieve item attributes
         $objTemplate->blnDisplayAttributes = (bool)$this->portfolio_displayAttributes;
