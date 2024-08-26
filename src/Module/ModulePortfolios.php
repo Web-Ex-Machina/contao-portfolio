@@ -15,10 +15,14 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Module;
 
+use Codefog\HasteBundle\Util\InsertTag;
+use Contao\Config;
 use Contao\ContentModel;
 use Contao\FrontendTemplate;
+use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Module;
+use Contao\RequestToken;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -30,15 +34,42 @@ use WEM\UtilsBundle\Classes\StringUtil;
  */
 abstract class ModulePortfolios extends Module
 {
+    protected function catchAjaxRequests(): void
+    {
+        if (Input::post('TL_AJAX') && (int)$this->id === (int)Input::post('module')) {
+            try {
+                switch (Input::post('action')) {
+                    case 'seeDetails':
+                        if (!Input::post('offer')) {
+                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['OFFERS']['ERROR']['argumentMissing'], 'offer'));
+                        }
+                        $objItem = Portfolio::findByPk(Input::post('offer'));
+
+                        $this->offer_template = 'offer_details';
+                        echo System::getContainer()->get('contao.insert_tag')->replace($this->parsePortfolio($objItem));
+                        exit;
+                        break;
+                    default:
+                        throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['OFFERS']['ERROR']['unknownRequest'], Input::post('action')));
+                }
+            } catch (\Exception $e) {
+                $arrResponse = ['status' => 'error', 'msg' => $e->getResponse(), 'trace' => $e->getTrace()];
+            }
+
+            // Add Request Token to JSON answer and return
+            $arrResponse['rt'] = System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue();
+            echo json_encode($arrResponse);
+            exit;
+        }
+    }
+
     /**
      * Parse one or more items and return them as array.
-     *
-     *
      * @throws \Exception
      */
-    protected function parsePortfolios(Collection $objArticles, bool $blnAddArchive = false): array
+    protected function parsePortfolios(Collection $objItems, bool $blnAddArchive = false): array
     {
-        $limit = $objArticles->count();
+        $limit = $objItems->count();
 
         if ($limit < 1) {
             return [];
@@ -47,10 +78,10 @@ abstract class ModulePortfolios extends Module
         $count = 0;
         $arrArticles = [];
 
-        while ($objArticles->next()) {
-            $objArticle = $objArticles->current();
+        while ($objItems->next()) {
+            $objItem = $objItems->current();
 
-            $arrArticles[] = $this->parsePortfolio($objArticle, $blnAddArchive, ((1 === ++$count) ? ' first' : '') . (($count === $limit) ? ' last' : '') . ((0 === ($count % 2)) ? ' odd' : ' even'), $count);
+            $arrArticles[] = $this->parsePortfolio($objItem, $blnAddArchive, ((1 === ++$count) ? ' first' : '') . (($count === $limit) ? ' last' : '') . ((0 === ($count % 2)) ? ' odd' : ' even'), $count);
         }
 
         return $arrArticles;
@@ -61,47 +92,47 @@ abstract class ModulePortfolios extends Module
      *
      * @throws \Exception
      */
-    protected function parsePortfolio(Portfolio $objArticle, bool $blnAddArchive = false, string $strClass = '', int $intCount = 0): string
+    protected function parsePortfolio(Portfolio $objItem, bool $blnAddArchive = false, string $strClass = '', int $intCount = 0): string
     {
         $objTemplate = new FrontendTemplate($this->portfolio_template);
-        $objTemplate->setData($objArticle->row());
+        $objTemplate->setData($objItem->row());
 
-        if ('' !== $objArticle->cssClass) {
-            $strClass = ' ' . $objArticle->cssClass . $strClass;
+        if ('' !== $objItem->cssClass) {
+            $strClass = ' ' . $objItem->cssClass . $strClass;
         }
 
-        $objTemplate->model = $objArticle;
+        $objTemplate->model = $objItem;
         $objTemplate->class = $strClass;
         $objTemplate->count = $intCount; // see #5708
 
         // Add the meta information
-        $objTemplate->date = (int)$objArticle->date;
-        $objTemplate->timestamp = $objArticle->date;
-        $objTemplate->datetime = date('Y-m-d\TH:i:sP', (int)$objArticle->date);
+        $objTemplate->date = (int)$objItem->date;
+        $objTemplate->timestamp = $objItem->date;
+        $objTemplate->datetime = date('Y-m-d\TH:i:sP', (int)$objItem->date);
 
         // Add an image
-        if ($objArticle->addImage) {
+        if ($objItem->addImage) {
             $figure = System::getContainer()
                 ->get('contao.image.studio')
                 ->createFigureBuilder()
-                ->from($objArticle->singleSRC)
-                ->setSize($objArticle->size)
-                ->enableLightbox((bool)$objArticle->fullsize)
+                ->from($objItem->singleSRC)
+                ->setSize($objItem->size)
+                ->enableLightbox((bool)$objItem->fullsize)
                 ->buildIfResourceExists();
 
             if (null !== $figure) {
-                $figure->applyLegacyTemplateData($objTemplate, $objArticle->imagemargin, $objArticle->floating);
+                $figure->applyLegacyTemplateData($objTemplate, $objItem->imagemargin, $objItem->floating);
             }
         }
 
         // Retrieve item teaser
-        if ($objArticle->teaser) {
+        if ($objItem->teaser) {
             $objTemplate->hasTeaser = true;
-            $objTemplate->teaser = StringUtil::encodeEmail($objArticle->teaser);
+            $objTemplate->teaser = StringUtil::encodeEmail($objItem->teaser);
         }
 
         // Retrieve item content
-        $id = $objArticle->id;
+        $id = $objItem->id;
 
         $objTemplate->text = function () use ($id) {
             $strText = '';
@@ -116,26 +147,32 @@ abstract class ModulePortfolios extends Module
             return $strText;
         };
 
-        $objTemplate->hasText = static fn() => ContentModel::countPublishedByPidAndTable($objArticle->id, 'tl_wem_portfolio') > 0;
+        $objTemplate->hasText = static fn() => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
 
         // Retrieve item attributes
         $objTemplate->blnDisplayAttributes = (bool)$this->portfolio_displayAttributes;
 
         if ((bool)$this->portfolio_displayAttributes && null !== $this->portfolio_attributes) {
-            $objTemplate->attributes = $objArticle->getAttributesFull(StringUtil::deserialize($this->portfolio_attributes));
+            $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->portfolio_attributes));
         }
 
         // Notice the template if we want/can display apply button
         if ($this->blnDisplayApplyButton) {
             $objTemplate->blnDisplayApplyButton = true;
-            $objTemplate->applyUrl = $this->addToUrl('apply=' . $objArticle->id, true, ['portfolio']);
+            $objTemplate->applyUrl = $this->addToUrl('apply=' . $objItem->id, true, ['portfolio']);
         }
 
         // Notice the template if we want to display the text
         if ($this->portfolio_displayTeaser) {
             $objTemplate->blnDisplayText = true;
         } else {
-            $objTemplate->detailsUrl = $this->addToUrl('seeDetails=' . $objArticle->id, true, ['portfolio']);
+            $objTemplate->detailsUrl = $this->addToUrl('seeDetails=' . $objItem->id, true, ['portfolio']);
+        }
+
+        // Parse the URL if we have a jumpTo configured
+        if ($objTarget = $objItem->getRelated('pid')->getRelated('jumpTo')) {
+            $params = (Config::get('useAutoItem') ? '/' : '/items/') . ($objItem->code ?: $objItem->id);
+            $objTemplate->jumpTo = $objTarget->getFrontendUrl($params);
         }
 
         return $objTemplate->parse();

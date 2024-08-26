@@ -99,4 +99,23 @@ class ModuleContainer extends Backend
 
         return $fields;
     }
+
+    /**
+     * Return all feeds as array.
+     */
+    public function getFiltersModules(): array
+    {
+        $arrModules = [];
+        $objModule = $this->Database->execute('SELECT id, name FROM tl_module WHERE type = "offersfilters" ORDER BY name');
+
+        if (!$objModule || 0 === $objModule->count()) {
+            return $arrModules;
+        }
+
+        while ($objModule->next()) {
+            $arrModules[$objModule->id] = $objModule->name;
+        }
+
+        return $arrModules;
+    }
 }

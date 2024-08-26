@@ -85,6 +85,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'pid' => [
+            'foreignKey' => 'tl_wem_portfolio_feed.title',
+            'relation' => ['type' => 'belongsTo', 'load' => 'eager'],
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'createdAt' => [

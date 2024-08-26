@@ -54,16 +54,11 @@ ArrayUtil::arrayInsert(
         'wem_portfolio' => [
             'wem_portfolio_list' => Module\ModulePortfoliosList::class,
             'wem_portfolio_reader' => Module\ModulePortfoliosReader::class,
+            'wem_portfolio_filters' => Module\ModulePortfoliosFilters::class,
         ],
     ]
 );
 
-/*
- * Hooks
- */
-$GLOBALS['TL_HOOKS']['generateBreadcrumb'][] = [Hooks\GenerateBreadcrumbListener::class, 'onGenerateBreadcrumb'];
-$GLOBALS['TL_HOOKS']['getSearchablePages'][] = [Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
-$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
 
 /*
  * Models

@@ -21,6 +21,19 @@ use WEM\PortfolioBundle\DataContainer\ModuleContainer;
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'portfolio_addFilters';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'portfolio_displayAttributes';
 
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_alert'] = '
+    {title_legend},name,headline,type;
+    {config_legend},portfolio_feed,portfolio_conditions,portfolio_pageGdpr,portfolio_pageSubscribe,portfolio_ncSubscribe,portfolio_pageUnsubscribe,portfolio_ncUnsubscribe;
+    {template_legend:hide},customTpl;
+    {expert_legend:hide},guests,cssID
+';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_filters'] = '
+    {title_legend},name,headline,type;
+    {config_legend},jumpTo,portfolio_filters,portfolio_addSearch;
+    {template_legend:hide},customTpl;
+    {expert_legend:hide},guests,cssID
+';
+
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
     '{title_legend},name,headline,type;
     {config_legend},jumpTo,wem_portfolio_categories,wem_portfolio_filters,wem_portfolio_sort,numberOfItems,perPage,skipFirst;
@@ -29,15 +42,16 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
     {protected_legend:hide},protected;
     {expert_legend:hide},guests,cssID';
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] =
-    '{title_legend},name,headline,type;
-    {template_legend:hide}
-    ,wem_portfolio_template,customTpl;
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '
+    {title_legend},name,headline,type;
+    {config_legend},portfolio_feeds,overviewPage,customLabel;
+    {form_legend},portfolio_applicationForm;
+    {template_legend:hide},portfolio_template,customTpl;
     {image_legend:hide},imgSize;
     {protected_legend:hide},protected;
     {expert_legend:hide},guests,cssID';
 
-$GLOBALS['TL_DCA']['tl_module']['subpalettes']['portfolio_addFilters'] = 'portfolio_filters,portfolio_addSearch';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['portfolio_addFilters'] = 'portfolio_filters_module';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['portfolio_displayAttributes'] = 'portfolio_attributes';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_feed'] = [
@@ -149,4 +163,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_attributes'] = [
     'options_callback' => [ModuleContainer::class, 'getAttributesOptions'],
     'eval' => ['chosen' => true, 'multiple' => true, 'mandatory' => true, 'tl_class' => 'w50'],
     'sql' => 'blob NULL',
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_filters_module'] = [
+    'exclude' => true,
+    'inputType' => 'select',
+    'options_callback' => [WEM\PortfolioBundle\DataContainer\ModuleContainer::class, 'getFiltersModules'],
+    'foreignKey' => 'tl_module.name',
+    'eval' => ['mandatory' => true],
+    'sql' => 'int(10) unsigned NOT NULL default 0',
+    'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
 ];

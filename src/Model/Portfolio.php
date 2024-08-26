@@ -30,6 +30,10 @@ class Portfolio extends Model
      * @var string
      */
     protected static $strTable = 'tl_wem_portfolio';
+    /**
+     * @var mixed|null
+     */
+    private $title;
 
     /**
      * Count items, depends on the arguments.
@@ -261,6 +265,10 @@ class Portfolio extends Model
     {
         if ("string" === gettype($varAttribute)) {
             $varAttribute = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttribute], 1);
+        }
+
+        if (null === $varAttribute) {
+            return null;
         }
 
         switch ($varAttribute->type) {

@@ -21,11 +21,12 @@ use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Environment;
 use Contao\FrontendTemplate;
 use Contao\Input;
+use Contao\Model\Collection;
 use Contao\Pagination;
 use Contao\System;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use WEM\PortfolioBundle\Model\Portfolio as PortfolioModel;
+use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -96,42 +97,7 @@ class ModulePortfoliosList extends ModulePortfolios
         }
 
         // Catch Ajax requets
-        if (Input::post('TL_AJAX') && (int)$this->id === (int)Input::post('module')) {
-            try {
-                switch (Input::post('action')) {
-                    case 'seeDetails':
-                        if (!Input::post('portfolio')) {
-                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['OFFERS']['ERROR']['argumentMissing'], 'portfolio'));
-                        }
-
-                        $objItem = PortfolioModel::findByPk(Input::post('portfolio'));
-
-                        $this->portfolio_template = 'portfolio_details';// TODO : InsertTag
-                        System::getContainer()->get('contao.insert_tag')->replace($this->parsePortfolio($objItem));
-                        exit;
-
-                    case 'apply':
-                        if (!Input::post('portfolio')) {
-                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['OFFERS']['ERROR']['argumentMissing'], 'portfolio'));
-                        }
-
-                        // Put the portfolio in session
-                        $objSession->set('wem_portfolio', Input::post('portfolio'));
-                        System::getContainer()->get('contao.insert_tag')->replace($this->getApplicationForm((int)Input::post('portfolio')));
-                        exit;
-
-                    default:
-                        throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['OFFERS']['ERROR']['unknownRequest'], Input::post('action')));
-                }
-            } catch (\Exception $e) {
-                $arrResponse = ['status' => 'error', 'msg' => $e->getResponse(), 'trace' => $e->getTrace()];
-            }
-
-            // Add Request Token to JSON answer and return
-            $arrResponse['rt'] = $this->csrfTokenManager->getToken($this->csrfTokenName)->getValue();
-            echo json_encode($arrResponse);
-            exit;
-        }
+        $this->catchAjaxRequests();
 
         if ($this->portfolio_applicationForm
             && '' !== $objSession->get('wem_portfolio')
@@ -159,7 +125,7 @@ class ModulePortfoliosList extends ModulePortfolios
             $this->limit = $this->numberOfItems;
         }
 
-        $this->Template->articles = [];
+        $this->Template->items = [];
         $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['OFFERS']['empty'];
 
         // assets
@@ -174,11 +140,34 @@ class ModulePortfoliosList extends ModulePortfolios
         $this->config = ['pid' => $this->portfolio_feeds, 'published' => 1];
 
         // Retrieve filters
-        $this->buildFilters();
-        $this->Template->filters = $this->filters;
+        if (!empty($_GET) || !empty($_POST)) {
+            foreach ($_GET as $f => $v) {
+                if (false === strpos($f, 'offer_filter_')) {
+                    continue;
+                }
 
+                if (Input::get($f)) {
+                    $this->config[str_replace('offer_filter_', '', $f)] = Input::get($f);
+                }
+            }
+
+            foreach ($_POST as $f => $v) {
+                if (false === strpos($f, 'offer_filter_')) {
+                    continue;
+                }
+
+                if (Input::post($f)) {
+                    $this->config[str_replace('offer_filter_', '', $f)] = Input::post($f);
+                }
+            }
+        }
+
+        // Retrieve filters
+        if ($this->offer_addFilters) {
+            $this->Template->filters = $this->getFrontendModule($this->offer_filters_module);
+        }
         // Get the total number of items
-        $intTotal = PortfolioModel::countItems($this->config);
+        $intTotal = Portfolio::countItems($this->config);
 
         if ($intTotal < 1) {
             return;
@@ -217,18 +206,18 @@ class ModulePortfoliosList extends ModulePortfolios
             $this->Template->pagination = $objPagination->generate("\n  ");
         }
 
-        $objArticles = PortfolioModel::findItems($this->config, ($this->limit ?: 0), ($this->offset ?: 0));
+        $objItems = Portfolio::findItems($this->config, ($this->limit ?: 0), ($this->offset ?: 0));
 
-        // Add the articles
-        if ($objArticles instanceof \Contao\Model\Collection) {
-            $this->Template->articles = $this->parsePortfolios($objArticles);
+        // Add the items
+        if ($objItems instanceof Collection) {
+            $this->Template->items = $this->parsePortfolios($objItems);
         }
 
         $this->Template->moduleId = $this->id;
 
         // Catch auto_item
         if (Input::get('auto_item')) {
-            $objPortfolio = PortfolioModel::findItems(['code' => Input::get('auto_item')], 1);
+            $objPortfolio = Portfolio::findItems(['code' => Input::get('auto_item')], 1);
 
             $this->Template->openModalOnLoad = true;
             $this->Template->portfolioId = $objPortfolio->first()->id;
@@ -249,7 +238,7 @@ class ModulePortfoliosList extends ModulePortfolios
 
         $strForm = $this->getForm($this->portfolio_applicationForm);
 
-        $objItem = PortfolioModel::findByPk($intId);
+        $objItem = Portfolio::findByPk($intId);
 
         $objTemplate = new FrontendTemplate($strTemplate);
         $objTemplate->id = $objItem->id;
@@ -261,145 +250,6 @@ class ModulePortfoliosList extends ModulePortfolios
         $objTemplate->form = $strForm;
 
         return $objTemplate->parse();
-    }
-
-    /**
-     * Retrieve list filters.
-     *
-     * @throws \Exception
-     */
-    protected function buildFilters(): void
-    {
-        if (!$this->portfolio_addFilters) {
-            exit();
-        }
-
-        // Retrieve and format dropdowns filters
-        $filters = StringUtil::deserialize($this->portfolio_filters);
-        if (\is_array($filters) && $filters !== []) {
-            foreach ($filters as $f) {
-                $field = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$f];
-
-                $filter = [
-                    'type' => $field['inputType'],
-                    'name' => $field['eval']['multiple'] ? $f . '[]' : $f,
-                    'label' => $field['label'][0] ?: $GLOBALS['TL_LANG']['tl_wem_portfolio'][$f][0],
-                    'value' => Input::get($f) ?: '',
-                    'options' => [],
-                    'multiple' => (bool)$field['eval']['multiple'],
-                ];
-
-                switch ($field['inputType']) {
-                    case 'select':
-                        if (\is_array($field['options_callback'])) {
-                            $strClass = $field['options_callback'][0];
-                            $strMethod = $field['options_callback'][1];
-
-                            $this->import($strClass);
-                            $options = $this->$strClass->$strMethod($this);
-                        } elseif (\is_callable($field['options_callback'])) {
-                            $options = $field['options_callback']($this);
-                        } elseif (\is_array($field['options'])) {
-                            $options = $field['options'];
-                        }
-
-                        foreach ($options as $value => $label) {
-                            if (\is_array($label)) {
-                                foreach ($label as $subValue => $subLabel) {
-                                    $filter['options'][$value]['options'][] = [
-                                        'value' => $subValue,
-                                        'label' => $subLabel,
-                                        'selected' => (null !== Input::get($f) && (Input::get($f) === $subValue || (\is_array(Input::get($f)) && \in_array($subValue, Input::get($f), true)))),
-                                    ];
-                                }
-                            } else {
-                                $filter['options'][] = [
-                                    'value' => $value,
-                                    'label' => $label,
-                                    'selected' => (null !== Input::get($f) && (Input::get($f) === $value || (\is_array(Input::get($f)) && \in_array($value, Input::get($f), true)))),
-                                ];
-                            }
-                        }
-
-                        break;
-
-                    case 'listWizard':
-                        $objOptions = PortfolioModel::findItemsGroupByOneField($f);
-
-                        if ($objOptions) {
-                            $filter['type'] = 'select';
-                            if ($filter['multiple']) {
-                                $filter['name'] .= '[]';
-                            }
-
-                            while ($objOptions->next()) {
-                                if (!$objOptions->{$f}) {
-                                    continue;
-                                }
-
-                                $subOptions = StringUtil::deserialize($objOptions->{$f});
-                                foreach ($subOptions as $subOption) {
-                                    $filter['options'][$subOption] = [
-                                        'value' => $subOption,
-                                        'label' => $subOption,
-                                        'selected' => $filter['multiple']
-                                            ? (null !== Input::get($f) && \in_array($subOption, Input::get($f ?? []), true))
-                                            : (null !== Input::get($f) && Input::get($f) === $subOption),
-                                    ];
-                                }
-                            }
-                        }
-
-                        break;
-
-                    case 'text':
-                    default:
-                        $objOptions = PortfolioModel::findItemsGroupByOneField($f);
-
-                        if ($objOptions && 0 < $objOptions->count()) {
-                            $filter['type'] = 'select';
-                            while ($objOptions->next()) {
-                                if (!$objOptions->{$f}) {
-                                    continue;
-                                }
-
-                                $filter['options'][] = [
-                                    'value' => $objOptions->{$f},
-                                    'label' => $objOptions->{$f},
-                                    'selected' => (null !== Input::get($f) && Input::get($f) === $objOptions->{$f}),
-                                ];
-                            }
-                        }
-
-                        break;
-                }
-
-                if ('select' === $filter['type'] && 1 >= \count($filter['options'])) {
-                    continue;
-                }
-
-                if (null !== Input::get($f) && '' !== Input::get($f)) {
-                    $this->config[$f] = Input::get($f);
-                }
-
-                $this->filters[] = $filter;
-            }
-        }
-
-        // Add fulltext search if asked
-        if ($this->portfolio_addSearch) {
-            $this->filters[] = [
-                'type' => 'text',
-                'name' => 'search',
-                'label' => $GLOBALS['TL_LANG']['WEM']['OFFERS']['search'],
-                'placeholder' => $GLOBALS['TL_LANG']['WEM']['OFFERS']['searchPlaceholder'],
-                'value' => Input::get('search') ?: '',
-            ];
-
-            if ('' !== Input::get('search') && null !== Input::get('search')) {
-                $this->config['search'] = StringUtil::formatKeywords(Input::get('search'));
-            }
-        }
     }
 
     /**

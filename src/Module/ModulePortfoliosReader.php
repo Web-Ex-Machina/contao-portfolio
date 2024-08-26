@@ -3,33 +3,119 @@
 declare(strict_types=1);
 
 /**
- * Contao Job Portfolios for Contao Open Source CMS
- * Copyright (c) 2018-2020 Web ex Machina.
+ * Personal Data Manager for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
- *
+ * @package  Web-Ex-Machina/contao-smartgear
  * @author   Web ex Machina <contact@webexmachina.fr>
- *
- * @see     https://github.com/Web-Ex-Machina/contao-job-portfolios/
+ * @link     https://github.com/Web-Ex-Machina/personal-data-manager/
  */
 
 namespace WEM\PortfolioBundle\Module;
 
+use Contao\BackendTemplate;
+use Contao\Combiner;
+use Contao\CoreBundle\Exception\PageNotFoundException;
+use Contao\Environment;
+use Contao\Input;
+use Contao\PageModel;
+use Contao\System;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\UtilsBundle\Classes\StringUtil;
+
 /**
- * Common functions for job portfolios modules.
+ * Front end module "portfolios list".
  *
  * @author Web ex Machina <https://www.webexmachina.fr>
  */
 class ModulePortfoliosReader extends ModulePortfolios
 {
+    /**
+     * Portfolio
+     *
+     * @var Portfolio
+     */
+    protected $objPortfolio = null;
+
+    /**
+     * Template.
+     *
+     * @var string
+     */
+    protected $strTemplate = 'mod_portfoliosreader';
+
+    private SessionInterface $session;
+
+    public function __construct($objModule, SessionInterface $session, $strColumn = 'main')
+    {
+        parent::__construct($objModule, $strColumn);
+        $this->session = $session;
+    }
+
+    /**
+     * Display a wildcard in the back end.
+     *
+     * @return string
+     */
     public function generate()
     {
-// note : https://github.com/Web-Ex-Machina/contao-geodata/blob/main/src/Module/LocationsReader.php
+        $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
+        if ($scopeMatcher->isBackend()) {
+            $objTemplate = new BackendTemplate('be_wildcard');
+            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['portfoliosreader'][0]) . ' ###';
+            $objTemplate->title = $this->headline;
+            $objTemplate->id = $this->id;
+            $objTemplate->link = $this->name;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+
+            return $objTemplate->parse();
+        }
+
+        $this->portfolio = Portfolio::findByIdOrCode(Input::get('auto_item'));
+
+        if (!$this->portfolio) {
+            throw new PageNotFoundException('Page not found: ' . Environment::get('uri'));
+        }
+
+        return parent::generate();
     }
 
-    public function compile()
+    /**
+     * Generate the module.
+     */
+    protected function compile(): void
     {
 
-    }
+        // If we have setup a form, allow module to use it later
+        if ($this->portfolio_applicationForm) {
+            $this->blnDisplayApplyButton = true;
+        }
 
+        if ($this->overviewPage) {
+            $this->Template->referer = PageModel::findById($this->overviewPage)->getFrontendUrl();
+            $this->Template->back = $this->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
+        }
+
+        // Catch Ajax requets
+        $this->catchAjaxRequests();
+
+        global $objPage;
+
+        $objPage->pageTitle = $this->portfolio->title . ' | ' . $this->portfolio->code;
+        $objPage->description = StringUtil::substr($this->portfolio->teaser, 300);
+
+        // assets
+        $strVersion = $this->getCustomPackageVersion('webexmachina/contao-portfolios');
+        $objCssCombiner = new Combiner();
+        $objCssCombiner->add('bundles/portfolios/css/styles.scss', $strVersion);
+
+        $GLOBALS['TL_HEAD'][] = sprintf('<link rel="stylesheet" href="%s">', $objCssCombiner->getCombinedFile());
+        $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/portfolios/js/scripts.js';
+
+        // Add the articles
+        $this->Template->portfolio = $this->parsePortfolio($this->portfolio);
+        $this->Template->moduleId = $this->id;
+    }
 }

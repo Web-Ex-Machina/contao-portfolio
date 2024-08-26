@@ -24,6 +24,7 @@
         "terminal42/dcawizard": "~2.7",
         "contao/manager-plugin": "^2.0",
         "webexmachina/contao-utils": "^2.0",
+        "codefog/contao-haste": "^4.24 || ^5.0",
         "menatwork/contao-multicolumnwizard-bundle": "3.5.x || 3.6.x",
         "ext-json": "*"
     },
@@ -38,5 +39,13 @@
     },
     "extra":{
         "contao-manager-plugin": "WEM\\PortfolioBundle\\ContaoManager\\Plugin"
+    },
+    "config": {
+        "allow-plugins": {
+            "contao-components/installer": false,
+            "php-http/discovery": false,
+            "contao/manager-plugin": false,
+            "contao-community-alliance/composer-plugin": false
+        }
     }
 }

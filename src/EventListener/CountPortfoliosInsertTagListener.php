@@ -8,6 +8,7 @@ use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Input;
 use WEM\PortfolioBundle\Model\Portfolio;
 
+
 class CountPortfoliosInsertTagListener
 {
     public const TAG = 'countportfolios';

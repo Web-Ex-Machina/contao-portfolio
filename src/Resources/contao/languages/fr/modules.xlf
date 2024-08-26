@@ -37,6 +37,16 @@
         <source>Display a list of portfolio categories</source>
         <target>Afficher une liste de catégories du portfolio</target>
       </trans-unit>
+
+      <trans-unit id="FMD.wem_portfolio_filters.0">
+        <source>Offers filters</source>
+        <target>Filtres de portfolio</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_filters.1">
+        <source>Adds an offer filters form to the page</source>
+        <target>Ajoute un système de filtres aux portfolios à la page</target>
+      </trans-unit>
+
       <trans-unit id="FMD.wem_portfolio_feed_reader.0">
         <source>Item Reader</source>
         <target>Lecteur d’élément</target>
