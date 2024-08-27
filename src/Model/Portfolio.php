@@ -22,6 +22,7 @@ class Portfolio extends Model
 {
     /**
      * Search fields.
+     * @var array<string>
      */
     public static array $arrSearchFields = ['slug', 'title', 'teaser'];
 
@@ -269,6 +270,7 @@ class Portfolio extends Model
 
         switch ($varAttribute->type) {
             case "select":
+                $return = null;
                 $arrArticleData = $this->row();
                 $options = StringUtil::deserialize($varAttribute->options ?? []);
 
