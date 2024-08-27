@@ -28,7 +28,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
      *
      * @var string
      */
-    protected $strTemplate = 'mod_portfoliosfilters';
+    protected $strTemplate = 'mod_wem_portfolio_filters';
 
     /**
      * Display a wildcard in the back end.
@@ -40,7 +40,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
         if ($scopeMatcher->isBackend()) {
             $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['portfoliosfilters'][0]) . ' ###';
+            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_filters'][0]) . ' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
@@ -69,7 +69,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
         $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/portfolios/js/scripts.js';
 
         // Add pids
-        $this->config = ['pid' => $this->portfolio_feeds, 'published' => 1];
+        $this->config = ['pid' => $this->wem_portfolio_feeds, 'published' => 1];
 
         // Retrieve filters
         $this->buildFilters();
@@ -202,8 +202,8 @@ class ModulePortfoliosFilters extends ModulePortfolios
             $this->filters[] = [
                 'type' => 'text',
                 'name' => 'portfolio_filter_search',
-                'label' => $GLOBALS['TL_LANG']['WEM']['OFFERS']['search'],
-                'placeholder' => $GLOBALS['TL_LANG']['WEM']['OFFERS']['searchPlaceholder'],
+                'label' => $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['search'],
+                'placeholder' => $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['searchPlaceholder'],
                 'value' => Input::get('portfolio_filter_search') ?: '',
             ];
 

@@ -39,7 +39,7 @@ class ModulePortfoliosReader extends ModulePortfolios
      *
      * @var string
      */
-    protected $strTemplate = 'mod_portfoliosreader';
+    protected $strTemplate = 'mod_wem_portfolio_reader';
 
     /**
      * Display a wildcard in the back end.
@@ -51,7 +51,7 @@ class ModulePortfoliosReader extends ModulePortfolios
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
         if ($scopeMatcher->isBackend()) {
             $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['portfoliosreader'][0]) . ' ###';
+            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_feed_reader'][0]) . ' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
@@ -90,7 +90,7 @@ class ModulePortfoliosReader extends ModulePortfolios
 
         global $objPage;
 
-        $objPage->pageTitle = $this->portfolio->title . ' | ' . $this->portfolio->code;
+        $objPage->pageTitle = $this->portfolio->title . ' | ' . $this->portfolio->slug;
         $objPage->description = StringUtil::substr($this->portfolio->teaser, 300);
 
         // assets

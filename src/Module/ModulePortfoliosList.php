@@ -19,13 +19,10 @@ use Contao\Combiner;
 use Contao\Config;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Environment;
-use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Pagination;
 use Contao\System;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -36,84 +33,26 @@ use WEM\UtilsBundle\Classes\StringUtil;
  */
 class ModulePortfoliosList extends ModulePortfolios
 {
-    /**
-     * List config.
-     */
     protected ?array $config = [];
 
-    /**
-     * List limit.
-     */
     protected ?int $limit = 0;
 
-    /**
-     * List offset.
-     */
     protected ?int $offset = 0;
 
-    /**
-     * List options.
-     */
     protected ?array $options = [];
 
-    /**
-     * List filters.
-     */
     protected ?array $filters = [];
 
-    /**
-     * Template.
-     *
-     * @var string
-     */
-    protected $strTemplate = 'mod_portfolioslist';
-
-    private CsrfTokenManagerInterface $csrfTokenManager;
-
-    private string $csrfTokenName;
-
-    private SessionInterface $session;
-
-    public function __construct($objModule, $csrfTokenManager, $csrfTokenName, SessionInterface $session, $strColumn = 'main')
-    {
-        parent::__construct($objModule, $strColumn);
-        $this->csrfTokenManager = $csrfTokenManager;
-        $this->csrfTokenName = $csrfTokenName;
-        $this->session = $session;
-    }
+    protected $strTemplate = 'mod_wem_portfolio_list';
 
     /**
      * Generate the module.
      */
     protected function compile(): void
     {
-
-        // Init session
-        $objSession = $this->session;
-
         // If we have setup a form, allow module to use it later
         if ($this->portfolio_applicationForm) {
             $this->blnDisplayApplyButton = true;
-        }
-
-        // Catch Ajax requets
-        $this->catchAjaxRequests();
-
-        if ($this->portfolio_applicationForm
-            && '' !== $objSession->get('wem_portfolio')
-        ) {
-            $strForm = $this->getApplicationForm($objSession->get('wem_portfolio'));
-
-            // Fetch the application form if defined
-            if (Input::post('FORM_SUBMIT')) {
-                try {
-                    $this->Template->openModalOnLoad = true;
-                    $this->Template->openModalOnLoadContent = json_encode($strForm);
-                } catch (\Exception $e) {
-                    $this->Template->openModalOnLoad = true;
-                    $this->Template->openModalOnLoadContent = json_encode('"' . $e->getResponse() . '"');
-                }
-            }
         }
 
         global $objPage;
@@ -126,7 +65,7 @@ class ModulePortfoliosList extends ModulePortfolios
         }
 
         $this->Template->items = [];
-        $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['OFFERS']['empty'];
+        $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
 
         // assets
         $strVersion = $this->getCustomPackageVersion('webexmachina/contao-portfolios');
@@ -137,8 +76,7 @@ class ModulePortfoliosList extends ModulePortfolios
         $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/portfolios/js/scripts.js';
 
         // Add pids
-        $this->config = ['pid' => $this->portfolio_feeds, 'published' => 1];
-
+        $this->config = ['pid' => $this->wem_portfolio_feeds, 'published' => 1];
         // Retrieve filters
         if ($_GET !== [] || $_POST !== []) {
             foreach ($_GET as $f => $v) {
@@ -218,7 +156,7 @@ class ModulePortfoliosList extends ModulePortfolios
 
         // Catch auto_item
         if (Input::get('auto_item')) {
-            $objPortfolio = Portfolio::findItems(['code' => Input::get('auto_item')], 1);
+            $objPortfolio = Portfolio::findItems(['slug' => Input::get('auto_item')], 1);
 
             $this->Template->openModalOnLoad = true;
             $this->Template->portfolioId = $objPortfolio->first()->id;
@@ -226,42 +164,15 @@ class ModulePortfoliosList extends ModulePortfolios
     }
 
     /**
-     * Parse and return an application form for a job.
-     *
-     * @param int $intId [Job ID]
-     * @param string $strTemplate [Template name]
-     */
-    protected function getApplicationForm(int $intId, string $strTemplate = 'portfolio_apply'): string
-    {
-        if (!$this->portfolio_applicationForm) {
-            return '';
-        }
-
-        $strForm = $this->getForm($this->portfolio_applicationForm);
-
-        $objItem = Portfolio::findByPk($intId);
-
-        $objTemplate = new FrontendTemplate($strTemplate);
-        $objTemplate->id = $objItem->id;
-        $objTemplate->code = $objItem->code;
-        $objTemplate->title = $objItem->title;
-        $objTemplate->recipient = $GLOBALS['TL_ADMIN_EMAIL'];
-        $objTemplate->time = time();
-        $objTemplate->token = $this->csrfTokenManager->getToken($this->csrfTokenName)->getValue();
-        $objTemplate->form = $strForm;
-
-        return $objTemplate->parse();
-    }
-
-    /**
      * Display a wildcard in the back end.
+     * @throws \ErrorException
      */
     public function generate(): string
     {
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
         if ($scopeMatcher->isBackend()) {
             $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['portfolioslist'][0]) . ' ###';
+            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_feed_list'][0]) . ' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
@@ -273,11 +184,11 @@ class ModulePortfoliosList extends ModulePortfolios
         // Load datacontainer and job feeds
         $this->loadDatacontainer('tl_wem_portfolio');
         $this->loadLanguageFile('tl_wem_portfolio');
-        $this->portfolio_feeds = StringUtil::deserialize($this->portfolio_feeds);
+        $this->wem_portfolio_feeds = StringUtil::deserialize($this->wem_portfolio_feeds);
 
         // Return if there are no archives
-        if (empty($this->portfolio_feeds) || !\is_array($this->portfolio_feeds)) {
-            return '';
+        if (empty($this->wem_portfolio_feeds) || !\is_array($this->wem_portfolio_feeds)) {
+            throw new \ErrorException('wem_portfolio_feeds not found.');
         }
 
         return parent::generate();

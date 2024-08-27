@@ -80,7 +80,7 @@ class ModuleContainer extends Backend
      */
     public function getAttributesOptions(): array
     {
-        $arrPids = StringUtil::deserialize($this->activeRecord->portfolio_feeds);
+        $arrPids = StringUtil::deserialize($this->activeRecord->wem_portfolio_feeds);
         $c = [];
 
         if (null !== $arrPids && !empty($arrPids)) {

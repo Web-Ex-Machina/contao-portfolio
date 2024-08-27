@@ -23,7 +23,7 @@ class Portfolio extends Model
     /**
      * Search fields.
      */
-    public static array $arrSearchFields = ['code', 'title', 'teaser'];
+    public static array $arrSearchFields = ['slug', 'title', 'teaser'];
 
     /**
      * Table name.
@@ -181,7 +181,7 @@ class Portfolio extends Model
 
         $arrOptions = array_merge
         (
-            ['limit' => 1, 'column' => $isCode ? [$t . '.code=?'] : [$t . '.id=?'], 'value' => $varId, 'return' => 'Model'],
+            ['limit' => 1, 'column' => $isCode ? [$t . '.slug=?'] : [$t . '.id=?'], 'value' => $varId, 'return' => 'Model'],
             $arrOptions
         );
 

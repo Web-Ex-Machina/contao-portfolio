@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
+use Rector\CodeQuality\Rector\If_\CombineIfRector;
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 use Rector\Symfony\Set\SymfonySetList;
-use Contao\Rector\Set\ContaoSetList;
-use Rector\CodeQuality\Rector\If_\CombineIfRector;
 
 /* Usage
  * vendor/bin/rector process src --dry-run //permet de faire un test
@@ -29,10 +28,7 @@ return RectorConfig::configure()
         SetList::CODE_QUALITY,
         SetList::DEAD_CODE,
         SetList::TYPE_DECLARATION,
+        SetList::PHP_74,
         LevelSetList::UP_TO_PHP_82,
         SymfonySetList::SYMFONY_64,
-        ContaoSetList::CONTAO_50,
-        ContaoSetList::CONTAO_53,
-        ContaoSetList::ANNOTATIONS_TO_ATTRIBUTES,
-        ContaoSetList::FQCN,
     ]);

@@ -41,7 +41,7 @@ abstract class ModulePortfolios extends Module
                 switch (Input::post('action')) {
                     case 'seeDetails':
                         if (!Input::post('offer')) {
-                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['OFFERS']['ERROR']['argumentMissing'], 'offer'));
+                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['argumentMissing'], 'offer'));
                         }
 
                         $objItem = Portfolio::findByPk(Input::post('offer'));
@@ -50,7 +50,7 @@ abstract class ModulePortfolios extends Module
                         echo System::getContainer()->get('contao.insert_tag')->replace($this->parsePortfolio($objItem));
                         exit;
                     default:
-                        throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['OFFERS']['ERROR']['unknownRequest'], Input::post('action')));
+                        throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['unknownRequest'], Input::post('action')));
                 }
             } catch (\Exception $e) {
                 $arrResponse = ['status' => 'error', 'msg' => $e->getResponse(), 'trace' => $e->getTrace()];
@@ -171,7 +171,7 @@ abstract class ModulePortfolios extends Module
 
         // Parse the URL if we have a jumpTo configured
         if ($objTarget = $objItem->getRelated('pid')->getRelated('jumpTo')) {
-            $params = (Config::get('useAutoItem') ? '/' : '/items/') . ($objItem->code ?: $objItem->id);
+            $params = (Config::get('useAutoItem') ? '/' : '/items/') . ($objItem->slug ?: $objItem->id);
             $objTemplate->jumpTo = $objTarget->getFrontendUrl($params);
         }
 
@@ -187,7 +187,8 @@ abstract class ModulePortfolios extends Module
      */
     protected function getCustomPackageVersion(string $package): ?string
     {
-        $packages = json_decode(file_get_contents('./../../vendor/composer/installed.json'));
+
+        $packages = json_decode(file_get_contents('./../vendor/composer/installed.json'));
 
         foreach ($packages->packages as $p) {
             $p = (array)$p;

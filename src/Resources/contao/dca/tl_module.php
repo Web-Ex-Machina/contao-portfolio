@@ -21,22 +21,16 @@ use WEM\PortfolioBundle\DataContainer\ModuleContainer;
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'portfolio_addFilters';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'portfolio_displayAttributes';
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_alert'] = '
-    {title_legend},name,headline,type;
-    {config_legend},portfolio_feed,portfolio_conditions,portfolio_pageGdpr,portfolio_pageSubscribe,portfolio_ncSubscribe,portfolio_pageUnsubscribe,portfolio_ncUnsubscribe;
-    {template_legend:hide},customTpl;
-    {expert_legend:hide},guests,cssID
-';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_filters'] = '
     {title_legend},name,headline,type;
-    {config_legend},jumpTo,portfolio_filters,portfolio_addSearch;
+    {config_legend},jumpTo,wem_portfolio_filters,portfolio_addSearch;
     {template_legend:hide},customTpl;
     {expert_legend:hide},guests,cssID
 ';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
     '{title_legend},name,headline,type;
-    {config_legend},jumpTo,wem_portfolio_categories,wem_portfolio_filters,wem_portfolio_sort,numberOfItems,perPage,skipFirst;
+    {config_legend},jumpTo,wem_portfolio_feeds,wem_portfolio_filters,wem_portfolio_sort,numberOfItems,perPage,skipFirst;
     {template_legend:hide},wem_portfolio_template,customTpl;
     {image_legend:hide},imgSize;
     {protected_legend:hide},protected;
@@ -44,7 +38,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '
     {title_legend},name,headline,type;
-    {config_legend},portfolio_feeds,overviewPage,customLabel;
+    {config_legend},wem_portfolio_feeds,overviewPage,customLabel;
     {form_legend},portfolio_applicationForm;
     {template_legend:hide},portfolio_template,customTpl;
     {image_legend:hide},imgSize;
@@ -63,7 +57,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_feed'] = [
     'sql' => 'int(10) unsigned NOT NULL default 0',
     'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_feeds'] = [
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_feeds'] = [
     'exclude' => true,
     'inputType' => 'checkbox',
     'options_callback' => [ModuleContainer::class, 'getFeeds'],
@@ -109,16 +103,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_addSearch'] = [
     'eval' => ['doNotCopy' => true, 'tl_class' => 'clr'],
     'sql' => "char(1) NOT NULL default ''",
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_applicationForm'] = [
-    'exclude' => true,
-    'inputType' => 'select',
-    'options_callback' => ['tl_content', 'getForms'],
-    'eval' => ['includeBlankOption' => true, 'chosen' => true, 'submitOnChange' => true, 'tl_class' => 'w50 wizard'],
-    'wizard' => [
-        ['tl_content', 'editForm'],
-    ],
-    'sql' => "int(10) unsigned NOT NULL default '0'",
-];
 $GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_template'] = [
     'default' => 'portfolio_default',
     'exclude' => true,
@@ -135,22 +119,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_pageGdpr'] = [
     'sql' => 'int(10) unsigned NOT NULL default 0',
     'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_pageSubscribe'] = [
-    'exclude' => true,
-    'inputType' => 'pageTree',
-    'foreignKey' => 'tl_page.title',
-    'eval' => ['fieldType' => 'radio', 'tl_class' => 'clr'],
-    'sql' => 'int(10) unsigned NOT NULL default 0',
-    'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
-];
-$GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_pageUnsubscribe'] = [
-    'exclude' => true,
-    'inputType' => 'pageTree',
-    'foreignKey' => 'tl_page.title',
-    'eval' => ['fieldType' => 'radio', 'tl_class' => 'clr'],
-    'sql' => 'int(10) unsigned NOT NULL default 0',
-    'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
-];
+
 $GLOBALS['TL_DCA']['tl_module']['fields']['portfolio_displayAttributes'] = [
     'exclude' => true,
     'inputType' => 'checkbox',

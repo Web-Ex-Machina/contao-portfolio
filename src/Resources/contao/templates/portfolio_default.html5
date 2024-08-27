@@ -1,14 +1,9 @@
 <div class="portfolio_item block-card  block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article" data-maxlines="3" data-preset="">
-  <<?= $this->link?'a href="'.$this->link.'" title="'.$GLOBALS['TL_LANG']['MSC']['more'].'"':'div' ?>  class="block-card__wrapper">
+    <<?= $this->jumpTo ? 'a href="' . $this->jumpTo . '" title="' . $GLOBALS['TL_LANG']['MSC']['more'] . '"' : 'div' ?>
+    class="block-card__wrapper">
     <div class="block-card__figure r_4-3">
       <?php if ($this->addImage): ?>
-        <?php $this->insert('image', $this->arrData); // need picture size optimisation ?> 
-      <?php endif; ?>
-    </div>
-    <div class="block-card__headline">
-      <div itemprop="categories"><?php foreach ($this->categories as $key => $category) {echo ($key!=0?' | ':'').$category['title'];}; ?></div>
-      <?php if($this->date && 1==0): ?>
-        <div class="info"><time datetime="<?= $this->date['datetime'] ?>" itemprop="datePublished"><?= $this->date['date'] ?></time></div>
+          <?php $this->insert('image', $this->arrData); // need picture size optimisation ?>
       <?php endif; ?>
     </div>
     <div class="block-card__content flex-justifycontent--center-alignitems--center txt-center">
@@ -19,5 +14,5 @@
         </div>
       <?php endif ?>
     </div>
-  </<?= $this->link?'a':'div' ?>>
+</<?= $this->jumpTo ? 'a' : 'div' ?>>
 </div>
