@@ -30,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_filters'] = '
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
     '{title_legend},name,headline,type;
-    {config_legend},jumpTo,wem_portfolio_feeds,wem_portfolio_filters,wem_portfolio_sort,numberOfItems,perPage,skipFirst;
+    {config_legend},wem_portfolio_feeds,wem_portfolio_filters,wem_portfolio_sort,numberOfItems,perPage,skipFirst;
     {template_legend:hide},wem_portfolio_template,customTpl;
     {image_legend:hide},imgSize;
     {protected_legend:hide},protected;
