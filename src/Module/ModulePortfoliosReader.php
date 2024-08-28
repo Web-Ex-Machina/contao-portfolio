@@ -43,8 +43,6 @@ class ModulePortfoliosReader extends ModulePortfolios
 
     /**
      * Display a wildcard in the back end.
-     *
-     * @return string
      */
     public function generate(): string
     {

@@ -89,7 +89,7 @@ class ModulePortfoliosList extends ModulePortfolios
                 }
             }
 
-            foreach ($_POST as $f => $v) {
+            foreach (array_keys($_POST) as $f) {
                 if (false === strpos($f, 'offer_filter_')) {
                     continue;
                 }

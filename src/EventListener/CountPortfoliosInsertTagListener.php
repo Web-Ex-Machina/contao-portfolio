@@ -41,7 +41,7 @@ class CountPortfoliosInsertTagListener
                 }
             }
 
-            foreach ($_POST as $f => $v) {
+            foreach (array_keys($_POST) as $f) {
                 if (false === strpos($f, 'portfolio_filter_')) {
                     continue;
                 }
@@ -53,8 +53,7 @@ class CountPortfoliosInsertTagListener
         }
 
         // Call the Model
-        $intCount = Portfolio::countItems($c);
+        return Portfolio::countItems($c);
 
-        return $intCount;
     }
 }

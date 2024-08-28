@@ -83,12 +83,12 @@ class ApiController
         $page = ($page = 0) ? 1 : $page;
 
         $cats = $request->query->all("cats");
-        $arrConfig['published'] = "1";
 
         $offset = ($page - 1) * $limit;
         if (!is_iterable($cats)) {
             return new JsonResponse('{"error":"Give at least on category : ?cats[]=1&cats[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
         }
+
         $items = [];
 
         foreach ($cats as $category) {
