@@ -39,7 +39,7 @@ class ApiController
         $this->framework = $framework;
         $this->framework->initialize();
 
-        $this->apiKey = ($this->encryption->decrypt_b64(Config::get('portfolioApiKey'))) ?? null;
+        $this->apiKey = ($this->encryption->decrypt_b64((string)Config::get('portfolioApiKey')) !== "") ?? null;
 
     }
 
@@ -78,9 +78,11 @@ class ApiController
             return $check;
         }
 
-        $limit = ($limit > 20) ? 20 : $limit;
-        $limit = ($limit < 1) ? 1 : $limit;
-        $page = ($page = 0) ? 1 : $page;
+        if ($limit > 20) {$limit = 20;}
+
+        if ($limit < 1) {$limit = 1;}
+
+        if ($page < 1) {$page = 1;}
 
         $cats = $request->query->all("cats");
 
