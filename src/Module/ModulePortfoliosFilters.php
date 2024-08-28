@@ -19,7 +19,9 @@ use WEM\UtilsBundle\Classes\StringUtil;
 class ModulePortfoliosFilters extends ModulePortfolios
 {
     /**
-     * List filters.
+     * List filters
+     *
+     * @var array<string>
      */
     protected $filters = [];
 

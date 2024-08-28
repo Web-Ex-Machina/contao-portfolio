@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
-use Contao\Model;
 use Contao\Model\Collection;
+use WEM\UtilsBundle\Model\Model;
 
 /**
  * Reads and writes items.
  */
-class PortfolioFeedAttribute extends \WEM\UtilsBundle\Model\Model
+class PortfolioFeedAttribute extends Model
 {
     /**
      * Table name.

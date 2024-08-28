@@ -165,9 +165,11 @@ class ModulePortfoliosList extends ModulePortfolios
 
     /**
      * Display a wildcard in the back end.
+     * @return string
+     *
      * @throws \ErrorException
      */
-    public function generate(): string
+    public function generate()
     {
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
         if ($scopeMatcher->isBackend()) {
