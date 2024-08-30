@@ -111,7 +111,7 @@ abstract class ModulePortfolios extends Module
         $objTemplate->datetime = date('Y-m-d\TH:i:sP', (int)$objItem->date);
 
         // Add an image
-        if ($objItem->addImage) {
+        if ($objItem->singleSRC) {
             $figure = System::getContainer()
                 ->get('contao.image.studio')
                 ->createFigureBuilder()
@@ -125,6 +125,49 @@ abstract class ModulePortfolios extends Module
             }
         }
 
+        // Retrieve item pictures
+        if ($objItem->pictures = \StringUtil::deserialize($objItem->pictures)) {
+            $objFiles = \FilesModel::findMultipleByUuids($objItem->pictures);
+            $images = [];
+            while ($objFiles->next()) {
+                $images[$objFiles->path] = [
+                    'id' => $objFiles->id,
+                    'uuid' => $objFiles->uuid,
+                    'name' => $objFile->basename,
+                    'singleSRC' => $objFiles->path,
+                    'filesModel' => $objFiles->current(),
+                ];
+            }
+
+            if ('' !== $objItem->orderPictures) {
+                $t = \StringUtil::deserialize($objItem->orderPictures);
+                if (!empty($t) && \is_array($t)) {
+                    // Remove all values
+                    $arrOrder = array_map(function (): void {
+                    }, array_flip($t));
+
+                    // Move the matching elements to their position in $arrOrder
+                    foreach ($images as $k => $v) {
+                        if (\array_key_exists($v['uuid'], $arrOrder)) {
+                            $arrOrder[$v['uuid']] = $v;
+                            unset($images[$k]);
+                        }
+                    }
+
+                    // Append the left-over images at the end
+                    if (!empty($images)) {
+                        $arrOrder = array_merge($arrOrder, array_values($images));
+                    }
+
+                    // Remove empty (unreplaced) entries
+                    $images = array_values(array_filter($arrOrder));
+                    unset($arrOrder);
+                }
+            }
+
+            $objTemplate->pictures = $images;
+        }
+
         // Retrieve item teaser
         if ($objItem->teaser) {
             $objTemplate->hasTeaser = true;
@@ -133,7 +176,6 @@ abstract class ModulePortfolios extends Module
 
         // Retrieve item content
         $id = $objItem->id;
-
         $objTemplate->text = function () use ($id): string {
             $strText = '';
             $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio');
@@ -146,12 +188,10 @@ abstract class ModulePortfolios extends Module
 
             return $strText;
         };
-
         $objTemplate->hasText = static fn(): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
 
         // Retrieve item attributes
         $objTemplate->blnDisplayAttributes = (bool)$this->wem_portfolio_displayAttributes;
-
         if ((bool)$this->wem_portfolio_displayAttributes && null !== $this->wem_portfolio_attributes) {
             $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->wem_portfolio_attributes));
         }
