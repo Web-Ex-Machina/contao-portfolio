@@ -21,6 +21,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'keys' => [
                 'id' => 'primary',
                 'pid' => 'index',
+                'slug' => 'index',
             ],
         ],
         'onload_callback' => [
