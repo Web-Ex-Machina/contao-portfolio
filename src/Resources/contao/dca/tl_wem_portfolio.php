@@ -230,7 +230,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         'pictures' => [
             'exclude' => true,
             'inputType' => 'fileTree',
-            'eval' => ['files' => true, 'extensions' => Config::get('validImageTypes'), 'multiple' => true, 'fieldType' => 'checkbox', 'orderField' => 'orderPictures'],
+            'eval' => ['files' => true, 'extensions' => Config::get('validImageTypes'), 'multiple' => true, 'fieldType' => 'checkbox', 'orderField' => 'orderPictures', 'tl_class'=> 'clr'],
             'sql' => 'blob NULL',
         ],
         'orderPictures' => [

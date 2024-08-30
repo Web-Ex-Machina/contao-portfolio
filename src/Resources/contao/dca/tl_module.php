@@ -93,7 +93,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_template'] = [
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_displayAttributes'] = [
     'exclude' => true,
     'inputType' => 'checkbox',
-    'eval' => ['doNotCopy' => true, 'tl_class' => 'clr'],
+    'eval' => ['doNotCopy' => true, 'tl_class' => 'clr', 'submitOnChange' => true],
     'sql' => "char(1) NOT NULL default ''",
 ];
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_attributes'] = [
