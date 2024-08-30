@@ -28,22 +28,22 @@ class PortfolioInsertTagListener
         }
 
         // Check if we want a specific portfolio or the current one
-        $varOffer = (3 === count($chunks)) ? $chunks[2] : Input::get('auto_item');
-        $objOffer = Portfolio::findByIdOrCode($varOffer);
+        $varItem = (3 === count($chunks)) ? $chunks[2] : Input::get('auto_item');
+        $objItem = Portfolio::findByIdOrSlug($varItem);
 
-        // If objOffer does not exist, return empty string
+        // If objItem does not exist, return empty string
         // We can't throw an Exception that can break a website just because an ID is wrong, can't we?
-        if (null === $objOffer) {
+        if (null === $objItem) {
             return '';
         }
 
         // Specific behavior for singleSRC
         if ('singleSRC' === $chunks[1]) {
-            $objFile = FilesModel::findByUuid($objOffer->{$chunks[1]});
+            $objFile = FilesModel::findByUuid($objItem->{$chunks[1]});
 
             return $objFile->path;
         }
         
-        return $objOffer->getAttributeValue($chunks[1]) ?: $objOffer->{$chunks[1]};
+        return $objItem->getAttributeValue($chunks[1]) ?: $objItem->{$chunks[1]};
     }
 }

@@ -165,7 +165,7 @@ class Portfolio extends Model
      *
      * @return \Contao\Model|static model or null if the result is empty
      */
-    public static function findByIdOrCode($varId, array $arrOptions = [])
+    public static function findByIdOrSlug($varId, array $arrOptions = [])
     {
         $isCode = !preg_match('/^[1-9]\d*$/', $varId);
 

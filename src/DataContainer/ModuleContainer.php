@@ -32,7 +32,7 @@ class ModuleContainer extends Backend
      */
     public function getTemplates(): array
     {
-        return $this->getTemplateGroup('portfolio_');
+        return $this->getTemplateGroup('wem_portfolio_item_');
     }
 
     /**
@@ -107,7 +107,7 @@ class ModuleContainer extends Backend
     public function getFiltersModules(): array
     {
         $arrModules = [];
-        $objModule = $this->Database->execute('SELECT id, name FROM tl_module WHERE type = "offersfilters" ORDER BY name');
+        $objModule = $this->Database->execute('SELECT id, name FROM tl_module WHERE type = "wem_portfolio_filters" ORDER BY name');
 
         if (!$objModule || 0 === $objModule->count()) {
             return $arrModules;

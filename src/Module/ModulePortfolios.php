@@ -46,7 +46,7 @@ abstract class ModulePortfolios extends Module
 
                         $objItem = Portfolio::findByPk(Input::post('portfolio'));
 
-                        $this->portfolio_template = 'portfolio_details';
+                        $this->wem_portfolio_template = 'portfolio_details';
                         echo System::getContainer()->get('contao.insert_tag')->replace($this->parsePortfolio($objItem));
                         exit;
                     default:
@@ -94,7 +94,7 @@ abstract class ModulePortfolios extends Module
      */
     protected function parsePortfolio(Portfolio $objItem, bool $blnAddArchive = false, string $strClass = '', int $intCount = 0): string
     {
-        $objTemplate = new FrontendTemplate($this->portfolio_template);
+        $objTemplate = new FrontendTemplate($this->wem_portfolio_template);
         $objTemplate->setData($objItem->row());
 
         if ('' !== $objItem->cssClass) {
@@ -150,14 +150,14 @@ abstract class ModulePortfolios extends Module
         $objTemplate->hasText = static fn(): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
 
         // Retrieve item attributes
-        $objTemplate->blnDisplayAttributes = (bool)$this->portfolio_displayAttributes;
+        $objTemplate->blnDisplayAttributes = (bool)$this->wem_portfolio_displayAttributes;
 
-        if ((bool)$this->portfolio_displayAttributes && null !== $this->portfolio_attributes) {
-            $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->portfolio_attributes));
+        if ((bool)$this->wem_portfolio_displayAttributes && null !== $this->wem_portfolio_attributes) {
+            $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->wem_portfolio_attributes));
         }
 
         // Notice the template if we want to display the text
-        if ($this->portfolio_displayTeaser) {
+        if ($this->wem_portfolio_displayTeaser) {
             $objTemplate->blnDisplayText = true;
         } else {
             $objTemplate->detailsUrl = $this->addToUrl('seeDetails=' . $objItem->id, true, ['portfolio']);

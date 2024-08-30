@@ -18,7 +18,7 @@ class GenerateBreadcrumbListener
     public function onGenerateBreadcrumb(array $items, Module $module): array
     {
         // Check if we have an auto_item and if it's an Offer
-        if (Input::get('auto_item') && $objOffer = Portfolio::findByIdOrCode(Input::get('auto_item'))) {
+        if (Input::get('auto_item') && $objOffer = Portfolio::findByIdOrSlug(Input::get('auto_item'))) {
             array_pop($items);
 
             $items[] = [

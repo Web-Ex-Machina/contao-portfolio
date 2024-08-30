@@ -88,8 +88,8 @@ class ModulePortfoliosList extends ModulePortfolios
         }
 
         // Retrieve filters
-        if ($this->portfolio_addFilters) {
-            $this->Template->filters = $this->getFrontendModule($this->portfolio_filters_module);
+        if ($this->wem_portfolio_addFilters) {
+            $this->Template->filters = $this->getFrontendModule($this->wem_portfolio_filters_module);
         }
 
         // Get the total number of items
@@ -133,6 +133,7 @@ class ModulePortfoliosList extends ModulePortfolios
         }
 
         $objItems = Portfolio::findItems($this->config, ($this->limit ?: 0), ($this->offset ?: 0));
+
 
         // Add the items
         if ($objItems instanceof Collection) {

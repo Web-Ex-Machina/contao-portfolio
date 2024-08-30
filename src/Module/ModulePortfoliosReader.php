@@ -60,7 +60,7 @@ class ModulePortfoliosReader extends ModulePortfolios
             return $objTemplate->parse();
         }
 
-        $this->portfolio = Portfolio::findByIdOrCode(Input::get('auto_item'));
+        $this->portfolio = Portfolio::findByIdOrSlug(Input::get('auto_item'));
 
         if (!$this->portfolio) {
             throw new PageNotFoundException('Page not found: ' . Environment::get('uri'));
