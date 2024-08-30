@@ -13,7 +13,7 @@ use WEM\PortfolioBundle\Model\Portfolio;
 class GenerateBreadcrumbListener
 {
     /**
-     * @Hook("replaceInsertTags", priority=100)
+     * @Hook("generateBreadcrumb", priority=100)
      */
     public function onGenerateBreadcrumb(array $items, Module $module): array
     {

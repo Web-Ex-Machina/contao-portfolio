@@ -62,14 +62,6 @@ class ModulePortfoliosFilters extends ModulePortfolios
         // Catch Ajax requets
         $this->catchAjaxRequests();
 
-        // assets
-        $strVersion = $this->getCustomPackageVersion('webexmachina/contao-portfolios');
-        $objCssCombiner = new Combiner();
-        $objCssCombiner->add('bundles/portfolios/css/styles.scss', $strVersion);
-
-        $GLOBALS['TL_HEAD'][] = sprintf('<link rel="stylesheet" href="%s">', $objCssCombiner->getCombinedFile());
-        $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/portfolios/js/scripts.js';
-
         // Add pids
         $this->config = ['pid' => $this->wem_portfolio_feeds, 'published' => 1];
 

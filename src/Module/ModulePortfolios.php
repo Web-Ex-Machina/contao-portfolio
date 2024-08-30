@@ -40,13 +40,13 @@ abstract class ModulePortfolios extends Module
             try {
                 switch (Input::post('action')) {
                     case 'seeDetails':
-                        if (!Input::post('offer')) {
-                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['argumentMissing'], 'offer'));
+                        if (!Input::post('portfolio')) {
+                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['argumentMissing'], 'portfolio'));
                         }
 
-                        $objItem = Portfolio::findByPk(Input::post('offer'));
+                        $objItem = Portfolio::findByPk(Input::post('portfolio'));
 
-                        $this->offer_template = 'offer_details';
+                        $this->portfolio_template = 'portfolio_details';
                         echo System::getContainer()->get('contao.insert_tag')->replace($this->parsePortfolio($objItem));
                         exit;
                     default:
@@ -156,12 +156,6 @@ abstract class ModulePortfolios extends Module
             $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->portfolio_attributes));
         }
 
-        // Notice the template if we want/can display apply button
-        if ($this->blnDisplayApplyButton) {
-            $objTemplate->blnDisplayApplyButton = true;
-            $objTemplate->applyUrl = $this->addToUrl('apply=' . $objItem->id, true, ['portfolio']);
-        }
-
         // Notice the template if we want to display the text
         if ($this->portfolio_displayTeaser) {
             $objTemplate->blnDisplayText = true;
@@ -176,27 +170,5 @@ abstract class ModulePortfolios extends Module
         }
 
         return $objTemplate->parse();
-    }
-
-    /**
-     * Get a package's version.
-     *
-     * @param string $package The package name
-     *
-     * @return string|null The package version if found, null otherwise
-     */
-    protected function getCustomPackageVersion(string $package): ?string
-    {
-
-        $packages = json_decode(file_get_contents('./../vendor/composer/installed.json'));
-
-        foreach ($packages->packages as $p) {
-            $p = (array)$p;
-            if ($package === $p['name']) {
-                return $p['version'];
-            }
-        }
-
-        return null;
     }
 }

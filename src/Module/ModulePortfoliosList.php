@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Module;
 
 use Contao\BackendTemplate;
-use Contao\Combiner;
 use Contao\Config;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Environment;
@@ -50,11 +49,6 @@ class ModulePortfoliosList extends ModulePortfolios
      */
     protected function compile(): void
     {
-        // If we have setup a form, allow module to use it later
-        if ($this->portfolio_applicationForm) {
-            $this->blnDisplayApplyButton = true;
-        }
-
         global $objPage;
         $this->limit = null;
         $this->offset = (int)$this->skipFirst;
@@ -67,42 +61,35 @@ class ModulePortfoliosList extends ModulePortfolios
         $this->Template->items = [];
         $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
 
-        // assets
-        $strVersion = $this->getCustomPackageVersion('webexmachina/contao-portfolios');
-        $objCssCombiner = new Combiner();
-        $objCssCombiner->add('bundles/portfolios/css/styles.scss', $strVersion);
-
-        $GLOBALS['TL_HEAD'][] = sprintf('<link rel="stylesheet" href="%s">', $objCssCombiner->getCombinedFile());
-        $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/portfolios/js/scripts.js';
-
         // Add pids
         $this->config = ['pid' => $this->wem_portfolio_feeds, 'published' => 1];
+
         // Retrieve filters
         if ($_GET !== [] || $_POST !== []) {
             foreach ($_GET as $f => $v) {
-                if (false === strpos($f, 'offer_filter_')) {
+                if (false === strpos($f, 'portfolio_filter_')) {
                     continue;
                 }
 
                 if (Input::get($f)) {
-                    $this->config[str_replace('offer_filter_', '', $f)] = Input::get($f);
+                    $this->config[str_replace('portfolio_filter_', '', $f)] = Input::get($f);
                 }
             }
 
             foreach (array_keys($_POST) as $f) {
-                if (false === strpos($f, 'offer_filter_')) {
+                if (false === strpos($f, 'portfolio_filter_')) {
                     continue;
                 }
 
                 if (Input::post($f)) {
-                    $this->config[str_replace('offer_filter_', '', $f)] = Input::post($f);
+                    $this->config[str_replace('portfolio_filter_', '', $f)] = Input::post($f);
                 }
             }
         }
 
         // Retrieve filters
-        if ($this->offer_addFilters) {
-            $this->Template->filters = $this->getFrontendModule($this->offer_filters_module);
+        if ($this->portfolio_addFilters) {
+            $this->Template->filters = $this->getFrontendModule($this->portfolio_filters_module);
         }
 
         // Get the total number of items
