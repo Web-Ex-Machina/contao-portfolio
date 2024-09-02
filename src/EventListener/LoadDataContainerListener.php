@@ -81,9 +81,24 @@ class LoadDataContainerListener
             $data['eval']['mandatory'] = true;
         }
 
+        // rte settings
+        if ($row['rte']) {
+            $data['eval']['rte'] = $row['rte'];
+        }
+
+        // Class settings
+        if ($row['explanation']) {
+            $data['explanation'] = $row['explanation'];
+        }
+
         // Class settings
         if ($row['class']) {
             $data['eval']['tl_class'] = $row['class'];
+        }
+
+        // Allow helpwizard
+        if ($row['helpwizard']) {
+            $data['eval']['helpwizard'] = true;
         }
 
         switch ($row['type']) {
@@ -102,6 +117,16 @@ class LoadDataContainerListener
                     $data['default'] = '';
                     $data['sql']['default'] = '';
                 }
+
+                break;
+
+            case 'textarea':
+                // Allow HTML settings
+                if ($row['allowHtml']) {
+                    $data['eval']['allowHtml'] = true;
+                }
+
+                $data['sql'] = 'mediumtext NULL';
 
                 break;
 
