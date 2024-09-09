@@ -39,7 +39,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
 ';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '
     {title_legend},name,headline,type;
-    {config_legend},wem_portfolio_feeds,overviewPage,customLabel;
+    {config_legend},wem_portfolio_feeds,wem_portfolio_displayAttributes,overviewPage,customLabel;
     {template_legend:hide},wem_portfolio_template,customTpl;
     {image_legend:hide},imgSize;
     {protected_legend:hide},protected;
