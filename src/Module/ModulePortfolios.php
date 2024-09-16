@@ -15,14 +15,12 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Module;
 
-use Codefog\HasteBundle\Util\InsertTag;
 use Contao\Config;
 use Contao\ContentModel;
 use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Module;
-use Contao\RequestToken;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -47,7 +45,7 @@ abstract class ModulePortfolios extends Module
                         $objItem = Portfolio::findByPk(Input::post('offer'));
 
                         $this->offer_template = 'offer_details';
-                        echo System::getContainer()->get('contao.insert_tag')->replace($this->parsePortfolio($objItem));
+                        echo System::getContainer()->get('contao.insert_tag.parser')->replace($this->parsePortfolio($objItem));
                         exit;
                     default:
                         throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['unknownRequest'], Input::post('action')));

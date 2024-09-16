@@ -60,6 +60,9 @@ class Portfolio extends Model
     public static function formatColumns(array $arrConfig): array
     {
         $arrColumns = [];
+
+        $arrConfig['lang'] = System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale();
+
         foreach ($arrConfig as $c => $v) {
             $arrColumns = array_merge($arrColumns, static::formatStatement($c, $v));
         }

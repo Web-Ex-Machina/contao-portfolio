@@ -10,7 +10,6 @@ use WEM\PortfolioBundle\DataContainer\PortfolioContainer;
 System::loadLanguageFile('tl_content');
 
 $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
-    // Config
     'config' => [
         'dataContainer' => 'Table',
         'ptable' => 'tl_wem_portfolio_feed',
@@ -21,14 +20,13 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'keys' => [
                 'id' => 'primary',
                 'pid' => 'index',
+                'slug,lang' => 'index',
             ],
         ],
         'onload_callback' => [
             [PortfolioContainer::class, 'updatePalettes'],
         ]
     ],
-
-    // List
     'list' => [
         'sorting' => [
             'mode' => 4,
@@ -74,25 +72,19 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             ],
         ],
     ],
-
-    // Palettes
     'palettes' => [
         '__selector__' => ['addImage', 'overwriteMeta'],
         'default' => '
-            {title_legend},title,slug,date;
+            {title_legend},title,slug,date,lang;
             {content_legend},teaser;
             {media_legend},addImage,pictures;
             {publish_legend},published,start,stop
         ',
     ],
-
-    // Subpalettes
     'subpalettes' => [
         'addImage' => 'singleSRC,size,floating,imagemargin,fullsize,overwriteMeta',
         'overwriteMeta' => 'alt,imageTitle,imageUrl,caption'
     ],
-
-    // Fields
     'fields' => [
         'id' => [
             'sql' => 'int(10) unsigned NOT NULL auto_increment',
@@ -112,6 +104,15 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'default' => time(),
             'flag' => 8,
             'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'lang' => [
+            'exclude' => true,
+            'search' => true,
+            'sorting' => true,
+            'inputType' => 'select',
+            'options' => System::getContainer()->get('contao.intl.locales')->getEnabledLocales(),
+            'eval' => ['mandatory' => true, 'tl_class' => 'w50', 'maxlength' => 5],
+            'sql' => "char(5) NOT NULL default ''",
         ],
         'slug' => [
             'exclude' => true,
