@@ -13,12 +13,12 @@ use WEM\PortfolioBundle\Model\Portfolio;
 class GenerateBreadcrumbListener
 {
     /**
-     * @Hook("replaceInsertTags", priority=100)
+     * @Hook("generateBreadcrumb", priority=100)
      */
     public function onGenerateBreadcrumb(array $items, Module $module): array
     {
         // Check if we have an auto_item and if it's an Offer
-        if (Input::get('auto_item') && $objOffer = Portfolio::findByIdOrCode(Input::get('auto_item'))) {
+        if (Input::get('auto_item') && $objOffer = Portfolio::findByIdOrSlug(Input::get('auto_item'))) {
             array_pop($items);
 
             $items[] = [

@@ -140,11 +140,11 @@ class PortfolioContainer extends Backend
     public function updatePalettes(DataContainer $dc): void
     {
         if ($dc->id && 'edit' == Input::get('act')) {
-            $objJob = Portfolio::findByPk($dc->id);
-            $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $objJob->pid]);
+            $objItem = Portfolio::findByPk($dc->id);
+            $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $objItem->pid]);
 
             if (!$objAttributes || 0 == $objAttributes->count()) {
-                exit();
+                return;
             }
 
             $objPalette = PaletteManipulator::create();

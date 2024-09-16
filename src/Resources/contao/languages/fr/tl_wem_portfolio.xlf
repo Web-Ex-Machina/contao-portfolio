@@ -3,10 +3,6 @@
     <file datatype="php" original="system/modules/wem-portfolio/languages/en/tl_wem_portfolio.php" source-language="en"
           target-language="fr">
         <body>
-            <trans-unit id="tl_wem_portfolio">
-                <source>See feed items</source>
-                <target>Voir les éléments du flux</target>
-            </trans-unit>
             <trans-unit id="tl_wem_portfolio.slug.0">
                 <source>slug</source>
                 <target>Permalien</target>

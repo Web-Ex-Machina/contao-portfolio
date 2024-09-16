@@ -69,11 +69,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
 
     // Subpalettes
     'subpalettes' => [
-        'type_text' => 'value,isFilter,isAlertCondition',
-        'type_select' => 'options,multiple,chosen,isFilter,isAlertCondition',
+        'type_text' => 'value,isFilter',
+        'type_textarea' => 'allowHtml,helpwizard,rte,explanation',
+        'type_select' => 'options,multiple,chosen,isFilter',
         'type_picker' => 'fkey',
         'type_fileTree' => 'multiple,filesOnly,fieldType,extensions',
-        'type_listWizard' => 'multiple,allowHtml,maxlength,isFilter,isAlertCondition',
+        'type_listWizard' => 'multiple,allowHtml,maxlength,isFilter',
     ],
 
     // Fields
@@ -179,6 +180,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50 cbx'],
             'sql' => "char(1) NOT NULL default ''",
         ],
+        'helpwizard' => [
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50 cbx'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
         'mandatory' => [
             'exclude' => true,
             'filter' => true,
@@ -186,13 +193,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'sql' => "char(1) NOT NULL default ''",
         ],
         'isFilter' => [
-            'exclude' => true,
-            'filter' => true,
-            'inputType' => 'checkbox',
-            'eval' => ['tl_class' => 'w50 cbx'],
-            'sql' => "char(1) NOT NULL default ''",
-        ],
-        'isAlertCondition' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'checkbox',
@@ -215,6 +215,18 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'sql' => ['name' => 'insertType', 'type' => 'string', 'length' => 128, 'default' => 'POSITION_APPEND'],
         ],
         'class' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'rte' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'explanation' => [
             'exclude' => true,
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],

@@ -60,7 +60,7 @@ class ModulePortfoliosReader extends ModulePortfolios
             return $objTemplate->parse();
         }
 
-        $this->portfolio = Portfolio::findByIdOrCode(Input::get('auto_item'));
+        $this->portfolio = Portfolio::findByIdOrSlug(Input::get('auto_item'));
 
         if (!$this->portfolio) {
             throw new PageNotFoundException('Page not found: ' . Environment::get('uri'));
@@ -74,12 +74,6 @@ class ModulePortfoliosReader extends ModulePortfolios
      */
     protected function compile(): void
     {
-
-        // If we have setup a form, allow module to use it later
-        if ($this->portfolio_applicationForm) {
-            $this->blnDisplayApplyButton = true;
-        }
-
         if ($this->overviewPage) {
             $this->Template->referer = PageModel::findById($this->overviewPage)->getFrontendUrl();
             $this->Template->back = $this->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
@@ -92,14 +86,6 @@ class ModulePortfoliosReader extends ModulePortfolios
 
         $objPage->pageTitle = $this->portfolio->title . ' | ' . $this->portfolio->slug;
         $objPage->description = StringUtil::substr($this->portfolio->teaser, 300);
-
-        // assets
-        $strVersion = $this->getCustomPackageVersion('webexmachina/contao-portfolios');
-        $objCssCombiner = new Combiner();
-        $objCssCombiner->add('bundles/portfolios/css/styles.scss', $strVersion);
-
-        $GLOBALS['TL_HEAD'][] = sprintf('<link rel="stylesheet" href="%s">', $objCssCombiner->getCombinedFile());
-        $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/portfolios/js/scripts.js';
 
         // Add the articles
         $this->Template->portfolio = $this->parsePortfolio($this->portfolio);

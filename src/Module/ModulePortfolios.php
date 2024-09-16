@@ -22,6 +22,7 @@ use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Module;
 use Contao\System;
+use Contao\FilesModel;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -38,13 +39,13 @@ abstract class ModulePortfolios extends Module
             try {
                 switch (Input::post('action')) {
                     case 'seeDetails':
-                        if (!Input::post('offer')) {
-                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['argumentMissing'], 'offer'));
+                        if (!Input::post('portfolio')) {
+                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['argumentMissing'], 'portfolio'));
                         }
 
-                        $objItem = Portfolio::findByPk(Input::post('offer'));
+                        $objItem = Portfolio::findByPk(Input::post('portfolio'));
 
-                        $this->offer_template = 'offer_details';
+                        $this->wem_portfolio_template = 'portfolio_details';
                         echo System::getContainer()->get('contao.insert_tag.parser')->replace($this->parsePortfolio($objItem));
                         exit;
                     default:
@@ -92,7 +93,7 @@ abstract class ModulePortfolios extends Module
      */
     protected function parsePortfolio(Portfolio $objItem, bool $blnAddArchive = false, string $strClass = '', int $intCount = 0): string
     {
-        $objTemplate = new FrontendTemplate($this->portfolio_template);
+        $objTemplate = new FrontendTemplate($this->wem_portfolio_template);
         $objTemplate->setData($objItem->row());
 
         if ('' !== $objItem->cssClass) {
@@ -109,7 +110,7 @@ abstract class ModulePortfolios extends Module
         $objTemplate->datetime = date('Y-m-d\TH:i:sP', (int)$objItem->date);
 
         // Add an image
-        if ($objItem->addImage) {
+        if ($objItem->singleSRC) {
             $figure = System::getContainer()
                 ->get('contao.image.studio')
                 ->createFigureBuilder()
@@ -123,6 +124,49 @@ abstract class ModulePortfolios extends Module
             }
         }
 
+        // Retrieve item pictures
+        if ($objItem->pictures = StringUtil::deserialize($objItem->pictures)) {
+            $objFiles = FilesModel::findMultipleByUuids($objItem->pictures);
+            $images = [];
+            while ($objFiles->next()) {
+                $images[$objFiles->path] = [
+                    'id' => $objFiles->id,
+                    'uuid' => $objFiles->uuid,
+                    'name' => $objFiles->basename,
+                    'singleSRC' => $objFiles->path,
+                    'filesModel' => $objFiles->current(),
+                ];
+            }
+
+            if ('' !== $objItem->orderPictures) {
+                $t = StringUtil::deserialize($objItem->orderPictures);
+                if (!empty($t) && \is_array($t)) {
+                    // Remove all values
+                    $arrOrder = array_map(function (): void {
+                    }, array_flip($t));
+
+                    // Move the matching elements to their position in $arrOrder
+                    foreach ($images as $k => $v) {
+                        if (\array_key_exists($v['uuid'], $arrOrder)) {
+                            $arrOrder[$v['uuid']] = $v;
+                            unset($images[$k]);
+                        }
+                    }
+
+                    // Append the left-over images at the end
+                    if (!empty($images)) {
+                        $arrOrder = array_merge($arrOrder, array_values($images));
+                    }
+
+                    // Remove empty (unreplaced) entries
+                    $images = array_values(array_filter($arrOrder));
+                    unset($arrOrder);
+                }
+            }
+
+            $objTemplate->pictures = $images;
+        }
+
         // Retrieve item teaser
         if ($objItem->teaser) {
             $objTemplate->hasTeaser = true;
@@ -131,7 +175,6 @@ abstract class ModulePortfolios extends Module
 
         // Retrieve item content
         $id = $objItem->id;
-
         $objTemplate->text = function () use ($id): string {
             $strText = '';
             $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio');
@@ -144,24 +187,16 @@ abstract class ModulePortfolios extends Module
 
             return $strText;
         };
-
         $objTemplate->hasText = static fn(): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
 
         // Retrieve item attributes
-        $objTemplate->blnDisplayAttributes = (bool)$this->portfolio_displayAttributes;
-
-        if ((bool)$this->portfolio_displayAttributes && null !== $this->portfolio_attributes) {
-            $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->portfolio_attributes));
-        }
-
-        // Notice the template if we want/can display apply button
-        if ($this->blnDisplayApplyButton) {
-            $objTemplate->blnDisplayApplyButton = true;
-            $objTemplate->applyUrl = $this->addToUrl('apply=' . $objItem->id, true, ['portfolio']);
+        $objTemplate->blnDisplayAttributes = (bool)$this->wem_portfolio_displayAttributes;
+        if ((bool)$this->wem_portfolio_displayAttributes && null !== $this->wem_portfolio_attributes) {
+            $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->wem_portfolio_attributes));
         }
 
         // Notice the template if we want to display the text
-        if ($this->portfolio_displayTeaser) {
+        if ($this->wem_portfolio_displayTeaser) {
             $objTemplate->blnDisplayText = true;
         } else {
             $objTemplate->detailsUrl = $this->addToUrl('seeDetails=' . $objItem->id, true, ['portfolio']);
@@ -174,27 +209,5 @@ abstract class ModulePortfolios extends Module
         }
 
         return $objTemplate->parse();
-    }
-
-    /**
-     * Get a package's version.
-     *
-     * @param string $package The package name
-     *
-     * @return string|null The package version if found, null otherwise
-     */
-    protected function getCustomPackageVersion(string $package): ?string
-    {
-
-        $packages = json_decode(file_get_contents('./../vendor/composer/installed.json'));
-
-        foreach ($packages->packages as $p) {
-            $p = (array)$p;
-            if ($package === $p['name']) {
-                return $p['version'];
-            }
-        }
-
-        return null;
     }
 }

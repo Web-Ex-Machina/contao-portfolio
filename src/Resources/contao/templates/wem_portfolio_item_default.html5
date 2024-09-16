@@ -1,3 +1,4 @@
+<?php dump($this->getData()); ?>
 <div class="portfolio_item block-card  block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article" data-maxlines="3" data-preset="">
     <<?= $this->jumpTo ? 'a href="' . $this->jumpTo . '" title="' . $GLOBALS['TL_LANG']['MSC']['more'] . '"' : 'div' ?>
     class="block-card__wrapper">

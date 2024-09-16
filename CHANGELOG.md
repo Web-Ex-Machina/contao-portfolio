@@ -1,8 +1,10 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
-## 3.X - 2024-08-26
+## 3.1 - ???
+- ADDED - Add a new textarea attribute that allows you to use a tinyMCE or a HTML field as attribute
 
+## 3.0 - 2024-08-26
 - Complete refactor of attribute logic
 - bundle `webexmachina/contao-utils` upgraded to `^1.0`
 - ADDED - Add a new tag "countoffers", returns the number of published portfolio in one or several PIDs
