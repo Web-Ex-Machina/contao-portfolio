@@ -77,6 +77,14 @@
                 <source>Check to make this attribute available for list filters</source>
                 <target>Cocher pour rendre cet attribut utilisable comme filtre de liste</target>
             </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed_attribute.filterLabel.0">
+                <source>Filter label</source>
+                <target>Label du filtre</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed_attribute.filterLabel.1">
+                <source>Enter the attribute label</source>
+                <target>Indiquez le label de l'attribut</target>
+            </trans-unit>
             <trans-unit id="tl_wem_portfolio_feed_attribute.isAlertCondition.0">
                 <source>Alert condition</source>
                 <target>Condition d'alerte</target>

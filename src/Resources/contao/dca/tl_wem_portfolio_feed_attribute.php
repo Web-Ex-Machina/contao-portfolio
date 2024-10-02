@@ -59,7 +59,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
 
     // Palettes
     'palettes' => [
-        '__selector__' => ['type'],
+        '__selector__' => ['type', 'isFilter'],
         'default' => '
             {title_legend},name,label;
             {field_legend},type,mandatory;
@@ -75,6 +75,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
         'type_picker' => 'fkey',
         'type_fileTree' => 'multiple,filesOnly,fieldType,extensions',
         'type_listWizard' => 'multiple,allowHtml,maxlength,isFilter',
+        'isFilter' => 'filterLabel',
     ],
 
     // Fields
@@ -198,6 +199,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'inputType' => 'checkbox',
             'eval' => ['tl_class' => 'w50 cbx'],
             'sql' => "char(1) NOT NULL default ''",
+        ],
+        'filterLabel' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'insertInDca' => [
             'exclude' => true,
