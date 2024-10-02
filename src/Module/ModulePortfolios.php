@@ -15,15 +15,14 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Module;
 
-use Codefog\HasteBundle\Util\InsertTag;
 use Contao\Config;
 use Contao\ContentModel;
 use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Module;
-use Contao\RequestToken;
 use Contao\System;
+use Contao\FilesModel;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -47,7 +46,7 @@ abstract class ModulePortfolios extends Module
                         $objItem = Portfolio::findByPk(Input::post('portfolio'));
 
                         $this->wem_portfolio_template = 'portfolio_details';
-                        echo System::getContainer()->get('contao.insert_tag')->replace($this->parsePortfolio($objItem));
+                        echo System::getContainer()->get('contao.insert_tag.parser')->replace($this->parsePortfolio($objItem));
                         exit;
                     default:
                         throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['unknownRequest'], Input::post('action')));
@@ -126,21 +125,21 @@ abstract class ModulePortfolios extends Module
         }
 
         // Retrieve item pictures
-        if ($objItem->pictures = \StringUtil::deserialize($objItem->pictures)) {
-            $objFiles = \FilesModel::findMultipleByUuids($objItem->pictures);
+        if ($objItem->pictures = StringUtil::deserialize($objItem->pictures)) {
+            $objFiles = FilesModel::findMultipleByUuids($objItem->pictures);
             $images = [];
             while ($objFiles->next()) {
                 $images[$objFiles->path] = [
                     'id' => $objFiles->id,
                     'uuid' => $objFiles->uuid,
-                    'name' => $objFile->basename,
+                    'name' => $objFiles->basename,
                     'singleSRC' => $objFiles->path,
                     'filesModel' => $objFiles->current(),
                 ];
             }
 
             if ('' !== $objItem->orderPictures) {
-                $t = \StringUtil::deserialize($objItem->orderPictures);
+                $t = StringUtil::deserialize($objItem->orderPictures);
                 if (!empty($t) && \is_array($t)) {
                     // Remove all values
                     $arrOrder = array_map(function (): void {
