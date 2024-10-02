@@ -85,12 +85,13 @@ class ModulePortfoliosFilters extends ModulePortfolios
             foreach ($filters as $f) {
                 $field = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$f];
                 $fName = sprintf('portfolio_filter_%s%s', $f, $field['eval']['multiple'] ? '[]' : '');
+                $fGet = sprintf('portfolio_filter_%s', $f);
 
                 $filter = [
                     'type' => $field['inputType'],
                     'name' => $fName,
                     'label' => $field['label'][0] ?: $GLOBALS['TL_LANG']['tl_wem_portfolio'][$f]['label'][0],
-                    'value' => Input::get($fName) ?: '',
+                    'value' => Input::get($fGet) ?: '',
                     'options' => [],
                     'multiple' => $field['eval']['multiple'] ?? false,
                 ];
@@ -115,14 +116,14 @@ class ModulePortfoliosFilters extends ModulePortfolios
                                     $filter['options'][$value]['options'][] = [
                                         'value' => $subValue,
                                         'label' => $subLabel,
-                                        'selected' => (null !== Input::get($fName) && (Input::get($fName) === $subValue || (\is_array(Input::get($fName)) && \in_array($subValue, Input::get($fName), true)))),
+                                        'selected' => null !== Input::get($fGet) && (Input::get($fGet) === $subValue || (\is_array(Input::get($fGet)) && \in_array($subValue, Input::get($fGet), true))),
                                     ];
                                 }
                             } else {
                                 $filter['options'][] = [
                                     'value' => $value,
                                     'label' => $label,
-                                    'selected' => (null !== Input::get($fName) && (Input::get($fName) === $value || (\is_array(Input::get($fName)) && \in_array($value, Input::get($fName), true)))),
+                                    'selected' => null !== Input::get($fGet) && (Input::get($fGet) === $value || (\is_array(Input::get($fGet)) && \in_array($value, Input::get($fGet), true))),
                                 ];
                             }
                         }
