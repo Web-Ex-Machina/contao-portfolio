@@ -3,6 +3,7 @@
 
 ## 3.1 - ???
 - ADDED - Add a new textarea attribute that allows you to use a tinyMCE or a HTML field as attribute
+- UPDATED - Few fixes on multiple filters
 
 ## 3.0 - 2024-08-26
 - Complete refactor of attribute logic
