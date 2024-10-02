@@ -9,6 +9,7 @@ use Contao\Combiner;
 use Contao\Input;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -83,6 +84,8 @@ class ModulePortfoliosFilters extends ModulePortfolios
 
         if (\is_array($filters) && $filters !== []) {
             foreach ($filters as $f) {
+                $objFeedAttribute = PortfolioFeedAttribute::findOneByName($f);
+
                 $field = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$f];
                 $fName = sprintf('portfolio_filter_%s%s', $f, $field['eval']['multiple'] ? '[]' : '');
                 $fGet = sprintf('portfolio_filter_%s', $f);
@@ -90,7 +93,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
                 $filter = [
                     'type' => $field['inputType'],
                     'name' => $fName,
-                    'label' => $field['label'][0] ?: $GLOBALS['TL_LANG']['tl_wem_portfolio'][$f]['label'][0],
+                    'label' => $objFeedAttribute->filterLabel ?: $objFeedAttribute->label,
                     'value' => Input::get($fGet) ?: '',
                     'options' => [],
                     'multiple' => $field['eval']['multiple'] ?? false,
