@@ -33,7 +33,7 @@ ArrayUtil::arrayInsert(
     [
         'wem_portfolio' => [
             'wem_portfolio_feed' => [
-                'tables' => ['tl_wem_portfolio_feed', 'tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_content'],
+                'tables' => ['tl_wem_portfolio_feed', 'tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_wem_portfolio_feed_attribute_l10n', 'tl_content'],
             ],
         ],
     ]
@@ -63,6 +63,7 @@ ArrayUtil::arrayInsert(
 /*
  * Models
  */
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_feed_attribute_l10n'] = Model\PortfolioFeedAttributeL10n::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_feed_attribute'] = Model\PortfolioFeedAttribute::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_feed'] = Model\PortfolioFeed::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio'] = Model\Portfolio::class;

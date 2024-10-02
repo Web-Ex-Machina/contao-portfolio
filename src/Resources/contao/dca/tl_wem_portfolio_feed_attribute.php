@@ -9,6 +9,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
     'config' => [
         'dataContainer' => 'Table',
         'ptable' => 'tl_wem_portfolio_feed',
+        'ctable' => ['tl_wem_portfolio_feed_attribute_l10n'],
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -63,7 +64,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
         'default' => '
             {title_legend},name,label;
             {field_legend},type,mandatory;
-            {design_legend},insertInDca,insertType,class
+            {design_legend},insertInDca,insertType,class;
+            {l10n_legend},translations
         ',
     ],
 
@@ -238,6 +240,21 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
             'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'translations' => [
+            'inputType' => 'dcaWizard',
+            'foreignTable' => 'tl_wem_portfolio_feed_attribute_l10n',
+            'foreignField' => 'pid',
+            'params' => [
+                'do' => 'wem_portfolio_feed',
+            ],
+            'eval' => [
+                'fields' => ['language', 'label', 'value'],
+                'orderField' => 'language ASC',
+                'showOperations' => true,
+                'operations' => ['edit', 'delete'],
+                'tl_class' => 'clr',
+            ],
         ],
     ],
 ];
