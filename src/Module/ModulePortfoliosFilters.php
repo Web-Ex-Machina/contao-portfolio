@@ -93,7 +93,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
                 $filter = [
                     'type' => $field['inputType'],
                     'name' => $fName,
-                    'label' => $objFeedAttribute->filterLabel ?: $objFeedAttribute->label,
+                    'label' => $objFeedAttribute->getL10nLabel('filterLabel') ?: $objFeedAttribute->getL10nLabel('label'),
                     'value' => Input::get($fGet) ?: '',
                     'options' => [],
                     'multiple' => $field['eval']['multiple'] ?? false,

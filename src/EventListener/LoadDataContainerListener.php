@@ -33,7 +33,7 @@ class LoadDataContainerListener
                 }
 
                 while ($objAttributes->next()) {
-                    $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$objAttributes->name] = $this->parseDcaAttribute($objAttributes->row());
+                    $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$objAttributes->name] = $this->parseDcaAttribute($objAttributes->row(), $objAttributes->current());
                 }
             }
         } catch (\Exception $exception) {
@@ -41,11 +41,11 @@ class LoadDataContainerListener
         }
     }
 
-    protected function parseDcaAttribute(array $row): array
+    protected function parseDcaAttribute(array $row, PortfolioFeedAttribute $model): array
     {
         // Generic data
         $data = [
-            'label' => [0 => $row['label'] ?: $row['name']],
+            'label' => [0 => $model->getL10nLabel('label') ?: $row['name']],
             'name' => $row['name'],
             'inputType' => $row['type'],
             'eval' => [],
@@ -88,7 +88,7 @@ class LoadDataContainerListener
 
         // Class settings
         if ($row['explanation']) {
-            $data['explanation'] = $row['explanation'];
+            $data['explanation'] = $model->getL10nLabel('explanation');
         }
 
         // Class settings
@@ -111,7 +111,7 @@ class LoadDataContainerListener
                 $data['sql']['type'] = 'string';
 
                 if ($row['value']) {
-                    $data['default'] = $row['value'];
+                    $data['default'] = $model->getL10nLabel('value');
                     $data['sql']['default'] = $row['value'];
                 } else {
                     $data['default'] = '';
@@ -147,7 +147,7 @@ class LoadDataContainerListener
                 }
 
                 // Options
-                $options = StringUtil::deserialize($row['options']);
+                $options = StringUtil::deserialize($model->getL10nLabel('options'));
                 if (null !== $options) {
                     $data['options'] = [];
                     $blnIsGroup = false;

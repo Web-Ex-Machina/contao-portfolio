@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Model;
 
 use Contao\Model\Collection;
+use Contao\System;
 use WEM\UtilsBundle\Model\Model;
 
 /**
@@ -88,5 +89,26 @@ class PortfolioFeedAttribute extends Model
         }
 
         return $arrColumns;
+    }
+
+    public function getL10nLabel($f, $l = null)
+    {
+        // Set default value
+        $label = $this->{$f};
+
+        // If $l is null, retrieve current language
+        if (null === $l) {
+            $l = System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale();
+        }
+
+        // Try to retrieve a l10n entry for this pid and language 
+        $objL10n = PortfolioFeedAttributeL10n::findItems(['language' => $l, 'pid' => $this->id], 1);
+
+        // If there is no translation available, retrieve the current field
+        if (!$objL10n || !$objL10n->{$f}) {
+            return $label;
+        }
+
+        return $objL10n->{$f};
     }
 }
