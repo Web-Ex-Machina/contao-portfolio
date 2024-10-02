@@ -79,16 +79,17 @@ class ModulePortfoliosFilters extends ModulePortfolios
     {
         // Retrieve and format dropdowns filters
         $filters = StringUtil::deserialize($this->wem_portfolio_filters);
+        $this->loadDataContainer('tl_wem_portfolio');
 
         if (\is_array($filters) && $filters !== []) {
             foreach ($filters as $f) {
-                $field = $GLOBALS['TL_DCA']['tl_wem_offer']['fields'][$f];
+                $field = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$f];
                 $fName = sprintf('portfolio_filter_%s%s', $f, $field['eval']['multiple'] ? '[]' : '');
 
                 $filter = [
                     'type' => $field['inputType'],
                     'name' => $fName,
-                    'label' => $field['label'][0] ?: $GLOBALS['TL_LANG']['tl_wem_offer'][$f][0],
+                    'label' => $field['label'][0] ?: $GLOBALS['TL_LANG']['tl_wem_portfolio'][$f]['label'][0],
                     'value' => Input::get($fName) ?: '',
                     'options' => [],
                     'multiple' => $field['eval']['multiple'] ?? false,
