@@ -87,6 +87,17 @@ class ModulePortfoliosList extends ModulePortfolios
             }
         }
 
+        // Check if we have constraints to adjust config
+        if ($this->wem_portfolio_addConstraints) {
+            $arrWheres = deserialize($this->wem_portfolio_constraints);
+
+            if (!empty($arrWheres)) {
+                foreach($arrWheres as $w) {
+                    $this->config['where'][] = html_entity_decode($w);
+                }
+            }
+        }
+
         // Retrieve filters
         if ($this->wem_portfolio_addFilters) {
             $this->Template->filters = $this->getFrontendModule($this->wem_portfolio_filters_module);

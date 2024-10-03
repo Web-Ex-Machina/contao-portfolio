@@ -98,7 +98,10 @@ class PortfolioFeedAttribute extends Model
 
         // If $l is null, retrieve current language
         if (null === $l) {
-            $l = System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale();
+            $r = System::getContainer()->get('request_stack')->getCurrentRequest();
+            if (null !== $r) {
+                $l = $r->getLocale();
+            }
         }
 
         // Try to retrieve a l10n entry for this pid and language 
