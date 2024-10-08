@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 use Contao\ArrayUtil;
 use Contao\System;
-use WEM\PortfolioBundle\Hooks;
 use WEM\PortfolioBundle\Model;
 use WEM\PortfolioBundle\Module;
 
@@ -67,3 +66,8 @@ $GLOBALS['TL_MODELS']['tl_wem_portfolio_feed_attribute_l10n'] = Model\PortfolioF
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_feed_attribute'] = Model\PortfolioFeedAttribute::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_feed'] = Model\PortfolioFeed::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio'] = Model\Portfolio::class;
+
+$GLOBALS['TL_HOOKS']['changelanguageNavigation'][] = [
+    WEM\PortfolioBundle\EventListener\ChangeLanguageNavigationListener::class,
+    'onChangeLanguageNavigation',
+];
