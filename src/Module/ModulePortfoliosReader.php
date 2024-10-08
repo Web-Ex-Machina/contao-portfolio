@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Module;
 
 use Contao\BackendTemplate;
-use Contao\Combiner;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Environment;
 use Contao\Input;
@@ -46,7 +45,7 @@ class ModulePortfoliosReader extends ModulePortfolios
      *
      * @return string
      */
-    public function generate()
+    public function generate(): string
     {
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
         if ($scopeMatcher->isBackend()) {

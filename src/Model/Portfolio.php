@@ -122,7 +122,7 @@ class Portfolio extends Model
                 if (array_key_exists($strField, $GLOBALS['TL_DCA'][$t]['fields'])) {
                     switch ($GLOBALS['TL_DCA'][$t]['fields'][$strField]['inputType']) {
                         case 'select':
-                            if ($GLOBALS['TL_DCA'][$t]['fields'][$strField]['eval']['multiple']) {
+                            if (isset($GLOBALS['TL_DCA'][$t]['fields'][$strField]['eval']['multiple']))  {
                                 $varValue = is_array($varValue) ? $varValue : [$varValue];
                                 $arrSubColumns = [];
 

@@ -95,7 +95,7 @@ class PortfolioContainer extends Backend
         $objVersions->initialize();
 
         // Trigger the save_callback
-        if (\is_array($GLOBALS['TL_DCA']['tl_wem_portfolio']['fields']['published']['save_callback'])) {
+        if(array_key_exists("save_callback", $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields']['published']??[])){
             foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['fields']['published']['save_callback'] as $callback) {
                 if (\is_array($callback)) {
                     $this->import($callback[0]);
@@ -118,7 +118,7 @@ class PortfolioContainer extends Backend
         }
 
         // Trigger the onsubmit_callback
-        if (\is_array($GLOBALS['TL_DCA']['tl_wem_portfolio']['config']['onsubmit_callback'])) {
+        if(array_key_exists("onsubmit_callback", $GLOBALS['TL_DCA']['tl_wem_portfolio']['config']??[])){
             foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['config']['onsubmit_callback'] as $callback) {
                 if (\is_array($callback)) {
                     $this->import($callback[0]);

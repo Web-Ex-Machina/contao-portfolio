@@ -89,7 +89,7 @@ class ModulePortfoliosList extends ModulePortfolios
 
         // Check if we have constraints to adjust config
         if ($this->wem_portfolio_addConstraints) {
-            $arrWheres = deserialize($this->wem_portfolio_constraints);
+            $arrWheres = StringUtil::deserialize($this->wem_portfolio_constraints);
 
             if (!empty($arrWheres)) {
                 foreach($arrWheres as $w) {
@@ -168,7 +168,7 @@ class ModulePortfoliosList extends ModulePortfolios
      *
      * @throws \ErrorException
      */
-    public function generate()
+    public function generate(): string
     {
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
         if ($scopeMatcher->isBackend()) {
