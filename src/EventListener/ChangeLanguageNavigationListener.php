@@ -26,13 +26,14 @@ class ChangeLanguageNavigationListener
         // The target root page for current event
         $targetRoot = $event->getNavigationItem()->getRootPage();
 
-        $language = $targetRoot->rootLanguage; // The target language
-        $currentPage = $event->getNavigationItem()->getTargetPage();
+        //$language = $targetRoot->rootLanguage; // The target language
+        //$currentPage = $event->getNavigationItem()->getTargetPage();
 
         $item = $this->getPortfolioItem();
-        if (!$item){
+        if (!$item instanceof Portfolio){
            return;
         }
+
         // Pass the new alias to ChangeLanguage
         $event->getUrlParameterBag()->setUrlAttribute("items", $item->slug);
     }

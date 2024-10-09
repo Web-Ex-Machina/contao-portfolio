@@ -85,18 +85,18 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
 
-        'language' => array
-        (
+        'language' =>
+            [
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'select',
-            'eval'                    => array('includeBlankOption'=>true, 'chosen'=>true, 'feEditable'=>true, 'feGroup'=>'personal', 'tl_class'=>'w50'),
+            'eval'                    => ['includeBlankOption'=>true, 'chosen'=>true, 'feEditable'=>true, 'feGroup'=>'personal', 'tl_class'=>'w50'],
             'options_callback' => static function ()
             {
                 return System::getContainer()->get('contao.intl.locales')->getLocales(null, false);
             },
             'sql' => "varchar(64) NOT NULL default ''"
-        ), 'title' => [
+            ], 'title' => [
             'exclude' => true,
             'search' => true,
             'inputType' => 'text',

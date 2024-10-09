@@ -34,7 +34,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['wem_language'] = [
 
 if ('wem_portfolio_feed' === Input::get('do')) {
     foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $key => $value) {
-        if ($key == "__selector__" OR $key == "default" ) {continue;}
+        if ($key == "__selector__" || $key == "default" ) {continue;}
+
         PaletteManipulator::create()
             // apply the field "custom_field" after the field "username"
             ->addLegend("language")

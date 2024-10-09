@@ -15,31 +15,31 @@ class Content extends Model
     protected static $strTable = 'tl_content';
 
 
-    public static function findPublishedByPidAndTableAndLanguage($intPid, $strParentTable, array $arrOptions=array())
+    public static function findPublishedByPidAndTableAndLanguage($intPid, $strParentTable, array $arrOptions=[])
     {
         $t = static::$strTable;
-        $arrColumns = array("$t.pid=? AND $t.ptable=?");
+        $arrColumns = [sprintf('%s.pid=? AND %s.ptable=?', $t, $t)];
 
         if (!static::isPreviewMode($arrOptions))
         {
             $time = Date::floorToMinute();
-            $arrColumns[] = "$t.invisible=0 AND ($t.start='' OR $t.start<=$time) AND ($t.stop='' OR $t.stop>$time)";
+            $arrColumns[] = sprintf('%s.invisible=0 AND (%s.start=\'\' OR %s.start<=%d) AND (%s.stop=\'\' OR %s.stop>%d)', $t, $t, $t, $time, $t, $t, $time);
         }
 
         $r = System::getContainer()->get('request_stack')->getCurrentRequest();
 
         if (null !== $r) {
-            $arrColumns[] = "$t.wem_language=?";
+            $arrColumns[] = $t . '.wem_language=?';
         }
 
-        $arrColumns[] = "$t.tstamp!=0";
+        $arrColumns[] = $t . '.tstamp!=0';
 
         if (!isset($arrOptions['order']))
         {
-            $arrOptions['order'] = "$t.sorting";
+            $arrOptions['order'] = $t . '.sorting';
         }
 
-        return static::findBy($arrColumns, array($intPid, $strParentTable,$r->getLocale()?:''), $arrOptions);
+        return static::findBy($arrColumns, [$intPid, $strParentTable, $r->getLocale()?:''], $arrOptions);
     }
 
 }

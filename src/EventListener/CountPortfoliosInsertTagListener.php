@@ -31,7 +31,7 @@ class CountPortfoliosInsertTagListener
 
         // Retrieve filters
         if ($_GET !== [] || $_POST !== []) {
-            foreach ($_GET as $f => $v) {
+            foreach (array_keys($_GET) as $f) {
                 if (false === strpos($f, 'portfolio_filter_')) {
                     continue;
                 }
