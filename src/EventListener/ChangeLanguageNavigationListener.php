@@ -16,26 +16,31 @@ namespace WEM\PortfolioBundle\EventListener;
 
 use Contao\Input;
 use Terminal42\ChangeLanguage\Event\ChangelanguageNavigationEvent;
+use WEM\PortfolioBundle\Model\Portfolio;
 
 class ChangeLanguageNavigationListener
 {
-    public function onChangelanguageNavigation(ChangelanguageNavigationEvent $event): void
+    public function __invoke(ChangelanguageNavigationEvent $event): void
     {
+
         // The target root page for current event
         $targetRoot = $event->getNavigationItem()->getRootPage();
+
         $language = $targetRoot->rootLanguage; // The target language
         $currentPage = $event->getNavigationItem()->getTargetPage();
-        $key = 'items';
 
-        switch($currentPage->alias) {
-            case 'task':
-                $alias = Input::get('auto_item');
-                break;
-            default:
-                return;
+        $item = $this->getPortfolioItem();
+        if (!$item){
+           return;
         }
-
         // Pass the new alias to ChangeLanguage
-        $event->getUrlParameterBag()->setUrlAttribute($key, $alias);
+        $event->getUrlParameterBag()->setUrlAttribute("items", $item->slug);
+    }
+
+    private function getPortfolioItem(): ?Portfolio
+    {
+        $slug = Input::get('auto_item');
+
+        return ($slug)?Portfolio::findByIdOrSlug($slug):null;
     }
 }

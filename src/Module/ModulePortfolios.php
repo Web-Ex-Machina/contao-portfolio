@@ -17,12 +17,13 @@ namespace WEM\PortfolioBundle\Module;
 
 use Contao\Config;
 use Contao\ContentModel;
+use Contao\FilesModel;
 use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Module;
 use Contao\System;
-use Contao\FilesModel;
+use WEM\PortfolioBundle\Model\Content;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -95,6 +96,8 @@ abstract class ModulePortfolios extends Module
     {
         $objTemplate = new FrontendTemplate($this->wem_portfolio_template);
         $objTemplate->setData($objItem->row());
+
+        $objTemplate->title = $objItem->getL10nLabel('title');
 
         if ('' !== $objItem->cssClass) {
             $strClass = ' ' . $objItem->cssClass . $strClass;
@@ -170,14 +173,14 @@ abstract class ModulePortfolios extends Module
         // Retrieve item teaser
         if ($objItem->teaser) {
             $objTemplate->hasTeaser = true;
-            $objTemplate->teaser = StringUtil::encodeEmail($objItem->teaser);
+            $objTemplate->teaser = StringUtil::encodeEmail($objItem->getL10nLabel('teaser'));
         }
 
         // Retrieve item content
         $id = $objItem->id;
         $objTemplate->text = function () use ($id): string {
             $strText = '';
-            $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio');
+            $objElement = Content::findPublishedByPidAndTableAndLanguage($id, 'tl_wem_portfolio');
 
             if ($objElement !== null) {
                 while ($objElement->next()) {

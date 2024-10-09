@@ -13,8 +13,36 @@ declare(strict_types=1);
  */
 
 // Dynamically add the permission check and parent table
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\Input;
+use Contao\System;
 
-if ('wem_portfolio' === Input::get('do')) {
+if ('wem_portfolio_feed' === Input::get('do')) {
     $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_wem_portfolio';
+}
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['wem_language'] = [
+    'exclude' => true,
+    'filter' => true,
+    'sorting' => true,
+    'inputType' => 'select',
+    'options' => System::getContainer()->get('contao.intl.locales')->getEnabledLocales(),
+    'eval' => ['mandatory' => true, 'tl_class' => 'w50', 'maxlength' => 5],
+    'sql' => "char(5) NOT NULL default ''",
+];
+
+
+if ('wem_portfolio_feed' === Input::get('do')) {
+    foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $key => $value) {
+        if ($key == "__selector__" OR $key == "default" ) {continue;}
+        PaletteManipulator::create()
+            // apply the field "custom_field" after the field "username"
+            ->addLegend("language")
+            ->addField('wem_language', 'language')
+
+            // now the field is registered in the PaletteManipulator
+            // but it still has to be registered in the globals array:
+            ->applyToPalette($key, 'tl_content')
+        ;
+    }
 }

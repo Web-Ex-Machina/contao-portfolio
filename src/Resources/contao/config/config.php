@@ -32,7 +32,7 @@ ArrayUtil::arrayInsert(
     [
         'wem_portfolio' => [
             'wem_portfolio_feed' => [
-                'tables' => ['tl_wem_portfolio_feed', 'tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_wem_portfolio_feed_attribute_l10n', 'tl_content'],
+                'tables' => ['tl_wem_portfolio_feed','tl_wem_portfolio_l10n', 'tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_wem_portfolio_feed_attribute_l10n', 'tl_content'],
             ],
         ],
     ]
@@ -65,9 +65,11 @@ ArrayUtil::arrayInsert(
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_feed_attribute_l10n'] = Model\PortfolioFeedAttributeL10n::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_feed_attribute'] = Model\PortfolioFeedAttribute::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_feed'] = Model\PortfolioFeed::class;
+
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_l10n'] = Model\PortfolioL10n::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio'] = Model\Portfolio::class;
 
 $GLOBALS['TL_HOOKS']['changelanguageNavigation'][] = [
     WEM\PortfolioBundle\EventListener\ChangeLanguageNavigationListener::class,
-    'onChangeLanguageNavigation',
+    '__invoke',
 ];

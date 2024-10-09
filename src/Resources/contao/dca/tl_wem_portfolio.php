@@ -13,14 +13,14 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
     'config' => [
         'dataContainer' => 'Table',
         'ptable' => 'tl_wem_portfolio_feed',
-        'ctable' => ['tl_content'],
+        'ctable' => ['tl_content','tl_wem_portfolio_l10n'],
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
             'keys' => [
                 'id' => 'primary',
                 'pid' => 'index',
-                'slug,lang' => 'index',
+                'slug' => 'index',
             ],
         ],
         'onload_callback' => [
@@ -75,10 +75,11 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
     'palettes' => [
         '__selector__' => ['overwriteMeta'],
         'default' => '
-            {title_legend},title,slug,date,lang;
+            {title_legend},title,slug,date;
             {content_legend},teaser;
             {media_legend},singleSRC,size,floating,imagemargin,fullsize,overwriteMeta,pictures;
-            {publish_legend},published,start,stop
+            {publish_legend},published,start,stop;
+            {translations_legend},translations
         ',
     ],
     'subpalettes' => [
@@ -104,15 +105,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'flag' => 8,
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
-        'lang' => [
-            'exclude' => true,
-            'search' => true,
-            'sorting' => true,
-            'inputType' => 'select',
-            'options' => System::getContainer()->get('contao.intl.locales')->getEnabledLocales(),
-            'eval' => ['mandatory' => true, 'tl_class' => 'w50', 'maxlength' => 5],
-            'sql' => "char(5) NOT NULL default ''",
-        ],
         'slug' => [
             'exclude' => true,
             'search' => true,
@@ -122,7 +114,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'save_callback' => [
                 [PortfolioContainer::class, 'generateSlug']
             ],
-            'eval' => ['tl_class' => 'w50', 'maxlength' => 255],
+            'eval' => ['tl_class' => 'w50', 'maxlength' => 255, 'unique'=> true],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'title' => [
@@ -255,6 +247,21 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'inputType' => 'text',
             'eval' => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'sql' => "varchar(10) NOT NULL default ''",
+        ],
+        'translations' => [
+            'inputType' => 'dcaWizard',
+            'foreignTable' => 'tl_wem_portfolio_l10n',
+            'foreignField' => 'pid',
+            'params' => [
+                'do' => 'wem_portfolio_feed',
+            ],
+            'eval' => [
+                'fields' => ['language', 'title'],
+                'orderField' => 'language ASC',
+                'showOperations' => true,
+                'operations' => ['edit', 'delete'],
+                'tl_class' => 'clr',
+            ],
         ],
     ],
 ];
