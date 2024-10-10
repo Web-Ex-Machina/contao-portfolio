@@ -34,11 +34,6 @@ class Portfolio extends Model
     protected static $strTable = 'tl_wem_portfolio';
 
     /**
-     * @var mixed|null
-     */
-    private $title;
-
-    /**
      * Count items, depends on the arguments.
      */
     public static function countItems(array $arrConfig = [], array $arrOptions = []): int
@@ -397,7 +392,7 @@ class Portfolio extends Model
         $objL10n = PortfolioL10n::findItems(['language' => $l, 'pid' => $this->id], 1);
 
         // If there is no translation available, retrieve the current field
-        if (!$objL10n || !$objL10n->{$f}) {
+        if (null === $objL10n || null === $objL10n->{$f}) {
             return $label;
         }
 
