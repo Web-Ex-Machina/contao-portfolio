@@ -37,7 +37,7 @@ class LoadDataContainerListener
                 }
             }
         } catch (\Exception $exception) {
-            $this->logger->log('ERROR', vsprintf(array_key_exists('ERROR',$GLOBALS['TL_LANG']['WEM']['PORTFOLIO']) ? $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['generic']: "coucou", [$exception->getMessage(), $exception->getTrace()]), ["WEM_OFFERS"]);
+            $this->logger->log('ERROR', sprintf('An error occured: %s | %s', $exception->getMessage(), $exception->getTraceAsString()), ["WEM_PORTFOLIO"]);
         }
     }
 
