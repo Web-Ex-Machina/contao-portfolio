@@ -18,6 +18,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
                 'pid' => 'index',
             ],
         ],
+        'onload_callback' => [
+            [PortfolioL10nContainer::class, 'updatePalettes'],
+        ]
     ],
 
     // List

@@ -24,7 +24,7 @@ class LoadDataContainerListener
     public function addAttributesToPortfolioDca($strTable): void
     {
         try {
-            if ('tl_wem_portfolio' === $strTable) {
+            if ('tl_wem_portfolio' === $strTable || 'tl_wem_portfolio_l10n' === $strTable) {
                 // For everytime we load a tl_wem_portfolio DCA, we want to load all the existing attributes as fields
                 $objAttributes = PortfolioFeedAttribute::findAll();
 
@@ -33,7 +33,13 @@ class LoadDataContainerListener
                 }
 
                 while ($objAttributes->next()) {
-                    $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$objAttributes->name] = $this->parseDcaAttribute($objAttributes->row(), $objAttributes->current());
+                    $field = $this->parseDcaAttribute($objAttributes->row(), $objAttributes->current());
+
+                    if ('tl_wem_portfolio' === $strTable) {
+                        $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$objAttributes->name] = $field;
+                    } else if('tl_wem_portfolio_l10n' === $strTable && 1 === (int) $objAttributes->translatable) {
+                        $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n']['fields'][$objAttributes->name] = $field;
+                    }
                 }
             }
         } catch (\Exception $exception) {
