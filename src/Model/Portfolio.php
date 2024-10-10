@@ -34,11 +34,6 @@ class Portfolio extends Model
     protected static $strTable = 'tl_wem_portfolio';
 
     /**
-     * @var mixed|null
-     */
-    private $title;
-
-    /**
      * Count items, depends on the arguments.
      */
     public static function countItems(array $arrConfig = [], array $arrOptions = []): int
@@ -61,7 +56,7 @@ class Portfolio extends Model
     {
         $arrColumns = [];
 
-        $arrConfig['lang'] = System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale();
+        //$arrConfig['lang'] = System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale();
 
         foreach ($arrConfig as $c => $v) {
             $arrColumns = array_merge($arrColumns, static::formatStatement($c, $v));
@@ -168,7 +163,7 @@ class Portfolio extends Model
      *
      * @return \Contao\Model|static model or null if the result is empty
      */
-    public static function findByIdOrSlug($varId, array $arrOptions = [])
+    public static function findByIdOrSlug(string $varId, array $arrOptions = [])
     {
         $isCode = !preg_match('/^[1-9]\d*$/', $varId);
 
@@ -336,10 +331,10 @@ class Portfolio extends Model
                 return $figure->getLegacyTemplateData() ?: null;
 
             case "listWizard":
-                return $this->{$varAttribute->name} ? implode(',', StringUtil::deserialize($this->{$varAttribute->name})) : '';
+                return $this->getL10nLabel($varAttribute->name) ? implode(',', StringUtil::deserialize($this->getL10nLabel($varAttribute->name))) : '';
 
             default:
-                return $this->{$varAttribute->name};
+                return $this->getL10nLabel($varAttribute->name);
         }
     }
 
@@ -378,5 +373,29 @@ class Portfolio extends Model
         $objPage = PageModel::findByPk($objCategory->jumpTo);
         // TODO : deprecated getAbsoluteUrl getFrontendUrl in 5.3 removed in 6
         return $blnAbsolute ? $objPage->getAbsoluteUrl('/' . $this->slug) : $objPage->getFrontendUrl('/' . $this->slug);
+    }
+
+    public function getL10nLabel($f, $l = null)
+    {
+        // Set default value
+        $label = $this->{$f};
+
+        // If $l is null, retrieve current language
+        if (null === $l) {
+            $r = System::getContainer()->get('request_stack')->getCurrentRequest();
+            if (null !== $r) {
+                $l = $r->getLocale();
+            }
+        }
+
+        // Try to retrieve a l10n entry for this pid and language
+        $objL10n = PortfolioL10n::findItems(['language' => $l, 'pid' => $this->id], 1);
+
+        // If there is no translation available, retrieve the current field
+        if (null === $objL10n || null === $objL10n->{$f}) {
+            return $label;
+        }
+
+        return $objL10n->{$f};
     }
 }

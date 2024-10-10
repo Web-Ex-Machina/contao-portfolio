@@ -68,6 +68,14 @@
                 <source>Check to make this attribute mandatory</source>
                 <target>Cocher pour rendre cet attribut obligatoire</target>
             </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed_attribute.translatable.0">
+                <source>Translatable</source>
+                <target>Traductible</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed_attribute.translatable.1">
+                <source>Check to make this attribute available in items translations</source>
+                <target>Cocher pour rendre cet attribut disponible dans les traductions de l'item</target>
+            </trans-unit>
 
             <trans-unit id="tl_wem_portfolio_feed_attribute.isFilter.0">
                 <source>Filter</source>

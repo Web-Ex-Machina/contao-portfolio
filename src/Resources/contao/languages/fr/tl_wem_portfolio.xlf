@@ -152,6 +152,10 @@
                 <source>Add there the picture for the gallery.</source>
                 <target>Ajoutez ici les images pour la galerie.</target>
             </trans-unit>
+            <trans-unit id="tl_wem_portfolio.ERROR.generic">
+                <source>Error</source>
+                <target>Erreur</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

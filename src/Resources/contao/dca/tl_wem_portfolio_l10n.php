@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use Contao\System;
-use WEM\PortfolioBundle\DataContainer\PortfolioFeedAttributeL10nContainer;
+use WEM\PortfolioBundle\DataContainer\PortfolioL10nContainer;
 
-$GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute_l10n'] = [
+$GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
     // Config
     'config' => [
         'dataContainer' => 'Table',
-        'ptable' => 'tl_wem_portfolio_feed_attribute',
+        'ptable' => 'tl_wem_portfolio',
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -18,6 +18,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute_l10n'] = [
                 'pid' => 'index',
             ],
         ],
+        'onload_callback' => [
+            [PortfolioL10nContainer::class, 'updatePalettes'],
+        ]
     ],
 
     // List
@@ -25,9 +28,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute_l10n'] = [
         'sorting' => [
             'mode' => 4,
             'fields' => ['language ASC'],
-            'headerFields' => ['name'],
+            'headerFields' => ['title'],
             'panelLayout' => 'filter;sort,search,limit',
-            'child_record_callback' => [PortfolioFeedAttributeL10nContainer::class, 'listItems'],
+            'child_record_callback' => [PortfolioL10nContainer::class, 'listItems'],
         ],
         'global_operations' => [
             'all' => [
@@ -62,7 +65,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute_l10n'] = [
     'palettes' => [
         'default' => '
             {title_legend},language;
-            {data_legend},label,value,options,filterLabel,explanation
+            {data_legend},title,teaser
         ',
     ],
 
@@ -75,7 +78,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute_l10n'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'pid' => [
-            'foreignKey' => 'tl_wem_portfolio_feed_attribute.name',
+            'foreignKey' => 'tl_wem_portfolio.title',
             'relation' => ['type' => 'belongsTo', 'load' => 'eager'],
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
@@ -95,38 +98,20 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute_l10n'] = [
             {
                 return System::getContainer()->get('contao.intl.locales')->getLocales(null, false);
             },
-            'sql'                     => "varchar(64) NOT NULL default ''"
-            ],
-        'label' => [
+            'sql' => "varchar(64) NOT NULL default ''"
+            ], 'title' => [
             'exclude' => true,
             'search' => true,
             'inputType' => 'text',
-            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
+            'eval' => ['mandatory' => true, 'tl_class' => 'w50', 'maxlength' => 255],
             'sql' => "varchar(255) NOT NULL default ''",
-        ],
-        'value' => [
+        ], 'teaser' => [
             'exclude' => true,
-            'inputType' => 'text',
-            'eval' => ['decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
-            'sql' => "varchar(255) NOT NULL default ''",
-        ],
-        'options' => [
-            'exclude' => true,
-            'inputType' => 'optionWizard',
-            'eval' => ['mandatory' => true, 'allowHtml' => true, 'tl_class' => 'clr'],
-            'sql' => 'blob NULL',
-        ],
-        'filterLabel' => [
-            'exclude' => true,
-            'inputType' => 'text',
-            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
-            'sql' => "varchar(255) NOT NULL default ''",
-        ],
-        'explanation' => [
-            'exclude' => true,
-            'inputType' => 'text',
-            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
-            'sql' => "varchar(255) NOT NULL default ''",
+            'search' => true,
+            'inputType' => 'textarea',
+            'eval' => ['rte' => 'tinyMCE', 'helpwizard' => true, 'tl_class' => 'clr'],
+            'explanation' => 'insertTags',
+            'sql' => 'mediumtext NULL',
         ],
     ],
 ];
