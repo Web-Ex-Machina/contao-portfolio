@@ -26,9 +26,9 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['wem_language'] = [
     'filter' => true,
     'sorting' => true,
     'inputType' => 'select',
-    'options' => System::getContainer()->get('contao.intl.locales')->getEnabledLocales(),
-    'eval' => ['mandatory' => true, 'tl_class' => 'w50', 'maxlength' => 5],
-    'sql' => "char(5) NOT NULL default ''",
+    'options' => System::getContainer()->get('contao.intl.locales')->getLocales(null, false),
+    'eval' => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50'],
+    'sql' => "varchar(64) NOT NULL default ''",
 ];
 
 
