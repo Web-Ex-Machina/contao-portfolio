@@ -23,6 +23,7 @@ use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Module;
 use Contao\System;
+use Terminal42\ChangeLanguage\PageFinder;
 use WEM\PortfolioBundle\Model\Content;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -207,8 +208,9 @@ abstract class ModulePortfolios extends Module
 
         // Parse the URL if we have a jumpTo configured
         if ($objTarget = $objItem->getRelated('pid')->getRelated('jumpTo')) {
+            $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
             $params = (Config::get('useAutoItem') ? '/' : '/items/') . ($objItem->slug ?: $objItem->id);
-            $objTemplate->jumpTo = $objTarget->getFrontendUrl($params);
+            $objTemplate->jumpTo = $objPageData->getFrontendUrl($params);
         }
 
         return $objTemplate->parse();
