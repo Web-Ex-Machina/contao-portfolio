@@ -331,10 +331,10 @@ class Portfolio extends Model
                 return $figure->getLegacyTemplateData() ?: null;
 
             case "listWizard":
-                return $this->{$varAttribute->name} ? implode(',', StringUtil::deserialize($this->{$varAttribute->name})) : '';
+                return $this->getL10nLabel($varAttribute->name) ? implode(',', StringUtil::deserialize($this->getL10nLabel($varAttribute->name))) : '';
 
             default:
-                return $this->{$varAttribute->name};
+                return $this->getL10nLabel($varAttribute->name);
         }
     }
 
