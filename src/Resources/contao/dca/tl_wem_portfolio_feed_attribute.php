@@ -63,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
         '__selector__' => ['type', 'isFilter'],
         'default' => '
             {title_legend},name,label;
-            {field_legend},type,mandatory;
+            {field_legend},type,mandatory,translatable;
             {design_legend},insertInDca,insertType,class;
             {l10n_legend},translations
         ',
@@ -190,6 +190,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'sql' => "char(1) NOT NULL default ''",
         ],
         'mandatory' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'checkbox',
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'translatable' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'checkbox',
