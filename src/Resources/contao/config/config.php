@@ -68,8 +68,3 @@ $GLOBALS['TL_MODELS']['tl_wem_portfolio_feed'] = Model\PortfolioFeed::class;
 
 $GLOBALS['TL_MODELS']['tl_wem_portfolio_l10n'] = Model\PortfolioL10n::class;
 $GLOBALS['TL_MODELS']['tl_wem_portfolio'] = Model\Portfolio::class;
-
-$GLOBALS['TL_HOOKS']['changelanguageNavigation'][] = [
-    WEM\PortfolioBundle\EventListener\ChangeLanguageNavigationListener::class,
-    '__invoke',
-];
