@@ -64,9 +64,8 @@ class ModuleContainer extends Backend
         $fields = [];
 
         foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'] as $k => $v) {
-            // if (!empty($v['eval']) && true === $v['eval']['wemportfolios_isAvailableForFilters']) {
             if (!empty($v['eval']) && true === $v['eval']['isFilter']) {
-                $fields[$k] = $v['label'][0] ?: $k;
+                $fields[$k] = sprintf('%s (%s)', $v['label'][0] ?: $k, $k);
             }
         }
 
@@ -95,7 +94,7 @@ class ModuleContainer extends Backend
 
         $fields = [];
         while ($objAttributes->next()) {
-            $fields[$objAttributes->name] = $objAttributes->label ?: $objAttributes->name;
+            $fields[$objAttributes->name] = sprintf('%s (ID:%s)', $objAttributes->label ?: $objAttributes->name, $objAttributes->id);
         }
 
         return $fields;
