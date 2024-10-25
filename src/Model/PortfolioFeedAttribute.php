@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 namespace WEM\PortfolioBundle\Model;
 
 use Contao\Model\Collection;
@@ -23,15 +33,14 @@ class PortfolioFeedAttribute extends Model
     /**
      * Find items, depends on the arguments.
      *
+     * @throws \Exception
      *
      * @return Model|Collection|null
-     * @throws \Exception
      */
     public static function findItems(
         array $arrConfig = [], int $intLimit = 0,
-        int   $intOffset = 0, array $arrOptions = []
-    ): ?Collection
-    {
+        int $intOffset = 0, array $arrOptions = []
+    ): ?Collection {
         $t = static::$strTable;
         $arrColumns = static::formatColumns($arrConfig);
 
@@ -44,10 +53,10 @@ class PortfolioFeedAttribute extends Model
         }
 
         if (!isset($arrOptions['order'])) {
-            $arrOptions['order'] = $t . '.createdAt DESC';
+            $arrOptions['order'] = $t.'.createdAt DESC';
         }
 
-        if ($arrColumns === []) {
+        if ([] === $arrColumns) {
             return static::findAll($arrOptions);
         }
 
@@ -57,8 +66,8 @@ class PortfolioFeedAttribute extends Model
     /**
      * Generic statements format.
      *
-     * @param string $strField [Column to format]
-     * @param mixed $varValue [Value to use]
+     * @param string $strField    [Column to format]
+     * @param mixed  $varValue    [Value to use]
      * @param string $strOperator [Operator to use, default "="]
      */
     public static function formatStatement(string $strField, $varValue, string $strOperator = '='): array
@@ -70,19 +79,19 @@ class PortfolioFeedAttribute extends Model
             // Search by pid
             case 'pid':
                 if (\is_array($varValue)) {
-                    $arrColumns[] = $t . '.pid IN(' . implode(',', array_map('\intval', $varValue)) . ')';
+                    $arrColumns[] = $t.'.pid IN('.implode(',', array_map('\intval', $varValue)).')';
                 } else {
-                    $arrColumns[] = $t . '.pid = ' . $varValue;
+                    $arrColumns[] = $t.'.pid = '.$varValue;
                 }
 
                 break;
 
-            // Search by name
+                // Search by name
             case 'name':
                 if (\is_array($varValue)) {
-                    $arrColumns[] = $t . ".name IN('" . implode("','", $varValue) . "')";
+                    $arrColumns[] = $t.".name IN('".implode("','", $varValue)."')";
                 } else {
-                    $arrColumns[] = $t . '.name = "' . $varValue . '"';
+                    $arrColumns[] = $t.'.name = "'.$varValue.'"';
                 }
 
                 break;
@@ -104,7 +113,7 @@ class PortfolioFeedAttribute extends Model
             }
         }
 
-        // Try to retrieve a l10n entry for this pid and language 
+        // Try to retrieve a l10n entry for this pid and language
         $objL10n = PortfolioFeedAttributeL10n::findItems(['language' => $l, 'pid' => $this->id], 1);
 
         // If there is no translation available, retrieve the current field

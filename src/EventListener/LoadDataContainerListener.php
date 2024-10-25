@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 namespace WEM\PortfolioBundle\EventListener;
 
 use Contao\CoreBundle\ServiceAnnotation\Hook;
@@ -37,13 +47,13 @@ class LoadDataContainerListener
 
                     if ('tl_wem_portfolio' === $strTable) {
                         $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$objAttributes->name] = $field;
-                    } else if('tl_wem_portfolio_l10n' === $strTable && 1 === (int) $objAttributes->translatable) {
+                    } elseif ('tl_wem_portfolio_l10n' === $strTable && 1 === (int) $objAttributes->translatable) {
                         $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n']['fields'][$objAttributes->name] = $field;
                     }
                 }
             }
         } catch (\Exception $exception) {
-            $this->logger->log('ERROR', sprintf('An error occured: %s | %s', $exception->getMessage(), $exception->getTraceAsString()), ["WEM_PORTFOLIO"]);
+            $this->logger->log('ERROR', \sprintf('An error occured: %s | %s', $exception->getMessage(), $exception->getTraceAsString()), ['WEM_PORTFOLIO']);
         }
     }
 
@@ -66,8 +76,8 @@ class LoadDataContainerListener
 
         // Maxlength settings
         if ($row['maxlength']) {
-            $data['eval']['maxlength'] = (int)$row['maxlength'];
-            $data['sql']['length'] = (int)$row['maxlength'];
+            $data['eval']['maxlength'] = (int) $row['maxlength'];
+            $data['sql']['length'] = (int) $row['maxlength'];
         }
 
         // Available for alerts settings

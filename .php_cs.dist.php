@@ -2,16 +2,20 @@
 
 $header = <<<EOF
 Contao Portfolio for Contao Open Source CMS
-Copyright (c) 2015-2020 Web ex Machina
+Copyright (c) 2015-2024 Web ex Machina
 
 @category ContaoBundle
 @package  Web-Ex-Machina/contao-portfolio
 @author   Web ex Machina <contact@webexmachina.fr>
 @link     https://github.com/Web-Ex-Machina/contao-portfolio/
 EOF;
+// To make it work, add "--path-mode": "intersection" in your "php_cs_fixer_additional_args"
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__)
+;
 
-return PhpCsFixer\Config::create()
-    ->setRules([
+$config = new PhpCsFixer\Config();
+return $config->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
         '@PHP71Migration' => true,
@@ -65,4 +69,5 @@ return PhpCsFixer\Config::create()
     ])
     ->setRiskyAllowed(true)
     ->setUsingCache(false)
+    ->setFinder($finder)
 ;

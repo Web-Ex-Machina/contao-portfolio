@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2023 Web ex Machina
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -121,5 +121,5 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_constraints'] = [
     'exclude' => true,
     'inputType' => 'listWizard',
     'eval' => ['multiple' => true, 'allowHtml' => true, 'tl_class' => 'clr'],
-    'sql' => "blob NULL",
+    'sql' => 'blob NULL',
 ];

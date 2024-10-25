@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2023 Web ex Machina
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -31,14 +31,15 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['wem_language'] = [
     'sql' => "varchar(64) NOT NULL default ''",
 ];
 
-
 if ('wem_portfolio_feed' === Input::get('do')) {
     foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $key => $value) {
-        if ($key == "__selector__" || $key == "default" ) {continue;}
+        if ('__selector__' === $key || 'default' === $key) {
+            continue;
+        }
 
         PaletteManipulator::create()
             // apply the field "custom_field" after the field "username"
-            ->addLegend("language")
+            ->addLegend('language')
             ->addField('wem_language', 'language')
 
             // now the field is registered in the PaletteManipulator

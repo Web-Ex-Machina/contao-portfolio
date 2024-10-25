@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 namespace WEM\PortfolioBundle\DataContainer;
 
 use Contao\Backend;
@@ -19,7 +29,7 @@ class PortfolioContainer extends Backend
 {
     public function __construct()
     {
-        Parent::__construct();
+        parent::__construct();
     }
 
     /**
@@ -27,7 +37,7 @@ class PortfolioContainer extends Backend
      */
     public function listItems(array $r): string
     {
-        return sprintf(
+        return \sprintf(
             '%s <span style="color:#888">[%s]</span>',
             $r['title'],
             $r['slug']
@@ -39,26 +49,24 @@ class PortfolioContainer extends Backend
      */
     public function toggleIcon(array $row, ?string $href, string $label, string $title, string $icon, string $attributes): string
     {
-        if (!is_null(Input::get('tid')) && \strlen(Input::get('tid'))) {
-            $this->toggleVisibility((int)Input::get('tid'), ('1' === Input::get('state')), (@func_get_arg(12) ?: null));
+        if (null !== Input::get('tid') && \strlen(Input::get('tid'))) {
+            $this->toggleVisibility((int) Input::get('tid'), '1' === Input::get('state'), @func_get_arg(12) ?: null);
             $this->redirect($this->getReferer());
         }
 
-        $href .= '&amp;tid=' . $row['id'] . '&amp;state=' . ($row['published'] ? '' : 1);
+        $href .= '&amp;tid='.$row['id'].'&amp;state='.($row['published'] ? '' : 1);
 
         if (!$row['published']) {
             $icon = 'invisible.svg';
         }
 
-        return '<a href="' . $this->addToUrl($href) . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"') . '</a> ';
+        return '<a href="'.$this->addToUrl($href).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label, 'data-state="'.($row['published'] ? 1 : 0).'"').'</a> ';
     }
 
     /**
      * Disable/enable a job.
-     *
-     * @param DataContainer|null $dc
      */
-    public function toggleVisibility(int $intId, bool $blnVisible, DataContainer $dc = null): void
+    public function toggleVisibility(int $intId, bool $blnVisible, ?DataContainer $dc = null): void
     {
         // Set the ID and action
         Input::setGet('id', $intId);
@@ -84,7 +92,8 @@ class PortfolioContainer extends Backend
         if ($dc instanceof DataContainer) {
             $objRow = $this->Database->prepare('SELECT * FROM tl_wem_portfolio WHERE id=?')
                 ->limit(1)
-                ->execute($intId);
+                ->execute($intId)
+            ;
 
             if ($objRow->numRows) {
                 $dc->activeRecord = $objRow;
@@ -95,7 +104,7 @@ class PortfolioContainer extends Backend
         $objVersions->initialize();
 
         // Trigger the save_callback
-        if(array_key_exists("save_callback", $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields']['published']??[])){
+        if (\array_key_exists('save_callback', $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields']['published'] ?? [])) {
             foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['fields']['published']['save_callback'] as $callback) {
                 if (\is_array($callback)) {
                     $this->import($callback[0]);
@@ -109,8 +118,9 @@ class PortfolioContainer extends Backend
         $time = time();
 
         // Update the database
-        $this->Database->prepare(sprintf("UPDATE tl_wem_portfolio SET tstamp=%d, published='", $time) . ($blnVisible ? '1' : '') . "' WHERE id=?")
-            ->execute($intId);
+        $this->Database->prepare(\sprintf("UPDATE tl_wem_portfolio SET tstamp=%d, published='", $time).($blnVisible ? '1' : '')."' WHERE id=?")
+            ->execute($intId)
+        ;
 
         if ($dc instanceof DataContainer) {
             $dc->activeRecord->tstamp = $time;
@@ -118,7 +128,7 @@ class PortfolioContainer extends Backend
         }
 
         // Trigger the onsubmit_callback
-        if(array_key_exists("onsubmit_callback", $GLOBALS['TL_DCA']['tl_wem_portfolio']['config']??[])){
+        if (\array_key_exists('onsubmit_callback', $GLOBALS['TL_DCA']['tl_wem_portfolio']['config'] ?? [])) {
             foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['config']['onsubmit_callback'] as $callback) {
                 if (\is_array($callback)) {
                     $this->import($callback[0]);
@@ -133,27 +143,27 @@ class PortfolioContainer extends Backend
     }
 
     /**
-     * Update DCA palettes and add custom attributes
+     * Update DCA palettes and add custom attributes.
      *
      * @throws \Exception
      */
     public function updatePalettes(DataContainer $dc): void
     {
-        if ($dc->id && 'edit' == Input::get('act')) {
+        if ($dc->id && 'edit' === Input::get('act')) {
             $objItem = Portfolio::findByPk($dc->id);
             $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $objItem->pid]);
 
-            if (!$objAttributes || 0 == $objAttributes->count()) {
+            if (!$objAttributes || 0 === $objAttributes->count()) {
                 return;
             }
 
             $objPalette = PaletteManipulator::create();
             while ($objAttributes->next()) {
-                if (false === strrpos($GLOBALS['TL_DCA']['tl_wem_portfolio']['palettes']['default'], (string)$objAttributes->name)) {
+                if (false === strrpos($GLOBALS['TL_DCA']['tl_wem_portfolio']['palettes']['default'], (string) $objAttributes->name)) {
                     $objPalette->addField(
                         $objAttributes->name,
                         $objAttributes->insertInDca,
-                        constant(PaletteManipulator::class . '::' . $objAttributes->insertType)
+                        \constant(PaletteManipulator::class.'::'.$objAttributes->insertType)
                     );
                 }
             }
@@ -167,13 +177,13 @@ class PortfolioContainer extends Backend
      */
     public function generateSlug($varValue, DataContainer $dc): string
     {
-        $aliasExists = fn(string $slug): bool => $this->Database->prepare('SELECT id FROM tl_wem_portfolio WHERE slug=? AND id!=?')->execute($slug, $dc->id)->numRows > 0;
+        $aliasExists = fn (string $slug): bool => $this->Database->prepare('SELECT id FROM tl_wem_portfolio WHERE slug=? AND id!=?')->execute($slug, $dc->id)->numRows > 0;
 
         // Generate an alias if there is none
         if (!$varValue) {
             $varValue = System::getContainer()->get('contao.slug')->generate($dc->activeRecord->title, $dc->activeRecord->id, $aliasExists);
         } elseif ($aliasExists($varValue)) {
-            throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+            throw new \Exception(\sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
         }
 
         return $varValue;

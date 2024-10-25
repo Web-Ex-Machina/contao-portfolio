@@ -3,14 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Contao Job Portfolios for Contao Open Source CMS
- * Copyright (c) 2018-2020 Web ex Machina.
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
- *
+ * @package  Web-Ex-Machina/contao-portfolio
  * @author   Web ex Machina <contact@webexmachina.fr>
- *
- * @see     https://github.com/Web-Ex-Machina/contao-job-portfolios/
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\PortfolioBundle\DataContainer;
@@ -24,7 +23,7 @@ class ModuleContainer extends Backend
 {
     public function __construct()
     {
-        Parent::__construct();
+        parent::__construct();
     }
 
     /**
@@ -54,7 +53,6 @@ class ModuleContainer extends Backend
         return $arrFeeds;
     }
 
-
     /**
      * Return all job alerts available gateways.
      */
@@ -65,7 +63,7 @@ class ModuleContainer extends Backend
 
         foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'] as $k => $v) {
             if (!empty($v['eval']) && true === $v['eval']['isFilter']) {
-                $fields[$k] = sprintf('%s (%s)', $v['label'][0] ?: $k, $k);
+                $fields[$k] = \sprintf('%s (%s)', $v['label'][0] ?: $k, $k);
             }
         }
 
@@ -94,7 +92,7 @@ class ModuleContainer extends Backend
 
         $fields = [];
         while ($objAttributes->next()) {
-            $fields[$objAttributes->name] = sprintf('%s (ID:%s)', $objAttributes->label ?: $objAttributes->name, $objAttributes->id);
+            $fields[$objAttributes->name] = \sprintf('%s (ID:%s)', $objAttributes->label ?: $objAttributes->name, $objAttributes->id);
         }
 
         return $fields;

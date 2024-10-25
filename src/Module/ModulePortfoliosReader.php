@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Personal Data Manager for Contao Open Source CMS
+ * Contao Portfolio for Contao Open Source CMS
  * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
- * @package  Web-Ex-Machina/contao-smartgear
+ * @package  Web-Ex-Machina/contao-portfolio
  * @author   Web ex Machina <contact@webexmachina.fr>
- * @link     https://github.com/Web-Ex-Machina/personal-data-manager/
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\PortfolioBundle\Module;
@@ -30,7 +30,6 @@ use WEM\UtilsBundle\Classes\StringUtil;
  */
 class ModulePortfoliosReader extends ModulePortfolios
 {
-
     protected ?Portfolio $objPortfolio = null;
 
     /**
@@ -48,11 +47,11 @@ class ModulePortfoliosReader extends ModulePortfolios
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
         if ($scopeMatcher->isBackend()) {
             $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_feed_reader'][0]) . ' ###';
+            $objTemplate->wildcard = '### '.strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_feed_reader'][0]).' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
         }
@@ -60,7 +59,7 @@ class ModulePortfoliosReader extends ModulePortfolios
         $this->portfolio = Portfolio::findByIdOrSlug(Input::get('auto_item'));
 
         if (!$this->portfolio) {
-            throw new PageNotFoundException('Page not found: ' . Environment::get('uri'));
+            throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
         }
 
         return parent::generate();
@@ -81,7 +80,7 @@ class ModulePortfoliosReader extends ModulePortfolios
 
         global $objPage;
 
-        $objPage->pageTitle = $this->portfolio->title . ' | ' . $this->portfolio->slug;
+        $objPage->pageTitle = $this->portfolio->title.' | '.$this->portfolio->slug;
         $objPage->description = StringUtil::substr($this->portfolio->teaser, 300);
 
         // Add the articles

@@ -2,19 +2,29 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 namespace WEM\PortfolioBundle\EventListener;
 
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Input;
 use WEM\PortfolioBundle\Model\Portfolio;
 
-
 class CountPortfoliosInsertTagListener
 {
     public const TAG = 'countportfolios';
 
     /**
-     * Example {{countportfolios::1,2,3...}}
+     * Example {{countportfolios::1,2,3...}}.
+     *
      * @Hook("replaceInsertTags", priority=100)
      */
     public function replaceInsertTags(string $tag)
@@ -26,13 +36,13 @@ class CountPortfoliosInsertTagListener
         }
 
         // Retrieve the PIDs wanted
-        $c['pid'] = explode(",", $chunks[1]);
+        $c['pid'] = explode(',', $chunks[1]);
         $c['published'] = 1;
 
         // Retrieve filters
-        if ($_GET !== [] || $_POST !== []) {
+        if ([] !== $_GET || [] !== $_POST) {
             foreach (array_keys($_GET) as $f) {
-                if (false === strpos($f, 'portfolio_filter_')) {
+                if (!str_contains($f, 'portfolio_filter_')) {
                     continue;
                 }
 
@@ -42,7 +52,7 @@ class CountPortfoliosInsertTagListener
             }
 
             foreach (array_keys($_POST) as $f) {
-                if (false === strpos($f, 'portfolio_filter_')) {
+                if (!str_contains($f, 'portfolio_filter_')) {
                     continue;
                 }
 
@@ -54,6 +64,5 @@ class CountPortfoliosInsertTagListener
 
         // Call the Model
         return Portfolio::countItems($c);
-
     }
 }

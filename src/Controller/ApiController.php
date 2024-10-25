@@ -1,5 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 namespace WEM\PortfolioBundle\Controller;
 
 use Contao\Config;
@@ -26,7 +38,6 @@ use WEM\UtilsBundle\Classes\StringUtil;
  */
 class ApiController
 {
-
     private ContaoFramework $framework;
 
     private Encryption $encryption;
@@ -39,8 +50,7 @@ class ApiController
         $this->framework = $framework;
         $this->framework->initialize();
 
-        $this->apiKey = ($this->encryption->decrypt_b64((string)Config::get('portfolioApiKey')) !== "") ?? null;
-
+        $this->apiKey = ('' !== $this->encryption->decrypt_b64((string) Config::get('portfolioApiKey'))) ?? null;
     }
 
     /**
@@ -57,13 +67,14 @@ class ApiController
     public function doc(Request $request): JsonResponse
     {
         $infos1 = [
-            "usage" => "For retrieve a list of article based on an categories array",
-            "path" => "/items/{page}/{limit}?cats[]=1&cats[]=2&key=myKey"
+            'usage' => 'For retrieve a list of article based on an categories array',
+            'path' => '/items/{page}/{limit}?cats[]=1&cats[]=2&key=myKey',
         ];
         $infos2 = [
-            "usage" => "For retrieve an unique item based on the unique Id",
-            "path" => "/item/{id}&key=myKey"
+            'usage' => 'For retrieve an unique item based on the unique Id',
+            'path' => '/item/{id}&key=myKey',
         ];
+
         return new JsonResponse(['data' => [$infos1, $infos2]]);
     }
 
@@ -72,19 +83,24 @@ class ApiController
      */
     public function viewPortfolioList(Request $request, int $page, int $limit, array $cats = []): JsonResponse
     {
-
         $check = $this->accessCheck($request);
         if ($check instanceof JsonResponse) {
             return $check;
         }
 
-        if ($limit > 20) {$limit = 20;}
+        if ($limit > 20) {
+            $limit = 20;
+        }
 
-        if ($limit < 1) {$limit = 1;}
+        if ($limit < 1) {
+            $limit = 1;
+        }
 
-        if ($page < 1) {$page = 1;}
+        if ($page < 1) {
+            $page = 1;
+        }
 
-        $cats = $request->query->all("cats");
+        $cats = $request->query->all('cats');
 
         $offset = ($page - 1) * $limit;
         if (!is_iterable($cats)) {
@@ -96,21 +112,20 @@ class ApiController
         foreach ($cats as $category) {
             $objCategory = PortfolioFeed::findByIdOrAlias($category);
             if (!$objCategory) {
-                return new JsonResponse('{"error":"Categorie ' . $category . ' not found"}', Response::HTTP_I_AM_A_TEAPOT, [], true);
+                return new JsonResponse('{"error":"Categorie '.$category.' not found"}', Response::HTTP_I_AM_A_TEAPOT, [], true);
             }
 
-            $objItems = Portfolio::findItems(['pid' => $objCategory->id, 'published' => "1"], $limit, $offset);
+            $objItems = Portfolio::findItems(['pid' => $objCategory->id, 'published' => '1'], $limit, $offset);
             if ($objItems instanceof Collection) {
-                /* @var Portfolio $item */
+                /** @var Portfolio $item */
                 foreach ($objItems as $item) {
                     $arrayItem = $item->row();
-                    $id = $arrayItem["id"];
+                    $id = $arrayItem['id'];
                     $return = [];
-                    if ($arrayItem["published"] === '1') {
-
+                    if ('1' === $arrayItem['published']) {
                         $return['mainPicture'] = [];
 
-                        if ($arrayItem['addImage'] === "1") {
+                        if ('1' === $arrayItem['addImage']) {
                             $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
                             $uuidP = Uuid::fromBinary($imageP->uuid);
                             $return['image_principal'][$uuidP->__toString()]['path'] = $imageP->path;
@@ -119,8 +134,8 @@ class ApiController
                             $return['image_principal'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
                         }
 
-                        $return["createdAt"] = $arrayItem["createdAt"];
-                        $return["title"] = $arrayItem["title"];
+                        $return['createdAt'] = $arrayItem['createdAt'];
+                        $return['title'] = $arrayItem['title'];
                         $arrayCategory = $item->getRelated('pid')->row();
                         $return['categorie']['id'] = $arrayCategory['id'];
                         $return['categorie']['createdAt'] = $arrayCategory['createdAt'];
@@ -128,8 +143,8 @@ class ApiController
                         $return['categorie']['title'] = $arrayCategory['title'];
                         $return['categorie']['alias'] = $arrayCategory['alias'];
 
-                        $return['teaser'] = $arrayItem["teaser"];
-                        $return["link"] = $item->getUrl();
+                        $return['teaser'] = $arrayItem['teaser'];
+                        $return['link'] = $item->getUrl();
                     }
 
                     $items[$id] = $return;
@@ -152,20 +167,20 @@ class ApiController
             return $check;
         }
 
-        $objItem = Portfolio::findByPk($id, ["eager" => true]);
+        $objItem = Portfolio::findByPk($id, ['eager' => true]);
 
         if ($objItem instanceof Portfolio) {
             $arrayItem = $objItem->row();
-            if ($arrayItem["published"] === '1') {
+            if ('1' === $arrayItem['published']) {
                 $return = [];
                 $strContent = '';
-                $objElement = (ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio')) ?? [];
+                $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio') ?? [];
 
                 foreach ($objElement as $element) {
                     $strContent .= Controller::getContentElement($element);
                 }
 
-                if ($arrayItem['addImage'] === "1") {
+                if ('1' === $arrayItem['addImage']) {
                     $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
                     $uuidP = Uuid::fromBinary($imageP->uuid);
                     $return['image_principal'][$uuidP->__toString()]['path'] = $imageP->path;
@@ -176,8 +191,7 @@ class ApiController
 
                 $images = $arrayItem['orderPictures'];
 
-                if ($images !== null) {
-
+                if (null !== $images) {
                     $images = StringUtil::deserialize($images);
 
                     foreach ($images as $image) {
@@ -190,17 +204,17 @@ class ApiController
                         }
                     }
 
-                    //$return['orderPictures'] = $images;
+                // $return['orderPictures'] = $images;
                 } else {
                     $return['orderPictures'] = [];
                 }
 
-                $return["createdAt"] = $arrayItem["createdAt"];
-                $return["tstamp"] = $arrayItem["tstamp"];
-                $return["title"] = $arrayItem["title"];
+                $return['createdAt'] = $arrayItem['createdAt'];
+                $return['tstamp'] = $arrayItem['tstamp'];
+                $return['title'] = $arrayItem['title'];
 
-                $return["date"] = $arrayItem["date"];
-                $return['teaser'] = $arrayItem["teaser"];
+                $return['date'] = $arrayItem['date'];
+                $return['teaser'] = $arrayItem['teaser'];
                 $category = $objItem->getRelated('pid');
                 $arrayCategory = $category->row();
 
@@ -210,10 +224,9 @@ class ApiController
                 $return['categorie']['title'] = $arrayCategory['title'];
                 $return['categorie']['alias'] = $arrayCategory['alias'];
 
+                $return['slug'] = $arrayItem['slug'];
 
-                $return["slug"] = $arrayItem["slug"];
-
-                $return["url"] = $objItem->getUrl(true);
+                $return['url'] = $objItem->getUrl(true);
 
                 $return['content_b64'] = base64_encode($strContent);
 
@@ -228,20 +241,19 @@ class ApiController
 
     private function accessCheck(Request $request): ?JsonResponse
     {
-
         if (!$this->apiKey) {
             return new JsonResponse('{"error":"No API KEY Provided"}', Response::HTTP_SERVICE_UNAVAILABLE, [], true);
         }
 
-        if ($request->headers->get("HTTP_PORTFOLIO_API_KEY")) {
-            $token = $request->headers->get("HTTP_PORTFOLIO_API_KEY");
-        } elseif ($request->query->get("key")) {
-            $token = $request->query->get("key");
+        if ($request->headers->get('HTTP_PORTFOLIO_API_KEY')) {
+            $token = $request->headers->get('HTTP_PORTFOLIO_API_KEY');
+        } elseif ($request->query->get('key')) {
+            $token = $request->query->get('key');
         } else {
             return new JsonResponse('{"error":"Forbidden Access no token : please provide &key=APIKEY in request OR HTTP_PORTFOLIO_API_KEY in headers"}', Response::HTTP_FORBIDDEN, [], true);
         }
 
-        if ($token == "") {
+        if ('' === $token) {
             return new JsonResponse('{"error":"Bad Request empty token"}', Response::HTTP_BAD_REQUEST, [], true);
         }
 
@@ -251,5 +263,4 @@ class ApiController
 
         return null;
     }
-
 }
