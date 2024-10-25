@@ -2,8 +2,6 @@
     "name": "webexmachina/contao-portfolio",
     "description": "Portfolio for Contao Open Source CMS",
     "keywords": ["portfolio", "webexmachina", "module", "contao"],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "type": "contao-module",
     "license": "LGPL-3.0+",
     "authors": [
