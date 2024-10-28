@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2023 Web ex Machina
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -32,7 +32,7 @@ ArrayUtil::arrayInsert(
     [
         'wem_portfolio' => [
             'wem_portfolio_feed' => [
-                'tables' => ['tl_wem_portfolio_feed','tl_wem_portfolio_l10n', 'tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_wem_portfolio_feed_attribute_l10n', 'tl_content'],
+                'tables' => ['tl_wem_portfolio_feed', 'tl_wem_portfolio_l10n', 'tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_wem_portfolio_feed_attribute_l10n', 'tl_content'],
             ],
         ],
     ]
@@ -57,7 +57,6 @@ ArrayUtil::arrayInsert(
         ],
     ]
 );
-
 
 /*
  * Models

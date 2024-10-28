@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
 
 use WEM\PortfolioBundle\DataContainer\PortfolioFeedContainer;
 
@@ -48,7 +57,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
             'delete' => [
                 'href' => 'act=delete',
                 'icon' => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+                'attributes' => 'onclick="if(!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\'))return false;Backend.getScrollOffset()"',
             ],
             'show' => [
                 'href' => 'act=show',
@@ -61,7 +70,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
             'portfolios' => [
                 'href' => 'table=tl_wem_portfolio',
                 'icon' => 'folderOP.gif',
-            ]
+            ],
         ],
     ],
 
@@ -109,8 +118,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
             'inputType' => 'pageTree',
             'foreignKey' => 'tl_page.title',
             'eval' => ['fieldType' => 'radio'],
-            'sql' => "int(10) unsigned NOT NULL default 0",
-            'relation' => ['type' => 'hasOne', 'load' => 'lazy']
+            'sql' => 'int(10) unsigned NOT NULL default 0',
+            'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
         ],
         'attributes' => [
             'inputType' => 'dcaWizard',

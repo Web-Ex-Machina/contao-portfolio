@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 namespace WEM\PortfolioBundle\EventListener;
 
 use Contao\CoreBundle\ServiceAnnotation\Hook;
@@ -17,6 +27,7 @@ class PortfolioInsertTagListener
      * Examples:
      * {{portfolio::title}}
      * {{portfolio::title::1}}
+     *
      * @Hook("replaceInsertTags", priority=100)
      */
     public function replaceInsertTags(string $tag)
@@ -28,7 +39,7 @@ class PortfolioInsertTagListener
         }
 
         // Check if we want a specific portfolio or the current one
-        $varItem = (3 === count($chunks)) ? $chunks[2] : Input::get('auto_item');
+        $varItem = (3 === \count($chunks)) ? $chunks[2] : Input::get('auto_item');
         $objItem = Portfolio::findByIdOrSlug($varItem);
 
         // If objItem does not exist, return empty string
@@ -43,7 +54,7 @@ class PortfolioInsertTagListener
 
             return $objFile->path;
         }
-        
+
         return $objItem->getAttributeValue($chunks[1]) ?: $objItem->{$chunks[1]};
     }
 }

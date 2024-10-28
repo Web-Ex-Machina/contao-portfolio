@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2023 Web ex Machina
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -45,7 +45,8 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
     {
         return $resolver
-            ->resolve(__DIR__ . '/../Resources/config/routes.yml')
-            ->load(__DIR__ . '/../Resources/config/routes.yml');
+            ->resolve(__DIR__.'/../Resources/config/routes.yml')
+            ->load(__DIR__.'/../Resources/config/routes.yml')
+        ;
     }
 }

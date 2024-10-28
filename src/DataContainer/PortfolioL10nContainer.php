@@ -2,19 +2,29 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 namespace WEM\PortfolioBundle\DataContainer;
 
 use Contao\Backend;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\Input;
-use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
+use WEM\PortfolioBundle\Model\PortfolioL10n;
 
 class PortfolioL10nContainer extends Backend
 {
     public function __construct()
     {
-        Parent::__construct();
+        parent::__construct();
     }
 
     /**
@@ -22,7 +32,7 @@ class PortfolioL10nContainer extends Backend
      */
     public function listItems(array $r): string
     {
-        return sprintf(
+        return \sprintf(
             '%s <span style="color:#888">[%s]</span>',
             $r['language'],
             $r['title']
@@ -30,17 +40,17 @@ class PortfolioL10nContainer extends Backend
     }
 
     /**
-     * Update DCA palettes and add custom attributes
+     * Update DCA palettes and add custom attributes.
      *
      * @throws \Exception
      */
     public function updatePalettes($dc): void
     {
-        if ($dc->id && 'edit' == Input::get('act')) {
+        if ($dc->id && 'edit' === Input::get('act')) {
             $objItem = PortfolioL10n::findByPk($dc->id);
             $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $objItem->getRelated('pid')->pid]);
 
-            if (!$objAttributes || 0 == $objAttributes->count()) {
+            if (!$objAttributes || 0 === $objAttributes->count()) {
                 return;
             }
 

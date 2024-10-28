@@ -2,10 +2,19 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 namespace WEM\PortfolioBundle\Module;
 
 use Contao\BackendTemplate;
-use Contao\Combiner;
 use Contao\Input;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Portfolio;
@@ -20,7 +29,7 @@ use WEM\UtilsBundle\Classes\StringUtil;
 class ModulePortfoliosFilters extends ModulePortfolios
 {
     /**
-     * List filters
+     * List filters.
      *
      * @var array<string>
      */
@@ -43,11 +52,11 @@ class ModulePortfoliosFilters extends ModulePortfolios
         $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
         if ($scopeMatcher->isBackend()) {
             $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_filters'][0]) . ' ###';
+            $objTemplate->wildcard = '### '.strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_filters'][0]).' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
         }
@@ -82,13 +91,13 @@ class ModulePortfoliosFilters extends ModulePortfolios
         $filters = StringUtil::deserialize($this->wem_portfolio_filters);
         $this->loadDataContainer('tl_wem_portfolio');
 
-        if (\is_array($filters) && $filters !== []) {
+        if (\is_array($filters) && [] !== $filters) {
             foreach ($filters as $f) {
                 $objFeedAttribute = PortfolioFeedAttribute::findOneByName($f);
 
                 $field = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$f];
-                $fName = sprintf('portfolio_filter_%s%s', $f, $field['eval']['multiple'] ? '[]' : '');
-                $fGet = sprintf('portfolio_filter_%s', $f);
+                $fName = \sprintf('portfolio_filter_%s%s', $f, $field['eval']['multiple'] ? '[]' : '');
+                $fGet = \sprintf('portfolio_filter_%s', $f);
 
                 $filter = [
                     'type' => $field['inputType'],
@@ -181,7 +190,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
                             }
                         }
 
-                    break;
+                        break;
                 }
 
                 if ('select' === $filter['type'] && 1 >= \count($filter['options'])) {

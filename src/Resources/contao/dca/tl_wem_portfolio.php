@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 use Contao\BackendUser;
 use Contao\Config;
 use Contao\System;
@@ -13,7 +23,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
     'config' => [
         'dataContainer' => 'Table',
         'ptable' => 'tl_wem_portfolio_feed',
-        'ctable' => ['tl_content','tl_wem_portfolio_l10n'],
+        'ctable' => ['tl_content', 'tl_wem_portfolio_l10n'],
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -25,7 +35,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         ],
         'onload_callback' => [
             [PortfolioContainer::class, 'updatePalettes'],
-        ]
+        ],
     ],
     'list' => [
         'sorting' => [
@@ -45,11 +55,11 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         'operations' => [
             'edit' => [
                 'href' => 'table=tl_content',
-                'icon' => 'edit.svg'
+                'icon' => 'edit.svg',
             ],
             'header' => [
                 'href' => 'act=edit',
-                'icon' => 'header.svg'
+                'icon' => 'header.svg',
             ],
             'copy' => [
                 'href' => 'act=copy',
@@ -58,7 +68,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'delete' => [
                 'href' => 'act=delete',
                 'icon' => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
+                'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
             ],
             'show' => [
                 'href' => 'act=show',
@@ -83,7 +93,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         ',
     ],
     'subpalettes' => [
-        'overwriteMeta' => 'alt,imageTitle,imageUrl,caption'
+        'overwriteMeta' => 'alt,imageTitle,imageUrl,caption',
     ],
     'fields' => [
         'id' => [
@@ -97,7 +107,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'foreignKey' => 'tl_wem_portfolio_feed.title',
             'relation' => [
                 'type' => 'belongsTo',
-                'load' => 'eager'
+                'load' => 'eager',
             ],
         ],
         'createdAt' => [
@@ -112,9 +122,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'flag' => 3,
             'inputType' => 'text',
             'save_callback' => [
-                [PortfolioContainer::class, 'generateSlug']
+                [PortfolioContainer::class, 'generateSlug'],
             ],
-            'eval' => ['tl_class' => 'w50', 'maxlength' => 255, 'unique'=> true],
+            'eval' => ['tl_class' => 'w50', 'maxlength' => 255, 'unique' => true],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'title' => [
@@ -146,21 +156,21 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'exclude' => true,
             'inputType' => 'checkbox',
             'eval' => ['submitOnChange' => true, 'tl_class' => 'w50 clr'],
-            'sql' => "char(1) NOT NULL default ''"
+            'sql' => "char(1) NOT NULL default ''",
         ],
         'singleSRC' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['singleSRC'],
             'exclude' => true,
             'inputType' => 'fileTree',
             'eval' => ['fieldType' => 'radio', 'filesOnly' => true, 'extensions' => '%contao.image.valid_extensions%', 'mandatory' => true],
-            'sql' => "binary(16) NULL"
+            'sql' => 'binary(16) NULL',
         ],
         'alt' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['alt'],
             'exclude' => true, 'search' => true,
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'imageTitle' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['imageTitle'],
@@ -168,7 +178,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'search' => true,
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'size' => [
             'label' => &$GLOBALS['TL_LANG']['MSC']['imgSize'],
@@ -176,8 +186,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'inputType' => 'imageSize',
             'reference' => &$GLOBALS['TL_LANG']['MSC'],
             'eval' => ['rgxp' => 'natural', 'includeBlankOption' => true, 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'],
-            'options_callback' => static fn() => System::getContainer()->get('contao.image.sizes')->getOptionsForUser(BackendUser::getInstance()),
-            'sql' => "varchar(64) NOT NULL default ''"
+            'options_callback' => static fn () => System::getContainer()->get('contao.image.sizes')->getOptionsForUser(BackendUser::getInstance()),
+            'sql' => "varchar(64) NOT NULL default ''",
         ],
         'imagemargin' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['imagemargin'],
@@ -185,7 +195,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'inputType' => 'trbl',
             'options' => ['px', '%', 'em', 'rem'],
             'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
-            'sql' => "varchar(128) NOT NULL default ''"
+            'sql' => "varchar(128) NOT NULL default ''",
         ],
         'imageUrl' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['imageUrl'],
@@ -193,14 +203,14 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'search' => true,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 2048, 'dcaPicker' => true, 'tl_class' => 'w50'],
-            'sql' => "varchar(2048) NOT NULL default ''"
+            'sql' => "varchar(2048) NOT NULL default ''",
         ],
         'fullsize' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['fullsize'],
             'exclude' => true,
             'inputType' => 'checkbox',
             'eval' => ['tl_class' => 'w50 m12'],
-            'sql' => "char(1) NOT NULL default ''"
+            'sql' => "char(1) NOT NULL default ''",
         ],
         'caption' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['caption'],
@@ -208,7 +218,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'search' => true,
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'allowHtml' => true, 'tl_class' => 'w50'],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'floating' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['floating'],
@@ -217,12 +227,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'options' => ['above', 'left', 'right', 'below'],
             'eval' => ['cols' => 4, 'tl_class' => 'w50'],
             'reference' => &$GLOBALS['TL_LANG']['MSC'],
-            'sql' => "varchar(12) NOT NULL default 'above'"
+            'sql' => "varchar(12) NOT NULL default 'above'",
         ],
         'pictures' => [
             'exclude' => true,
             'inputType' => 'fileTree',
-            'eval' => ['files' => true, 'extensions' => Config::get('validImageTypes'), 'multiple' => true, 'fieldType' => 'checkbox', 'orderField' => 'orderPictures', 'tl_class'=> 'clr'],
+            'eval' => ['files' => true, 'extensions' => Config::get('validImageTypes'), 'multiple' => true, 'fieldType' => 'checkbox', 'orderField' => 'orderPictures', 'tl_class' => 'clr'],
             'sql' => 'blob NULL',
         ],
         'orderPictures' => [

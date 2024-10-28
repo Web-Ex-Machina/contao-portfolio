@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Personal Data Manager for Contao Open Source CMS
+ * Contao Portfolio for Contao Open Source CMS
  * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
- * @package  Web-Ex-Machina/contao-smartgear
+ * @package  Web-Ex-Machina/contao-portfolio
  * @author   Web ex Machina <contact@webexmachina.fr>
- * @link     https://github.com/Web-Ex-Machina/personal-data-manager/
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\PortfolioBundle\Module;
@@ -45,13 +45,45 @@ class ModulePortfoliosList extends ModulePortfolios
     protected $strTemplate = 'mod_wem_portfolio_list';
 
     /**
+     * Display a wildcard in the back end.
+     *
+     * @throws \ErrorException
+     */
+    public function generate(): string
+    {
+        $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
+        if ($scopeMatcher->isBackend()) {
+            $objTemplate = new BackendTemplate('be_wildcard');
+            $objTemplate->wildcard = '### '.strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_feed_list'][0]).' ###';
+            $objTemplate->title = $this->headline;
+            $objTemplate->id = $this->id;
+            $objTemplate->link = $this->name;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
+
+            return $objTemplate->parse();
+        }
+
+        // Load datacontainer and job feeds
+        $this->loadDatacontainer('tl_wem_portfolio');
+        $this->loadLanguageFile('tl_wem_portfolio');
+        $this->wem_portfolio_feeds = StringUtil::deserialize($this->wem_portfolio_feeds);
+
+        // Return if there are no archives
+        if (empty($this->wem_portfolio_feeds) || !\is_array($this->wem_portfolio_feeds)) {
+            throw new \ErrorException('wem_portfolio_feeds not found.');
+        }
+
+        return parent::generate();
+    }
+
+    /**
      * Generate the module.
      */
     protected function compile(): void
     {
         global $objPage;
         $this->limit = null;
-        $this->offset = (int)$this->skipFirst;
+        $this->offset = (int) $this->skipFirst;
 
         // Maximum number of items
         if ($this->numberOfItems > 0) {
@@ -65,9 +97,9 @@ class ModulePortfoliosList extends ModulePortfolios
         $this->config = ['pid' => $this->wem_portfolio_feeds, 'published' => 1];
 
         // Retrieve filters
-        if ($_GET !== [] || $_POST !== []) {
+        if ([] !== $_GET || [] !== $_POST) {
             foreach (array_keys($_GET) as $f) {
-                if (false === strpos($f, 'portfolio_filter_')) {
+                if (!str_contains($f, 'portfolio_filter_')) {
                     continue;
                 }
 
@@ -77,7 +109,7 @@ class ModulePortfoliosList extends ModulePortfolios
             }
 
             foreach (array_keys($_POST) as $f) {
-                if (false === strpos($f, 'portfolio_filter_')) {
+                if (!str_contains($f, 'portfolio_filter_')) {
                     continue;
                 }
 
@@ -92,7 +124,7 @@ class ModulePortfoliosList extends ModulePortfolios
             $arrWheres = StringUtil::deserialize($this->wem_portfolio_constraints);
 
             if (!empty($arrWheres)) {
-                foreach($arrWheres as $w) {
+                foreach ($arrWheres as $w) {
                     $this->config['where'][] = html_entity_decode($w);
                 }
             }
@@ -120,18 +152,18 @@ class ModulePortfoliosList extends ModulePortfolios
             }
 
             // Get the current page
-            $id = 'page_n' . $this->id;
+            $id = 'page_n'.$this->id;
             $page = Input::get($id) ?? 1;
 
             // Do not index or cache the page if the page number is outside the range
             if ($page < 1 || $page > max(ceil($total / $this->perPage), 1)) {
-                throw new PageNotFoundException('Page not found: ' . Environment::get('uri'));
+                throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
             }
 
             // Set limit and offset
             $this->limit = $this->perPage;
             $this->offset += (max($page, 1) - 1) * $this->perPage;
-            $skip = (int)$this->skipFirst;
+            $skip = (int) $this->skipFirst;
 
             // Overall limit
             if ($this->offset + $this->limit > $total + $skip) {
@@ -143,8 +175,7 @@ class ModulePortfoliosList extends ModulePortfolios
             $this->Template->pagination = $objPagination->generate("\n  ");
         }
 
-        $objItems = Portfolio::findItems($this->config, ($this->limit ?: 0), ($this->offset ?: 0));
-
+        $objItems = Portfolio::findItems($this->config, $this->limit ?: 0, $this->offset ?: 0);
 
         // Add the items
         if ($objItems instanceof Collection) {
@@ -160,38 +191,5 @@ class ModulePortfoliosList extends ModulePortfolios
             $this->Template->openModalOnLoad = true;
             $this->Template->portfolioId = $objPortfolio->first()->id;
         }
-    }
-
-    /**
-     * Display a wildcard in the back end.
-     * @return string
-     *
-     * @throws \ErrorException
-     */
-    public function generate(): string
-    {
-        $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
-        if ($scopeMatcher->isBackend()) {
-            $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### ' . strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_feed_list'][0]) . ' ###';
-            $objTemplate->title = $this->headline;
-            $objTemplate->id = $this->id;
-            $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
-
-            return $objTemplate->parse();
-        }
-
-        // Load datacontainer and job feeds
-        $this->loadDatacontainer('tl_wem_portfolio');
-        $this->loadLanguageFile('tl_wem_portfolio');
-        $this->wem_portfolio_feeds = StringUtil::deserialize($this->wem_portfolio_feeds);
-
-        // Return if there are no archives
-        if (empty($this->wem_portfolio_feeds) || !\is_array($this->wem_portfolio_feeds)) {
-            throw new \ErrorException('wem_portfolio_feeds not found.');
-        }
-
-        return parent::generate();
     }
 }

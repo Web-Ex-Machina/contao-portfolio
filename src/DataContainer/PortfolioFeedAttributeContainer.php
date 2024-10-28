@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+/**
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
+ *
+ * @category ContaoBundle
+ * @package  Web-Ex-Machina/contao-portfolio
+ * @author   Web ex Machina <contact@webexmachina.fr>
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
+ */
+
 namespace WEM\PortfolioBundle\DataContainer;
 
 use Contao\Backend;
@@ -10,7 +20,7 @@ class PortfolioFeedAttributeContainer extends Backend
 {
     public function __construct()
     {
-        Parent::__construct();
+        parent::__construct();
     }
 
     /**
@@ -18,7 +28,7 @@ class PortfolioFeedAttributeContainer extends Backend
      */
     public function listItems(array $r): string
     {
-        return sprintf(
+        return \sprintf(
             '%s <span style="color:#888">[%s]</span>',
             $r['name'],
             $r['label']
@@ -26,7 +36,7 @@ class PortfolioFeedAttributeContainer extends Backend
     }
 
     /**
-     * Return a list of form fields
+     * Return a list of form fields.
      */
     public function getFieldOptions(): array
     {
@@ -34,7 +44,7 @@ class PortfolioFeedAttributeContainer extends Backend
     }
 
     /**
-     * Return a list of form fields
+     * Return a list of form fields.
      */
     public function getFieldsAndLegends(): array
     {
@@ -44,20 +54,20 @@ class PortfolioFeedAttributeContainer extends Backend
         $strPalette = $GLOBALS['TL_DCA']['tl_wem_portfolio']['palettes']['default'];
         $arrChunks = explode(';', $strPalette);
 
-        if ($arrChunks === []) {
+        if ([] === $arrChunks) {
             return $arrOptions;
         }
 
         foreach ($arrChunks as $c) {
             $arrWidgets = explode(',', $c);
 
-            if ($arrWidgets === []) {
+            if ([] === $arrWidgets) {
                 continue;
             }
 
             foreach ($arrWidgets as $w) {
-                if (false !== strpos($w, "_legend")) {
-                    $arrOptions['legends'][] = trim(str_replace(["{", "}", "_hidden"], ["", "", ""], $w));
+                if (str_contains($w, '_legend')) {
+                    $arrOptions['legends'][] = trim(str_replace(['{', '}', '_hidden'], ['', '', ''], $w));
                     continue;
                 }
 
@@ -65,7 +75,7 @@ class PortfolioFeedAttributeContainer extends Backend
 
                 $arrSubfields = $this->getFieldsFromSubpalette($w);
 
-                if ($arrSubfields !== []) {
+                if ([] !== $arrSubfields) {
                     $arrOptions['fields'] = array_merge($arrOptions['fields'], $arrSubfields);
                 }
             }
@@ -75,16 +85,16 @@ class PortfolioFeedAttributeContainer extends Backend
     }
 
     /**
-     * Retrieve fields from subpalette
+     * Retrieve fields from subpalette.
      */
     protected function getFieldsFromSubpalette(string $f): array
     {
         $arrFields = [];
 
-        if (array_key_exists('subpalettes', $GLOBALS['TL_DCA']['tl_wem_portfolio']) && array_key_exists($f, $GLOBALS['TL_DCA']['tl_wem_portfolio']['subpalettes'])) {
+        if (\array_key_exists('subpalettes', $GLOBALS['TL_DCA']['tl_wem_portfolio']) && \array_key_exists($f, $GLOBALS['TL_DCA']['tl_wem_portfolio']['subpalettes'])) {
             $arrSubfields = explode(',', $GLOBALS['TL_DCA']['tl_wem_portfolio']['subpalettes'][$f]);
 
-            if ($arrSubfields === []) {
+            if ([] === $arrSubfields) {
                 return $arrFields;
             }
 
@@ -93,7 +103,7 @@ class PortfolioFeedAttributeContainer extends Backend
 
                 $arrSubfields = $this->getFieldsFromSubpalette($s);
 
-                if ($arrSubfields !== []) {
+                if ([] !== $arrSubfields) {
                     $arrFields = array_merge($arrFields, $arrSubfields);
                 }
             }

@@ -3,14 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Contao Job Portfolios for Contao Open Source CMS
- * Copyright (c) 2018-2020 Web ex Machina.
+ * Contao Portfolio for Contao Open Source CMS
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
- *
+ * @package  Web-Ex-Machina/contao-portfolio
  * @author   Web ex Machina <contact@webexmachina.fr>
- *
- * @see     https://github.com/Web-Ex-Machina/contao-job-portfolios/
+ * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
 namespace WEM\PortfolioBundle\Module;
@@ -37,12 +36,12 @@ abstract class ModulePortfolios extends Module
 {
     protected function catchAjaxRequests(): void
     {
-        if (Input::post('TL_AJAX') && (int)$this->id === (int)Input::post('module')) {
+        if (Input::post('TL_AJAX') && (int) $this->id === (int) Input::post('module')) {
             try {
                 switch (Input::post('action')) {
                     case 'seeDetails':
                         if (!Input::post('portfolio')) {
-                            throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['argumentMissing'], 'portfolio'));
+                            throw new \Exception(\sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['argumentMissing'], 'portfolio'));
                         }
 
                         $objItem = Portfolio::findByPk(Input::post('portfolio'));
@@ -51,7 +50,7 @@ abstract class ModulePortfolios extends Module
                         echo System::getContainer()->get('contao.insert_tag.parser')->replace($this->parsePortfolio($objItem));
                         exit;
                     default:
-                        throw new \Exception(sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['unknownRequest'], Input::post('action')));
+                        throw new \Exception(\sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['unknownRequest'], Input::post('action')));
                 }
             } catch (\Exception $e) {
                 $arrResponse = ['status' => 'error', 'msg' => $e->getResponse(), 'trace' => $e->getTrace()];
@@ -66,6 +65,7 @@ abstract class ModulePortfolios extends Module
 
     /**
      * Parse one or more items and return them as array.
+     *
      * @throws \Exception
      */
     protected function parsePortfolios(Collection $objItems, bool $blnAddArchive = false): array
@@ -82,7 +82,7 @@ abstract class ModulePortfolios extends Module
         while ($objItems->next()) {
             $objItem = $objItems->current();
 
-            $arrArticles[] = $this->parsePortfolio($objItem, $blnAddArchive, ((1 === ++$count) ? ' first' : '') . (($count === $limit) ? ' last' : '') . ((0 === ($count % 2)) ? ' odd' : ' even'), $count);
+            $arrArticles[] = $this->parsePortfolio($objItem, $blnAddArchive, ((1 === ++$count) ? ' first' : '').(($count === $limit) ? ' last' : '').((0 === ($count % 2)) ? ' odd' : ' even'), $count);
         }
 
         return $arrArticles;
@@ -101,7 +101,7 @@ abstract class ModulePortfolios extends Module
         $objTemplate->title = $objItem->getL10nLabel('title');
 
         if ('' !== $objItem->cssClass) {
-            $strClass = ' ' . $objItem->cssClass . $strClass;
+            $strClass = ' '.$objItem->cssClass.$strClass;
         }
 
         $objTemplate->model = $objItem;
@@ -109,9 +109,9 @@ abstract class ModulePortfolios extends Module
         $objTemplate->count = $intCount; // see #5708
 
         // Add the meta information
-        $objTemplate->date = (int)$objItem->date;
+        $objTemplate->date = (int) $objItem->date;
         $objTemplate->timestamp = $objItem->date;
-        $objTemplate->datetime = date('Y-m-d\TH:i:sP', (int)$objItem->date);
+        $objTemplate->datetime = date('Y-m-d\TH:i:sP', (int) $objItem->date);
 
         // Add an image
         if ($objItem->singleSRC) {
@@ -120,8 +120,9 @@ abstract class ModulePortfolios extends Module
                 ->createFigureBuilder()
                 ->from($objItem->singleSRC)
                 ->setSize($objItem->size)
-                ->enableLightbox((bool)$objItem->fullsize)
-                ->buildIfResourceExists();
+                ->enableLightbox((bool) $objItem->fullsize)
+                ->buildIfResourceExists()
+            ;
 
             if (null !== $figure) {
                 $figure->applyLegacyTemplateData($objTemplate, $objItem->imagemargin, $objItem->floating);
@@ -158,7 +159,7 @@ abstract class ModulePortfolios extends Module
                     }
 
                     // Append the left-over images at the end
-                    if ($images !== []) {
+                    if ([] !== $images) {
                         $arrOrder = array_merge($arrOrder, array_values($images));
                     }
 
@@ -183,7 +184,7 @@ abstract class ModulePortfolios extends Module
             $strText = '';
             $objElement = Content::findPublishedByPidAndTableAndLanguage($id, 'tl_wem_portfolio');
 
-            if ($objElement !== null) {
+            if (null !== $objElement) {
                 while ($objElement->next()) {
                     $strText .= $this->getContentElement($objElement->current());
                 }
@@ -191,11 +192,11 @@ abstract class ModulePortfolios extends Module
 
             return $strText;
         };
-        $objTemplate->hasText = static fn(): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
+        $objTemplate->hasText = static fn (): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
 
         // Retrieve item attributes
-        $objTemplate->blnDisplayAttributes = (bool)$this->wem_portfolio_displayAttributes;
-        if ((bool)$this->wem_portfolio_displayAttributes && null !== $this->wem_portfolio_attributes) {
+        $objTemplate->blnDisplayAttributes = (bool) $this->wem_portfolio_displayAttributes;
+        if ((bool) $this->wem_portfolio_displayAttributes && null !== $this->wem_portfolio_attributes) {
             $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->wem_portfolio_attributes));
         }
 
@@ -203,13 +204,13 @@ abstract class ModulePortfolios extends Module
         if ($this->wem_portfolio_displayTeaser) {
             $objTemplate->blnDisplayText = true;
         } else {
-            $objTemplate->detailsUrl = $this->addToUrl('seeDetails=' . $objItem->id, true, ['portfolio']);
+            $objTemplate->detailsUrl = $this->addToUrl('seeDetails='.$objItem->id, true, ['portfolio']);
         }
 
         // Parse the URL if we have a jumpTo configured
         if ($objTarget = $objItem->getRelated('pid')->getRelated('jumpTo')) {
             $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
-            $params = (Config::get('useAutoItem') ? '/' : '/items/') . ($objItem->slug ?: $objItem->id);
+            $params = (Config::get('useAutoItem') ? '/' : '/items/').($objItem->slug ?: $objItem->id);
             $objTemplate->jumpTo = $objPageData->getFrontendUrl($params);
         }
 
