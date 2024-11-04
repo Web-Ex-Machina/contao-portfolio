@@ -34,7 +34,7 @@ class Portfolio extends Model
      *
      * @var array<string>
      */
-    public static array $arrSearchFields = ['slug', 'title', 'teaser'];
+    public static $arrSearchFields = ['slug', 'title', 'teaser'];
 
     /**
      * Table name.
