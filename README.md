@@ -16,6 +16,10 @@ Functionnalities
  * Sort your items the way you want
  * Attach multiple files to portfolio items and display them in your templates
 
+Known issues
+-------------------
+ * Attribute can erase another attribute properties if they have the same name - will be fixed in 4.x (with a global attribute system)
+
 System requirements
 -------------------
 

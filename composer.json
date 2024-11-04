@@ -13,14 +13,22 @@
     ],
     "support":{
         "website":"https://www.webexmachina.fr/",
-        "issues":"https://github.com/webexmachina/contao-portfolio/issues",
-        "source":"https://github.com/webexmachina/contao-portfolio"
+        "issues":"https://github.com/web-ex-machina/contao-portfolio/issues",
+        "source":"https://github.com/web-ex-machina/contao-portfolio"
     },
     "require": {
-        "php": "^7.1",
-        "contao/core-bundle": "~4.4",
-        "contao-community-alliance/composer-plugin": "*",
-        "terminal42/dcawizard":"^2.4"
+        "php": ">=7.4 || >=8.2",
+        "contao/core-bundle": "^4.13 || 5.3.x",
+        "terminal42/dcawizard": "~2.7",
+        "contao/manager-plugin": "^2.0",
+        "webexmachina/contao-utils": "^2.0",
+        "ext-json": "*",
+        "terminal42/contao-changelanguage": "^3.7"
+    },
+    "require-dev": {
+        "rector/rector": "^1.0",
+        "contao/contao-rector": "^1.0",
+        "phpstan/phpstan": "^1.12"
     },
     "autoload":{
         "psr-4": {
@@ -29,5 +37,13 @@
     },
     "extra":{
         "contao-manager-plugin": "WEM\\PortfolioBundle\\ContaoManager\\Plugin"
+    },
+    "config": {
+        "allow-plugins": {
+            "contao-components/installer": false,
+            "php-http/discovery": false,
+            "contao/manager-plugin": false,
+            "contao-community-alliance/composer-plugin": false
+        }
     }
 }

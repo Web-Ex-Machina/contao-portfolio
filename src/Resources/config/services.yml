@@ -1,0 +1,30 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+  WEM\PortfolioBundle\:
+    resource: '../../../src/'
+    exclude:
+      - '../../../src/DependencyInjection/'
+      - '../../../src/Config/'
+      - '../../../src/Resources/'
+      - '../../../src/Model/'
+      - '../../../src/Module/'
+      - '../../../src/Migrations/'
+  WEM\PortfolioBundle\Controller\ApiController:
+    alias: 'wem_portfolio.controller.api_controller'
+    public: true
+
+  wem_portfolio.controller.api_controller:
+    class: WEM\PortfolioBundle\Controller\ApiController
+    public: true
+    tags: [ 'controller.service_arguments' ]
+
+  wem_portfolio.listener.load_datacontainer:
+    class: WEM\PortfolioBundle\EventListener\LoadDataContainerListener
+    arguments:
+      $logger: '@logger'
+    public: true
+    tags:
+      - { name: contao.hook, hook: loadDataContainer, method: addAttributesToPortfolioDca, priority: 100 }

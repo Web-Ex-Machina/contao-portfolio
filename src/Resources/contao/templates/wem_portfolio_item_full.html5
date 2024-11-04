@@ -1,0 +1,18 @@
+<div class="portfolio_item block-card  block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article" data-maxlines="3" data-preset="">
+    <<?= $this->jumpTo ? 'a href="' . $this->jumpTo . '" title="' . $GLOBALS['TL_LANG']['MSC']['more'] . '"' : 'div' ?>
+    class="block-card__wrapper">
+    <div class="block-card__figure r_4-3">
+      <?php if ($this->addImage): ?>
+          <?php $this->insert('image', $this->arrData); // need picture size optimisation ?>
+      <?php endif; ?>
+    </div>
+    <div class="block-card__content flex-justifycontent--center-alignitems--center txt-center">
+      <div class="block-card__title h2"> <?php echo $this->title ?> </div>
+      <?php if ($this->text): ?>
+        <div class="block-card__text" itemprop="description">
+          <?php echo strip_tags($this->text) ?>
+        </div>
+      <?php endif ?>
+    </div>
+</<?= $this->jumpTo ? 'a' : 'div' ?>>
+</div>

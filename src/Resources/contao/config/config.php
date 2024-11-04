@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2020 Web ex Machina
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -12,87 +12,58 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
+use Contao\ArrayUtil;
+use Contao\System;
+use WEM\PortfolioBundle\Model;
+use WEM\PortfolioBundle\Module;
+
 /**
  * Load Contao 4 Bundles.
  */
-$bundles = \System::getContainer()->getParameter('kernel.bundles');
+$bundles = System::getContainer()->getParameter('kernel.bundles');
+$scopeMatcher = System::getContainer()->get('wem.scope_matcher');
 
 /*
  * Back end modules
  */
-array_insert(
+ArrayUtil::arrayInsert(
     $GLOBALS['BE_MOD'],
     1,
     [
         'wem_portfolio' => [
-            'wem_portfolio_item' => [
-                'tables' => ['tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
-            ],
-            'wem_portfolio_attribute' => [
-                'tables' => ['tl_wem_portfolio_attribute'],
-            ],
-            'wem_portfolio_category' => [
-                'tables' => ['tl_wem_portfolio_category', 'tl_wem_portfolio_category_item', 'tl_wem_portfolio_item', 'tl_wem_portfolio_item_attribute', 'tl_content'],
+            'wem_portfolio_feed' => [
+                'tables' => ['tl_wem_portfolio_feed', 'tl_wem_portfolio_l10n', 'tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute', 'tl_wem_portfolio_feed_attribute_l10n', 'tl_content'],
             ],
         ],
     ]
 );
 
 // Load icon in Contao backend
-if ('BE' === TL_MODE) {
+if ($scopeMatcher->isBackend()) {
     $GLOBALS['TL_CSS'][] = 'bundles/wemportfolio/backend_svg.css';
-}
-
-// Add JS Logic only if we are in the items DCA
-if ('wem_portfolio_item' === \Input::get('do') || 'wem_portfolio_category' === \Input::get('do')) {
-    $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/wemportfolio/backend.js';
 }
 
 /*
  * Front end modules
  */
-array_insert(
+ArrayUtil::arrayInsert(
     $GLOBALS['FE_MOD'],
     2,
     [
         'wem_portfolio' => [
-            'wem_portfolio_list' => 'WEM\PortfolioBundle\Module\PortfolioList',
-            'wem_portfolio_list_categories' => 'WEM\PortfolioBundle\Module\ListCategories',
-            'wem_portfolio_reader' => 'WEM\PortfolioBundle\Module\PortfolioReader',
+            'wem_portfolio_list' => Module\ModulePortfoliosList::class,
+            'wem_portfolio_reader' => Module\ModulePortfoliosReader::class,
+            'wem_portfolio_filters' => Module\ModulePortfoliosFilters::class,
         ],
     ]
 );
 
 /*
- * Hooks
- */
-$GLOBALS['TL_HOOKS']['generateBreadcrumb'][] = [\WEM\PortfolioBundle\Hooks\GenerateBreadcrumbListener::class, 'onGenerateBreadcrumb'];
-$GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\WEM\PortfolioBundle\Hooks\GetSearchablePagesListener::class, 'onGetSearchablePages'];
-$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\WEM\PortfolioBundle\Hooks\ReplaceInsertTagsListener::class, 'onReplaceInsertTags'];
-
-if ('BE' === TL_MODE) {
-    $GLOBALS['TL_HOOKS']['executePreActions'][] = [\WEM\PortfolioBundle\Hooks\ExecutePreActionsListener::class, 'onExecutePreActions'];
-}
-
-/*
  * Models
  */
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_attribute'] = 'WEM\PortfolioBundle\Model\Attribute';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_category'] = 'WEM\PortfolioBundle\Model\Category';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_category_item'] = 'WEM\PortfolioBundle\Model\CategoryItem';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item'] = 'WEM\PortfolioBundle\Model\Item';
-$GLOBALS['TL_MODELS']['tl_wem_portfolio_item_attribute'] = 'WEM\PortfolioBundle\Model\ItemAttribute';
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_feed_attribute_l10n'] = Model\PortfolioFeedAttributeL10n::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_feed_attribute'] = Model\PortfolioFeedAttribute::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_feed'] = Model\PortfolioFeed::class;
 
-// Wizards
-$GLOBALS['BE_FFL']['wemPortfolioAttributeWizard'] = 'WEM\PortfolioBundle\Widget\AttributeWizard';
-
-/*
- * i18nl10n specific items
- */
-if (\array_key_exists('VerstaerkerI18nl10nBundle', $bundles)) {
-    // Hooks
-    $GLOBALS['TL_HOOKS']['i18nl10nUpdateLanguageSelectionItem'][] = ["WEM\PortfolioBundle\Controller\Item", 'getFrontendUrl'];
-
-    // Wizards
-    $GLOBALS['BE_FFL']['i18nl10nAssociatedLocationsWizard'] = 'WEM\PortfolioBundle\Widget\I18nl10nAssociatedLocationsWizard';
-}
+$GLOBALS['TL_MODELS']['tl_wem_portfolio_l10n'] = Model\PortfolioL10n::class;
+$GLOBALS['TL_MODELS']['tl_wem_portfolio'] = Model\Portfolio::class;

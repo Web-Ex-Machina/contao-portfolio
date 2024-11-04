@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2020 Web ex Machina
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -15,190 +15,111 @@ declare(strict_types=1);
 /*
  * Add palettes to tl_module.
  */
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list_categories'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_category_sort,numberOfItems,perPage,skipFirst;{list_legend},wem_portfolio_list_module;{template_legend:hide},wem_portfolio_category_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] = '{title_legend},name,headline,type;{config_legend},wem_portfolio_categories,wem_portfolio_filters,wem_portfolio_item_sort,numberOfItems,perPage,skipFirst;{template_legend:hide},wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '{title_legend},name,headline,type;{template_legend:hide},wem_portfolio_item_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_categories'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_categories'],
+use WEM\PortfolioBundle\DataContainer\ModuleContainer;
+
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'wem_portfolio_addFilters';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'wem_portfolio_addConstraints';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'wem_portfolio_displayAttributes';
+
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_filters'] = '
+    {title_legend},name,headline,type;
+    {config_legend},jumpTo,wem_portfolio_filters,wem_portfolio_addSearch;
+    {template_legend:hide},customTpl;
+    {expert_legend:hide},guests,cssID
+';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
+    '{title_legend},name,headline,type;
+    {config_legend},wem_portfolio_feeds,wem_portfolio_sort,numberOfItems,perPage,skipFirst;
+    {filters_legend},wem_portfolio_addFilters,wem_portfolio_addConstraints;
+    {attributes_legend},wem_portfolio_displayAttributes;
+    {template_legend:hide},wem_portfolio_template,customTpl;
+    {image_legend:hide},imgSize;
+    {protected_legend:hide},protected;
+    {expert_legend:hide},guests,cssID
+';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '
+    {title_legend},name,headline,type;
+    {config_legend},wem_portfolio_feeds,wem_portfolio_displayAttributes,overviewPage,customLabel;
+    {template_legend:hide},wem_portfolio_template,customTpl;
+    {image_legend:hide},imgSize;
+    {protected_legend:hide},protected;
+    {expert_legend:hide},guests,cssID
+';
+
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['wem_portfolio_addFilters'] = 'wem_portfolio_filters_module';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['wem_portfolio_addConstraints'] = 'wem_portfolio_constraints';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['wem_portfolio_displayAttributes'] = 'wem_portfolio_attributes';
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_feeds'] = [
+    'exclude' => true,
     'inputType' => 'checkbox',
-    'foreignKey' => 'tl_wem_portfolio_category.title',
-    'eval' => ['multiple' => true, 'tl_class' => 'clr', 'mandatory' => true],
+    'options_callback' => [ModuleContainer::class, 'getFeeds'],
+    'eval' => ['multiple' => true, 'mandatory' => true],
     'sql' => 'blob NULL',
-    'relation' => ['type' => 'hasMany', 'load' => 'lazy'],
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_item_template'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_template'],
-    'default' => 'wem_portfolio_item_default',
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_addFilters'] = [
     'exclude' => true,
-    'inputType' => 'select',
-    'options_callback' => ['tl_module_wem_portfolio', 'getPortfolioItemTemplates'],
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "varchar(64) NOT NULL default ''",
-];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_category_template'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_category_template'],
-    'default' => 'wem_portfolio_category_default',
-    'exclude' => true,
-    'inputType' => 'select',
-    'options_callback' => ['tl_module_wem_portfolio', 'getPortfolioCategoriesTemplates'],
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "varchar(64) NOT NULL default ''",
+    'flag' => 1,
+    'inputType' => 'checkbox',
+    'eval' => ['submitOnChange' => true, 'doNotCopy' => true, 'tl_class' => 'clr'],
+    'sql' => "char(1) NOT NULL default ''",
 ];
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_filters'],
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => ['tl_module_wem_portfolio', 'getPortfolioFilters'],
-    'eval' => ['doNotCopy' => true, 'tl_class' => 'clr', 'chosen' => true, 'multiple' => true],
+    'options_callback' => [ModuleContainer::class, 'getFiltersOptions'],
+    'eval' => ['chosen' => true, 'multiple' => true, 'mandatory' => true, 'tl_class' => 'w50'],
     'sql' => 'blob NULL',
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_category_sort'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_category_sort'],
-    'default' => 'global',
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_addSearch'] = [
+    'exclude' => true,
+    'flag' => 1,
+    'inputType' => 'checkbox',
+    'eval' => ['doNotCopy' => true, 'tl_class' => 'clr'],
+    'sql' => "char(1) NOT NULL default ''",
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_template'] = [
+    'default' => 'wem_portfolio_default',
     'exclude' => true,
     'inputType' => 'select',
-    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_category_sort'],
-    'options' => ['global', 'title_ASC', 'title_DESC'],
+    'options_callback' => [ModuleContainer::class, 'getTemplates'],
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(64) NOT NULL default ''",
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_item_sort'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_sort'],
-    'default' => 'global',
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_displayAttributes'] = [
     'exclude' => true,
-    'inputType' => 'select',
-    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_sort'],
-    'options_callback' => ['tl_module_wem_portfolio', 'getSortingCategories'],
-    'save_callback' => [
-        ['tl_module_wem_portfolio', 'checkIfMultiCategories'],
-    ],
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "varchar(64) NOT NULL default ''",
+    'inputType' => 'checkbox',
+    'eval' => ['doNotCopy' => true, 'tl_class' => 'clr', 'submitOnChange' => true],
+    'sql' => "char(1) NOT NULL default ''",
 ];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_list_module'] = [
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_list_module'],
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_attributes'] = [
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => ['tl_module_wem_portfolio', 'getListModules'],
-    'reference' => &$GLOBALS['TL_LANG']['tl_module'],
-    'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
+    'options_callback' => [ModuleContainer::class, 'getAttributesOptions'],
+    'eval' => ['chosen' => true, 'multiple' => true, 'mandatory' => true, 'tl_class' => 'w50'],
+    'sql' => 'blob NULL',
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters_module'] = [
+    'exclude' => true,
+    'inputType' => 'select',
+    'options_callback' => [ModuleContainer::class, 'getFiltersModules'],
+    'foreignKey' => 'tl_module.name',
+    'eval' => ['mandatory' => true],
     'sql' => 'int(10) unsigned NOT NULL default 0',
+    'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
 ];
-
-/**
- * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @author Web ex Machina <http://www.webexmachina.fr>
- */
-class tl_module_wem_portfolio extends Backend
-{
-    /**
-     * Import the back end user object.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->import('BackendUser', 'User');
-    }
-
-    /**
-     * Get all portfolio list modules and return them as array.
-     *
-     * @return array
-     */
-    public function getListModules()
-    {
-        $arrModules = [];
-        $objModules = $this->Database->execute("SELECT m.id, m.name, t.name AS theme FROM tl_module m LEFT JOIN tl_theme t ON m.pid=t.id WHERE m.type='wem_portfolio_list' ORDER BY t.name, m.name");
-
-        while ($objModules->next()) {
-            $arrModules[$objModules->theme][$objModules->id] = $objModules->name.' (ID '.$objModules->id.')';
-        }
-
-        return $arrModules;
-    }
-
-    /**
-     * Remove "category" option from sorting options if we have several categories to display.
-     *
-     * @return array
-     */
-    public function getSortingCategories(DataContainer $dc)
-    {
-        $arrOptions = ['global', 'category', 'date_ASC', 'date_DESC', 'title_ASC', 'title_DESC'];
-
-        if ($dc->activeRecord->wem_portfolio_categories && 1 < \count(deserialize($dc->activeRecord->wem_portfolio_categories))) {
-            unset($arrOptions[array_search('category', $arrOptions, true)]);
-        }
-
-        $options = [];
-        foreach ($arrOptions as $o) {
-            $options[$o] = $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_item_sort'][$o];
-        }
-
-        return $options;
-    }
-
-    /**
-     * Throw an exception when we want a sorting by category if we have several categories.
-     *
-     * @param mixed         $varValue [Value saved]
-     * @param DataContainer $dc       [Datacontainer]
-     *
-     * @throws \Exception
-     *
-     * @return mixed [Value to save]
-     */
-    public function checkIfMultiCategories($varValue, DataContainer $dc)
-    {
-        if ('category' === $varValue && $dc->activeRecord->wem_portfolio_categories && 1 < \count(deserialize($dc->activeRecord->wem_portfolio_categories))) {
-            throw new \Exception($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['cannotUseCategorySorting']);
-        }
-
-        return $varValue;
-    }
-
-    /**
-     * Return all news templates as array.
-     *
-     * @return array
-     */
-    public function getPortfolioItemTemplates()
-    {
-        return $this->getTemplateGroup('wem_portfolio_item_');
-    }
-
-    /**
-     * Return all news templates as array.
-     *
-     * @return array
-     */
-    public function getPortfolioCategoriesTemplates()
-    {
-        return $this->getTemplateGroup('wem_portfolio_category_');
-    }
-
-    /**
-     * Return all attributes usable as filters.
-     *
-     * @return array
-     */
-    public function getPortfolioFilters()
-    {
-        $objAttributes = \WEM\PortfolioBundle\Model\Attribute::findItems(['useAsFilter' => 1]);
-
-        if (!$objAttributes || 0 === $objAttributes->count()) {
-            \Message::addInfo($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['noFiltersAvailable']);
-
-            return [];
-        }
-
-        $arrFilters = [];
-        while ($objAttributes->next()) {
-            $arrFilters[$objAttributes->id] = $objAttributes->title;
-        }
-
-        return $arrFilters;
-    }
-}
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_addConstraints'] = [
+    'exclude' => true,
+    'flag' => 1,
+    'inputType' => 'checkbox',
+    'eval' => ['submitOnChange' => true, 'doNotCopy' => true, 'tl_class' => 'clr'],
+    'sql' => "char(1) NOT NULL default ''",
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_constraints'] = [
+    'exclude' => true,
+    'inputType' => 'listWizard',
+    'eval' => ['multiple' => true, 'allowHtml' => true, 'tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];

@@ -1,6 +1,9 @@
 # DEV FILES
 sftp-config.json 
 *.sublime-*
+vendor
+.idea
+*.lock
 
 # Ignore all assets/vendor libraries
 assets/vendor

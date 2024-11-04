@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2020 Web ex Machina
+ * Copyright (c) 2015-2024 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -35,7 +35,6 @@ class WEMPortfolioExtension extends Extension
             $container,
             new FileLocator(__DIR__.'/../Resources/config')
         );
-
         $loader->load('services.yml');
     }
 }

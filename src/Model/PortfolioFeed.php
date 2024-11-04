@@ -12,15 +12,19 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\PortfolioBundle;
+namespace WEM\PortfolioBundle\Model;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use WEM\UtilsBundle\Model\Model;
 
 /**
- * Configures the Contao Portfolio bundle.
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
+ * Reads and writes items.
  */
-class WEMPortfolioBundle extends Bundle
+class PortfolioFeed extends Model
 {
+    /**
+     * Table name.
+     *
+     * @var string
+     */
+    protected static $strTable = 'tl_wem_portfolio_feed';
 }

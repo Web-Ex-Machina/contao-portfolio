@@ -1,0 +1,161 @@
+<?xml version="1.0" ?>
+<xliff version="1.1">
+    <file datatype="php" original="system/modules/wem-portfolio/languages/en/tl_wem_portfolio.php" source-language="en"
+          target-language="fr">
+        <body>
+            <trans-unit id="tl_wem_portfolio.slug.0">
+                <source>slug</source>
+                <target>Permalien</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.slug.1">
+                <source>Enter the item slug</source>
+                <target>Saisissez le permalien</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.header.0">
+                <source>Edit item</source>
+                <target>Modifier l’élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.header.1">
+                <source>Edit item ID %s</source>
+                <target>Modifier l’élément ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.title.0">
+                <source>Title</source>
+                <target>Intitulé</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.title.1">
+                <source>Enter the item title</source>
+                <target>Saisissez l'intitulé de l’élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.date.0">
+                <source>Date of publishing</source>
+                <target>Date de publication</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.date.1">
+                <source>Enter the item date of publishing</source>
+                <target>Saisissez la date de publication de l’élément</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio.teaser.0">
+                <source>Teaser</source>
+                <target>Accroche</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.teaser.1">
+                <source>Enter the item teaser</source>
+                <target>Saisissez l'accroche de l’élément</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio.published.0">
+                <source>Publish the item</source>
+                <target>Publier l'élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.published.1">
+                <source>Check to publish the item</source>
+                <target>Cochez pour publier l’élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.start.0">
+                <source>Publish from</source>
+                <target>Publier à partir du</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.start.1">
+                <source>Enter the date on which the item posting should appear on the site</source>
+                <target>Indiquez la date à laquelle l’élément doit apparaître sur le site</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.stop.0">
+                <source>Publish until</source>
+                <target>Publier jusqu'au</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.stop.1">
+                <source>Enter the date on which the item should be removed from the site</source>
+                <target>Indiquez la date à laquelle l’élément doit être retirée du le site</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio.title_legend">
+                <source>Global informations</source>
+                <target>Informations générales</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.content_legend">
+                <source>Contents</source>
+                <target>Contenus</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.media_legend">
+                <source>Media</source>
+                <target>Médias</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.publish_legend">
+                <source>Publish settings</source>
+                <target>Paramètres de publication</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio.createdAt.0">
+                <source>Created at</source>
+                <target>Créée le</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.createdAt.1">
+                <source>Enter creation date</source>
+                <target>Saisissez la date de création</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio.new.0">
+                <source>New item</source>
+                <target>Nouvelle annonce</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.new.1">
+                <source>Create a new item</source>
+                <target>Créer une nouvelle annonce</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.edit.0">
+                <source>Edit item</source>
+                <target>Éditer l’élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.edit.1">
+                <source>Edit item ID %s</source>
+                <target>Éditer l’élément ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.copy.0">
+                <source>Copy item</source>
+                <target>Dupliquer l’élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.copy.1">
+                <source>Copy item ID %s</source>
+                <target>Dupliquer l’élément ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.delete.0">
+                <source>Delete item</source>
+                <target>Supprimer l’élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.delete.1">
+                <source>Delete item ID %s</source>
+                <target>Supprimer l’élément ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.show.0">
+                <source>Show item data</source>
+                <target>Voir les informations de l’élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.show.1">
+                <source>Show item data ID %s</source>
+                <target>Voir les informations de l’élément ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.applications.0">
+                <source>Show item applications</source>
+                <target>Voir les candidatures de l’élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.applications.1">
+                <source>Show item applications ID %s</source>
+                <target>Voir les candidatures de l’élément ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.pictures.0">
+                <source>Gallery</source>
+                <target>Galerie</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.pictures.1">
+                <source>Add there the picture for the gallery.</source>
+                <target>Ajoutez ici les images pour la galerie.</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.ERROR.generic">
+                <source>Error</source>
+                <target>Erreur</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
