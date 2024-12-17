@@ -232,6 +232,7 @@ abstract class ModulePortfolios extends Module
         $url = $feed->readFromRemoteUrl . '/api/portfolio/items?' . http_build_query($params);
 
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $request = curl_exec($ch);
         curl_close($ch);
@@ -257,13 +258,14 @@ abstract class ModulePortfolios extends Module
         $url = $feed->readFromRemoteUrl . '/api/portfolio/count?' . http_build_query($params);
 
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $request = curl_exec($ch);
         curl_close($ch);
 
-        dump($url); 
-        dump($request); 
-        die;
+        $data = json_decode($request, true);
+
+        return $data['items'];
     }
 
     /**
@@ -284,6 +286,7 @@ abstract class ModulePortfolios extends Module
         $url = $feed->readFromRemoteUrl . '/api/portfolio/item/' . $item;
 
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $request = curl_exec($ch);
         curl_close($ch);
