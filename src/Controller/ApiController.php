@@ -71,11 +71,15 @@ class ApiController
             'path' => '/items/{page}/{limit}?cats[]=1&cats[]=2&key=myKey',
         ];
         $infos2 = [
+            'usage' => 'To count number of article based on an categories array',
+            'path' => '/count?cats[]=1&cats[]=2&key=myKey',
+        ];
+        $infos3 = [
             'usage' => 'To retrieve an unique item based on the unique Id',
             'path' => '/item/{id}&key=myKey',
         ];
 
-        return new JsonResponse(['data' => [$infos1, $infos2]]);
+        return new JsonResponse(['data' => [$infos1, $infos2, $infos3]]);
     }
 
     /**
@@ -155,6 +159,25 @@ class ApiController
         }
 
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+    }
+
+        /**
+     * @Route("/count", methods={"GET"})
+     */
+    public function countPortfolioList(Request $request, array $cats = []): JsonResponse
+    {
+        $check = $this->accessCheck($request);
+        if ($check instanceof JsonResponse) {
+            return $check;
+        }
+
+        $cats = $request->query->all('cats');
+
+        if (!is_iterable($cats)) {
+            return new JsonResponse('{"error":"Give at least on category : ?cats[]=1&cats[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
+        }
+
+        return new JsonResponse(['items' => Portfolio::countItems(['pid' => $cats])], Response::HTTP_OK);
     }
 
     /**
