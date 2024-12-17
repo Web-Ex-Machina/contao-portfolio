@@ -67,11 +67,11 @@ class ApiController
     public function doc(Request $request): JsonResponse
     {
         $infos1 = [
-            'usage' => 'For retrieve a list of article based on an categories array',
+            'usage' => 'To retrieve a list of article based on an categories array',
             'path' => '/items/{page}/{limit}?cats[]=1&cats[]=2&key=myKey',
         ];
         $infos2 = [
-            'usage' => 'For retrieve an unique item based on the unique Id',
+            'usage' => 'To retrieve an unique item based on the unique Id',
             'path' => '/item/{id}&key=myKey',
         ];
 
