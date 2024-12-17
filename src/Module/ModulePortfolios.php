@@ -216,4 +216,31 @@ abstract class ModulePortfolios extends Module
 
         return $objTemplate->parse();
     }
+
+    /**
+     * Transform a JSON object into a Portfolio Model
+     * Useful for API calls
+     * 
+     * @var string $json
+     * 
+     * @return WEM\PortfolioBundle\Model\Portfolio
+     * 
+     * @throws \Exception
+     */
+    protected function jsonToModel(string $json): Portfolio
+    {
+        $data = json_decode($json, true);
+
+        if (empty($data)) {
+            throw new \Exception("JSON data is empty");
+        }
+
+        $objModel = new Portfolio();
+
+        foreach ($data as $c => $v) {
+            $objModel->{$c} = $v;
+        }
+
+        return $objModel
+    }
 }
