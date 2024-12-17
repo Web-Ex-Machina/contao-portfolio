@@ -397,7 +397,7 @@ class Portfolio extends Model
         }
 
         $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
-        $params = (Config::get('useAutoItem') ? '/' : '/items/') . $objFeed->alias . '/' . ($this->slug ?: $this->id);
+        $params = (Config::get('useAutoItem') ? '/' : '/items/') . 'category/' . $objFeed->alias . '/item/' . ($this->slug ?: $this->id);
 
         return $blnAbsolute ? $objPageData->getAbsoluteUrl($params) : $objPageData->getFrontendUrl($params);
     }
