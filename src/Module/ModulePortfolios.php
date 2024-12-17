@@ -25,6 +25,7 @@ use Contao\System;
 use Terminal42\ChangeLanguage\PageFinder;
 use WEM\PortfolioBundle\Model\Content;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -214,70 +215,106 @@ abstract class ModulePortfolios extends Module
     }
 
     /**
-     * Generate an Item URL
+     * Find items from remote
      * 
-     * @var mixed $varItem
-     * @var mixed $varFeed
-     * 
-     * @return string
+     * @var array config
+     * @var PortfolioFeed feed
+     *
+     * @return Collection
      * 
      * @throws \Exception
      */
-    protected function generateItemUrl($varItem, $varFeed = null)
+    protected function findRemoteItems($config, $feed, $limit, $offset, $options): Collection
     {
-        // First, if we have a $varFeed, try to get it
-        if (null !== $varFeed) {
-            if ($varFeed instanceof PortfolioFeed) {
-                $objFeed = $varFeed;
-            } else {
-                $objFeed = PortfolioFeed::findByIdOrAlias($varFeed);
-            }
+        $ch = curl_init();
+        $params = $config;
+        $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/items?' . http_build_query($params);
 
-            // Throw an exception if objFeed is null since we asked for a specific feed that cannot be found
-            if (null === $objFeed) {
-                throw new \Exception(sprintf("Feed %s cannot be found", $varFeed));
-            }
+        curl_setopt($ch, CURLOPT_URL, $url);
 
-            // Check if we want a item from remote
-            // Providing the varFeed is the only way to retrieve an item from remote
-            // since the item wanted cannot exist locally
-            if ($objFeed->readFromRemote) {
-                $objItem = $this->retrieveItemFromRemote($varItem, $objFeed);
+        $request = curl_exec($ch);
+        curl_close($ch);
 
-                if (null === $objItem) {
-                    throw new \Exception(sprintf("Item %s cannot be found from remote %s", $varItem, $objFeed->readFromRemoteUrl));
-                }
-            }
+        dump($request); die;
+    }
+
+    /**
+     * Count items from remote
+     * 
+     * @var array config
+     * @var PortfolioFeed feed
+     *
+     * @return Portfolio
+     * 
+     * @throws \Exception
+     */
+    protected function countRemoteItems($config, $feed): int
+    {
+        $ch = curl_init();
+        $params = $config;
+        $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/count?' . http_build_query($params);
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        $request = curl_exec($ch);
+        curl_close($ch);
+
+        dump($url); 
+        dump($request); 
+        die;
+    }
+
+    /**
+     * Find a specific item from remote
+     * 
+     * @var mixed item
+     * @var PortfolioFeed feed
+     *
+     * @return Portfolio
+     * 
+     * @throws \Exception
+     */
+    protected function findRemoteItem($item, $feed): Portfolio
+    {
+        $ch = curl_init();
+        $params = $config;
+        $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/item/' . $item;
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        $request = curl_exec($ch);
+        curl_close($ch);
+
+        dump($request); die;
+    }
+
+    /**
+     * Transform a JSON object into a Portfolio Model
+     * Useful for API calls
+     * 
+     * @var string $json
+     * 
+     * @return WEM\PortfolioBundle\Model\Portfolio
+     * 
+     * @throws \Exception
+     */
+    protected function jsonToModel(string $json): Portfolio
+    {
+        $data = json_decode($json, true);
+
+        if (empty($data)) {
+            throw new \Exception("JSON data is empty");
         }
 
-        // Only case Item is different of null is we retrieved from remote
-        // All other cases, it is available locally and we should retrieve it
-        if (null !== $objItem) {
-            // Then retrieve the item
-            if ($varItem instanceof Portfolio) {
-                $objItem = $varItem;
-            } else {
-                $objItem = Portfolio::findByIdOrSlug($varItem);
-            }
+        $objModel = new Portfolio();
 
-            // And retrieve the feed
-            if (null === $objFeed) {
-                $objFeed = $objItem->getRelated('pid');
-            }
+        foreach ($data as $c => $v) {
+            $objModel->{$c} = $v;
         }
 
-        // Should not happen but hey.
-        if (null === $objItem || null === $objFeed) {
-            throw new \Exception(sprintf("Cannot generate URL because Item %s or Feed %s does not exist", $varItem, $varFeed));
-        }
-
-        // Generate the URL
-        if ($objTarget = $objFeed->getRelated('jumpTo')) {
-            $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
-            $params = (Config::get('useAutoItem') ? '/' : '/items/') . $objFeed->alias . '/' . ($objItem->slug ?: $objItem->id);
-            return $objPageData->getFrontendUrl($params);
-        } else {
-            throw new \Exception(sprintf("Cannot retrieve jumpTo param from feed %s", $objFeed->id));
-        }
+        return $objModel;
     }
 }

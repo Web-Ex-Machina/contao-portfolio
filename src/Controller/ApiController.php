@@ -71,11 +71,11 @@ class ApiController
     {
         $infos1 = [
             'usage' => 'To retrieve a list of article based on an categories array',
-            'path' => '/items/{page}/{limit}?cats[]=1&cats[]=2&key=myKey',
+            'path' => '/items/{page}/{limit}?pid[]=1&pid[]=2&key=myKey',
         ];
         $infos2 = [
             'usage' => 'To count number of article based on an categories array',
-            'path' => '/count?cats[]=1&cats[]=2&key=myKey',
+            'path' => '/count?pid[]=1&pid[]=2&key=myKey',
         ];
         $infos3 = [
             'usage' => 'To retrieve an unique item based on the unique Id',
@@ -88,7 +88,7 @@ class ApiController
     /**
      * @Route("/items/{page}/{limit}", requirements={"page"="\d+","limit"="\d+"}), methods={"GET"})
      */
-    public function viewPortfolioList(Request $request, int $page, int $limit, array $cats = []): JsonResponse
+    public function viewPortfolioList(Request $request, int $page, int $limit, array $pid = []): JsonResponse
     {
         $check = $this->accessCheck($request);
         if ($check instanceof JsonResponse) {
@@ -107,16 +107,16 @@ class ApiController
             $page = 1;
         }
 
-        $cats = $request->query->all('cats');
+        $pid = $request->query->all('pid');
 
         $offset = ($page - 1) * $limit;
-        if (!is_iterable($cats)) {
-            return new JsonResponse('{"error":"Give at least on category : ?cats[]=1&cats[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
+        if (!is_iterable($pid)) {
+            return new JsonResponse('{"error":"Give at least on category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
         }
 
         $items = [];
 
-        foreach ($cats as $category) {
+        foreach ($pid as $category) {
             $objCategory = PortfolioFeed::findByIdOrAlias($category);
             if (!$objCategory) {
                 return new JsonResponse('{"error":"Categorie '.$category.' not found"}', Response::HTTP_I_AM_A_TEAPOT, [], true);
@@ -167,20 +167,20 @@ class ApiController
         /**
      * @Route("/count", methods={"GET"})
      */
-    public function countPortfolioList(Request $request, array $cats = []): JsonResponse
+    public function countPortfolioList(Request $request, array $pid = []): JsonResponse
     {
         $check = $this->accessCheck($request);
         if ($check instanceof JsonResponse) {
             return $check;
         }
 
-        $cats = $request->query->all('cats');
+        $pid = $request->query->all('pid');
 
-        if (!is_iterable($cats)) {
-            return new JsonResponse('{"error":"Give at least on category : ?cats[]=1&cats[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
+        if (!is_iterable($pid)) {
+            return new JsonResponse('{"error":"Give at least on category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
         }
 
-        return new JsonResponse(['items' => Portfolio::countItems(['pid' => $cats])], Response::HTTP_OK);
+        return new JsonResponse(['items' => Portfolio::countItems(['pid' => $pid])], Response::HTTP_OK);
     }
 
     /**

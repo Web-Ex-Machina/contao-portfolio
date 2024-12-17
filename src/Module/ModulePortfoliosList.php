@@ -23,6 +23,7 @@ use Contao\Model\Collection;
 use Contao\Pagination;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -44,6 +45,9 @@ class ModulePortfoliosList extends ModulePortfolios
 
     protected $strTemplate = 'mod_wem_portfolio_list';
 
+    protected bool $readFromRemote = false;
+    protected ?PortfolioFeed $readFromRemoteFeed = null;
+
     /**
      * Display a wildcard in the back end.
      *
@@ -63,7 +67,6 @@ class ModulePortfoliosList extends ModulePortfolios
             return $objTemplate->parse();
         }
 
-        // Load datacontainer and job feeds
         $this->loadDatacontainer('tl_wem_portfolio');
         $this->loadLanguageFile('tl_wem_portfolio');
         $this->wem_portfolio_feeds = StringUtil::deserialize($this->wem_portfolio_feeds);
@@ -71,6 +74,20 @@ class ModulePortfoliosList extends ModulePortfolios
         // Return if there are no archives
         if (empty($this->wem_portfolio_feeds) || !\is_array($this->wem_portfolio_feeds)) {
             throw new \ErrorException('wem_portfolio_feeds not found.');
+        }
+
+        // Check if we have remote feeds
+        foreach ($this->wem_portfolio_feeds as $f) {
+            $objFeed = PortfolioFeed::findByPk($f);
+
+            // If we have one remote feed, consider we must 
+            // get everything from remote, to improve later
+            if ($objFeed->readFromRemote) {
+                $this->readFromRemote = true;
+                $this->readFromRemoteFeed = $objFeed;
+
+                break;
+            }
         }
 
         return parent::generate();
@@ -136,7 +153,11 @@ class ModulePortfoliosList extends ModulePortfolios
         }
 
         // Get the total number of items
-        $intTotal = Portfolio::countItems($this->config);
+        if ($this->readFromRemote) {
+            $intTotal = $this->countRemoteItems($this->config, $this->readFromRemoteFeed);
+        } else {
+            $intTotal = Portfolio::countItems($this->config);
+        }
 
         if ($intTotal < 1) {
             return;
