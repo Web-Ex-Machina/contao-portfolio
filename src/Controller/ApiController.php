@@ -51,7 +51,7 @@ class ApiController
         $this->framework->initialize();
         $this->apiKey = null;
 
-        if (!Config::get('portfolioApiKey')) {
+        if (Config::get('portfolioApiKey')) {
             $this->apiKey = $this->encryption->decrypt_b64((string) Config::get('portfolioApiKey'));
         }
     }
