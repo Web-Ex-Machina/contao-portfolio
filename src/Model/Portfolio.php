@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
+use Contao\Config;
 use Contao\Controller;
 use Contao\Date;
 use Contao\FilesModel;
@@ -21,6 +22,7 @@ use Contao\Model\Collection;
 use Contao\Model\Registry;
 use Contao\PageModel;
 use Contao\System;
+use Terminal42\ChangeLanguage\PageFinder;
 use WEM\UtilsBundle\Classes\StringUtil;
 use WEM\UtilsBundle\Model\Model;
 
@@ -382,12 +384,22 @@ class Portfolio extends Model
      */
     public function getUrl(bool $blnAbsolute = false): string
     {
-        $objCategory = $this->getRelated('pid');
+        $objFeed = $this->getRelated('pid');
 
-        $objPage = PageModel::findByPk($objCategory->jumpTo);
+        if (!$objFeed) {
+            throw new \Exception(sprintf("Cannot retrieve pid from item id %s", $this->id));
+        }
 
-        // TODO : deprecated getAbsoluteUrl getFrontendUrl in 5.3 removed in 6
-        return $blnAbsolute ? $objPage->getAbsoluteUrl('/'.$this->slug) : $objPage->getFrontendUrl('/'.$this->slug);
+        $objTarget = $objFeed->getRelated('jumpTo');
+
+        if (!$objFeed) {
+            throw new \Exception(sprintf("Cannot retrieve jumpTo from feed %s", $objFeed->id));
+        }
+
+        $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
+        $params = (Config::get('useAutoItem') ? '/' : '/items/') . $objFeed->alias . '/' . ($this->slug ?: $this->id);
+
+        return $blnAbsolute ? $objPageData->getAbsoluteUrl($params) : $objPageData->getFrontendUrl($params);
     }
 
     public function getL10nLabel($f, $l = null)
@@ -412,5 +424,32 @@ class Portfolio extends Model
         }
 
         return $objL10n->{$f};
+    }
+
+    /**
+     * Transform a JSON object into a Portfolio Model
+     * Useful for API calls
+     * 
+     * @var string $json
+     * 
+     * @return WEM\PortfolioBundle\Model\Portfolio
+     * 
+     * @throws \Exception
+     */
+    protected function jsonToModel(string $json): Portfolio
+    {
+        $data = json_decode($json, true);
+
+        if (empty($data)) {
+            throw new \Exception("JSON data is empty");
+        }
+
+        $objModel = new Portfolio();
+
+        foreach ($data as $c => $v) {
+            $objModel->{$c} = $v;
+        }
+
+        return $objModel;
     }
 }
