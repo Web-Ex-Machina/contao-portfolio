@@ -294,6 +294,33 @@ abstract class ModulePortfolios extends Module
         dump($request); die;
     }
 
+    protected function formatConfigForRemote($config, $feed): string
+    {
+        $params = $config;
+
+        // Unset some default config settings
+        unset($params['pid']);
+
+        $feedParams = deserialize($feed->readFromRemoteConfig);
+        if (is_iterable($feedParams)) {
+            foreach ($feedParams as $c) {
+                switch ($c['key']) {
+                    case 'pid':
+                        $params['pid'][] = $c['value'];
+                    break;
+
+                    default:
+                        $params[$c['key']] = $c['value'];
+                }
+
+            }
+        }
+
+        $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
+
+        return http_build_query($params);
+    }
+
     /**
      * Transform a JSON object into a Portfolio Model
      * Useful for API calls
