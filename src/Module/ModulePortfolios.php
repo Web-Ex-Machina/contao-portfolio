@@ -116,10 +116,20 @@ abstract class ModulePortfolios extends Module
 
         // Add an image
         if ($objItem->singleSRC) {
+            // remote
+            if(is_array($objItem->singleSRC)) {
+                $file = $objItem->singleSRC;
+            }
+            // local
+            else {
+                $objFile = FilesModel::findByUuid($objItem->singleSRC);
+                $file = $objFile->row();
+            }
+
             $figure = System::getContainer()
                 ->get('contao.image.studio')
                 ->createFigureBuilder()
-                ->from($objItem->singleSRC)
+                ->fromPath($file['path'])
                 ->setSize($objItem->size)
                 ->enableLightbox((bool) $objItem->fullsize)
                 ->buildIfResourceExists()
@@ -128,10 +138,26 @@ abstract class ModulePortfolios extends Module
             if (null !== $figure) {
                 $figure->applyLegacyTemplateData($objTemplate, $objItem->imagemargin, $objItem->floating);
             }
+
+            // Send also the data for flexible behavior
+            $objTemplate->singleSRC = $file;
         }
 
-        // Retrieve item pictures
-        if ($objItem->pictures = StringUtil::deserialize($objItem->pictures)) {
+        // Retrieve item pictures (remote)
+        if(is_array($objItem->pictures) && !empty($objItem->pictures)) {
+            $images = [];
+            foreach($objItem->pictures as $uuid => $i) {
+                $images[$i['path']] = [
+                    'id' => '',
+                    'uuid' => $uuid,
+                    'name' => $i['basename'],
+                    'singleSRC' => $i['path'],
+                    'filesModel' => null,
+                ];
+            }
+        }
+        // Retrieve item pictures (local)
+        else if ($objItem->pictures = StringUtil::deserialize($objItem->pictures)) {
             $objFiles = FilesModel::findMultipleByUuids($objItem->pictures);
             $images = [];
             while ($objFiles->next()) {
@@ -224,20 +250,42 @@ abstract class ModulePortfolios extends Module
      * 
      * @throws \Exception
      */
-    protected function findRemoteItems($config, $feed, $limit, $offset, $options): Collection
+    protected function findRemoteItems($config, $feed, $page, $limit): Collection
     {
         $ch = curl_init();
-        $params = $config;
-        $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
-        $url = $feed->readFromRemoteUrl . '/api/portfolio/items?' . http_build_query($params);
+        $params = $this->formatConfigForRemote($config, $feed);
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/items/' . $page . '/' . $limit . '?' . $params;
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $request = curl_exec($ch);
         curl_close($ch);
+        $data = json_decode($request, true);
 
-        dump($request); die;
+        // We need to format a Collection of Portfolio
+        $items = [];
+        foreach ($data as $item) {
+            $objModel = new Portfolio();
+            $objModel->pid = $feed->id;
+
+            foreach ($item as $c => $v) {
+                switch($c) {
+                    case 'category':
+                        // skip
+                    break;
+
+                    default:
+                        $objModel->{$c} = $v;
+                }
+            }
+
+            $items[] = $objModel;
+        }
+
+        $objCollection = new Collection($items, 'tl_wem_portfolio');
+
+        return $objCollection;
     }
 
     /**
@@ -280,7 +328,6 @@ abstract class ModulePortfolios extends Module
     protected function findRemoteItem($item, $feed): Portfolio
     {
         $ch = curl_init();
-        $params = $config;
         $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
         $url = $feed->readFromRemoteUrl . '/api/portfolio/item/' . $item;
 
@@ -318,32 +365,5 @@ abstract class ModulePortfolios extends Module
         $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
 
         return http_build_query($params);
-    }
-
-    /**
-     * Transform a JSON object into a Portfolio Model
-     * Useful for API calls
-     * 
-     * @var string $json
-     * 
-     * @return WEM\PortfolioBundle\Model\Portfolio
-     * 
-     * @throws \Exception
-     */
-    protected function jsonToModel(string $json): Portfolio
-    {
-        $data = json_decode($json, true);
-
-        if (empty($data)) {
-            throw new \Exception("JSON data is empty");
-        }
-
-        $objModel = new Portfolio();
-
-        foreach ($data as $c => $v) {
-            $objModel->{$c} = $v;
-        }
-
-        return $objModel;
     }
 }

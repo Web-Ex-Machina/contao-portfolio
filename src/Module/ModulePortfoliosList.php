@@ -196,7 +196,11 @@ class ModulePortfoliosList extends ModulePortfolios
             $this->Template->pagination = $objPagination->generate("\n  ");
         }
 
-        $objItems = Portfolio::findItems($this->config, $this->limit ?: 0, $this->offset ?: 0);
+        if ($this->readFromRemote) {
+            $objItems = $this->findRemoteItems($this->config, $this->readFromRemoteFeed, $page ?: 1, $this->limit ?: 0);
+        } else {
+            $objItems = Portfolio::findItems($this->config, $this->limit ?: 0, $this->offset ?: 0);
+        }
 
         // Add the items
         if ($objItems instanceof Collection) {

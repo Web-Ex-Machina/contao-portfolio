@@ -133,19 +133,39 @@ class ApiController
                     $arrayItem = $item->row();
                     $id = $arrayItem['id'];
                     $return = [];
+                    $return['singleSRC'] = [];
+                    $return['pictures'] = [];
                     if ('1' === $arrayItem['published']) {
                         foreach($arrayItem as $c => $v) {
                             switch ($c) {
                                 case 'singleSRC':
-                                    $return['picture'] = [];
                                     $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
                                     $uuidP = Uuid::fromBinary($imageP->uuid);
-                                    $return['picture'][$uuidP->__toString()]['path'] = $base . $imageP->path;
-                                    $return['picture'][$uuidP->__toString()]['extension'] = $imageP->extension;
-                                    $return['picture'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
-                                    $return['picture'][$uuidP->__toString()]['hash'] = $imageP->hash;
-                                    $return['picture'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
+                                    $return['singleSRC']['uuid'] = $base . $imageP->path;
+                                    $return['singleSRC']['path'] = $base . $imageP->path;
+                                    $return['singleSRC']['extension'] = $imageP->extension;
+                                    $return['singleSRC']['tstamp'] = $imageP->tstamp;
+                                    $return['singleSRC']['hash'] = $imageP->hash;
+                                    $return['singleSRC']['lastModified'] = $imageP->lastModified;
+                                    $return['singleSRC']['basename'] = $imageP->basename;
+                                    $return['singleSRC']['main'] = true;
                                     break;
+
+                                case 'pictures':
+                                    $arrPictures = deserialize($v);
+                                    foreach ($v as $uuid) {
+                                        $imageP = FilesModel::findByUuid($uuid);
+                                        $uuidP = Uuid::fromBinary($imageP->uuid);
+                                        $return['pictures'][$uuidP->__toString()]['uuid'] = $uuidP->__toString();
+                                        $return['pictures'][$uuidP->__toString()]['path'] = $base . $imageP->path;
+                                        $return['pictures'][$uuidP->__toString()]['extension'] = $imageP->extension;
+                                        $return['pictures'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
+                                        $return['pictures'][$uuidP->__toString()]['hash'] = $imageP->hash;
+                                        $return['pictures'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
+                                        $return['pictures'][$uuidP->__toString()]['basename'] = $imageP->basename;
+                                        $return['pictures'][$uuidP->__toString()]['main'] = false;
+                                    }
+                                break;
 
                                 case 'pid':
                                     $arrayCategory = $item->getRelated('pid')->row();
