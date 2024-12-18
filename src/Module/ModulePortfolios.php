@@ -253,16 +253,15 @@ abstract class ModulePortfolios extends Module
     protected function countRemoteItems($config, $feed): int
     {
         $ch = curl_init();
-        $params = $config;
-        $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
-        $url = $feed->readFromRemoteUrl . '/api/portfolio/count?' . http_build_query($params);
+        
+        $params = $this->formatConfigForRemote($config, $feed);
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/count?' . $params;
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $request = curl_exec($ch);
         curl_close($ch);
-
         $data = json_decode($request, true);
 
         return $data['items'];
