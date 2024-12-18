@@ -109,6 +109,7 @@ class ApiController
         }
 
         $pid = $request->query->all('pid');
+        $lang = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
 
         $offset = ($page - 1) * $limit;
         if (!is_iterable($pid)) {
@@ -191,6 +192,8 @@ class ApiController
                             }
                         }
                     }
+
+                    $return['attributes'] = $item->getAttributesFull([], $lang);
 
                     $items[$id] = $return;
                 }

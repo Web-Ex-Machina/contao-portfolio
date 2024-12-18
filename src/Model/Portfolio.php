@@ -205,17 +205,21 @@ class Portfolio extends Model
      *
      * @return array ['attribute_name'=>['label'=>$label, 'raw_value'=>$value,'human_readable_value'=>$human_readable_value]]
      */
-    public function getAttributesFull($varAttributes = []): array
+    public function getAttributesFull($varAttributes = [], $lang = null): array
     {
         $attributes = [];
 
-        $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttributes]);
+        if (empty($varAttributes)) {
+            $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $this->pid]);
+        } else {
+            $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttributes]);
+        }
 
         if ($objAttributes && 0 < $objAttributes->count()) {
             $arrArticleData = $this->row();
             while ($objAttributes->next()) {
                 if (\array_key_exists($objAttributes->name, $arrArticleData)) {
-                    $varValue = $this->getAttributeValue($objAttributes->current());
+                    $varValue = $this->getAttributeValue($objAttributes->current(), $lang);
 
                     $attributes[$objAttributes->name] = [
                         'label' => $objAttributes->label,
@@ -267,7 +271,7 @@ class Portfolio extends Model
      *
      * @return array|Collection|mixed|string|Portfolio|null
      */
-    public function getAttributeValue($varAttribute)
+    public function getAttributeValue($varAttribute, $lang = null)
     {
         if ('string' === \gettype($varAttribute)) {
             $varAttribute = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttribute], 1);
@@ -345,10 +349,10 @@ class Portfolio extends Model
                 return $figure->getLegacyTemplateData() ?: null;
 
             case 'listWizard':
-                return $this->getL10nLabel($varAttribute->name) ? implode(',', StringUtil::deserialize($this->getL10nLabel($varAttribute->name))) : '';
+                return $this->getL10nLabel($varAttribute->name, $lang) ? implode(',', StringUtil::deserialize($this->getL10nLabel($varAttribute->name, $lang))) : '';
 
             default:
-                return $this->getL10nLabel($varAttribute->name);
+                return $this->getL10nLabel($varAttribute->name, $lang);
         }
     }
 
@@ -359,7 +363,7 @@ class Portfolio extends Model
      *
      * @return array ['attribute_label'=>$human_readable_value,...]
      */
-    public function getAttributesSimple($varAttributes = []): array
+    public function getAttributesSimple($varAttributes = [], $lang = null): array
     {
         $attributes = [];
 
@@ -369,7 +373,7 @@ class Portfolio extends Model
             $arrArticleData = $this->row();
             while ($objAttributes->next()) {
                 if (\array_key_exists($objAttributes->name, $arrArticleData)) {
-                    $attributes[$objAttributes->name] = $this->getAttributeValue($objAttributes->current());
+                    $attributes[$objAttributes->name] = $this->getAttributeValue($objAttributes->current(), $lang);
                 }
             }
         }
