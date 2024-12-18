@@ -18,6 +18,7 @@ use Contao\Config;
 use Contao\ContentModel;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\Environment;
 use Contao\FilesModel;
 use Contao\Model\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -119,39 +120,56 @@ class ApiController
         foreach ($pid as $category) {
             $objCategory = PortfolioFeed::findByIdOrAlias($category);
             if (!$objCategory) {
-                return new JsonResponse('{"error":"Categorie '.$category.' not found"}', Response::HTTP_I_AM_A_TEAPOT, [], true);
+                return new JsonResponse('{"error":"Category '.$category.' not found"}', Response::HTTP_I_AM_A_TEAPOT, [], true);
             }
+
+            $base = Environment::get('base');
 
             $objItems = Portfolio::findItems(['pid' => $objCategory->id, 'published' => '1'], $limit, $offset);
             if ($objItems instanceof Collection) {
                 /** @var Portfolio $item */
                 foreach ($objItems as $item) {
+                    //dump($item);
                     $arrayItem = $item->row();
                     $id = $arrayItem['id'];
                     $return = [];
                     if ('1' === $arrayItem['published']) {
-                        $return['mainPicture'] = [];
+                        foreach($arrayItem as $c => $v) {
+                            switch ($c) {
+                                case 'singleSRC':
+                                    $return['picture'] = [];
+                                    $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
+                                    $uuidP = Uuid::fromBinary($imageP->uuid);
+                                    $return['picture'][$uuidP->__toString()]['path'] = $base . $imageP->path;
+                                    $return['picture'][$uuidP->__toString()]['extension'] = $imageP->extension;
+                                    $return['picture'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
+                                    $return['picture'][$uuidP->__toString()]['hash'] = $imageP->hash;
+                                    $return['picture'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
+                                    break;
 
-                        if ('1' === $arrayItem['addImage']) {
-                            $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
-                            $uuidP = Uuid::fromBinary($imageP->uuid);
-                            $return['image_principal'][$uuidP->__toString()]['path'] = $imageP->path;
-                            $return['image_principal'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
-                            $return['image_principal'][$uuidP->__toString()]['hash'] = $imageP->hash;
-                            $return['image_principal'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
+                                case 'pid':
+                                    $arrayCategory = $item->getRelated('pid')->row();
+                                    $return['category']['id'] = $arrayCategory['id'];
+                                    $return['category']['createdAt'] = $arrayCategory['createdAt'];
+                                    $return['category']['tstamp'] = $arrayCategory['tstamp'];
+                                    $return['category']['title'] = $arrayCategory['title'];
+                                    $return['category']['alias'] = $arrayCategory['alias'];
+                                break;
+
+                                case 'size':
+                                case 'imagemargin':
+                                case 'orderPictures':
+                                    // skip fields
+                                break;
+                                
+                                default:
+                                    // Try to find a matching attribute
+                                    $varValue = $item->getAttributeValue($c);
+
+                                    $return[$c] = $varValue ?: $v;
+                                    break;
+                            }
                         }
-
-                        $return['createdAt'] = $arrayItem['createdAt'];
-                        $return['title'] = $arrayItem['title'];
-                        $arrayCategory = $item->getRelated('pid')->row();
-                        $return['categorie']['id'] = $arrayCategory['id'];
-                        $return['categorie']['createdAt'] = $arrayCategory['createdAt'];
-                        $return['categorie']['tstamp'] = $arrayCategory['tstamp'];
-                        $return['categorie']['title'] = $arrayCategory['title'];
-                        $return['categorie']['alias'] = $arrayCategory['alias'];
-
-                        $return['teaser'] = $arrayItem['teaser'];
-                        $return['link'] = $item->getUrl();
                     }
 
                     $items[$id] = $return;
