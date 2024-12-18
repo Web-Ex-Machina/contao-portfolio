@@ -364,6 +364,10 @@ abstract class ModulePortfolios extends Module
 
         $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
 
+        if (!array_key_exists("lang", $params)) {
+            $params['lang'] = $GLOBALS["TL_LANGUAGE"];
+        }
+
         return http_build_query($params);
     }
 }
