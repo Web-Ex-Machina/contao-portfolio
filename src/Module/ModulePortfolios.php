@@ -302,7 +302,7 @@ abstract class ModulePortfolios extends Module
         curl_close($ch);
         $data = json_decode($request, true);
 
-        return $data['items'];
+        return (int) $data['items'];
     }
 
     /**
