@@ -250,7 +250,7 @@ abstract class ModulePortfolios extends Module
      * 
      * @throws \Exception
      */
-    protected function findRemoteItems($config, $feed, $page, $limit): Collection
+    protected function findRemoteItems(array $config, PortfolioFeed $feed, int $page, int $limit): Collection
     {
         $ch = curl_init();
         $params = $this->formatConfigForRemote($config, $feed);
@@ -288,7 +288,7 @@ abstract class ModulePortfolios extends Module
      * 
      * @throws \Exception
      */
-    protected function countRemoteItems($config, $feed): int
+    protected function countRemoteItems(array $config, PortfolioFeed $feed): int
     {
         $ch = curl_init();
         
@@ -308,14 +308,14 @@ abstract class ModulePortfolios extends Module
     /**
      * Find a specific item from remote
      * 
-     * @var mixed item
+     * @var mixed item (can be int or string)
      * @var PortfolioFeed feed
      *
      * @return Portfolio
      * 
      * @throws \Exception
      */
-    protected function findRemoteItem($item, $feed): Portfolio
+    protected function findRemoteItem(mixed $item, PortfolioFeed $feed): Portfolio
     {
         $ch = curl_init();
         $params = $this->formatConfigForRemote([], $feed);
@@ -338,7 +338,7 @@ abstract class ModulePortfolios extends Module
         return $objModel;
     }
 
-    protected function formatConfigForRemote($config, $feed): string
+    protected function formatConfigForRemote(array $config, PortfolioFeed $feed): string
     {
         $params = $config;
 
