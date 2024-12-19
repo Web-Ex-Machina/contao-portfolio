@@ -58,10 +58,13 @@ class ModulePortfoliosReader extends ModulePortfolios
             return $objTemplate->parse();
         }
 
-        $this->portfolio = Portfolio::findByIdOrSlug(Input::get('item'));
         $this->feed = PortfolioFeed::findByIdOrAlias(Input::get('category'));
 
-        dump($this->feed);
+        if ($this->feed->readFromRemote) {
+            $this->portfolio = $this->findRemoteItem(Input::get('item'), $this->feed);
+        } else {
+            $this->portfolio = Portfolio::findByIdOrSlug(Input::get('item'));
+        }
 
         if (!$this->portfolio) {
             throw new PageNotFoundException('Page not found: '.Environment::get('uri'));

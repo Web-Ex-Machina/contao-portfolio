@@ -328,16 +328,32 @@ abstract class ModulePortfolios extends Module
     protected function findRemoteItem($item, $feed): Portfolio
     {
         $ch = curl_init();
-        $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
-        $url = $feed->readFromRemoteUrl . '/api/portfolio/item/' . $item;
+        $params = $this->formatConfigForRemote([], $feed);
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/item/' . $item . '?' . $params;
 
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $request = curl_exec($ch);
         curl_close($ch);
+        $data = json_decode($request, true);
 
-        dump($request); die;
+        $objModel = new Portfolio();
+        $objModel->pid = $feed->id;
+
+        foreach ($data as $c => $v) {
+            switch($c) {
+                case 'category':
+                    // skip
+                break;
+
+                default:
+                    $objModel->{$c} = $v;
+            }
+        }
+
+        return $objModel;
     }
 
     protected function formatConfigForRemote($config, $feed): string
@@ -345,7 +361,9 @@ abstract class ModulePortfolios extends Module
         $params = $config;
 
         // Unset some default config settings
-        unset($params['pid']);
+        if (array_key_exists('pid', $config)) {
+            unset($params['pid']);
+        }
 
         $feedParams = deserialize($feed->readFromRemoteConfig);
         if (is_iterable($feedParams)) {
@@ -358,7 +376,6 @@ abstract class ModulePortfolios extends Module
                     default:
                         $params[$c['key']] = $c['value'];
                 }
-
             }
         }
 
