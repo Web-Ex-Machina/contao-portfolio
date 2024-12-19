@@ -39,7 +39,7 @@ class PortfolioInsertTagListener
         }
 
         // Check if we want a specific portfolio or the current one
-        $varItem = (3 === \count($chunks)) ? $chunks[2] : Input::get('auto_item');
+        $varItem = (3 === \count($chunks)) ? $chunks[2] : Input::get('item');
         $objItem = Portfolio::findByIdOrSlug($varItem);
 
         // If objItem does not exist, return empty string
