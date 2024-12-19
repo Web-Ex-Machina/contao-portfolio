@@ -139,7 +139,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
         'readFromRemoteUrl' => [
             'exclude' => true,
             'inputType' => 'text',
-            'eval' => ['rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>2048, 'dcaPicker'=>true, 'tl_class'=>'w50'],
+            'eval' => ['rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>2048, 'tl_class'=>'w50'],
             'sql' => "text NULL"
         ],
         'readFromRemoteApiKey' => [
