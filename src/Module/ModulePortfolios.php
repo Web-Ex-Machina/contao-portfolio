@@ -266,20 +266,10 @@ abstract class ModulePortfolios extends Module
         // We need to format a Collection of Portfolio
         $items = [];
         foreach ($data as $item) {
+            unset($item['category']);
             $objModel = new Portfolio();
+            $objModel->setRow($item);
             $objModel->pid = $feed->id;
-
-            foreach ($item as $c => $v) {
-                switch($c) {
-                    case 'category':
-                        // skip
-                    break;
-
-                    default:
-                        $objModel->{$c} = $v;
-                }
-            }
-
             $items[] = $objModel;
         }
 
@@ -339,19 +329,11 @@ abstract class ModulePortfolios extends Module
         curl_close($ch);
         $data = json_decode($request, true);
 
+        unset($data['category']);
+
         $objModel = new Portfolio();
+        $objModel->setRow($data);
         $objModel->pid = $feed->id;
-
-        foreach ($data as $c => $v) {
-            switch($c) {
-                case 'category':
-                    // skip
-                break;
-
-                default:
-                    $objModel->{$c} = $v;
-            }
-        }
 
         return $objModel;
     }
