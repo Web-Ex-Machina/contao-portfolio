@@ -76,11 +76,18 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
 
     // Palettes
     'palettes' => [
+        '__selector__' => ['readFromRemote'],
         'default' => '
             {title_legend},title,alias;
             {config_legend},jumpTo;
+            {remote_legend},readFromRemote;
             {attributes_legend},attributes
         ',
+    ],
+
+    // Subpalettes
+    'subpalettes' => [
+        'readFromRemote' => 'readFromRemoteUrl,readFromRemoteApiKey,readFromRemoteConfig'
     ],
 
     // Fields
@@ -120,6 +127,38 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
             'eval' => ['fieldType' => 'radio'],
             'sql' => 'int(10) unsigned NOT NULL default 0',
             'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
+        ],
+        'readFromRemote' => [
+            'exclude' => true,
+            'filter' => true,
+            'flag' => 1,
+            'inputType' => 'checkbox',
+            'eval' => ['doNotCopy' => true, 'submitOnChange' => true],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'readFromRemoteUrl' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>2048, 'tl_class'=>'w50'],
+            'sql' => "text NULL"
+        ],
+        'readFromRemoteApiKey' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['tl_class'=>'w50'],
+            'load_callback' => [
+                ['wem.encryption_util', 'decrypt_b64'],
+            ],
+            'save_callback' => [
+                ['wem.encryption_util', 'encrypt_b64'],
+            ],
+            'sql' => "text NULL"
+        ],
+        'readFromRemoteConfig' => [
+            'exclude' => true,
+            'inputType' => 'keyValueWizard',
+            'eval' => ['tl_class'=>'clr'],
+            'sql' => 'blob NULL',
         ],
         'attributes' => [
             'inputType' => 'dcaWizard',

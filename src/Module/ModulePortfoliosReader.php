@@ -21,6 +21,7 @@ use Contao\Input;
 use Contao\PageModel;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -30,7 +31,8 @@ use WEM\UtilsBundle\Classes\StringUtil;
  */
 class ModulePortfoliosReader extends ModulePortfolios
 {
-    protected ?Portfolio $objPortfolio = null;
+    protected ?Portfolio $portfolio = null;
+    protected ?PortfolioFeed $feed = null;
 
     /**
      * Template.
@@ -56,7 +58,13 @@ class ModulePortfoliosReader extends ModulePortfolios
             return $objTemplate->parse();
         }
 
-        $this->portfolio = Portfolio::findByIdOrSlug(Input::get('auto_item'));
+        $this->feed = PortfolioFeed::findByIdOrAlias(Input::get('category'));
+
+        if ($this->feed->readFromRemote) {
+            $this->portfolio = $this->findRemoteItem(Input::get('item'), $this->feed);
+        } else {
+            $this->portfolio = Portfolio::findByIdOrSlug(Input::get('item'));
+        }
 
         if (!$this->portfolio) {
             throw new PageNotFoundException('Page not found: '.Environment::get('uri'));

@@ -1,6 +1,15 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
+## 3.2 - 2024-12-19
+- ADDED - Add feed settings to retrieve data from a remote source
+- ADDED - API route can now count items
+- UPDATED - API can now filter items by lang
+- UPDATED - API retrieve more data for portfolio items and their attributes
+- UPDATED - URLs of portfolio items now include their category so we can know if it's a local/remote feed
+- UPDATED - We can now specify a language when retrieving an item attributes
+- UPDATED - Fix some typos here and there
+
 ## 3.1 - 2024-10-25
 - ADDED - Add a new textarea attribute that allows you to use a tinyMCE or a HTML field as attribute
 - ADDED - Add a translation subtable for attributes

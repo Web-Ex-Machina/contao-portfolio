@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Model;
 
+use Contao\Config;
 use Contao\Controller;
 use Contao\Date;
 use Contao\FilesModel;
@@ -21,6 +22,7 @@ use Contao\Model\Collection;
 use Contao\Model\Registry;
 use Contao\PageModel;
 use Contao\System;
+use Terminal42\ChangeLanguage\PageFinder;
 use WEM\UtilsBundle\Classes\StringUtil;
 use WEM\UtilsBundle\Model\Model;
 
@@ -203,17 +205,21 @@ class Portfolio extends Model
      *
      * @return array ['attribute_name'=>['label'=>$label, 'raw_value'=>$value,'human_readable_value'=>$human_readable_value]]
      */
-    public function getAttributesFull($varAttributes = []): array
+    public function getAttributesFull($varAttributes = [], $lang = null): array
     {
         $attributes = [];
 
-        $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttributes]);
+        if (empty($varAttributes)) {
+            $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $this->pid]);
+        } else {
+            $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttributes]);
+        }
 
         if ($objAttributes && 0 < $objAttributes->count()) {
             $arrArticleData = $this->row();
             while ($objAttributes->next()) {
                 if (\array_key_exists($objAttributes->name, $arrArticleData)) {
-                    $varValue = $this->getAttributeValue($objAttributes->current());
+                    $varValue = $this->getAttributeValue($objAttributes->current(), $lang);
 
                     $attributes[$objAttributes->name] = [
                         'label' => $objAttributes->label,
@@ -265,7 +271,7 @@ class Portfolio extends Model
      *
      * @return array|Collection|mixed|string|Portfolio|null
      */
-    public function getAttributeValue($varAttribute)
+    public function getAttributeValue($varAttribute, $lang = null)
     {
         if ('string' === \gettype($varAttribute)) {
             $varAttribute = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttribute], 1);
@@ -343,10 +349,10 @@ class Portfolio extends Model
                 return $figure->getLegacyTemplateData() ?: null;
 
             case 'listWizard':
-                return $this->getL10nLabel($varAttribute->name) ? implode(',', StringUtil::deserialize($this->getL10nLabel($varAttribute->name))) : '';
+                return $this->getL10nLabel($varAttribute->name, $lang) ? implode(',', StringUtil::deserialize($this->getL10nLabel($varAttribute->name, $lang))) : '';
 
             default:
-                return $this->getL10nLabel($varAttribute->name);
+                return $this->getL10nLabel($varAttribute->name, $lang);
         }
     }
 
@@ -357,7 +363,7 @@ class Portfolio extends Model
      *
      * @return array ['attribute_label'=>$human_readable_value,...]
      */
-    public function getAttributesSimple($varAttributes = []): array
+    public function getAttributesSimple($varAttributes = [], $lang = null): array
     {
         $attributes = [];
 
@@ -367,7 +373,7 @@ class Portfolio extends Model
             $arrArticleData = $this->row();
             while ($objAttributes->next()) {
                 if (\array_key_exists($objAttributes->name, $arrArticleData)) {
-                    $attributes[$objAttributes->name] = $this->getAttributeValue($objAttributes->current());
+                    $attributes[$objAttributes->name] = $this->getAttributeValue($objAttributes->current(), $lang);
                 }
             }
         }
@@ -382,12 +388,22 @@ class Portfolio extends Model
      */
     public function getUrl(bool $blnAbsolute = false): string
     {
-        $objCategory = $this->getRelated('pid');
+        $objFeed = $this->getRelated('pid');
 
-        $objPage = PageModel::findByPk($objCategory->jumpTo);
+        if (!$objFeed) {
+            throw new \Exception(sprintf("Cannot retrieve pid from item id %s", $this->id));
+        }
 
-        // TODO : deprecated getAbsoluteUrl getFrontendUrl in 5.3 removed in 6
-        return $blnAbsolute ? $objPage->getAbsoluteUrl('/'.$this->slug) : $objPage->getFrontendUrl('/'.$this->slug);
+        $objTarget = $objFeed->getRelated('jumpTo');
+
+        if (!$objFeed) {
+            throw new \Exception(sprintf("Cannot retrieve jumpTo from feed %s", $objFeed->id));
+        }
+
+        $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
+        $params = (Config::get('useAutoItem') ? '/' : '/items/') . 'category/' . $objFeed->alias . '/item/' . ($this->slug ?: $this->id);
+
+        return $blnAbsolute ? $objPageData->getAbsoluteUrl($params) : $objPageData->getFrontendUrl($params);
     }
 
     public function getL10nLabel($f, $l = null)

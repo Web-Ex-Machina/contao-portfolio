@@ -25,6 +25,7 @@ use Contao\System;
 use Terminal42\ChangeLanguage\PageFinder;
 use WEM\PortfolioBundle\Model\Content;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -115,10 +116,20 @@ abstract class ModulePortfolios extends Module
 
         // Add an image
         if ($objItem->singleSRC) {
+            // remote
+            if(is_array($objItem->singleSRC)) {
+                $file = $objItem->singleSRC;
+            }
+            // local
+            else {
+                $objFile = FilesModel::findByUuid($objItem->singleSRC);
+                $file = $objFile->row();
+            }
+
             $figure = System::getContainer()
                 ->get('contao.image.studio')
                 ->createFigureBuilder()
-                ->from($objItem->singleSRC)
+                ->fromPath($file['path'])
                 ->setSize($objItem->size)
                 ->enableLightbox((bool) $objItem->fullsize)
                 ->buildIfResourceExists()
@@ -127,10 +138,26 @@ abstract class ModulePortfolios extends Module
             if (null !== $figure) {
                 $figure->applyLegacyTemplateData($objTemplate, $objItem->imagemargin, $objItem->floating);
             }
+
+            // Send also the data for flexible behavior
+            $objTemplate->singleSRC = $file;
         }
 
-        // Retrieve item pictures
-        if ($objItem->pictures = StringUtil::deserialize($objItem->pictures)) {
+        // Retrieve item pictures (remote)
+        if(is_array($objItem->pictures) && !empty($objItem->pictures)) {
+            $images = [];
+            foreach($objItem->pictures as $uuid => $i) {
+                $images[$i['path']] = [
+                    'id' => '',
+                    'uuid' => $uuid,
+                    'name' => $i['basename'],
+                    'singleSRC' => $i['path'],
+                    'filesModel' => null,
+                ];
+            }
+        }
+        // Retrieve item pictures (local)
+        else if ($objItem->pictures = StringUtil::deserialize($objItem->pictures)) {
             $objFiles = FilesModel::findMultipleByUuids($objItem->pictures);
             $images = [];
             while ($objFiles->next()) {
@@ -208,12 +235,138 @@ abstract class ModulePortfolios extends Module
         }
 
         // Parse the URL if we have a jumpTo configured
-        if ($objTarget = $objItem->getRelated('pid')->getRelated('jumpTo')) {
-            $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
-            $params = (Config::get('useAutoItem') ? '/' : '/items/').($objItem->slug ?: $objItem->id);
-            $objTemplate->jumpTo = $objPageData->getFrontendUrl($params);
-        }
+        $objTemplate->jumpTo = $objItem->getUrl();
 
         return $objTemplate->parse();
+    }
+
+    /**
+     * Find items from remote
+     * 
+     * @var array config
+     * @var PortfolioFeed feed
+     *
+     * @return Collection
+     * 
+     * @throws \Exception
+     */
+    protected function findRemoteItems(array $config, PortfolioFeed $feed, int $page, int $limit): Collection
+    {
+        $ch = curl_init();
+        $params = $this->formatConfigForRemote($config, $feed);
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/items/' . $page . '/' . $limit . '?' . $params;
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $request = curl_exec($ch);
+        curl_close($ch);
+        $data = json_decode($request, true);
+
+        // We need to format a Collection of Portfolio
+        $items = [];
+        foreach ($data as $item) {
+            unset($item['category']);
+            $objModel = new Portfolio();
+            $objModel->setRow($item);
+            $objModel->pid = $feed->id;
+            $items[] = $objModel;
+        }
+
+        $objCollection = new Collection($items, 'tl_wem_portfolio');
+
+        return $objCollection;
+    }
+
+    /**
+     * Count items from remote
+     * 
+     * @var array config
+     * @var PortfolioFeed feed
+     *
+     * @return Portfolio
+     * 
+     * @throws \Exception
+     */
+    protected function countRemoteItems(array $config, PortfolioFeed $feed): int
+    {
+        $ch = curl_init();
+        
+        $params = $this->formatConfigForRemote($config, $feed);
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/count?' . $params;
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $request = curl_exec($ch);
+        curl_close($ch);
+        $data = json_decode($request, true);
+
+        return (int) $data['items'];
+    }
+
+    /**
+     * Find a specific item from remote
+     * 
+     * @var mixed item (can be int or string)
+     * @var PortfolioFeed feed
+     *
+     * @return Portfolio
+     * 
+     * @throws \Exception
+     */
+    protected function findRemoteItem(mixed $item, PortfolioFeed $feed): Portfolio
+    {
+        $ch = curl_init();
+        $params = $this->formatConfigForRemote([], $feed);
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/item/' . $item . '?' . $params;
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $request = curl_exec($ch);
+        curl_close($ch);
+        $data = json_decode($request, true);
+
+        unset($data['category']);
+
+        $objModel = new Portfolio();
+        $objModel->setRow($data);
+        $objModel->pid = $feed->id;
+
+        return $objModel;
+    }
+
+    protected function formatConfigForRemote(array $config, PortfolioFeed $feed): string
+    {
+        $params = $config;
+
+        // Unset some default config settings
+        if (array_key_exists('pid', $config)) {
+            unset($params['pid']);
+        }
+
+        $feedParams = deserialize($feed->readFromRemoteConfig);
+        if (is_iterable($feedParams)) {
+            foreach ($feedParams as $c) {
+                switch ($c['key']) {
+                    case 'pid':
+                        $params['pid'][] = $c['value'];
+                    break;
+
+                    default:
+                        $params[$c['key']] = $c['value'];
+                }
+            }
+        }
+
+        $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
+
+        if (!array_key_exists("lang", $params)) {
+            $params['lang'] = $GLOBALS["TL_LANGUAGE"];
+        }
+
+        return http_build_query($params);
     }
 }

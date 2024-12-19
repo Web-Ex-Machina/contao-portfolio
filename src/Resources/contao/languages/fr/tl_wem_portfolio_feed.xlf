@@ -29,6 +29,39 @@
                 <target>Indiquez la page où les offres de cette catégorie doivent être redirigés</target>
             </trans-unit>
 
+            <trans-unit id="tl_wem_portfolio_feed.readFromRemote.0">
+                <source>Read from remote</source>
+                <target>Lire depuis une page distante</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed.readFromRemote.1">
+                <source>Check to link this feed with a remote API</source>
+                <target>Cochez pour lier ce flux avec une API distante</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed.readFromRemoteUrl.0">
+                <source>Remote URL</source>
+                <target>URL distante</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed.readFromRemoteUrl.1">
+                <source>Enter the remote server URL</source>
+                <target>Saisissez l'adresse distante du serveur</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed.readFromRemoteApiKey.0">
+                <source>API Key</source>
+                <target>Clef API</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed.readFromRemoteApiKey.1">
+                <source>Enter the remote API Key</source>
+                <target>Saisissez la clef API</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed.readFromRemoteConfig.0">
+                <source>API config</source>
+                <target>Paramètres d'API</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed.readFromRemoteConfig.1">
+                <source>Enter the API config</source>
+                <target>Saisissez la configuration de l'API</target>
+            </trans-unit>
+
             <trans-unit id="tl_wem_portfolio_feed.attributes.0">
                 <source>Attributes</source>
                 <target>Attributs</target>
@@ -59,13 +92,17 @@
                 <source>General data</source>
                 <target>Informations générales</target>
             </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed.config_legend">
+                <source>Settings</source>
+                <target>Paramètres</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed.remote_legend">
+                <source>API</source>
+                <target>API</target>
+            </trans-unit>
             <trans-unit id="tl_wem_portfolio_feed.attributes_legend">
                 <source>Attributes</source>
                 <target>Attributs</target>
-            </trans-unit>
-            <trans-unit id="tl_wem_portfolio_feed.alert_legend">
-                <source>Alerts settings</source>
-                <target>Paramètres des alertes</target>
             </trans-unit>
 
             <trans-unit id="tl_wem_portfolio_feed.new.0">
