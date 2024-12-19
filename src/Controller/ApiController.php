@@ -113,7 +113,7 @@ class ApiController
 
         $offset = ($page - 1) * $limit;
         if (!is_iterable($pid)) {
-            return new JsonResponse('{"error":"Give at least on category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
+            return new JsonResponse('{"error":"Give at least one category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
         }
 
         $items = [];
@@ -130,72 +130,11 @@ class ApiController
             if ($objItems instanceof Collection) {
                 /** @var Portfolio $item */
                 foreach ($objItems as $item) {
-                    //dump($item);
-                    $arrayItem = $item->row();
-                    $id = $arrayItem['id'];
-                    $return = [];
-                    $return['singleSRC'] = [];
-                    $return['pictures'] = [];
-                    if ('1' === $arrayItem['published']) {
-                        foreach($arrayItem as $c => $v) {
-                            switch ($c) {
-                                case 'singleSRC':
-                                    $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
-                                    $uuidP = Uuid::fromBinary($imageP->uuid);
-                                    $return['singleSRC']['uuid'] = $base . $imageP->path;
-                                    $return['singleSRC']['path'] = $base . $imageP->path;
-                                    $return['singleSRC']['extension'] = $imageP->extension;
-                                    $return['singleSRC']['tstamp'] = $imageP->tstamp;
-                                    $return['singleSRC']['hash'] = $imageP->hash;
-                                    $return['singleSRC']['lastModified'] = $imageP->lastModified;
-                                    $return['singleSRC']['basename'] = $imageP->basename;
-                                    $return['singleSRC']['main'] = true;
-                                    break;
-
-                                case 'pictures':
-                                    $arrPictures = deserialize($v);
-                                    foreach ($v as $uuid) {
-                                        $imageP = FilesModel::findByUuid($uuid);
-                                        $uuidP = Uuid::fromBinary($imageP->uuid);
-                                        $return['pictures'][$uuidP->__toString()]['uuid'] = $uuidP->__toString();
-                                        $return['pictures'][$uuidP->__toString()]['path'] = $base . $imageP->path;
-                                        $return['pictures'][$uuidP->__toString()]['extension'] = $imageP->extension;
-                                        $return['pictures'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
-                                        $return['pictures'][$uuidP->__toString()]['hash'] = $imageP->hash;
-                                        $return['pictures'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
-                                        $return['pictures'][$uuidP->__toString()]['basename'] = $imageP->basename;
-                                        $return['pictures'][$uuidP->__toString()]['main'] = false;
-                                    }
-                                break;
-
-                                case 'pid':
-                                    $arrayCategory = $item->getRelated('pid')->row();
-                                    $return['category']['id'] = $arrayCategory['id'];
-                                    $return['category']['createdAt'] = $arrayCategory['createdAt'];
-                                    $return['category']['tstamp'] = $arrayCategory['tstamp'];
-                                    $return['category']['title'] = $arrayCategory['title'];
-                                    $return['category']['alias'] = $arrayCategory['alias'];
-                                break;
-
-                                case 'size':
-                                case 'imagemargin':
-                                case 'orderPictures':
-                                    // skip fields
-                                break;
-                                
-                                default:
-                                    // Try to find a matching attribute
-                                    $varValue = $item->getAttributeValue($c);
-
-                                    $return[$c] = $varValue ?: $v;
-                                    break;
-                            }
-                        }
+                    if (!$item->published) {
+                        continue;
                     }
 
-                    $return['attributes'] = $item->getAttributesFull([], $lang);
-
-                    $items[$id] = $return;
+                    $items[$item->id] = $this->prepareItem($item, $lang);
                 }
 
                 return new JsonResponse($items, Response::HTTP_OK);
@@ -238,73 +177,8 @@ class ApiController
         $lang = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
 
         if ($objItem instanceof Portfolio) {
-            $arrayItem = $objItem->row();
-            if ('1' === $arrayItem['published']) {
-                $return = [];
-                $strContent = '';
-                $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio') ?? [];
-
-                foreach ($objElement as $element) {
-                    $strContent .= Controller::getContentElement($element);
-                }
-
-                foreach($arrayItem as $c => $v) {
-                    switch ($c) {
-                        case 'singleSRC':
-                            $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
-                            $uuidP = Uuid::fromBinary($imageP->uuid);
-                            $return['singleSRC']['uuid'] = $base . $imageP->path;
-                            $return['singleSRC']['path'] = $base . $imageP->path;
-                            $return['singleSRC']['extension'] = $imageP->extension;
-                            $return['singleSRC']['tstamp'] = $imageP->tstamp;
-                            $return['singleSRC']['hash'] = $imageP->hash;
-                            $return['singleSRC']['lastModified'] = $imageP->lastModified;
-                            $return['singleSRC']['basename'] = $imageP->basename;
-                            $return['singleSRC']['main'] = true;
-                            break;
-
-                        case 'pictures':
-                            $arrPictures = deserialize($v);
-                            foreach ($v as $uuid) {
-                                $imageP = FilesModel::findByUuid($uuid);
-                                $uuidP = Uuid::fromBinary($imageP->uuid);
-                                $return['pictures'][$uuidP->__toString()]['uuid'] = $uuidP->__toString();
-                                $return['pictures'][$uuidP->__toString()]['path'] = $base . $imageP->path;
-                                $return['pictures'][$uuidP->__toString()]['extension'] = $imageP->extension;
-                                $return['pictures'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
-                                $return['pictures'][$uuidP->__toString()]['hash'] = $imageP->hash;
-                                $return['pictures'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
-                                $return['pictures'][$uuidP->__toString()]['basename'] = $imageP->basename;
-                                $return['pictures'][$uuidP->__toString()]['main'] = false;
-                            }
-                        break;
-
-                        case 'pid':
-                            $arrayCategory = $objItem->getRelated('pid')->row();
-                            $return['category']['id'] = $arrayCategory['id'];
-                            $return['category']['createdAt'] = $arrayCategory['createdAt'];
-                            $return['category']['tstamp'] = $arrayCategory['tstamp'];
-                            $return['category']['title'] = $arrayCategory['title'];
-                            $return['category']['alias'] = $arrayCategory['alias'];
-                        break;
-
-                        case 'size':
-                        case 'imagemargin':
-                        case 'orderPictures':
-                            // skip fields
-                        break;
-                        
-                        default:
-                            // Try to find a matching attribute
-                            $varValue = $objItem->getAttributeValue($c);
-
-                            $return[$c] = $varValue ?: $v;
-                            break;
-                    }
-                }
-
-                $return['attributes'] = $objItem->getAttributesFull([], $lang);
-                $return['content_b64'] = base64_encode($strContent);
+            if ($objItem->published) {
+                $return = $this->prepareItem($objItem, $lang, true);
 
                 return new JsonResponse($return, Response::HTTP_OK);
             }
@@ -313,6 +187,86 @@ class ApiController
         }
 
         return new JsonResponse('{"error":"404 : Item not found"}', Response::HTTP_NOT_FOUND, [], true);
+    }
+
+    protected function prepareItem(Portfolio $item, string $lang = null, bool $getContent = false): array
+    {
+        $arrayItem = $item->row();
+        $id = $arrayItem['id'];
+        $return = [];
+        $return['singleSRC'] = [];
+        $return['pictures'] = [];
+        if ('1' === $arrayItem['published']) {
+            foreach($arrayItem as $c => $v) {
+                switch ($c) {
+                    case 'singleSRC':
+                        $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
+                        $uuidP = Uuid::fromBinary($imageP->uuid);
+                        $return['singleSRC']['uuid'] = $base . $imageP->path;
+                        $return['singleSRC']['path'] = $base . $imageP->path;
+                        $return['singleSRC']['extension'] = $imageP->extension;
+                        $return['singleSRC']['tstamp'] = $imageP->tstamp;
+                        $return['singleSRC']['hash'] = $imageP->hash;
+                        $return['singleSRC']['lastModified'] = $imageP->lastModified;
+                        $return['singleSRC']['basename'] = $imageP->basename;
+                        $return['singleSRC']['main'] = true;
+                        break;
+
+                    case 'pictures':
+                        $arrPictures = deserialize($v);
+                        foreach ($v as $uuid) {
+                            $imageP = FilesModel::findByUuid($uuid);
+                            $uuidP = Uuid::fromBinary($imageP->uuid);
+                            $return['pictures'][$uuidP->__toString()]['uuid'] = $uuidP->__toString();
+                            $return['pictures'][$uuidP->__toString()]['path'] = $base . $imageP->path;
+                            $return['pictures'][$uuidP->__toString()]['extension'] = $imageP->extension;
+                            $return['pictures'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
+                            $return['pictures'][$uuidP->__toString()]['hash'] = $imageP->hash;
+                            $return['pictures'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
+                            $return['pictures'][$uuidP->__toString()]['basename'] = $imageP->basename;
+                            $return['pictures'][$uuidP->__toString()]['main'] = false;
+                        }
+                    break;
+
+                    case 'pid':
+                        $arrayCategory = $item->getRelated('pid')->row();
+                        $return['category']['id'] = $arrayCategory['id'];
+                        $return['category']['createdAt'] = $arrayCategory['createdAt'];
+                        $return['category']['tstamp'] = $arrayCategory['tstamp'];
+                        $return['category']['title'] = $arrayCategory['title'];
+                        $return['category']['alias'] = $arrayCategory['alias'];
+                    break;
+
+                    case 'size':
+                    case 'imagemargin':
+                    case 'orderPictures':
+                        // skip fields
+                    break;
+                    
+                    default:
+                        // Try to find a matching attribute
+                        $varValue = $item->getAttributeValue($c);
+
+                        $return[$c] = $varValue ?: $v;
+                        break;
+                }
+            }
+        }
+
+        $return['attributes'] = $item->getAttributesFull([], $lang);
+
+        if ($getContent) {
+            $strContent = '';
+            $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio') ?? [];
+
+            foreach ($objElement as $element) {
+                $strContent .= Controller::getContentElement($element);
+            }
+
+            $return['content_b64'] = base64_encode($strContent);
+        }
+
+        return $return;
     }
 
     private function accessCheck(Request $request): ?JsonResponse
