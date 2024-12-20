@@ -396,7 +396,7 @@ class Portfolio extends Model
 
         $objTarget = $objFeed->getRelated('jumpTo');
 
-        if (!$objFeed) {
+        if (!$objTarget) {
             throw new \Exception(sprintf("Cannot retrieve jumpTo from feed %s", $objFeed->id));
         }
 
