@@ -8,9 +8,22 @@
     </div>
     <div class="block-card__content flex-justifycontent--center-alignitems--center txt-center">
       <div class="block-card__title h2"> <?php echo $this->title ?> </div>
-      <?php if ($this->teaser): ?>
+      <?php if ($this->teaser || $this->attributes): ?>
         <div class="block-card__text" itemprop="description">
+          <?php if($this->attributes): ?>
+          <div class="block-card__attributes">
+            <?php foreach($this->attributes as $key => $attr): ?>
+            <p class="block-card__attribute <?= $key ?>">
+              <span class="block-card__attribute__label"><?= $attr['label'] ?></span>:
+              <span class="block-card__attribute__value"><?= $attr['human_readable_value'] ?></span>
+            </p>
+            <?php endforeach ?>
+          </div>
+          <?php endif ?>
+
+          <?php if($this->teaser): ?>
           <?php echo strip_tags($this->teaser) ?>
+          <?php endif ?>
         </div>
       <?php endif ?>
     </div>
