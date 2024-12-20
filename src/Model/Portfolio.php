@@ -386,7 +386,7 @@ class Portfolio extends Model
      *
      * @throws \Exception
      */
-    public function getUrl(bool $blnAbsolute = false): string
+    public function getUrl(bool $blnAbsolute = false): ?string
     {
         $objFeed = $this->getRelated('pid');
 
@@ -397,7 +397,7 @@ class Portfolio extends Model
         $objTarget = $objFeed->getRelated('jumpTo');
 
         if (!$objTarget) {
-            throw new \Exception(sprintf("Cannot retrieve jumpTo from feed %s", $objFeed->id));
+            return null;
         }
 
         $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
