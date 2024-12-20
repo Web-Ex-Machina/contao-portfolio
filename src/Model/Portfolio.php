@@ -100,11 +100,6 @@ class Portfolio extends Model
 
                 break;
 
-                // Search by country
-            case 'country':
-                $arrColumns[] = $t.".countries LIKE '%%".$varValue."%'";
-                break;
-
                 // Search for recipient not present in the subtable lead
             case 'published':
                 if (1 === $varValue) {
