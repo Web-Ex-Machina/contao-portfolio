@@ -5,13 +5,12 @@
 	<?php if($this->blnError): ?>
 		<p class="error"><?= $this->strError ?></p>
 	<?php else: ?>
+		<?php if($this->filters): ?>
+		<?= $this->filters ?>
+		<?php endif; ?>
 		<?php if (empty($this->items)): ?>
 			<p class="empty"><?= $this->empty ?></p>
 		<?php else: ?>
-			<?php if($this->filters): ?>
-			<?= $this->filters ?>
-			<?php endif; ?>
-			
 			<div class="block-card__container d-grid cols-autofill gap-1">
 				<?= implode('', $this->items) ?>
 			</div>
