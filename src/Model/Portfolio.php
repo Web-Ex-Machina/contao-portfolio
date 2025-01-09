@@ -217,7 +217,7 @@ class Portfolio extends Model
                     $varValue = $this->getAttributeValue($objAttributes->current(), $lang);
 
                     $attributes[$objAttributes->name] = [
-                        'label' => $objAttributes->label,
+                        'label' => $objAttributes->current()->getL10nLabel('label'),
                         'raw_value' => $varValue,
                         'human_readable_value' => $varValue,
                     ];
