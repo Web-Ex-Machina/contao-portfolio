@@ -249,7 +249,7 @@ class Portfolio extends Model
         }
 
         if (!isset($arrOptions['order'])) {
-            $arrOptions['order'] = $t.'.createdAt DESC';
+            $arrOptions['order'] = $t.'.title ASC';
         }
 
         if ([] === $arrColumns) {
