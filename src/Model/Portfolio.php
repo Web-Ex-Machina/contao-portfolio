@@ -276,18 +276,30 @@ class Portfolio extends Model
             return null;
         }
 
+        // If $l is null, retrieve current language
+        if (null === $lang) {
+            $r = System::getContainer()->get('request_stack')->getCurrentRequest();
+            if (null !== $r) {
+                $lang = $r->getLocale();
+            }
+        }
+
         switch ($varAttribute->type) {
             case 'select':
                 $return = null;
                 $arrArticleData = $this->row();
                 $options = StringUtil::deserialize($varAttribute->options ?? []);
 
+                if ($varAttribute->translatable) {
+                    $objL10n = PortfolioFeedAttributeL10n::findItems(['language' => $lang, 'pid' => $varAttribute->id], 1);
+                    $options = StringUtil::deserialize($objL10n->options ?? []);
+                }
+
                 if ($varAttribute->multiple) {
                     $arrArticleData[$varAttribute->name] = StringUtil::deserialize($arrArticleData[$varAttribute->name]);
                     $return = [];
                 }
 
-                $arrArticleData = $this->row();
                 foreach ($options as $option) {
                     if ($varAttribute->multiple && \is_array($arrArticleData[$varAttribute->name]) && \in_array($option['value'], $arrArticleData[$varAttribute->name], true)) {
                         $return[] = $option['label'];
