@@ -1,16 +1,29 @@
 <div class="portfolio_item block-card  block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article" data-maxlines="3" data-preset="">
     <<?= $this->jumpTo ? 'a href="' . $this->jumpTo . '" title="' . $GLOBALS['TL_LANG']['MSC']['more'] . '"' : 'div' ?>
     class="block-card__wrapper">
-    <div class="block-card__figure r_4-3">
+    <div class="block-card__figure r_4-3 fit--scaledown">
       <?php if ($this->addImage): ?>
           <?php $this->insert('image', $this->arrData); // need picture size optimisation ?>
       <?php endif; ?>
     </div>
-    <div class="block-card__content flex-justifycontent--center-alignitems--center txt-center">
-      <div class="block-card__title h2"> <?php echo $this->title ?> </div>
-      <?php if ($this->teaser): ?>
+    <div class="block-card__content flex-justifycontent--center-alignitems--center gap-1-em ">
+      <div class="block-card__title h2 txt-center"> <?php echo $this->title ?> </div>
+      <?php if ($this->teaser || $this->attributes): ?>
         <div class="block-card__text" itemprop="description">
+          <?php if($this->attributes): ?>
+          <div class="block-card__attributes">
+            <?php foreach($this->attributes as $key => $attr): ?>
+            <div class="block-card__attribute <?= $key ?> flex gap-1-em">
+              <span class="block-card__attribute__label"><?= $attr['label'] ?> :</span>
+              <span class="block-card__attribute__value "><?= $attr['human_readable_value'] ?></span>
+            </div>
+            <?php endforeach ?>
+          </div>
+          <?php endif ?>
+
+          <?php if($this->teaser): ?>
           <?php echo strip_tags($this->teaser) ?>
+          <?php endif ?>
         </div>
       <?php endif ?>
     </div>

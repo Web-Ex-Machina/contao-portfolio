@@ -117,9 +117,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         ],
         'slug' => [
             'exclude' => true,
-            'search' => true,
-            'sorting' => true,
-            'flag' => 3,
             'inputType' => 'text',
             'save_callback' => [
                 [PortfolioContainer::class, 'generateSlug'],
@@ -130,6 +127,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         'title' => [
             'exclude' => true,
             'search' => true,
+            'sorting' => true,
+            'flag' => 1,
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'tl_class' => 'w50', 'maxlength' => 255],
             'sql' => "varchar(255) NOT NULL default ''",
