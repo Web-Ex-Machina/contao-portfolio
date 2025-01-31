@@ -1,6 +1,9 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
+## 3.1.1 - 2025-01-31
+- UPDATED - Fixes & Backend improvements
+
 ## 3.1 - 2024-12-19
 - ADDED - Add a new textarea attribute that allows you to use a tinyMCE or a HTML field as attribute
 - ADDED - Add a translation subtable for attributes
