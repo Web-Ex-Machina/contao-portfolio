@@ -64,6 +64,11 @@ class ModulePortfoliosReader extends ModulePortfolios
 
             if (!$objItem) {
                 $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('auto_item'));
+
+                if (!$objL10nItem) {
+                    throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
+                }
+
                 $objItem = $objL10nItem->getRelated('pid');
             }
 
@@ -78,6 +83,16 @@ class ModulePortfoliosReader extends ModulePortfolios
             $this->portfolio = $this->findRemoteItem(Input::get('item'), $this->feed);
         } else {
             $this->portfolio = Portfolio::findByIdOrSlug(Input::get('item'));
+
+            if (!$this->portfolio) {
+                $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('item'));
+
+                if (!$objL10nItem) {
+                    throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
+                }
+                
+                $this->portfolio = $objL10nItem->getRelated('pid');
+            }
         }
 
         if (!$this->portfolio) {
