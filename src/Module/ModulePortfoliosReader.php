@@ -22,6 +22,7 @@ use Contao\PageModel;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
+use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -56,6 +57,19 @@ class ModulePortfoliosReader extends ModulePortfolios
             $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
+        }
+
+        if ((!Input::get('category') || !Input::get('item')) && Input::get('auto_item')) {
+            $objItem = Portfolio::findByIdOrSlug(Input::get('auto_item'));
+
+            if (!$objItem) {
+                $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('auto_item'));
+                $objItem = $objL10nItem->getRelated('pid');
+            }
+
+            global $objPage;
+            $this->redirect($objPage->getFrontendUrl('/category/'.$objItem->getRelated('pid')->alias.'/item/'.Input::get('auto_item')), 301);
+            exit();
         }
 
         $this->feed = PortfolioFeed::findByIdOrAlias(Input::get('category'));
