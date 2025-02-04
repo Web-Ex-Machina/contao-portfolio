@@ -23,6 +23,10 @@ class ChangeLanguageNavigationListener
 {
     public function onChangelanguageNavigation(ChangelanguageNavigationEvent $event): void
     {
+        if (!Input::get('item')) {
+            return;
+        }
+
         // The target root page for current event
         $targetRoot = $event->getNavigationItem()->getRootPage();
         $language = $targetRoot->rootLanguage; // The target language
