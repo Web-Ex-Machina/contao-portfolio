@@ -1,6 +1,15 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
+## 3.2 - 2025-02-05
+- ADDED - Slug for translations + URL adjustements
+- ADDED - ChangeLanguage listener to redirect properly to the translation url
+- ADDED - Sorting settings for list module
+- UPDATED - Backend - language marked in items list and items contents
+- UPDATED - Backend - use the rights icons to edit portfolio feed or access feed items
+- UPDATED - Frontend - List item restricts config to the current language
+- UPDATED - Fix translations (French and English)
+
 ## 3.1.1 - 2025-01-31
 - UPDATED - Fixes & Backend improvements
 
