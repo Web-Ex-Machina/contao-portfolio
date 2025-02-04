@@ -58,6 +58,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_feeds'] = [
     'eval' => ['multiple' => true, 'mandatory' => true],
     'sql' => 'blob NULL',
 ];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_sort'] = [
+    'exclude' => true,
+    'inputType' => 'select',
+    'options' => ['order_date_asc', 'order_date_desc', 'order_headline_asc', 'order_headline_desc'],
+    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'],
+    'eval' => ['chosen' => true, 'mandatory' => true, 'tl_class' => 'w50'],
+    'sql' => 'blob NULL',
+];
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_addFilters'] = [
     'exclude' => true,
     'flag' => 1,
@@ -87,7 +95,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_template'] = [
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(64) NOT NULL default ''",
 ];
-
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_displayAttributes'] = [
     'exclude' => true,
     'inputType' => 'checkbox',

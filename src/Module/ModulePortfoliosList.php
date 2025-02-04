@@ -102,6 +102,13 @@ class ModulePortfoliosList extends ModulePortfolios
         $this->limit = null;
         $this->offset = (int) $this->skipFirst;
 
+        switch ($this->wem_portfolio_sort) {
+            case 'order_date_asc': $this->options['order'] = 'date ASC'; break;
+            case 'order_date_desc': $this->options['order'] = 'date DESC'; break;
+            case 'order_headline_asc': $this->options['order'] = 'title ASC'; break;
+            case 'order_headline_desc': $this->options['order'] = 'title DESC'; break;
+        }
+
         // Maximum number of items
         if ($this->numberOfItems > 0) {
             $this->limit = $this->numberOfItems;
@@ -199,7 +206,7 @@ class ModulePortfoliosList extends ModulePortfolios
         if ($this->readFromRemote) {
             $objItems = $this->findRemoteItems($this->config, $this->readFromRemoteFeed, $page ?: 1, $this->limit ?: 0);
         } else {
-            $objItems = Portfolio::findItems($this->config, $this->limit ?: 0, $this->offset ?: 0);
+            $objItems = Portfolio::findItems($this->config, $this->limit ?: 0, $this->offset ?: 0, $this->options);
         }
 
         // Add the items
