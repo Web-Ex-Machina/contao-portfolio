@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<xliff version="1.1">
+    <file datatype="php" original="system/modules/wem-portfolio/languages/en/tl_wem_portfolio_l10n.php" source-language="en"
+          target-language="fr">
+        <body>
+            <trans-unit id="tl_wem_portfolio_l10n.slug.0">
+                <source>Slug</source>
+                <target>Permalien</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.slug.1">
+                <source>Enter the translation slug</source>
+                <target>Saisissez le permalien de la traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.title.0">
+                <source>Title</source>
+                <target>Intitulé</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.title.1">
+                <source>Enter the translation title</source>
+                <target>Saisissez l'intitulé de la traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.language.0">
+                <source>Language</source>
+                <target>Langage</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.language.1">
+                <source>Select the translation language</source>
+                <target>Sélectionnez la langue de cette traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.teaser.0">
+                <source>Teaser</source>
+                <target>Accroche</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.teaser.1">
+                <source>Enter the translation teaser</source>
+                <target>Saisissez l'accroche de la traduction</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio_l10n.title_legend">
+                <source>Global informations</source>
+                <target>Informations générales</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.data_legend">
+                <source>Contents</source>
+                <target>Contenus</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio_l10n.createdAt.0">
+                <source>Created at</source>
+                <target>Créée le</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.createdAt.1">
+                <source>Enter creation date</source>
+                <target>Saisissez la date de création</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio_l10n.new.0">
+                <source>New translation</source>
+                <target>Nouvelle traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.new.1">
+                <source>Create a new translation</source>
+                <target>Créer une nouvelle traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.edit.0">
+                <source>Edit translation</source>
+                <target>Éditer la traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.edit.1">
+                <source>Edit translation ID %s</source>
+                <target>Éditer la traduction ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.header.0">
+                <source>Edit translation</source>
+                <target>Modifier la traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.header.1">
+                <source>Edit translation ID %s</source>
+                <target>Modifier la traduction ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.copy.0">
+                <source>Copy translation</source>
+                <target>Dupliquer la traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.copy.1">
+                <source>Copy translation ID %s</source>
+                <target>Dupliquer la traduction ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.delete.0">
+                <source>Delete translation</source>
+                <target>Supprimer la traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.delete.1">
+                <source>Delete translation ID %s</source>
+                <target>Supprimer la traduction ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.show.0">
+                <source>Show translation data</source>
+                <target>Voir les informations de la traduction</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.show.1">
+                <source>Show translation data ID %s</source>
+                <target>Voir les informations de la traduction ID %s</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

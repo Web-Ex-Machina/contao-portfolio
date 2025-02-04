@@ -11,14 +11,6 @@
                 <source>Enter the item slug</source>
                 <target>Saisissez le permalien</target>
             </trans-unit>
-            <trans-unit id="tl_wem_portfolio.header.0">
-                <source>Edit item</source>
-                <target>Modifier l’élément</target>
-            </trans-unit>
-            <trans-unit id="tl_wem_portfolio.header.1">
-                <source>Edit item ID %s</source>
-                <target>Modifier l’élément ID %s</target>
-            </trans-unit>
             <trans-unit id="tl_wem_portfolio.title.0">
                 <source>Title</source>
                 <target>Intitulé</target>
@@ -53,6 +45,15 @@
                 <target>Saisissez l'accroche de l’élément</target>
             </trans-unit>
 
+            <trans-unit id="tl_wem_portfolio.pictures.0">
+                <source>Gallery</source>
+                <target>Galerie</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.pictures.1">
+                <source>Add there the picture for the gallery.</source>
+                <target>Ajoutez ici les images pour la galerie.</target>
+            </trans-unit>
+
             <trans-unit id="tl_wem_portfolio.published.0">
                 <source>Publish the item</source>
                 <target>Publier l'élément</target>
@@ -78,6 +79,15 @@
                 <target>Indiquez la date à laquelle l’élément doit être retirée du le site</target>
             </trans-unit>
 
+            <trans-unit id="tl_wem_portfolio.translations.0">
+                <source>Translations</source>
+                <target>Traductions</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.translations.1">
+                <source>Manage item translations</source>
+                <target>Gérez les traductions de l'élément</target>
+            </trans-unit>
+
             <trans-unit id="tl_wem_portfolio.title_legend">
                 <source>Global informations</source>
                 <target>Informations générales</target>
@@ -93,6 +103,10 @@
             <trans-unit id="tl_wem_portfolio.publish_legend">
                 <source>Publish settings</source>
                 <target>Paramètres de publication</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.translations_legend">
+                <source>Translations</source>
+                <target>Traductions</target>
             </trans-unit>
 
             <trans-unit id="tl_wem_portfolio.createdAt.0">
@@ -114,11 +128,19 @@
             </trans-unit>
             <trans-unit id="tl_wem_portfolio.edit.0">
                 <source>Edit item</source>
-                <target>Éditer l’élément</target>
+                <target>Éditer les contenus de l'élément</target>
             </trans-unit>
             <trans-unit id="tl_wem_portfolio.edit.1">
                 <source>Edit item ID %s</source>
-                <target>Éditer l’élément ID %s</target>
+                <target>Éditer les contenus de l'élément ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.header.0">
+                <source>Edit item</source>
+                <target>Modifier l’élément</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.header.1">
+                <source>Edit item ID %s</source>
+                <target>Modifier l’élément ID %s</target>
             </trans-unit>
             <trans-unit id="tl_wem_portfolio.copy.0">
                 <source>Copy item</source>
@@ -144,22 +166,7 @@
                 <source>Show item data ID %s</source>
                 <target>Voir les informations de l’élément ID %s</target>
             </trans-unit>
-            <trans-unit id="tl_wem_portfolio.applications.0">
-                <source>Show item applications</source>
-                <target>Voir les candidatures de l’élément</target>
-            </trans-unit>
-            <trans-unit id="tl_wem_portfolio.applications.1">
-                <source>Show item applications ID %s</source>
-                <target>Voir les candidatures de l’élément ID %s</target>
-            </trans-unit>
-            <trans-unit id="tl_wem_portfolio.pictures.0">
-                <source>Gallery</source>
-                <target>Galerie</target>
-            </trans-unit>
-            <trans-unit id="tl_wem_portfolio.pictures.1">
-                <source>Add there the picture for the gallery.</source>
-                <target>Ajoutez ici les images pour la galerie.</target>
-            </trans-unit>
+            
             <trans-unit id="tl_wem_portfolio.ERROR.generic">
                 <source>Error</source>
                 <target>Erreur</target>
