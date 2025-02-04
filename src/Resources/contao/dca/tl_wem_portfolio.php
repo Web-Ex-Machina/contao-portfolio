@@ -85,7 +85,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
     'palettes' => [
         '__selector__' => ['overwriteMeta'],
         'default' => '
-            {title_legend},title,slug,date;
+            {title_legend},title,slug,date,language;
             {content_legend},teaser;
             {media_legend},singleSRC,size,floating,imagemargin,fullsize,overwriteMeta,pictures;
             {publish_legend},published,start,stop;
@@ -123,6 +123,16 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             ],
             'eval' => ['tl_class' => 'w50', 'maxlength' => 255, 'unique' => true],
             'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'language' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'select',
+            'eval' => ['includeBlankOption' => true, 'chosen' => true, 'feEditable' => true, 'feGroup' => 'personal', 'tl_class' => 'w50'],
+            'options_callback' => static function () {
+                return System::getContainer()->get('contao.intl.locales')->getLocales(null, false);
+            },
+            'sql' => "varchar(64) NOT NULL default ''",
         ],
         'title' => [
             'exclude' => true,
