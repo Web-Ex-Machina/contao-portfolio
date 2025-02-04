@@ -118,7 +118,11 @@ class ModulePortfoliosList extends ModulePortfolios
         $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
 
         // Add pids
-        $this->config = ['pid' => $this->wem_portfolio_feeds, 'published' => 1];
+        $this->config = [
+            'pid' => $this->wem_portfolio_feeds,
+            'language' => System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale(),
+            'published' => 1
+        ];
 
         // Retrieve filters
         if ([] !== $_GET || [] !== $_POST) {

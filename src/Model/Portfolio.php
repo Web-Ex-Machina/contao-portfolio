@@ -68,8 +68,6 @@ class Portfolio extends Model
     {
         $arrColumns = [];
 
-        // $arrConfig['lang'] = System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale();
-
         foreach ($arrConfig as $c => $v) {
             $arrColumns = array_merge($arrColumns, static::formatStatement($c, $v));
         }
@@ -100,7 +98,7 @@ class Portfolio extends Model
 
                 break;
 
-                // Search for recipient not present in the subtable lead
+            // Search for recipient not present in the subtable lead
             case 'published':
                 if (1 === $varValue) {
                     $time = Date::floorToMinute();
@@ -109,7 +107,7 @@ class Portfolio extends Model
 
                 break;
 
-                // Wizard for active items
+            // Wizard for active items
             case 'active':
                 if (1 === $varValue) {
                     $arrColumns[] = \sprintf('%s.published = 1 AND (%s.start = 0 OR %s.start <= ', $t, $t, $t).time().\sprintf(') AND (%s.stop = 0 OR %s.stop >= ', $t, $t).time().')';
@@ -119,7 +117,11 @@ class Portfolio extends Model
 
                 break;
 
-                // Load parent
+            case 'language': 
+                $arrColumns[] = '('.$t.'.language = "'.$varValue.'" OR '.$t.'.id IN (SELECT pid FROM tl_wem_portfolio_l10n AS twpl WHERE twpl.language = "'.$varValue.'"))';
+            break;
+
+            // Load parent
             default:
                 if (\array_key_exists($strField, $GLOBALS['TL_DCA'][$t]['fields'])) {
                     switch ($GLOBALS['TL_DCA'][$t]['fields'][$strField]['inputType']) {
