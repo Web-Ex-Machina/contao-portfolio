@@ -70,7 +70,7 @@ class PortfolioL10nContainer extends Backend
     /**
      * @throws \Exception
      */
-    public function generateSlug($varValue, DataContainer $dc): string
+    public function generateSlug($varValue, $dc): string
     {
         $aliasExists = fn (string $slug): bool => $this->Database->prepare('SELECT id FROM tl_wem_portfolio_l10n WHERE slug=? AND id!=?')->execute($slug, $dc->id)->numRows > 0;
 
