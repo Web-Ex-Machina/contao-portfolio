@@ -28,3 +28,10 @@ services:
     public: true
     tags:
       - { name: contao.hook, hook: loadDataContainer, method: addAttributesToPortfolioDca, priority: 100 }
+
+
+  wem_portfolio.listener.change_language_navigation:
+    class: WEM\PortfolioBundle\EventListener\ChangeLanguageNavigationListener
+    public: true
+    tags:
+      - { name: contao.hook, hook: changelanguageNavigation, method: onChangelanguageNavigation, priority: 100 }

@@ -395,7 +395,7 @@ class Portfolio extends Model
      *
      * @throws \Exception
      */
-    public function getUrl(bool $blnAbsolute = false): ?string
+    public function getUrl(bool $blnAbsolute = false, string $lang  = ''): ?string
     {
         $objFeed = $this->getRelated('pid');
 
@@ -409,8 +409,16 @@ class Portfolio extends Model
             return null;
         }
 
-        $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
-        $params = (Config::get('useAutoItem') ? '/' : '/items/') . 'category/' . $objFeed->alias . '/item/' . ($this->getL10nLabel('slug') ?: $this->id);
+        // If $l is null, retrieve current language
+        if ('' === $lang) {
+            $r = System::getContainer()->get('request_stack')->getCurrentRequest();
+            if (null !== $r) {
+                $lang = $r->getLocale();
+            }
+        }
+
+        $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $lang);
+        $params = (Config::get('useAutoItem') ? '/' : '/items/') . 'category/' . $objFeed->alias . '/item/' . ($this->getL10nLabel('slug', $lang) ?: $this->id);
 
         return $blnAbsolute ? $objPageData->getAbsoluteUrl($params) : $objPageData->getFrontendUrl($params);
     }
