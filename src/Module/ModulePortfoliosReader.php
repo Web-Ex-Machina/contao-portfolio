@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2024 Web ex Machina
+ * Copyright (c) 2015-2025 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -74,7 +74,7 @@ class ModulePortfoliosReader extends ModulePortfolios
 
             global $objPage;
             $this->redirect($objPage->getFrontendUrl('/category/'.$objItem->getRelated('pid')->alias.'/item/'.Input::get('auto_item')), 301);
-            exit();
+            exit;
         }
 
         $this->feed = PortfolioFeed::findByIdOrAlias(Input::get('category'));
@@ -90,7 +90,7 @@ class ModulePortfoliosReader extends ModulePortfolios
                 if (!$objL10nItem) {
                     throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
                 }
-                
+
                 $this->portfolio = $objL10nItem->getRelated('pid');
             }
         }

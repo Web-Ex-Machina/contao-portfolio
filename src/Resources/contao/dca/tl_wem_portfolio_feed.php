@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2024 Web ex Machina
+ * Copyright (c) 2015-2025 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
 
     // Subpalettes
     'subpalettes' => [
-        'readFromRemote' => 'readFromRemoteUrl,readFromRemoteApiKey,readFromRemoteConfig'
+        'readFromRemote' => 'readFromRemoteUrl,readFromRemoteApiKey,readFromRemoteConfig',
     ],
 
     // Fields
@@ -139,25 +139,25 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
         'readFromRemoteUrl' => [
             'exclude' => true,
             'inputType' => 'text',
-            'eval' => ['rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>2048, 'tl_class'=>'w50'],
-            'sql' => "text NULL"
+            'eval' => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 2048, 'tl_class' => 'w50'],
+            'sql' => 'text NULL',
         ],
         'readFromRemoteApiKey' => [
             'exclude' => true,
             'inputType' => 'text',
-            'eval' => ['tl_class'=>'w50'],
+            'eval' => ['tl_class' => 'w50'],
             'load_callback' => [
                 ['wem.encryption_util', 'decrypt_b64'],
             ],
             'save_callback' => [
                 ['wem.encryption_util', 'encrypt_b64'],
             ],
-            'sql' => "text NULL"
+            'sql' => 'text NULL',
         ],
         'readFromRemoteConfig' => [
             'exclude' => true,
             'inputType' => 'keyValueWizard',
-            'eval' => ['tl_class'=>'clr'],
+            'eval' => ['tl_class' => 'clr'],
             'sql' => 'blob NULL',
         ],
         'attributes' => [

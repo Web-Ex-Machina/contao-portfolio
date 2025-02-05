@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2024 Web ex Machina
+ * Copyright (c) 2015-2025 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -80,7 +80,7 @@ class ModulePortfoliosList extends ModulePortfolios
         foreach ($this->wem_portfolio_feeds as $f) {
             $objFeed = PortfolioFeed::findByPk($f);
 
-            // If we have one remote feed, consider we must 
+            // If we have one remote feed, consider we must
             // get everything from remote, to improve later
             if ($objFeed->readFromRemote) {
                 $this->readFromRemote = true;
@@ -103,10 +103,14 @@ class ModulePortfoliosList extends ModulePortfolios
         $this->offset = (int) $this->skipFirst;
 
         switch ($this->wem_portfolio_sort) {
-            case 'order_date_asc': $this->options['order'] = 'date ASC'; break;
-            case 'order_date_desc': $this->options['order'] = 'date DESC'; break;
-            case 'order_headline_asc': $this->options['order'] = 'title ASC'; break;
-            case 'order_headline_desc': $this->options['order'] = 'title DESC'; break;
+            case 'order_date_asc': $this->options['order'] = 'date ASC';
+                break;
+            case 'order_date_desc': $this->options['order'] = 'date DESC';
+                break;
+            case 'order_headline_asc': $this->options['order'] = 'title ASC';
+                break;
+            case 'order_headline_desc': $this->options['order'] = 'title DESC';
+                break;
         }
 
         // Maximum number of items
@@ -121,7 +125,7 @@ class ModulePortfoliosList extends ModulePortfolios
         $this->config = [
             'pid' => $this->wem_portfolio_feeds,
             'language' => System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale(),
-            'published' => 1
+            'published' => 1,
         ];
 
         // Retrieve filters

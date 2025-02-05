@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2024 Web ex Machina
+ * Copyright (c) 2015-2025 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -20,7 +20,6 @@ use Contao\Date;
 use Contao\FilesModel;
 use Contao\Model\Collection;
 use Contao\Model\Registry;
-use Contao\PageModel;
 use Contao\System;
 use Terminal42\ChangeLanguage\PageFinder;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -98,7 +97,7 @@ class Portfolio extends Model
 
                 break;
 
-            // Search for recipient not present in the subtable lead
+                // Search for recipient not present in the subtable lead
             case 'published':
                 if (1 === $varValue) {
                     $time = Date::floorToMinute();
@@ -107,7 +106,7 @@ class Portfolio extends Model
 
                 break;
 
-            // Wizard for active items
+                // Wizard for active items
             case 'active':
                 if (1 === $varValue) {
                     $arrColumns[] = \sprintf('%s.published = 1 AND (%s.start = 0 OR %s.start <= ', $t, $t, $t).time().\sprintf(') AND (%s.stop = 0 OR %s.stop >= ', $t, $t).time().')';
@@ -117,11 +116,11 @@ class Portfolio extends Model
 
                 break;
 
-            case 'language': 
+            case 'language':
                 $arrColumns[] = '('.$t.'.language = "'.$varValue.'" OR '.$t.'.id IN (SELECT pid FROM tl_wem_portfolio_l10n AS twpl WHERE twpl.language = "'.$varValue.'"))';
-            break;
+                break;
 
-            // Load parent
+                // Load parent
             default:
                 if (\array_key_exists($strField, $GLOBALS['TL_DCA'][$t]['fields'])) {
                     switch ($GLOBALS['TL_DCA'][$t]['fields'][$strField]['inputType']) {
@@ -198,6 +197,8 @@ class Portfolio extends Model
     /**
      * Get offer attributes as array.
      *
+     * @param mixed|null $lang
+     *
      * @throws \Exception
      *
      * @return array ['attribute_name'=>['label'=>$label, 'raw_value'=>$value,'human_readable_value'=>$human_readable_value]]
@@ -263,6 +264,8 @@ class Portfolio extends Model
 
     /**
      * TODO : this fonction return too many different value type.
+     *
+     * @param mixed|null $lang
      *
      * @throws \Exception
      *
@@ -368,6 +371,8 @@ class Portfolio extends Model
     /**
      * Get offer attributes as array.
      *
+     * @param mixed|null $lang
+     *
      * @throws \Exception
      *
      * @return array ['attribute_label'=>$human_readable_value,...]
@@ -395,12 +400,12 @@ class Portfolio extends Model
      *
      * @throws \Exception
      */
-    public function getUrl(bool $blnAbsolute = false, string $lang  = ''): ?string
+    public function getUrl(bool $blnAbsolute = false, string $lang = ''): ?string
     {
         $objFeed = $this->getRelated('pid');
 
         if (!$objFeed) {
-            throw new \Exception(sprintf("Cannot retrieve pid from item id %s", $this->id));
+            throw new \Exception(\sprintf('Cannot retrieve pid from item id %s', $this->id));
         }
 
         $objTarget = $objFeed->getRelated('jumpTo');
@@ -418,7 +423,7 @@ class Portfolio extends Model
         }
 
         $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $lang);
-        $params = (Config::get('useAutoItem') ? '/' : '/items/') . 'category/' . $objFeed->alias . '/item/' . ($this->getL10nLabel('slug', $lang) ?: $this->id);
+        $params = (Config::get('useAutoItem') ? '/' : '/items/').'category/'.$objFeed->alias.'/item/'.($this->getL10nLabel('slug', $lang) ?: $this->id);
 
         return $blnAbsolute ? $objPageData->getAbsoluteUrl($params) : $objPageData->getFrontendUrl($params);
     }

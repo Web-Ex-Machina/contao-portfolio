@@ -4,8 +4,8 @@
           target-language="en">
         <body>
             <trans-unit id="tl_wem_portfolio.slug.0">
-                <source>slug</source>
-                <target>slug</target>
+                <source>Slug</source>
+                <target>Slug</target>
             </trans-unit>
             <trans-unit id="tl_wem_portfolio.slug.1">
                 <source>Enter the item slug</source>
