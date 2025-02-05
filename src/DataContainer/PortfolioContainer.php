@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2024 Web ex Machina
+ * Copyright (c) 2015-2025 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -23,6 +23,7 @@ use Contao\System;
 use Contao\Versions;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
+use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 class PortfolioContainer extends Backend
@@ -37,10 +38,19 @@ class PortfolioContainer extends Backend
      */
     public function listItems(array $r): string
     {
+        $arrLanguages = System::getContainer()->get('contao.intl.locales')->getLocales(null, false);
+        $arrTranslations = [$arrLanguages[$r['language']]];
+        $objTranslations = PortfolioL10n::findItems(['pid' => $r['id']]);
+        if ($objTranslations) {
+            while ($objTranslations->next()) {
+                $arrTranslations[] = $arrLanguages[$objTranslations->language];
+            }
+        }
+
         return \sprintf(
             '%s <span style="color:#888">[%s]</span>',
             $r['title'],
-            $r['slug']
+            implode(', ', $arrTranslations)
         );
     }
 

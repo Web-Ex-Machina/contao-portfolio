@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2024 Web ex Machina
+ * Copyright (c) 2015-2025 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -22,6 +22,7 @@ use Contao\PageModel;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
+use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -58,12 +59,40 @@ class ModulePortfoliosReader extends ModulePortfolios
             return $objTemplate->parse();
         }
 
+        if ((!Input::get('category') || !Input::get('item')) && Input::get('auto_item')) {
+            $objItem = Portfolio::findByIdOrSlug(Input::get('auto_item'));
+
+            if (!$objItem) {
+                $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('auto_item'));
+
+                if (!$objL10nItem) {
+                    throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
+                }
+
+                $objItem = $objL10nItem->getRelated('pid');
+            }
+
+            global $objPage;
+            $this->redirect($objPage->getFrontendUrl('/category/'.$objItem->getRelated('pid')->alias.'/item/'.Input::get('auto_item')), 301);
+            exit;
+        }
+
         $this->feed = PortfolioFeed::findByIdOrAlias(Input::get('category'));
 
         if ($this->feed->readFromRemote) {
             $this->portfolio = $this->findRemoteItem(Input::get('item'), $this->feed);
         } else {
             $this->portfolio = Portfolio::findByIdOrSlug(Input::get('item'));
+
+            if (!$this->portfolio) {
+                $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('item'));
+
+                if (!$objL10nItem) {
+                    throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
+                }
+
+                $this->portfolio = $objL10nItem->getRelated('pid');
+            }
         }
 
         if (!$this->portfolio) {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2024 Web ex Machina
+ * Copyright (c) 2015-2025 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -20,7 +20,6 @@ use Contao\Date;
 use Contao\FilesModel;
 use Contao\Model\Collection;
 use Contao\Model\Registry;
-use Contao\PageModel;
 use Contao\System;
 use Terminal42\ChangeLanguage\PageFinder;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -67,8 +66,6 @@ class Portfolio extends Model
     public static function formatColumns(array $arrConfig): array
     {
         $arrColumns = [];
-
-        // $arrConfig['lang'] = System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale();
 
         foreach ($arrConfig as $c => $v) {
             $arrColumns = array_merge($arrColumns, static::formatStatement($c, $v));
@@ -117,6 +114,10 @@ class Portfolio extends Model
                     $arrColumns[] = \sprintf("%s.published = '' AND (%s.start = 0 OR %s.start >= ", $t, $t, $t).time().\sprintf(') AND (%s.stop = 0 OR %s.stop <= ', $t, $t).time().')';
                 }
 
+                break;
+
+            case 'language':
+                $arrColumns[] = '('.$t.'.language = "'.$varValue.'" OR '.$t.'.id IN (SELECT pid FROM tl_wem_portfolio_l10n AS twpl WHERE twpl.language = "'.$varValue.'"))';
                 break;
 
                 // Load parent
@@ -196,6 +197,8 @@ class Portfolio extends Model
     /**
      * Get offer attributes as array.
      *
+     * @param mixed|null $lang
+     *
      * @throws \Exception
      *
      * @return array ['attribute_name'=>['label'=>$label, 'raw_value'=>$value,'human_readable_value'=>$human_readable_value]]
@@ -261,6 +264,8 @@ class Portfolio extends Model
 
     /**
      * TODO : this fonction return too many different value type.
+     *
+     * @param mixed|null $lang
      *
      * @throws \Exception
      *
@@ -366,6 +371,8 @@ class Portfolio extends Model
     /**
      * Get offer attributes as array.
      *
+     * @param mixed|null $lang
+     *
      * @throws \Exception
      *
      * @return array ['attribute_label'=>$human_readable_value,...]
@@ -393,12 +400,12 @@ class Portfolio extends Model
      *
      * @throws \Exception
      */
-    public function getUrl(bool $blnAbsolute = false): ?string
+    public function getUrl(bool $blnAbsolute = false, string $lang = ''): ?string
     {
         $objFeed = $this->getRelated('pid');
 
         if (!$objFeed) {
-            throw new \Exception(sprintf("Cannot retrieve pid from item id %s", $this->id));
+            throw new \Exception(\sprintf('Cannot retrieve pid from item id %s', $this->id));
         }
 
         $objTarget = $objFeed->getRelated('jumpTo');
@@ -407,8 +414,16 @@ class Portfolio extends Model
             return null;
         }
 
-        $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $GLOBALS['TL_LANGUAGE']);
-        $params = (Config::get('useAutoItem') ? '/' : '/items/') . 'category/' . $objFeed->alias . '/item/' . ($this->slug ?: $this->id);
+        // If $l is null, retrieve current language
+        if ('' === $lang) {
+            $r = System::getContainer()->get('request_stack')->getCurrentRequest();
+            if (null !== $r) {
+                $lang = $r->getLocale();
+            }
+        }
+
+        $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $lang);
+        $params = (Config::get('useAutoItem') ? '/' : '/items/').'category/'.$objFeed->alias.'/item/'.($this->getL10nLabel('slug', $lang) ?: $this->id);
 
         return $blnAbsolute ? $objPageData->getAbsoluteUrl($params) : $objPageData->getFrontendUrl($params);
     }

@@ -2,7 +2,7 @@
 
 $header = <<<EOF
 Contao Portfolio for Contao Open Source CMS
-Copyright (c) 2015-2024 Web ex Machina
+Copyright (c) 2015-2025 Web ex Machina
 
 @category ContaoBundle
 @package  Web-Ex-Machina/contao-portfolio
@@ -17,7 +17,7 @@ $finder = PhpCsFixer\Finder::create()
 $config = new PhpCsFixer\Config();
 return $config->setRules([
         '@Symfony' => true,
-        '@Symfony:risky' => true,
+        // '@Symfony:risky' => true, // to allow classes to have a different name than their files
         '@PHP71Migration' => true,
         '@PHP71Migration:risky' => true,
         '@PHPUnit60Migration:risky' => true,

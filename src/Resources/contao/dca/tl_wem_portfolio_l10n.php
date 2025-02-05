@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2024 Web ex Machina
+ * Copyright (c) 2015-2025 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -75,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
     'palettes' => [
         'default' => '
             {title_legend},language;
-            {data_legend},title,teaser
+            {data_legend},title,slug,teaser
         ',
     ],
 
@@ -107,13 +107,24 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
                 return System::getContainer()->get('contao.intl.locales')->getLocales(null, false);
             },
             'sql' => "varchar(64) NOT NULL default ''",
-        ], 'title' => [
+        ],
+        'title' => [
             'exclude' => true,
             'search' => true,
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'tl_class' => 'w50', 'maxlength' => 255],
             'sql' => "varchar(255) NOT NULL default ''",
-        ], 'teaser' => [
+        ],
+        'slug' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'save_callback' => [
+                [PortfolioL10nContainer::class, 'generateSlug'],
+            ],
+            'eval' => ['tl_class' => 'w50', 'maxlength' => 255, 'unique' => true],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'teaser' => [
             'exclude' => true,
             'search' => true,
             'inputType' => 'textarea',

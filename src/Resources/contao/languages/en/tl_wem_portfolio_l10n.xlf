@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<xliff version="1.1">
+    <file datatype="php" original="system/modules/wem-portfolio/languages/en/tl_wem_portfolio_l10n.php" source-language="en"
+          target-language="en">
+        <body>
+            <trans-unit id="tl_wem_portfolio_l10n.slug.0">
+                <source>Slug</source>
+                <target>Slug</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.slug.1">
+                <source>Enter the translation slug</source>
+                <target>Enter the translation slug</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.title.0">
+                <source>Title</source>
+                <target>Title</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.title.1">
+                <source>Enter the translation title</source>
+                <target>Enter the translation title</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.language.0">
+                <source>Language</source>
+                <target>Language</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.language.1">
+                <source>Select the translation language</source>
+                <target>Select the translation language</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.teaser.0">
+                <source>Teaser</source>
+                <target>Teaser</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.teaser.1">
+                <source>Enter the translation teaser</source>
+                <target>Enter the translation teaser</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio_l10n.title_legend">
+                <source>Global informations</source>
+                <target>Global informations</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.data_legend">
+                <source>Contents</source>
+                <target>Contents</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio_l10n.createdAt.0">
+                <source>Created at</source>
+                <target>Created at</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.createdAt.1">
+                <source>Enter creation date</source>
+                <target>Enter creation date</target>
+            </trans-unit>
+
+            <trans-unit id="tl_wem_portfolio_l10n.new.0">
+                <source>New translation</source>
+                <target>New translation</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.new.1">
+                <source>Create a new translation</source>
+                <target>Create a new translation</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.edit.0">
+                <source>Edit translation</source>
+                <target>Edit translation</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.edit.1">
+                <source>Edit translation ID %s</source>
+                <target>Edit translation ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.header.0">
+                <source>Edit translation</source>
+                <target>Edit translation</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.header.1">
+                <source>Edit translation ID %s</source>
+                <target>Edit translation ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.copy.0">
+                <source>Copy translation</source>
+                <target>Copy translation</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.copy.1">
+                <source>Copy translation ID %s</source>
+                <target>Copy translation ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.delete.0">
+                <source>Delete translation</source>
+                <target>Delete translation</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.delete.1">
+                <source>Delete translation ID %s</source>
+                <target>Delete translation ID %s</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.show.0">
+                <source>Show translation data</source>
+                <target>Show translation data</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_l10n.show.1">
+                <source>Show translation data ID %s</source>
+                <target>Show translation data ID %s</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
