@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Contao Portfolio for Contao Open Source CMS
- * Copyright (c) 2015-2024 Web ex Machina
+ * Copyright (c) 2015-2025 Web ex Machina
  *
  * @category ContaoBundle
  * @package  Web-Ex-Machina/contao-portfolio
@@ -39,7 +39,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['wem_language'] = [
 class tl_content_wemportfolio extends tl_content
 {
     /**
-     * Import the back end user object
+     * Import the back end user object.
      */
     public function __construct()
     {
@@ -47,7 +47,7 @@ class tl_content_wemportfolio extends tl_content
     }
 
     /**
-     * Add the type of content element
+     * Add the type of content element.
      *
      * @param array $arrRow
      *
@@ -60,62 +60,51 @@ class tl_content_wemportfolio extends tl_content
         $class = 'limit_height';
 
         // Remove the class if it is a wrapper element
-        if (in_array($arrRow['type'], $GLOBALS['TL_WRAPPERS']['start']) || in_array($arrRow['type'], $GLOBALS['TL_WRAPPERS']['separator']) || in_array($arrRow['type'], $GLOBALS['TL_WRAPPERS']['stop']))
-        {
+        if (\in_array($arrRow['type'], $GLOBALS['TL_WRAPPERS']['start'], true) || \in_array($arrRow['type'], $GLOBALS['TL_WRAPPERS']['separator'], true) || \in_array($arrRow['type'], $GLOBALS['TL_WRAPPERS']['stop'], true)) {
             $class = '';
 
-            if (($group = $this->getContentElementGroup($arrRow['type'])) !== null)
-            {
-                $type = ($GLOBALS['TL_LANG']['CTE'][$group] ?? $group) . ' (' . $type . ')';
+            if (($group = $this->getContentElementGroup($arrRow['type'])) !== null) {
+                $type = ($GLOBALS['TL_LANG']['CTE'][$group] ?? $group).' ('.$type.')';
             }
         }
 
         // Add the group name if it is a single element (see #5814)
-        elseif (in_array($arrRow['type'], $GLOBALS['TL_WRAPPERS']['single']))
-        {
-            if (($group = $this->getContentElementGroup($arrRow['type'])) !== null)
-            {
-                $type = ($GLOBALS['TL_LANG']['CTE'][$group] ?? $group) . ' (' . $type . ')';
+        elseif (\in_array($arrRow['type'], $GLOBALS['TL_WRAPPERS']['single'], true)) {
+            if (($group = $this->getContentElementGroup($arrRow['type'])) !== null) {
+                $type = ($GLOBALS['TL_LANG']['CTE'][$group] ?? $group).' ('.$type.')';
             }
         }
 
         // Add the ID of the aliased element
-        if ($arrRow['type'] == 'alias')
-        {
-            $type .= ' ID ' . $arrRow['cteAlias'];
+        if ('alias' === $arrRow['type']) {
+            $type .= ' ID '.$arrRow['cteAlias'];
         }
 
         // Add the protection status
-        if ($arrRow['protected'] ?? null)
-        {
+        if ($arrRow['protected'] ?? null) {
             $groupIds = StringUtil::deserialize($arrRow['groups'], true);
-            $groupNames = array();
+            $groupNames = [];
 
-            if (!empty($groupIds))
-            {
-                if (in_array(-1, array_map('intval', $groupIds), true))
-                {
+            if (!empty($groupIds)) {
+                if (\in_array(-1, array_map('intval', $groupIds), true)) {
                     $groupNames[] = $GLOBALS['TL_LANG']['MSC']['guests'];
                 }
 
-                if (null !== ($groups = MemberGroupModel::findMultipleByIds($groupIds)))
-                {
+                if (null !== ($groups = MemberGroupModel::findMultipleByIds($groupIds))) {
                     $groupNames += $groups->fetchEach('name');
                 }
             }
 
-            $type .= ' (' . $GLOBALS['TL_LANG']['MSC']['protected'] . ($groupNames ? ': ' . implode(', ', $groupNames) : '') . ')';
+            $type .= ' ('.$GLOBALS['TL_LANG']['MSC']['protected'].($groupNames ? ': '.implode(', ', $groupNames) : '').')';
         }
 
         // Add the headline level (see #5858)
-        if ($arrRow['type'] == 'headline' && is_array($headline = StringUtil::deserialize($arrRow['headline'])))
-        {
-            $type .= ' (' . $headline['unit'] . ')';
+        if ('headline' === $arrRow['type'] && \is_array($headline = StringUtil::deserialize($arrRow['headline']))) {
+            $type .= ' ('.$headline['unit'].')';
         }
 
         // Limit the element's height
-        if (!Config::get('doNotCollapse'))
-        {
+        if (!Config::get('doNotCollapse')) {
             $class .= ' h40';
         }
 
@@ -126,9 +115,9 @@ class tl_content_wemportfolio extends tl_content
         $strLang = $arrRow['wem_language'] ? $arrLanguages[$arrRow['wem_language']] : 'NR';
 
         return '
-<div class="cte_type ' . $key . '">' . $type . ' // ' . $strLang . '</div>
-<div class="' . trim($class) . '">
-' . StringUtil::insertTagToSrc($this->getContentElement($objModel)) . '
-</div>' . "\n";
+<div class="cte_type '.$key.'">'.$type.' // '.$strLang.'</div>
+<div class="'.trim($class).'">
+'.StringUtil::insertTagToSrc($this->getContentElement($objModel)).'
+</div>'."\n";
     }
 }
