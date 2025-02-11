@@ -24,7 +24,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'wem_portfolio_d
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_filters'] = '
     {title_legend},name,headline,type;
-    {config_legend},jumpTo,wem_portfolio_filters,wem_portfolio_addSearch;
+    {config_legend},jumpTo,wem_portfolio_feeds,wem_portfolio_filters,wem_portfolio_addSearch,wem_portfolio_hideFiltersWithNoResults;
     {template_legend:hide},customTpl;
     {expert_legend:hide},guests,cssID
 ';
@@ -81,6 +81,13 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters'] = [
     'sql' => 'blob NULL',
 ];
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_addSearch'] = [
+    'exclude' => true,
+    'flag' => 1,
+    'inputType' => 'checkbox',
+    'eval' => ['doNotCopy' => true, 'tl_class' => 'clr'],
+    'sql' => "char(1) NOT NULL default ''",
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_hideFiltersWithNoResults'] = [
     'exclude' => true,
     'flag' => 1,
     'inputType' => 'checkbox',
