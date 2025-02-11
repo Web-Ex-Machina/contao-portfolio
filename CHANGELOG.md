@@ -1,6 +1,9 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
+## 3.3 - 2025-02-XX
+- ADDED - New setting for filters to hide filters and options with no results
+
 ## 3.2 - 2025-02-05
 - ADDED - Slug for translations + URL adjustements
 - ADDED - ChangeLanguage listener to redirect properly to the translation url
