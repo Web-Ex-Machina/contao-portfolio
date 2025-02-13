@@ -365,14 +365,18 @@ class Portfolio extends Model
                     return $arrFiles ?: null;
                 }
 
-                $objFile = FilesModel::findByUuid($this->{$varAttribute->name});
+                $data = $this->{$varAttribute->name};
 
-                $figure = $figureBuilder
-                    ->fromPath($objFile->path)
-                    ->build()
-                ;
+                if (!is_array($data)) {
+                    $objFile = FilesModel::findByUuid($data);
 
-                $data = $figure->getLegacyTemplateData() ?: null;
+                    $figure = $figureBuilder
+                        ->fromPath($objFile->path)
+                        ->build()
+                    ;
+
+                    $data = $figure->getLegacyTemplateData() ?: null;
+                }
 
                 if ($forApi && is_array($data)) {
                     $data['picture']['img']['srcset'] = Environment::get('base') . $data['picture']['img']['srcset'];
