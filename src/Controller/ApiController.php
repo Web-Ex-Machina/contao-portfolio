@@ -246,7 +246,7 @@ class ApiController
                     
                     default:
                         // Try to find a matching attribute
-                        $varValue = $item->getAttributeValue($c);
+                        $varValue = $item->getAttributeValue($c, $lang, true);
 
                         $return[$c] = $varValue ?: $v;
                         break;
@@ -254,7 +254,7 @@ class ApiController
             }
         }
 
-        $return['attributes'] = $item->getAttributesFull([], $lang);
+        $return['attributes'] = $item->getAttributesFull([], $lang, true);
 
         if ($getContent) {
             $strContent = '';
