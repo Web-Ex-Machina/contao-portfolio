@@ -149,13 +149,17 @@ class ApiController
             return $check;
         }
 
-        $pid = $request->query->all('pid');
+        $params = $request->query->all();
+        $lang = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
 
-        if (!is_iterable($pid)) {
-            return new JsonResponse('{"error":"Give at least on category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
+        if (!is_iterable($params['pid'])) {
+            return new JsonResponse('{"error":"Give at least one category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
         }
 
-        return new JsonResponse(['items' => Portfolio::countItems(['pid' => $pid])], Response::HTTP_OK);
+        unset($params['key']);
+        unset($params['lang']);
+
+        return new JsonResponse(['items' => Portfolio::countItems($params)], Response::HTTP_OK);
     }
 
     /**
