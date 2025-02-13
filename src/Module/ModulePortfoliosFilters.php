@@ -129,7 +129,13 @@ class ModulePortfoliosFilters extends ModulePortfolios
                         foreach ($options as $value => $label) {
                             if (\is_array($label)) {
                                 foreach ($label as $subValue => $subLabel) {
-                                    if ($this->shouldBeSkipped($f . ' = "'. $subValue .'"')) {
+
+                                    $statement = $field['eval']['multiple'] 
+                                        ? $f . ' LIKE "%%'. $subValue .'%%"' 
+                                        : $f . ' = "'. $subValue .'"'
+                                    ;
+
+                                    if ($this->shouldBeSkipped($statement)) {
                                         continue;
                                     }
 
@@ -140,7 +146,12 @@ class ModulePortfoliosFilters extends ModulePortfolios
                                     ];
                                 }
                             } else {
-                                if ($this->shouldBeSkipped($f . ' = "'. $value .'"')) {
+                                $statement = $field['eval']['multiple'] 
+                                    ? $f . ' LIKE "%%'. $value .'%%"' 
+                                    : $f . ' = "'. $value .'"'
+                                ;
+                                
+                                if ($this->shouldBeSkipped($statement)) {
                                     continue;
                                 }
 
@@ -170,7 +181,12 @@ class ModulePortfoliosFilters extends ModulePortfolios
 
                                 $subOptions = StringUtil::deserialize($objOptions->{$f});
                                 foreach ($subOptions as $subOption) {
-                                    if ($this->shouldBeSkipped($f . ' = "'. $subOption .'"')) {
+                                    $statement = $field['eval']['multiple'] 
+                                        ? $f . ' LIKE "%%'. $subOption .'%%"' 
+                                        : $f . ' = "'. $subOption .'"'
+                                    ;
+                                    
+                                    if ($this->shouldBeSkipped($statement)) {
                                         continue;
                                     }
 
