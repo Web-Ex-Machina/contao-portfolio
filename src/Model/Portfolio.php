@@ -17,6 +17,7 @@ namespace WEM\PortfolioBundle\Model;
 use Contao\Config;
 use Contao\Controller;
 use Contao\Date;
+use Contao\Environment;
 use Contao\FilesModel;
 use Contao\Model\Collection;
 use Contao\Model\Registry;
@@ -203,7 +204,7 @@ class Portfolio extends Model
      *
      * @return array ['attribute_name'=>['label'=>$label, 'raw_value'=>$value,'human_readable_value'=>$human_readable_value]]
      */
-    public function getAttributesFull($varAttributes = [], $lang = null): array
+    public function getAttributesFull($varAttributes = [], $lang = null, $forApi = false): array
     {
         $attributes = [];
 
@@ -217,7 +218,7 @@ class Portfolio extends Model
             $arrArticleData = $this->row();
             while ($objAttributes->next()) {
                 if (\array_key_exists($objAttributes->name, $arrArticleData)) {
-                    $varValue = $this->getAttributeValue($objAttributes->current(), $lang);
+                    $varValue = $this->getAttributeValue($objAttributes->current(), $lang, $forApi);
 
                     $attributes[$objAttributes->name] = [
                         'label' => $objAttributes->current()->getL10nLabel('label'),
@@ -271,7 +272,7 @@ class Portfolio extends Model
      *
      * @return array|Collection|mixed|string|Portfolio|null
      */
-    public function getAttributeValue($varAttribute, $lang = null)
+    public function getAttributeValue($varAttribute, $lang = null, $forApi = false)
     {
         if ('string' === \gettype($varAttribute)) {
             $varAttribute = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttribute], 1);
@@ -345,23 +346,59 @@ class Portfolio extends Model
                             ->build()
                         ;
 
-                        $arrFiles[] = $figure->getLegacyTemplateData();
+                        $data = $figure->getLegacyTemplateData() ?: null;
+
+                        if (null === $data) {
+                            continue;
+                        }
+
+                        if ($forApi && is_array($data)) {
+                            $data['picture']['img']['srcset'] = Environment::get('base') . $data['picture']['img']['srcset'];
+                            $data['picture']['img']['src'] = Environment::get('base') . $data['picture']['img']['src'];
+                            $data['singleSRC'] = Environment::get('base') . $data['singleSRC'];
+                            $data['src'] = Environment::get('base') . $data['src'];
+                        }
+
+                        $arrFiles[] = $data;
                     }
 
                     return $arrFiles ?: null;
                 }
 
-                $objFile = FilesModel::findByUuid($this->{$varAttribute->name});
+                $data = $this->{$varAttribute->name};
 
-                $figure = $figureBuilder
-                    ->fromPath($objFile->path)
-                    ->build()
-                ;
+                if (!is_array($data)) {
+                    $objFile = FilesModel::findByUuid($data);
 
-                return $figure->getLegacyTemplateData() ?: null;
+                    $figure = $figureBuilder
+                        ->fromPath($objFile->path)
+                        ->build()
+                    ;
+
+                    $data = $figure->getLegacyTemplateData() ?: null;
+                }
+
+                if ($forApi && is_array($data)) {
+                    $data['picture']['img']['srcset'] = Environment::get('base') . $data['picture']['img']['srcset'];
+                    $data['picture']['img']['src'] = Environment::get('base') . $data['picture']['img']['src'];
+                    $data['singleSRC'] = Environment::get('base') . $data['singleSRC'];
+                    $data['src'] = Environment::get('base') . $data['src'];
+                }
+                
+                return $data;
 
             case 'listWizard':
-                return $this->getL10nLabel($varAttribute->name, $lang) ? implode(',', StringUtil::deserialize($this->getL10nLabel($varAttribute->name, $lang))) : '';
+                $varValue = StringUtil::deserialize($this->getL10nLabel($varAttribute->name, $lang));
+
+                if (!$varValue) {
+                    return '';
+                }
+
+                if (is_array($varValue)) {
+                    return implode(', ', $varValue);
+                }
+
+                return $varValue;
 
             default:
                 return $this->getL10nLabel($varAttribute->name, $lang);

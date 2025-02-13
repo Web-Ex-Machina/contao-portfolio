@@ -108,43 +108,38 @@ class ApiController
             $page = 1;
         }
 
-        $pid = $request->query->all('pid');
+        $params = $request->query->all();
         $lang = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
 
-        $offset = ($page - 1) * $limit;
-        if (!is_iterable($pid)) {
+        if (!is_iterable($params['pid'])) {
             return new JsonResponse('{"error":"Give at least one category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
         }
 
+        unset($params['key']);
+        unset($params['lang']);
+
         $items = [];
+        $offset = ($page - 1) * $limit;
 
-        foreach ($pid as $category) {
-            $objCategory = PortfolioFeed::findByIdOrAlias($category);
-            if (!$objCategory) {
-                return new JsonResponse('{"error":"Category '.$category.' not found"}', Response::HTTP_I_AM_A_TEAPOT, [], true);
-            }
+        $objItems = Portfolio::findItems($params, $limit, $offset);
 
-            $base = Environment::get('base');
-
-            $objItems = Portfolio::findItems(['pid' => $objCategory->id, 'published' => '1'], $limit, $offset);
-            if ($objItems instanceof Collection) {
-                /** @var Portfolio $item */
-                foreach ($objItems as $item) {
-                    if (!$item->published) {
-                        continue;
-                    }
-
-                    $items[$item->id] = $this->prepareItem($item, $lang);
+        if ($objItems instanceof Collection) {
+            /** @var Portfolio $item */
+            foreach ($objItems as $item) {
+                if (!$item->published) {
+                    continue;
                 }
 
-                return new JsonResponse($items, Response::HTTP_OK);
+                $items[$item->id] = $this->prepareItem($item, $lang);
             }
+
+            return new JsonResponse($items, Response::HTTP_OK);
         }
 
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-        /**
+    /**
      * @Route("/count", methods={"GET"})
      */
     public function countPortfolioList(Request $request, array $pid = []): JsonResponse
@@ -196,6 +191,7 @@ class ApiController
         $return = [];
         $return['singleSRC'] = [];
         $return['pictures'] = [];
+        $base = Environment::get('base');
         if ('1' === $arrayItem['published']) {
             foreach($arrayItem as $c => $v) {
                 switch ($c) {
@@ -245,7 +241,7 @@ class ApiController
                     
                     default:
                         // Try to find a matching attribute
-                        $varValue = $item->getAttributeValue($c);
+                        $varValue = $item->getAttributeValue($c, $lang, true);
 
                         $return[$c] = $varValue ?: $v;
                         break;
@@ -253,7 +249,7 @@ class ApiController
             }
         }
 
-        $return['attributes'] = $item->getAttributesFull([], $lang);
+        $return['attributes'] = $item->getAttributesFull([], $lang, true);
 
         if ($getContent) {
             $strContent = '';
