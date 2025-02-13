@@ -361,7 +361,17 @@ class Portfolio extends Model
                 return $figure->getLegacyTemplateData() ?: null;
 
             case 'listWizard':
-                return $this->getL10nLabel($varAttribute->name, $lang) ? implode(',', StringUtil::deserialize($this->getL10nLabel($varAttribute->name, $lang))) : '';
+                $varValue = StringUtil::deserialize($this->getL10nLabel($varAttribute->name, $lang));
+
+                if (!$varValue) {
+                    return '';
+                }
+
+                if (is_array($varValue)) {
+                    return implode(', ', $varValue);
+                }
+
+                return $varValue;
 
             default:
                 return $this->getL10nLabel($varAttribute->name, $lang);
