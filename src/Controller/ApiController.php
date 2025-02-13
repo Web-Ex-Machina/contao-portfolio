@@ -196,6 +196,7 @@ class ApiController
         $return = [];
         $return['singleSRC'] = [];
         $return['pictures'] = [];
+        $base = Environment::get('base');
         if ('1' === $arrayItem['published']) {
             foreach($arrayItem as $c => $v) {
                 switch ($c) {
