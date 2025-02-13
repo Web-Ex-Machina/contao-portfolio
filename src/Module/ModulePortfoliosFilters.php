@@ -73,7 +73,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
         $this->catchAjaxRequests();
 
         // Add pids
-        $this->config = ['pid' => $this->wem_portfolio_feeds, 'published' => 1];
+        $this->config = ['pid' => StringUtil::deserialize($this->wem_portfolio_feeds), 'published' => 1];
 
         // Retrieve filters
         $this->buildFilters();
@@ -94,6 +94,10 @@ class ModulePortfoliosFilters extends ModulePortfolios
         if (\is_array($filters) && [] !== $filters) {
             foreach ($filters as $f) {
                 $objFeedAttribute = PortfolioFeedAttribute::findOneByName($f);
+
+                if ($this->shouldBeSkipped($f . ' != ""')) {
+                    continue;
+                }
 
                 $field = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$f];
                 $fName = \sprintf('portfolio_filter_%s%s', $f, $field['eval']['multiple'] ? '[]' : '');
@@ -125,6 +129,16 @@ class ModulePortfoliosFilters extends ModulePortfolios
                         foreach ($options as $value => $label) {
                             if (\is_array($label)) {
                                 foreach ($label as $subValue => $subLabel) {
+
+                                    $statement = $field['eval']['multiple'] 
+                                        ? $f . ' LIKE "%%'. $subValue .'%%"' 
+                                        : $f . ' = "'. $subValue .'"'
+                                    ;
+
+                                    if ($this->shouldBeSkipped($statement)) {
+                                        continue;
+                                    }
+
                                     $filter['options'][$value]['options'][] = [
                                         'value' => $subValue,
                                         'label' => $subLabel,
@@ -132,6 +146,15 @@ class ModulePortfoliosFilters extends ModulePortfolios
                                     ];
                                 }
                             } else {
+                                $statement = $field['eval']['multiple'] 
+                                    ? $f . ' LIKE "%%'. $value .'%%"' 
+                                    : $f . ' = "'. $value .'"'
+                                ;
+                                
+                                if ($this->shouldBeSkipped($statement)) {
+                                    continue;
+                                }
+
                                 $filter['options'][] = [
                                     'value' => $value,
                                     'label' => $label,
@@ -158,6 +181,15 @@ class ModulePortfoliosFilters extends ModulePortfolios
 
                                 $subOptions = StringUtil::deserialize($objOptions->{$f});
                                 foreach ($subOptions as $subOption) {
+                                    $statement = $field['eval']['multiple'] 
+                                        ? $f . ' LIKE "%%'. $subOption .'%%"' 
+                                        : $f . ' = "'. $subOption .'"'
+                                    ;
+                                    
+                                    if ($this->shouldBeSkipped($statement)) {
+                                        continue;
+                                    }
+
                                     $filter['options'][$subOption] = [
                                         'value' => $subOption,
                                         'label' => $subOption,
@@ -179,6 +211,10 @@ class ModulePortfoliosFilters extends ModulePortfolios
                             $filter['type'] = 'select';
                             while ($objOptions->next()) {
                                 if (!$objOptions->{$f}) {
+                                    continue;
+                                }
+
+                                if ($this->shouldBeSkipped($f . ' = "'. $objOptions->{$f} .'"')) {
                                     continue;
                                 }
 
@@ -219,5 +255,17 @@ class ModulePortfoliosFilters extends ModulePortfolios
                 $this->config['portfolio_filter_search'] = StringUtil::formatKeywords(Input::get('portfolio_filter_search'));
             }
         }
+    }
+
+    protected function shouldBeSkipped($statement): bool
+    {
+        if (!$this->wem_portfolio_hideFiltersWithNoResults) {
+            return false;
+        }
+
+        $config = $this->config;
+        $config['where'][] = $statement;
+
+        return 0 === Portfolio::countItems($config);
     }
 }
