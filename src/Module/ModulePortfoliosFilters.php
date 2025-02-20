@@ -122,8 +122,14 @@ class ModulePortfoliosFilters extends ModulePortfolios
                             $options = $this->$strClass->$strMethod($this);
                         } elseif (\is_callable($field['options_callback'])) {
                             $options = $field['options_callback']($this);
-                        } elseif (\is_array($field['options'])) {
-                            $options = $field['options'];
+                        } else {
+                            $opts = unserialize($objFeedAttribute->getL10nLabel('options'));
+
+                            if (is_array($opts) && !empty($opts)) {
+                                foreach($opts as $opt) {
+                                    $options[$opt['value']] = $opt['label'];
+                                }
+                            }
                         }
 
                         foreach ($options as $value => $label) {
