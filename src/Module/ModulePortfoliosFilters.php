@@ -18,6 +18,7 @@ use Contao\BackendTemplate;
 use Contao\Input;
 use Contao\System;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -61,6 +62,27 @@ class ModulePortfoliosFilters extends ModulePortfolios
             return $objTemplate->parse();
         }
 
+        $this->wem_portfolio_feeds = StringUtil::deserialize($this->wem_portfolio_feeds);
+
+        // Return if there are no archives
+        if (empty($this->wem_portfolio_feeds) || !\is_array($this->wem_portfolio_feeds)) {
+            throw new \ErrorException('wem_portfolio_feeds not found.');
+        }
+
+        // Check if we have remote feeds
+        foreach ($this->wem_portfolio_feeds as $f) {
+            $objFeed = PortfolioFeed::findByPk($f);
+
+            // If we have one remote feed, consider we must
+            // get everything from remote, to improve later
+            if ($objFeed->readFromRemote) {
+                $this->readFromRemote = true;
+                $this->readFromRemoteFeed = $objFeed;
+
+                break;
+            }
+        }
+
         return parent::generate();
     }
 
@@ -73,7 +95,7 @@ class ModulePortfoliosFilters extends ModulePortfolios
         $this->catchAjaxRequests();
 
         // Add pids
-        $this->config = ['pid' => StringUtil::deserialize($this->wem_portfolio_feeds), 'published' => 1];
+        $this->config = ['pid' => $this->wem_portfolio_feeds, 'published' => 1];
 
         // Retrieve filters
         $this->buildFilters();
@@ -271,6 +293,10 @@ class ModulePortfoliosFilters extends ModulePortfolios
 
         $config = $this->config;
         $config['where'][] = $statement;
+
+        if ($this->readFromRemote && $this->readFromRemoteFeed) {
+            return 0 === $this->countRemoteItems($config, $this->readFromRemoteFeed);
+        }
 
         return 0 === Portfolio::countItems($config);
     }
