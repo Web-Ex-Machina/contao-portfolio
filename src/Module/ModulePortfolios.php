@@ -224,7 +224,11 @@ abstract class ModulePortfolios extends Module
         // Retrieve item attributes
         $objTemplate->blnDisplayAttributes = (bool) $this->wem_portfolio_displayAttributes;
         if ((bool) $this->wem_portfolio_displayAttributes && null !== $this->wem_portfolio_attributes) {
-            $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->wem_portfolio_attributes));
+            if ($objItem->attributes) {
+                $objTemplate->attributes = $objItem->attributes;
+            } else {
+                $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->wem_portfolio_attributes));
+            }
         }
 
         // Notice the template if we want to display the text
