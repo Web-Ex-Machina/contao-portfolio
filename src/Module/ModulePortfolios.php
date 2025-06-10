@@ -335,7 +335,7 @@ abstract class ModulePortfolios extends Module
 
         unset($data['category']);
 
-        if (!$data || empy($data)) {
+        if (!$data || empty($data)) {
             return null;
         }
 
