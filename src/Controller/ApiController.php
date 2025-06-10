@@ -33,7 +33,7 @@ use WEM\UtilsBundle\Classes\Encryption;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
- * @Route("/api/portfolio")
+ * @Route("/api/portfolio", defaults={"_scope" = "frontend", "_token_check" = false})
  *
  * @ServiceTag("controller.service_arguments")
  */

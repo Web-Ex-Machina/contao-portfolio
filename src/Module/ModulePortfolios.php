@@ -206,20 +206,25 @@ abstract class ModulePortfolios extends Module
         }
 
         // Retrieve item content
-        $id = $objItem->id;
-        $objTemplate->text = function () use ($id): string {
-            $strText = '';
-            $objElement = Content::findPublishedByPidAndTableAndLanguage($id, 'tl_wem_portfolio');
+        if ($objItem->content_b64) {
+            $objTemplate->text = base64_decode($objItem->content_b64);
+            $objTemplate->hasText = true;
+        } else {
+            $id = $objItem->id;
+            $objTemplate->text = function () use ($id): string {
+                $strText = '';
+                $objElement = Content::findPublishedByPidAndTableAndLanguage($id, 'tl_wem_portfolio');
 
-            if (null !== $objElement) {
-                while ($objElement->next()) {
-                    $strText .= $this->getContentElement($objElement->current());
+                if (null !== $objElement) {
+                    while ($objElement->next()) {
+                        $strText .= $this->getContentElement($objElement->current());
+                    }
                 }
-            }
 
-            return $strText;
-        };
-        $objTemplate->hasText = static fn (): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
+                return $strText;
+            };
+            $objTemplate->hasText = static fn (): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
+        }
 
         // Retrieve item attributes
         $objTemplate->blnDisplayAttributes = (bool) $this->wem_portfolio_displayAttributes;
@@ -319,7 +324,7 @@ abstract class ModulePortfolios extends Module
      * 
      * @throws \Exception
      */
-    protected function findRemoteItem(mixed $item, PortfolioFeed $feed): Portfolio
+    protected function findRemoteItem(mixed $item, PortfolioFeed $feed): ?Portfolio
     {
         $ch = curl_init();
         $params = $this->formatConfigForRemote([], $feed);
@@ -334,6 +339,10 @@ abstract class ModulePortfolios extends Module
         $data = json_decode($request, true);
 
         unset($data['category']);
+
+        if (!$data || empty($data)) {
+            return null;
+        }
 
         $objModel = new Portfolio();
         $objModel->setRow($data);
