@@ -319,7 +319,7 @@ abstract class ModulePortfolios extends Module
      * 
      * @throws \Exception
      */
-    protected function findRemoteItem(mixed $item, PortfolioFeed $feed): Portfolio
+    protected function findRemoteItem(mixed $item, PortfolioFeed $feed): ?Portfolio
     {
         $ch = curl_init();
         $params = $this->formatConfigForRemote([], $feed);
@@ -334,6 +334,10 @@ abstract class ModulePortfolios extends Module
         $data = json_decode($request, true);
 
         unset($data['category']);
+
+        if (!$data || empy($data)) {
+            return null;
+        }
 
         $objModel = new Portfolio();
         $objModel->setRow($data);
