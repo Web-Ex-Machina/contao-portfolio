@@ -212,9 +212,9 @@ class ModulePortfoliosList extends ModulePortfolios
         }
 
         if ($this->readFromRemote) {
-            $objItems = $this->findRemoteItems($this->config, $this->readFromRemoteFeed, (int) $page ?: 1, $this->limit ?: 0);
+            $objItems = $this->findRemoteItems($this->config, $this->readFromRemoteFeed, (int) $page ?: 1, (int) $this->limit ?: 0);
         } else {
-            $objItems = Portfolio::findItems($this->config, $this->limit ?: 0, $this->offset ?: 0, $this->options);
+            $objItems = Portfolio::findItems($this->config, (int) $this->limit ?: 0, (int) $this->offset ?: 0, $this->options);
         }
 
         // Add the items
