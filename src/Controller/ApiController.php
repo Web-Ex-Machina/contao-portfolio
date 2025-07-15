@@ -244,11 +244,8 @@ class ApiController
 
                     case 'pid':
                         $arrayCategory = $item->getRelated('pid')->row();
-                        $return['category']['id'] = $arrayCategory['id'];
-                        $return['category']['createdAt'] = $arrayCategory['createdAt'];
-                        $return['category']['tstamp'] = $arrayCategory['tstamp'];
-                        $return['category']['title'] = $arrayCategory['title'];
-                        $return['category']['alias'] = $arrayCategory['alias'];
+                        $return['category'] = $arrayCategory;
+                        $return['pid'] = $arrayCategory;
                     break;
 
                     case 'size':
