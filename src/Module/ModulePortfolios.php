@@ -346,6 +346,7 @@ abstract class ModulePortfolios extends Module
 
         $objModel = new Portfolio();
         $objModel->setRow($data);
+        $objModel->remotePid = $objModel->pid;
         $objModel->pid = $feed->id;
 
         return $objModel;
