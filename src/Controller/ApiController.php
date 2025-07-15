@@ -203,6 +203,7 @@ class ApiController
         $arrayItem = $item->row();
         $id = $arrayItem['id'];
         $return = [];
+        $return['id'] = $id;
         $return['singleSRC'] = [];
         $return['pictures'] = [];
         $base = Environment::get('base');
@@ -253,6 +254,7 @@ class ApiController
                     case 'size':
                     case 'imagemargin':
                     case 'orderPictures':
+                    case 'id':
                         // skip fields
                     break;
                     
