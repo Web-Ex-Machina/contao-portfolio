@@ -35,6 +35,11 @@ class ChangeLanguageNavigationListener
 
         if (null === $objPortfolio) {
             $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('item'));
+
+            if (!$objL10nItem) {
+                return;
+            }
+
             $objPortfolio = $objL10nItem->getRelated('pid');
         }
 
