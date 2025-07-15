@@ -28,6 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
 use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\UtilsBundle\Classes\Encryption;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -173,6 +174,15 @@ class ApiController
         }
 
         $objItem = Portfolio::findByIdOrSlug($id, ['eager' => true]);
+
+        if (null === $objItem) {
+            $objL10nItem = PortfolioL10n::findByIdOrSlug($id);
+
+            if ($objL10nItem) {
+                $objItem = $objL10nItem->getRelated('pid');
+            }
+        }
+
         $lang = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
 
         if ($objItem instanceof Portfolio) {
