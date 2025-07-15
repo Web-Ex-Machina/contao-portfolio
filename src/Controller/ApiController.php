@@ -196,7 +196,10 @@ class ApiController
         $return['singleSRC'] = [];
         $return['pictures'] = [];
         $base = Environment::get('base');
+
         if ('1' === $arrayItem['published']) {
+            $attributes = $item->getAttributesFull([], $lang, true);
+
             foreach($arrayItem as $c => $v) {
                 switch ($c) {
                     case 'singleSRC':
@@ -245,7 +248,11 @@ class ApiController
                     
                     default:
                         // Try to find a matching attribute
-                        $varValue = $item->getAttributeValue($c, $lang, true);
+                        if (array_key_exists($c, $attributes)) {
+                            $varValue = $item->getAttributeValue($c, $lang, true);
+                        } else {
+                            $varValue = $item->getL10nLabel($c, $lang, true);
+                        }
 
                         $return[$c] = $varValue ?: $v;
                         break;
@@ -253,7 +260,7 @@ class ApiController
             }
         }
 
-        $return['attributes'] = $item->getAttributesFull([], $lang, true);
+        $return['attributes'] = $attributes;
 
         if ($getContent) {
             $strContent = '';
