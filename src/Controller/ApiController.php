@@ -218,6 +218,7 @@ class ApiController
                         $uuidP = Uuid::fromBinary($imageP->uuid);
                         $return['singleSRC']['uuid'] = $base . $imageP->path;
                         $return['singleSRC']['path'] = $base . $imageP->path;
+                        $return['singleSRC']['singleSRC'] = $base . $imageP->path;
                         $return['singleSRC']['extension'] = $imageP->extension;
                         $return['singleSRC']['tstamp'] = $imageP->tstamp;
                         $return['singleSRC']['hash'] = $imageP->hash;
@@ -233,6 +234,7 @@ class ApiController
                             $uuidP = Uuid::fromBinary($imageP->uuid);
                             $return['pictures'][$uuidP->__toString()]['uuid'] = $uuidP->__toString();
                             $return['pictures'][$uuidP->__toString()]['path'] = $base . $imageP->path;
+                            $return['pictures'][$uuidP->__toString()]['singleSRC'] = $base . $imageP->path;
                             $return['pictures'][$uuidP->__toString()]['extension'] = $imageP->extension;
                             $return['pictures'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
                             $return['pictures'][$uuidP->__toString()]['hash'] = $imageP->hash;
