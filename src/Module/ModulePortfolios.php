@@ -259,11 +259,11 @@ abstract class ModulePortfolios extends Module
      * 
      * @throws \Exception
      */
-    protected function findRemoteItems(array $config, PortfolioFeed $feed, int $page, int $limit): Collection
+    protected function findRemoteItems(array $config, PortfolioFeed $feed, int $page, int $limit, int $offset): Collection
     {
         $ch = curl_init();
         $params = $this->formatConfigForRemote($config, $feed);
-        $url = $feed->readFromRemoteUrl . '/api/portfolio/items/' . $page . '/' . $limit . '?' . $params;
+        $url = $feed->readFromRemoteUrl . '/api/portfolio/items/' . $page . '/' . $limit . '/' . $offset . '?' . $params;
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
