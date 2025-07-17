@@ -92,6 +92,19 @@ class ApiController
      */
     public function viewPortfolioList(Request $request, int $page, int $limit, array $pid = []): JsonResponse
     {
+        return $this->getList($request, $page, $limit, 0, $pid);
+    }
+
+    /**
+     * @Route("/items/{page}/{limit}/{offset}", requirements={"page"="\d+","limit"="\d+","offset"="\d+"}), methods={"GET"})
+     */
+    public function viewPortfolioListWithOffset(Request $request, int $page, int $limit, int $offset, array $pid = []): JsonResponse
+    {
+        return $this->getList($request, $page, $limit, $offset, $pid);
+    }
+
+    protected function getList(Request $request, int $page, int $limit, int $offset = 0, array $pid = []): JsonResponse
+    {
         $check = $this->accessCheck($request);
         if ($check instanceof JsonResponse) {
             return $check;
@@ -120,7 +133,6 @@ class ApiController
         unset($params['lang']);
 
         $items = [];
-        $offset = ($page - 1) * $limit;
 
         $objItems = Portfolio::findItems($params, $limit, $offset);
 
