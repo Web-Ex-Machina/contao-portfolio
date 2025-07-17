@@ -228,7 +228,7 @@ class ApiController
 
                     case 'pictures':
                         $arrPictures = deserialize($v);
-                        foreach ($v as $uuid) {
+                        foreach ($arrPictures as $uuid) {
                             $imageP = FilesModel::findByUuid($uuid);
                             $uuidP = Uuid::fromBinary($imageP->uuid);
                             $return['pictures'][$uuidP->__toString()]['uuid'] = $uuidP->__toString();
