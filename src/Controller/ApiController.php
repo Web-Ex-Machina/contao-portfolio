@@ -28,6 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
 use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\UtilsBundle\Classes\Encryption;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -91,6 +92,19 @@ class ApiController
      */
     public function viewPortfolioList(Request $request, int $page, int $limit, array $pid = []): JsonResponse
     {
+        return $this->getList($request, $page, $limit, 0, $pid);
+    }
+
+    /**
+     * @Route("/items/{page}/{limit}/{offset}", requirements={"page"="\d+","limit"="\d+","offset"="\d+"}), methods={"GET"})
+     */
+    public function viewPortfolioListWithOffset(Request $request, int $page, int $limit, int $offset, array $pid = []): JsonResponse
+    {
+        return $this->getList($request, $page, $limit, $offset, $pid);
+    }
+
+    protected function getList(Request $request, int $page, int $limit, int $offset = 0, array $pid = []): JsonResponse
+    {
         $check = $this->accessCheck($request);
         if ($check instanceof JsonResponse) {
             return $check;
@@ -119,7 +133,6 @@ class ApiController
         unset($params['lang']);
 
         $items = [];
-        $offset = ($page - 1) * $limit;
 
         $objItems = Portfolio::findItems($params, $limit, $offset);
 
@@ -173,6 +186,15 @@ class ApiController
         }
 
         $objItem = Portfolio::findByIdOrSlug($id, ['eager' => true]);
+
+        if (null === $objItem) {
+            $objL10nItem = PortfolioL10n::findByIdOrSlug($id);
+
+            if ($objL10nItem) {
+                $objItem = $objL10nItem->getRelated('pid');
+            }
+        }
+
         $lang = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
 
         if ($objItem instanceof Portfolio) {
@@ -193,10 +215,14 @@ class ApiController
         $arrayItem = $item->row();
         $id = $arrayItem['id'];
         $return = [];
+        $return['id'] = $id;
         $return['singleSRC'] = [];
         $return['pictures'] = [];
         $base = Environment::get('base');
+
         if ('1' === $arrayItem['published']) {
+            $attributes = $item->getAttributesFull([], $lang, true);
+
             foreach($arrayItem as $c => $v) {
                 switch ($c) {
                     case 'singleSRC':
@@ -204,6 +230,7 @@ class ApiController
                         $uuidP = Uuid::fromBinary($imageP->uuid);
                         $return['singleSRC']['uuid'] = $base . $imageP->path;
                         $return['singleSRC']['path'] = $base . $imageP->path;
+                        $return['singleSRC']['singleSRC'] = $base . $imageP->path;
                         $return['singleSRC']['extension'] = $imageP->extension;
                         $return['singleSRC']['tstamp'] = $imageP->tstamp;
                         $return['singleSRC']['hash'] = $imageP->hash;
@@ -214,11 +241,12 @@ class ApiController
 
                     case 'pictures':
                         $arrPictures = deserialize($v);
-                        foreach ($v as $uuid) {
+                        foreach ($arrPictures as $uuid) {
                             $imageP = FilesModel::findByUuid($uuid);
                             $uuidP = Uuid::fromBinary($imageP->uuid);
                             $return['pictures'][$uuidP->__toString()]['uuid'] = $uuidP->__toString();
                             $return['pictures'][$uuidP->__toString()]['path'] = $base . $imageP->path;
+                            $return['pictures'][$uuidP->__toString()]['singleSRC'] = $base . $imageP->path;
                             $return['pictures'][$uuidP->__toString()]['extension'] = $imageP->extension;
                             $return['pictures'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
                             $return['pictures'][$uuidP->__toString()]['hash'] = $imageP->hash;
@@ -230,22 +258,24 @@ class ApiController
 
                     case 'pid':
                         $arrayCategory = $item->getRelated('pid')->row();
-                        $return['category']['id'] = $arrayCategory['id'];
-                        $return['category']['createdAt'] = $arrayCategory['createdAt'];
-                        $return['category']['tstamp'] = $arrayCategory['tstamp'];
-                        $return['category']['title'] = $arrayCategory['title'];
-                        $return['category']['alias'] = $arrayCategory['alias'];
+                        $return['category'] = $arrayCategory;
+                        $return['pid'] = $arrayCategory;
                     break;
 
                     case 'size':
                     case 'imagemargin':
                     case 'orderPictures':
+                    case 'id':
                         // skip fields
                     break;
                     
                     default:
                         // Try to find a matching attribute
-                        $varValue = $item->getAttributeValue($c, $lang, true);
+                        if (array_key_exists($c, $attributes)) {
+                            $varValue = $item->getAttributeValue($c, $lang, true);
+                        } else {
+                            $varValue = $item->getL10nLabel($c, $lang, true);
+                        }
 
                         $return[$c] = $varValue ?: $v;
                         break;
@@ -253,7 +283,7 @@ class ApiController
             }
         }
 
-        $return['attributes'] = $item->getAttributesFull([], $lang, true);
+        $return['attributes'] = $attributes;
 
         if ($getContent) {
             $strContent = '';
