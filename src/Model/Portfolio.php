@@ -298,7 +298,10 @@ class Portfolio extends Model
 
                 if ($varAttribute->translatable) {
                     $objL10n = PortfolioFeedAttributeL10n::findItems(['language' => $lang, 'pid' => $varAttribute->id], 1);
-                    $options = StringUtil::deserialize($objL10n->options ?? []);
+
+                    if (null !== $objL10n) {
+                        $options = StringUtil::deserialize($objL10n->options ?? []);
+                    }
                 }
 
                 if ($varAttribute->multiple) {
