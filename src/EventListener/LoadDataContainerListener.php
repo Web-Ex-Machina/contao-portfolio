@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\EventListener;
 
+use Contao\Controller;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Psr\Log\LoggerInterface;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
@@ -42,8 +43,13 @@ class LoadDataContainerListener
                     return;
                 }
 
+                if ('tl_wem_portfolio_l10n' === $strTable && null === $GLOBALS['TL_DCA']['tl_wem_portfolio']) {
+                    Controller::loadDataContainer('tl_wem_portfolio');
+                }
+
                 while ($objAttributes->next()) {
-                    $field = $this->parseDcaAttribute($objAttributes->row(), $objAttributes->current());
+
+                    $field = $this->parseDcaAttribute($objAttributes->row(), $objAttributes->current(), $strTable);
 
                     if ('tl_wem_portfolio' === $strTable) {
                         $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$objAttributes->name] = $field;
@@ -162,7 +168,7 @@ class LoadDataContainerListener
 
                 // Options
                 $options = StringUtil::deserialize($model->getL10nLabel('options'));
-                if (null !== $options) {
+                if (null !== $options) {                  
                     // Options might already exist so to avoid option to be erased, we will "concatenate" every options 
                     // from attributes. This should be improved by restrict attributes to their parent feed. 
                     if (
