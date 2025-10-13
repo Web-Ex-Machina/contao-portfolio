@@ -92,7 +92,7 @@ class ApiController
      */
     public function viewPortfolioList(Request $request, int $page, int $limit, array $pid = []): JsonResponse
     {
-        return $this->getList($request, $page, $limit, 0, $pid);
+        return $this->getList($request, $page, $limit, 0, null, $pid);
     }
 
     /**
@@ -100,10 +100,18 @@ class ApiController
      */
     public function viewPortfolioListWithOffset(Request $request, int $page, int $limit, int $offset, array $pid = []): JsonResponse
     {
-        return $this->getList($request, $page, $limit, $offset, $pid);
+        return $this->getList($request, $page, $limit, $offset, null, $pid);
     }
 
-    protected function getList(Request $request, int $page, int $limit, int $offset = 0, array $pid = []): JsonResponse
+    /**
+     * @Route("/items/{page}/{limit}/{offset}/{order}", requirements={"page"="\d+","limit"="\d+","offset"="\d+"}), methods={"GET"})
+     */
+    public function viewPortfolioListWithOffsetAndOrder(Request $request, int $page, int $limit, int $offset, string $order, array $pid = []): JsonResponse
+    {
+        return $this->getList($request, $page, $limit, $offset, $order, $pid);
+    }
+
+    protected function getList(Request $request, int $page, int $limit, int $offset = 0, ?string $order = null, array $pid = []): JsonResponse
     {
         $check = $this->accessCheck($request);
         if ($check instanceof JsonResponse) {
@@ -133,8 +141,13 @@ class ApiController
         unset($params['lang']);
 
         $items = [];
+        $options = [];
 
-        $objItems = Portfolio::findItems($params, $limit, $offset);
+        if ($order) {
+            $options['order'] = urldecode($order);
+        }
+
+        $objItems = Portfolio::findItems($params, $limit, $offset, $options);
 
         if ($objItems instanceof Collection) {
             /** @var Portfolio $item */
