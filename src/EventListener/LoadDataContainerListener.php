@@ -57,7 +57,7 @@ class LoadDataContainerListener
         }
     }
 
-    protected function parseDcaAttribute(array $row, PortfolioFeedAttribute $model): array
+    protected function parseDcaAttribute(array $row, PortfolioFeedAttribute $model, string $strTable): array
     {
         // Generic data
         $data = [
@@ -166,8 +166,8 @@ class LoadDataContainerListener
                     // Options might already exist so to avoid option to be erased, we will "concatenate" every options 
                     // from attributes. This should be improved by restrict attributes to their parent feed. 
                     if (
-                        array_key_exists($row['name'], $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'])
-                        && array_key_exists('options', $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$row['name']])
+                        array_key_exists($row['name'], $GLOBALS['TL_DCA'][$strTable]['fields'])
+                        && array_key_exists('options', $GLOBALS['TL_DCA'][$strTable]['fields'][$row['name']])
                     ) {
                         $data['options'] = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$row['name']]['options'];
                     } else {
