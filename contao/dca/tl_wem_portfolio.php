@@ -13,6 +13,8 @@ declare(strict_types=1);
  */
 
 use Contao\BackendUser;
+use Contao\DataContainer;
+use Contao\DC_Table;
 use Contao\Config;
 use Contao\System;
 use WEM\PortfolioBundle\DataContainer\PortfolioContainer;
@@ -21,7 +23,7 @@ System::loadLanguageFile('tl_content');
 
 $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_wem_portfolio_feed',
         'ctable' => ['tl_content', 'tl_wem_portfolio_l10n'],
         'switchToEdit' => true,
@@ -39,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
     ],
     'list' => [
         'sorting' => [
-            'mode' => 4,
+            'mode' => DataContainer::MODE_PARENT,
             'fields' => ['title ASC'],
             'headerFields' => ['title'],
             'panelLayout' => 'filter;sort,search,limit',

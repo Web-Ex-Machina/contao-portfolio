@@ -12,12 +12,14 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
+use Contao\DataContainer;
+use Contao\DC_Table;
 use WEM\PortfolioBundle\DataContainer\PortfolioFeedContainer;
 
 $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ctable' => ['tl_wem_portfolio', 'tl_wem_portfolio_feed_attribute'],
         'switchToEdit' => true,
         'enableVersioning' => true,
@@ -32,9 +34,9 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 1,
+            'mode' => DataContainer::MODE_SORTED,
             'fields' => ['title'],
-            'flag' => 1,
+            'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'panelLayout' => 'filter;search,limit',
         ],
         'label' => [
@@ -43,7 +45,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
         ],
         'global_operations' => [
             'all' => [
-                'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
                 'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
@@ -65,7 +66,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
             'delete' => [
                 'href' => 'act=delete',
                 'icon' => 'delete.svg',
-                'attributes' => 'onclick="if(!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\'))return false;Backend.getScrollOffset()"',
+                'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
             ],
             'show' => [
                 'href' => 'act=show',
@@ -103,7 +104,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
             'flag' => 8,
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
-
         'title' => [
             'exclude' => true,
             'search' => true,

@@ -12,13 +12,15 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
+use Contao\DataContainer;
+use Contao\DC_Table;
 use Contao\System;
 use WEM\PortfolioBundle\DataContainer\PortfolioL10nContainer;
 
 $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_wem_portfolio',
         'switchToEdit' => true,
         'enableVersioning' => true,
@@ -36,7 +38,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 4,
+            'mode' => DataContainer::MODE_PARENT,
             'fields' => ['language ASC'],
             'headerFields' => ['title'],
             'panelLayout' => 'filter;sort,search,limit',
@@ -44,7 +46,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
         ],
         'global_operations' => [
             'all' => [
-                'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
                 'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
@@ -62,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
             'delete' => [
                 'href' => 'act=delete',
                 'icon' => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\'))return false;Backend.getScrollOffset()"',
+                'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
             ],
             'show' => [
                 'href' => 'act=show',
@@ -97,7 +98,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
             'flag' => 8,
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
-
         'language' => [
             'exclude' => true,
             'filter' => true,
