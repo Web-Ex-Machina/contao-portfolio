@@ -17,13 +17,12 @@
         "source":"https://github.com/web-ex-machina/contao-portfolio"
     },
     "require": {
-        "php": ">=7.4 || >=8.2",
-        "contao/core-bundle": "^4.13 || 5.3.x",
-        "terminal42/dcawizard": "~2.7",
-        "contao/manager-plugin": "^2.0",
-        "webexmachina/contao-utils": "^2.0",
         "ext-json": "*",
-        "terminal42/contao-changelanguage": "^3.7"
+        "contao/core-bundle": "^4.13 || ^5.3",
+        "contao/manager-plugin": "^2.0",
+        "terminal42/dcawizard": "^3.0 || ^4.0",
+        "terminal42/contao-changelanguage": "^3.7",
+        "webexmachina/contao-utils": "^2.0"
     },
     "require-dev": {
         "rector/rector": "^1.0",
