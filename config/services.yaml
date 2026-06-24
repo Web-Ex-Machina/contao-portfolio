@@ -3,15 +3,16 @@ services:
     autowire: true
     autoconfigure: true
     public: true
+
   WEM\PortfolioBundle\:
     resource: '../../../src/'
     exclude:
       - '../../../src/DependencyInjection/'
       - '../../../src/Config/'
-      - '../../../src/Resources/'
       - '../../../src/Model/'
       - '../../../src/Module/'
       - '../../../src/Migrations/'
+      
   WEM\PortfolioBundle\Controller\ApiController:
     alias: 'wem_portfolio.controller.api_controller'
     public: true
