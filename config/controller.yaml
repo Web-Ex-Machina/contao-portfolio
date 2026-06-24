@@ -1,0 +1,11 @@
+services:
+  WEM\PortfolioBundle\Controller\ApiController:
+        alias: 'wem.portfolio.apicontroller'
+        public: true
+
+  wem.portfolio.apicontroller:
+      class: WEM\PortfolioBundle\Controller\ApiController
+      arguments:
+          $framework: '@contao.framework'
+          $encryption: '@wem.encryption_util'
+      public: true

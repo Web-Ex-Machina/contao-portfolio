@@ -16,11 +16,10 @@ namespace WEM\PortfolioBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * Configures the Contao Portfolio bundle.
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
- */
 class WEMPortfolioBundle extends Bundle
 {
+	public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
 }

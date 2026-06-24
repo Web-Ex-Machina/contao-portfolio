@@ -23,11 +23,6 @@ use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use WEM\PortfolioBundle\WEMPortfolioBundle;
 
-/**
- * Plugin for the Contao Manager.
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
- */
 class Plugin implements BundlePluginInterface, RoutingPluginInterface
 {
     /**
@@ -45,8 +40,8 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
     {
         return $resolver
-            ->resolve(__DIR__.'/../Resources/config/routes.yml')
-            ->load(__DIR__.'/../Resources/config/routes.yml')
+            ->resolve(__DIR__.'/../../config/routes.yaml')
+            ->load(__DIR__.'/../../config/routes.yaml')
         ;
     }
 }

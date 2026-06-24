@@ -5,22 +5,8 @@ services:
     public: true
 
   WEM\PortfolioBundle\:
-    resource: '../../../src/'
-    exclude:
-      - '../../../src/DependencyInjection/'
-      - '../../../src/Config/'
-      - '../../../src/Model/'
-      - '../../../src/Module/'
-      - '../../../src/Migrations/'
-      
-  WEM\PortfolioBundle\Controller\ApiController:
-    alias: 'wem_portfolio.controller.api_controller'
-    public: true
-
-  wem_portfolio.controller.api_controller:
-    class: WEM\PortfolioBundle\Controller\ApiController
-    public: true
-    tags: [ 'controller.service_arguments' ]
+    resource: ../src/
+    exclude: ../src/{ContaoManager,DependencyInjection}
 
   wem_portfolio.listener.load_datacontainer:
     class: WEM\PortfolioBundle\EventListener\LoadDataContainerListener
