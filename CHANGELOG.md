@@ -1,6 +1,9 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
+## x.y - 2026-06-dd
+- UPDATED - Contao 5.7 compatibility
+
 ## 3.3 - 2025-02-13
 - ADDED - New setting for filters to hide filters and options with no results
 

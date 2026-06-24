@@ -23,7 +23,9 @@ Known issues
 System requirements
 -------------------
 
- * Contao 4.* (Manager Edition)
+ * Contao 4.13
+ * Contao 5.3
+ * Contao 5.7
 
 Installation
 ------------
