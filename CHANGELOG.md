@@ -1,9 +1,10 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
-## x.y - 2026-06-dd
-- UPDATED - Modernize bundle structure
+## 4.y - 2026-06-dd
+- IMPORTANT - Drop Contao 4.13 Compatibility
 - UPDATED - Add Contao 5.7 compatibility
+- UPDATED - Modernize bundle structure
 - UPDATED - Licence (From Apache 2 to lgpl+gpl)
 
 ## 3.3 - 2025-02-13

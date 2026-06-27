@@ -17,44 +17,34 @@
         <source>Manage portfolio attributes</source>
         <target>Manage portfolio attributes</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_feed">
+
+      <trans-unit id="FMD.wem_portfolio">
         <source>Portfolio</source>
         <target>Portfolio</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_feed_list.0">
-        <source>Items List</source>
-        <target>Items List</target>
-      </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_feed_list.1">
-        <source>Display a list of portfolio items</source>
-        <target>Display a list of portfolio items</target>
-      </trans-unit>
-
       <trans-unit id="FMD.wem_portfolio_filters.0">
         <source>Offers filters</source>
         <target>Offers filters</target>
       </trans-unit>
-
       <trans-unit id="FMD.wem_portfolio_filters.1">
         <source>Adds an offer filters form to the page</source>
         <target>Adds an offer filters form to the page</target>
       </trans-unit>
-
-      <trans-unit id="FMD.wem_portfolio_feed_reader.0">
+      <trans-unit id="FMD.wem_portfolio_list.0">
+        <source>Items List</source>
+        <target>Items List</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_list.1">
+        <source>Display a list of portfolio items</source>
+        <target>Display a list of portfolio items</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_reader.0">
         <source>Item Reader</source>
         <target>Item Reader</target>
       </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_feed_reader.1">
+      <trans-unit id="FMD.wem_portfolio_reader.1">
         <source>Display a reader of portfolio item</source>
         <target>Display a reader of portfolio item</target>
-      </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_feed_navigation.0">
-        <source>Navigation</source>
-        <target>Navigation</target>
-      </trans-unit>
-      <trans-unit id="FMD.wem_portfolio_feed_navigation.1">
-        <source>Display a navigation of portfolio categories</source>
-        <target>Display a navigation of portfolio categories</target>
       </trans-unit>
     </body>
   </file>

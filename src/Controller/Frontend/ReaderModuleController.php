@@ -12,53 +12,46 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\PortfolioBundle\Module;
+namespace WEM\PortfolioBundle\Controller\Frontend;
 
 use Contao\BackendTemplate;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Environment;
 use Contao\Input;
 use Contao\PageModel;
+use Contao\ModuleModel;
 use Contao\System;
+use Contao\Template;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\UtilsBundle\Classes\StringUtil;
 
-/**
- * Front end module "portfolios list".
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
- */
-class ModulePortfoliosReader extends ModulePortfolios
+#[AsFrontendModule(
+    ReaderModuleController::TYPE, 
+    category: 'wem_portfolio',
+    template: 'mod_wem_portfolio_reader'
+)]
+class ReaderModuleController extends ModuleController
 {
+    public const TYPE = 'wem_portfolio_reader';
+
     protected ?Portfolio $portfolio = null;
     protected ?PortfolioFeed $feed = null;
 
-    /**
-     * Template.
-     *
-     * @var string
-     */
-    protected $strTemplate = 'mod_wem_portfolio_reader';
-
-    /**
-     * Display a wildcard in the back end.
-     */
-    public function generate(): string
+    public function __construct()
     {
-        $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
-        if ($scopeMatcher->isBackend()) {
-            $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### '.strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_feed_reader'][0]).' ###';
-            $objTemplate->title = $this->headline;
-            $objTemplate->id = $this->id;
-            $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
+        parent::__construct();
+    }
 
-            return $objTemplate->parse();
-        }
-
+    /**
+     * Generate the module.
+     */
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
+    {
         if ((!Input::get('category') || !Input::get('item')) && Input::get('auto_item')) {
             $objItem = Portfolio::findByIdOrSlug(Input::get('auto_item'));
 
@@ -99,17 +92,9 @@ class ModulePortfoliosReader extends ModulePortfolios
             throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
         }
 
-        return parent::generate();
-    }
-
-    /**
-     * Generate the module.
-     */
-    protected function compile(): void
-    {
         if ($this->overviewPage) {
-            $this->Template->referer = PageModel::findById($this->overviewPage)->getFrontendUrl();
-            $this->Template->back = $this->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
+            $template->referer = PageModel::findById($this->overviewPage)->getFrontendUrl();
+            $template->back = $this->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
         }
 
         // Catch Ajax requets
@@ -121,7 +106,9 @@ class ModulePortfoliosReader extends ModulePortfolios
         $objPage->description = StringUtil::substr($this->portfolio->teaser, 300);
 
         // Add the articles
-        $this->Template->portfolio = $this->parsePortfolio($this->portfolio);
-        $this->Template->moduleId = $this->id;
+        $template->portfolio = $this->parsePortfolio($this->portfolio);
+        $template->moduleId = $this->id;
+
+        return $template->getResponse();
     }
 }

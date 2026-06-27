@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\PortfolioBundle\Controller;
+namespace WEM\PortfolioBundle\Controller\Api;
 
 use Contao\Config;
 use Contao\ContentModel;

@@ -12,10 +12,11 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\PortfolioBundle\Module;
+namespace WEM\PortfolioBundle\Controller\Frontend;
 
 use Contao\Config;
 use Contao\ContentModel;
+use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
 use Contao\Input;
@@ -33,7 +34,7 @@ use WEM\UtilsBundle\Classes\StringUtil;
  *
  * @author Web ex Machina <https://www.webexmachina.fr>
  */
-abstract class ModulePortfolios extends Module
+abstract class ModuleController extends AbstractFrontendModuleController
 {
     protected function catchAjaxRequests(): void
     {

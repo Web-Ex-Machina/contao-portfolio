@@ -12,68 +12,63 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\PortfolioBundle\Module;
+namespace WEM\PortfolioBundle\Controller\Frontend;
 
-use Contao\BackendTemplate;
 use Contao\Config;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Environment;
 use Contao\Input;
 use Contao\Model\Collection;
+use Contao\ModuleModel;
 use Contao\Pagination;
 use Contao\System;
+use Contao\Template;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\UtilsBundle\Classes\StringUtil;
 
-/**
- * Front end module "portfolios list".
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
- */
-class ModulePortfoliosList extends ModulePortfolios
+#[AsFrontendModule(
+    ListModuleController::TYPE, 
+    category: 'wem_portfolio',
+    template: 'mod_wem_portfolio_list'
+)]
+class ListModuleController extends ModuleController
 {
+    public const TYPE = 'wem_portfolio_list';
+
     protected ?array $config = [];
 
     protected ?int $limit = 0;
 
     protected ?int $offset = 0;
 
-    protected ?array $options = [];
+    protected array $options = [];
 
     protected ?array $filters = [];
-
-    protected $strTemplate = 'mod_wem_portfolio_list';
 
     protected bool $readFromRemote = false;
     protected ?PortfolioFeed $readFromRemoteFeed = null;
 
-    /**
-     * Display a wildcard in the back end.
-     *
-     * @throws \ErrorException
-     */
-    public function generate(): string
+    public function __construct()
     {
-        $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
-        if ($scopeMatcher->isBackend()) {
-            $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### '.strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_feed_list'][0]).' ###';
-            $objTemplate->title = $this->headline;
-            $objTemplate->id = $this->id;
-            $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
+        parent::__construct();
+    }
 
-            return $objTemplate->parse();
-        }
-
+    /**
+     * Generate the module.
+     */
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
+    {
         $this->loadDatacontainer('tl_wem_portfolio');
         $this->loadLanguageFile('tl_wem_portfolio');
         $this->wem_portfolio_feeds = StringUtil::deserialize($this->wem_portfolio_feeds);
 
         // Return if there are no archives
         if (empty($this->wem_portfolio_feeds) || !\is_array($this->wem_portfolio_feeds)) {
-            throw new \ErrorException('wem_portfolio_feeds not found.');
+            throw new \Exception('wem_portfolio_feeds not found.');
         }
 
         // Check if we have remote feeds
@@ -90,14 +85,6 @@ class ModulePortfoliosList extends ModulePortfolios
             }
         }
 
-        return parent::generate();
-    }
-
-    /**
-     * Generate the module.
-     */
-    protected function compile(): void
-    {
         global $objPage;
         $this->limit = null;
         $this->offset = (int) $this->skipFirst;
@@ -118,8 +105,8 @@ class ModulePortfoliosList extends ModulePortfolios
             $this->limit = $this->numberOfItems;
         }
 
-        $this->Template->items = [];
-        $this->Template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
+        $template->items = [];
+        $template->empty = $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['empty'];
 
         // Add pids
         $this->config = [
@@ -164,7 +151,7 @@ class ModulePortfoliosList extends ModulePortfolios
 
         // Retrieve filters
         if ($this->wem_portfolio_addFilters) {
-            $this->Template->filters = $this->getFrontendModule($this->wem_portfolio_filters_module);
+            $template->filters = $this->getFrontendModule($this->wem_portfolio_filters_module);
         }
 
         // Get the total number of items
@@ -175,7 +162,7 @@ class ModulePortfoliosList extends ModulePortfolios
         }
 
         if ($intTotal < 1) {
-            return;
+            return $template->getResponse();
         }
 
         $total = $intTotal - $this->offset;
@@ -208,7 +195,7 @@ class ModulePortfoliosList extends ModulePortfolios
 
             // Add the pagination menu
             $objPagination = new Pagination($total, $this->perPage, Config::get('maxPaginationLinks'), $id);
-            $this->Template->pagination = $objPagination->generate("\n  ");
+            $template->pagination = $objPagination->generate("\n  ");
         }
 
         if ($this->readFromRemote) {
@@ -219,17 +206,19 @@ class ModulePortfoliosList extends ModulePortfolios
 
         // Add the items
         if ($objItems instanceof Collection) {
-            $this->Template->items = $this->parsePortfolios($objItems);
+            $template->items = $this->parsePortfolios($objItems);
         }
 
-        $this->Template->moduleId = $this->id;
+        $template->moduleId = $this->id;
 
         // Catch auto_item
         if (Input::get('auto_item')) {
             $objPortfolio = Portfolio::findItems(['slug' => Input::get('auto_item')], 1);
 
-            $this->Template->openModalOnLoad = true;
-            $this->Template->portfolioId = $objPortfolio->first()->id;
+            $template->openModalOnLoad = true;
+            $template->portfolioId = $objPortfolio->first()->id;
         }
+
+        return $template->getResponse();
     }
 }

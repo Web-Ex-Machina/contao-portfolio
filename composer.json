@@ -18,10 +18,10 @@
     },
     "require": {
         "ext-json": "*",
-        "contao/core-bundle": "^4.13 || ^5.3",
+        "contao/core-bundle": "^5.3 || ^5.7",
         "contao/manager-plugin": "^2.0",
         "terminal42/dcawizard": "^3.0 || ^4.0",
-        "terminal42/contao-changelanguage": "^3.7",
+        "terminal42/contao-changelanguage": "^3.8",
         "webexmachina/contao-utils": "^2.0"
     },
     "autoload":{

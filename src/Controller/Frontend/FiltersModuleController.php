@@ -12,23 +12,29 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\PortfolioBundle\Module;
+namespace WEM\PortfolioBundle\Controller\Frontend;
 
-use Contao\BackendTemplate;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\Input;
+use Contao\ModuleModel;
 use Contao\System;
+use Contao\Template;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\UtilsBundle\Classes\StringUtil;
 
-/**
- * Front end module "portfolios filters".
- *
- * @author Web ex Machina <https://www.webexmachina.fr>
- */
-class ModulePortfoliosFilters extends ModulePortfolios
+#[AsFrontendModule(
+    FiltersModuleController::TYPE, 
+    category: 'wem_portfolio',
+    template: 'mod_wem_portfolio_filters'
+)]
+class FiltersModuleController extends ModuleController
 {
+    public const TYPE = 'wem_portfolio_filters';
+
     /**
      * List filters.
      *
@@ -36,37 +42,21 @@ class ModulePortfoliosFilters extends ModulePortfolios
      */
     protected $filters = [];
 
-    /**
-     * Template.
-     *
-     * @var string
-     */
-    protected $strTemplate = 'mod_wem_portfolio_filters';
-
-    /**
-     * Display a wildcard in the back end.
-     *
-     * @return string
-     */
-    public function generate()
+    public function __construct()
     {
-        $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
-        if ($scopeMatcher->isBackend()) {
-            $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### '.strtoupper($GLOBALS['TL_LANG']['FMD']['wem_portfolio_filters'][0]).' ###';
-            $objTemplate->title = $this->headline;
-            $objTemplate->id = $this->id;
-            $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
+        parent::__construct();
+    }
 
-            return $objTemplate->parse();
-        }
-
+    /**
+     * Generate the module.
+     */
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
+    {
         $this->wem_portfolio_feeds = StringUtil::deserialize($this->wem_portfolio_feeds);
 
         // Return if there are no archives
         if (empty($this->wem_portfolio_feeds) || !\is_array($this->wem_portfolio_feeds)) {
-            throw new \ErrorException('wem_portfolio_feeds not found.');
+            throw new \Exception('wem_portfolio_feeds not found.');
         }
 
         // Check if we have remote feeds
@@ -83,14 +73,6 @@ class ModulePortfoliosFilters extends ModulePortfolios
             }
         }
 
-        return parent::generate();
-    }
-
-    /**
-     * Generate the module.
-     */
-    protected function compile(): void
-    {
         // Catch Ajax requets
         $this->catchAjaxRequests();
 
@@ -100,8 +82,10 @@ class ModulePortfoliosFilters extends ModulePortfolios
         // Retrieve filters
         $this->buildFilters();
 
-        $this->Template->filters = $this->filters;
-        $this->Template->moduleId = $this->id;
+        $template->filters = $this->filters;
+        $template->moduleId = $this->id;
+
+        return $template->getResponse();
     }
 
     /**

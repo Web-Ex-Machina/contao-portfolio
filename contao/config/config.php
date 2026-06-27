@@ -18,9 +18,8 @@ use WEM\PortfolioBundle\Model;
 use WEM\PortfolioBundle\Module;
 
 /**
- * Load Contao 4 Bundles.
+ * Load Bundles.
  */
-$bundles = System::getContainer()->getParameter('kernel.bundles');
 $scopeMatcher = System::getContainer()->get('wem.scope_matcher');
 
 /*
@@ -42,21 +41,6 @@ ArrayUtil::arrayInsert(
 if ($scopeMatcher->isBackend()) {
     $GLOBALS['TL_CSS'][] = 'bundles/wemportfolio/backend_svg.css';
 }
-
-/*
- * Front end modules
- */
-ArrayUtil::arrayInsert(
-    $GLOBALS['FE_MOD'],
-    2,
-    [
-        'wem_portfolio' => [
-            'wem_portfolio_list' => Module\ModulePortfoliosList::class,
-            'wem_portfolio_reader' => Module\ModulePortfoliosReader::class,
-            'wem_portfolio_filters' => Module\ModulePortfoliosFilters::class,
-        ],
-    ]
-);
 
 /*
  * Models

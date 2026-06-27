@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\EventListener;
 
 use Contao\Controller;
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Psr\Log\LoggerInterface;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -29,9 +29,7 @@ class LoadDataContainerListener
         $this->logger = $logger;
     }
 
-    /**
-     * @Hook("loadDataContainer", priority=100)
-     */
+    #[AsHook('loadDataContainer', priority: 100)]
     public function addAttributesToPortfolioDca($strTable): void
     {
         try {
