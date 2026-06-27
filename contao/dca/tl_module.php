@@ -62,7 +62,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_sort'] = [
     'exclude' => true,
     'inputType' => 'select',
     'options' => ['order_date_asc', 'order_date_desc', 'order_headline_asc', 'order_headline_desc'],
-    'reference' => $GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'],
+    'reference' => &$GLOBALS['TL_LANG']['tl_module']['wem_portfolio_sort'],
     'eval' => ['chosen' => true, 'mandatory' => true, 'tl_class' => 'w50'],
     'sql' => 'blob NULL',
 ];
