@@ -1,3 +1,3 @@
 wem.portfolio.controller:
-  resource: '@WEM/PortfolioBundle/src/Controller'
+  resource: '../src/Controller'
   type: attribute
