@@ -19,10 +19,9 @@ use WEM\PortfolioBundle\DataContainer\ContentContainer;
 if ('wem_portfolio_feed' === Input::get('do')) {
     $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_wem_portfolio';
 
-    $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = ['tl_content_wemportfolio', 'addCteType'];
+    // $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = ['tl_content_wemportfolio', 'addCteType'];
 }
 
-$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = [ContentContainer::class, 'updatePalettes'];
 $GLOBALS['TL_DCA']['tl_content']['fields']['wem_language'] = [
     'exclude' => true,
     'filter' => true,

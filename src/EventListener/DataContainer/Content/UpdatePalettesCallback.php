@@ -1,16 +1,25 @@
 <?php
 
-declare(strict_types=1);
+namespace WEM\PortfolioBundle\EventListener\DataContainer\Content;
 
-namespace WEM\PortfolioBundle\DataContainer;
-
-use Contao\Backend;
+use Contao\ContentModel;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
+use Contao\DataContainer;
 use Contao\Input;
+use Symfony\Component\HttpFoundation\RequestStack;
 
-class ContentContainer extends Backend
+#[AsCallback(table: 'tl_content', target: 'config.onload')]
+class UpdatePalettesCallback
 {
-    public function updatePalettes()
+    private $requestStack;
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
+    public function __invoke(DataContainer|null $dc = null): void
     {
         if ('wem_portfolio_feed' === Input::get('do')) {
             foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $key => $value) {
