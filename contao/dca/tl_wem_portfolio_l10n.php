@@ -44,32 +44,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_l10n'] = [
             'panelLayout' => 'filter;sort,search,limit',
             'child_record_callback' => [PortfolioL10nContainer::class, 'listItems'],
         ],
-        'global_operations' => [
-            'all' => [
-                'href' => 'act=select',
-                'class' => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
-            ],
-        ],
-        'operations' => [
-            'edit' => [
-                'href' => 'act=edit',
-                'icon' => 'edit.gif',
-            ],
-            'copy' => [
-                'href' => 'act=copy',
-                'icon' => 'copy.gif',
-            ],
-            'delete' => [
-                'href' => 'act=delete',
-                'icon' => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
-            ],
-            'show' => [
-                'href' => 'act=show',
-                'icon' => 'show.gif',
-            ],
-        ],
+        'global_operations' => ['all'],
+        'operations' => ['edit', 'copy', 'delete', 'show'],
     ],
 
     // Palettes

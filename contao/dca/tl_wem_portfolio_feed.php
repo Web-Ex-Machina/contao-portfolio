@@ -43,36 +43,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
             'fields' => ['title'],
             'format' => '%s',
         ],
-        'global_operations' => [
-            'all' => [
-                'href' => 'act=select',
-                'class' => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
-            ],
-        ],
-        'operations' => [
-            'edit' => [
-                'href' => 'table=tl_wem_portfolio',
-                'icon' => 'edit.svg',
-            ],
-            'editheader' => [
-                'href' => 'act=edit',
-                'icon' => 'header.svg',
-            ],
-            'attributes' => [
-                'href' => 'table=tl_wem_portfolio_feed_attribute',
-                'icon' => 'modules.svg',
-            ],
-            'delete' => [
-                'href' => 'act=delete',
-                'icon' => 'delete.svg',
-                'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
-            ],
-            'show' => [
-                'href' => 'act=show',
-                'icon' => 'show.svg',
-            ],
-        ],
+        'global_operations' => ['all'],
+        'operations' => ['edit', 'children', 'delete', 'show'],
     ],
 
     // Palettes

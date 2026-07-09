@@ -47,42 +47,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             'panelLayout' => 'filter;sort,search,limit',
             'child_record_callback' => [PortfolioContainer::class, 'listItems'],
         ],
-        'global_operations' => [
-            'all' => [
-                'href' => 'act=select',
-                'class' => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
-            ],
-        ],
-        'operations' => [
-            'edit' => [
-                'href' => 'table=tl_content',
-                'icon' => 'edit.svg',
-            ],
-            'header' => [
-                'href' => 'act=edit',
-                'icon' => 'header.svg',
-            ],
-            'copy' => [
-                'href' => 'act=copy',
-                'icon' => 'copy.gif',
-            ],
-            'delete' => [
-                'href' => 'act=delete',
-                'icon' => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
-            ],
-            'show' => [
-                'href' => 'act=show',
-                'icon' => 'show.gif',
-            ],
-            'toggle' => [
-                'icon' => 'visible.svg',
-                'attributes' => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-                'button_callback' => [PortfolioContainer::class, 'toggleIcon'],
-                'showInHeader' => true,
-            ],
-        ],
+        'global_operations' => ['all'],
+        'operations' => ['edit', 'children', 'copy', 'delete', 'show', 'toggle'],
     ],
     'palettes' => [
         '__selector__' => ['overwriteMeta'],
@@ -251,6 +217,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         ],
         'published' => [
             'exclude' => true,
+            'toggle' => true,
             'filter' => true,
             'flag' => 1,
             'inputType' => 'checkbox',
