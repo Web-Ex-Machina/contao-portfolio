@@ -121,21 +121,9 @@ class LoadDataContainerListener
 
         switch ($row['type']) {
             case 'text':
-                // Allow HTML settings
-                if ($row['allowHtml']) {
-                    $data['eval']['allowHtml'] = true;
-                }
-
-                $data['sql']['type'] = 'string';
-
-                if ($row['value']) {
-                    $data['default'] = $model->getL10nLabel('value');
-                    $data['sql']['default'] = $row['value'];
-                } else {
-                    $data['default'] = '';
-                    $data['sql']['default'] = '';
-                }
-
+                $val = $row['value'] ? $model->getL10nLabel('value') : '';
+                $data['default'] = $val;
+                $data['sql'] = sprintf("varchar(255) NOT NULL default '%s'", $val);
                 break;
 
             case 'textarea':
@@ -149,9 +137,8 @@ class LoadDataContainerListener
                 break;
 
             case 'select':
-                $data['sql']['type'] = 'string';
                 $data['default'] = '';
-                $data['sql']['default'] = '';
+                $data['sql'] = "varchar(255) NOT NULL default ''";
 
                 // Multiple settings
                 if ($row['multiple']) {
@@ -201,7 +188,7 @@ class LoadDataContainerListener
 
                         if (\array_key_exists('default', $o)) {
                             $data['default'] = $o['default'];
-                            $data['sql']['default'] = $o['default'];
+                            $data['sql'] = sprintf("varchar(255) NOT NULL default '%s'", $o['default']);
                         }
                     }
                 }
