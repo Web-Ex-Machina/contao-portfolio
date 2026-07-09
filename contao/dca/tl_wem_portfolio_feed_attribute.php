@@ -41,40 +41,52 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'panelLayout' => 'filter;sort,search,limit',
             'child_record_callback' => [PortfolioFeedAttributeContainer::class, 'listItems'],
         ],
-        'global_operations' => [
-            'all' => [
-                'href' => 'act=select',
-                'class' => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
-            ],
-        ],
-        'operations' => [
-            'edit' => [
-                'href' => 'act=edit',
-                'icon' => 'edit.gif',
-            ],
-            'copy' => [
-                'href' => 'act=copy',
-                'icon' => 'copy.gif',
-            ],
-            'delete' => [
-                'href' => 'act=delete',
-                'icon' => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
-            ],
-            'show' => [
-                'href' => 'act=show',
-                'icon' => 'show.gif',
-            ],
-        ],
+        'global_operations' => ['all'],
+        'operations' => ['edit', 'copy', 'delete', 'show'],
     ],
 
     // Palettes
     'palettes' => [
         '__selector__' => ['type', 'isFilter'],
         'default' => '
-            {title_legend},name,label;
-            {field_legend},type,mandatory,translatable;
+            {type_legend},type,name,label;
+        ',
+        'text' => '
+            {type_legend},type,name,label;
+            {config_legend},mandatory,value;
+            {filter_legend},isFilter;
+            {design_legend},insertInDca,insertType,class;
+            {l10n_legend},translatable,translations
+        ',
+        'textarea' => '
+            {type_legend},type,name,label;
+            {config_legend},mandatory,allowHtml,helpwizard,rte,explanation;
+            {design_legend},insertInDca,insertType,class;
+            {l10n_legend},translatable,translations
+        ',
+        'select' => '
+            {type_legend},type,name,label;
+            {config_legend},mandatory,options,multiple,chosen;
+            {filter_legend},isFilter;
+            {design_legend},insertInDca,insertType,class;
+            {l10n_legend},translations
+        ',
+        'picker' => '
+            {type_legend},type,name,label;
+            {config_legend},mandatory,fkey;
+            {design_legend},insertInDca,insertType,class;
+            {l10n_legend},translations
+        ',
+        'fileTree' => '
+            {type_legend},type,name,label;
+            {config_legend},mandatory,multiple,filesOnly,fieldType,extensions;
+            {design_legend},insertInDca,insertType,class;
+            {l10n_legend},translations
+        ',
+        'listWizard' => '
+            {type_legend},type,name,label;
+            {config_legend},mandatory,multiple,allowHtml,maxlength;
+            {filter_legend},isFilter;
             {design_legend},insertInDca,insertType,class;
             {l10n_legend},translations
         ',
@@ -82,12 +94,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
 
     // Subpalettes
     'subpalettes' => [
-        'type_text' => 'value,isFilter',
-        'type_textarea' => 'allowHtml,helpwizard,rte,explanation',
-        'type_select' => 'options,multiple,chosen,isFilter',
-        'type_picker' => 'fkey',
-        'type_fileTree' => 'multiple,filesOnly,fieldType,extensions',
-        'type_listWizard' => 'multiple,allowHtml,maxlength,isFilter',
         'isFilter' => 'filterLabel',
     ],
 
@@ -106,11 +112,21 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
         ],
         'createdAt' => [
             'default' => time(),
-            'flag' => 8,
+            'flag' => DataContainer::SORT_MONTH_ASC,
             'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'type' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'select',
+            'options_callback' => [PortfolioFeedAttributeContainer::class, 'getFieldOptions'],
+            'eval' => ['submitOnChange' => true, 'tl_class' => 'w50 clr'],
+            'reference' => &$GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ATTRIBUTE']['TYPE'],
+            'sql' => ['name' => 'type', 'type' => 'string', 'length' => 64, 'default' => 'text'],
         ],
         'name' => [
             'exclude' => true,
+            'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'search' => true,
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'rgxp' => 'fieldname', 'spaceToUnderscore' => true, 'maxlength' => 64, 'tl_class' => 'w50 clr'],
@@ -122,15 +138,6 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
             'sql' => "varchar(255) NOT NULL default ''",
-        ],
-        'type' => [
-            'exclude' => true,
-            'filter' => true,
-            'inputType' => 'select',
-            'options_callback' => [PortfolioFeedAttributeContainer::class, 'getFieldOptions'],
-            'eval' => ['helpwizard' => true, 'submitOnChange' => true, 'tl_class' => 'w50 clr'],
-            'reference' => &$GLOBALS['TL_LANG']['CTE'],
-            'sql' => ['name' => 'type', 'type' => 'string', 'length' => 64, 'default' => 'text'],
         ],
         'value' => [
             'exclude' => true,
@@ -190,32 +197,27 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
         'allowHtml' => [
             'exclude' => true,
             'inputType' => 'checkbox',
-            'eval' => ['maxlength' => 255, 'tl_class' => 'w50 cbx'],
+            'eval' => ['tl_class' => 'w50'],
             'sql' => "char(1) NOT NULL default ''",
         ],
         'helpwizard' => [
             'exclude' => true,
             'inputType' => 'checkbox',
-            'eval' => ['maxlength' => 255, 'tl_class' => 'w50 cbx'],
+            'eval' => ['tl_class' => 'w50'],
             'sql' => "char(1) NOT NULL default ''",
         ],
         'mandatory' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'checkbox',
-            'sql' => "char(1) NOT NULL default ''",
-        ],
-        'translatable' => [
-            'exclude' => true,
-            'filter' => true,
-            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50'],
             'sql' => "char(1) NOT NULL default ''",
         ],
         'isFilter' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'checkbox',
-            'eval' => ['tl_class' => 'w50 cbx'],
+            'eval' => ['tl_class' => 'w50 clr'],
             'sql' => "char(1) NOT NULL default ''",
         ],
         'filterLabel' => [
@@ -236,7 +238,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'exclude' => true,
             'inputType' => 'select',
             'options' => ['POSITION_BEFORE', 'POSITION_AFTER', 'POSITION_PREPEND', 'POSITION_APPEND'],
-            'eval' => ['tl_class' => 'w50'],
+            'eval' => ['tl_class' => 'w50 clr'],
             'sql' => ['name' => 'insertType', 'type' => 'string', 'length' => 128, 'default' => 'POSITION_APPEND'],
         ],
         'class' => [
@@ -256,6 +258,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
             'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'translatable' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'checkbox',
+            'sql' => "char(1) NOT NULL default ''",
         ],
         'translations' => [
             'inputType' => 'dcaWizard',

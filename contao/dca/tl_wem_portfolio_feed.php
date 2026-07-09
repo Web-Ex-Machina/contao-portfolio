@@ -168,7 +168,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed'] = [
                 'do' => 'wem_portfolio_feed',
             ],
             'eval' => [
-                'fields' => ['name', 'label', 'type', 'isFilter', 'isAlertCondition'],
+                'fields' => ['name', 'label', 'type', 'isFilter'],
                 'orderField' => 'name ASC',
                 'showOperations' => true,
                 'operations' => ['edit', 'delete'],

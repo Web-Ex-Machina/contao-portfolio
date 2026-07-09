@@ -35,6 +35,31 @@
         <source>You cannot use category sorting if you use more than one category.</source>
         <target>Vous ne pouvez pas utiliser le tri par catégorie si vous utilisez plus d'une catégorie.</target>
       </trans-unit>
+
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.text">
+        <source>Text</source>
+        <target>Texte</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.textarea">
+        <source>Textarea</source>
+        <target>Zone de texte</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.select">
+        <source>Dropdown</source>
+        <target>Liste déroulante</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.picker">
+        <source>Item picker</source>
+        <target>Sélection d'élément</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.fileTree">
+        <source>File picker</source>
+        <target>Sélection de fichiers</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.listWizard">
+        <source>List of texts</source>
+        <target>Liste de textes</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
