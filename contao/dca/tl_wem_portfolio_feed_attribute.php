@@ -129,7 +129,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'search' => true,
             'inputType' => 'text',
-            'eval' => ['mandatory' => true, 'rgxp' => 'fieldname', 'spaceToUnderscore' => true, 'maxlength' => 64, 'tl_class' => 'w50 clr'],
+            'eval' => ['mandatory' => true, 'rgxp' => 'custom', 'customRgxp' => '/^[a-zA-Z0-9]*$/', 'maxlength' => 64, 'tl_class' => 'w50 clr'],
             'sql' => "varchar(64) NOT NULL default ''",
         ],
         'label' => [
