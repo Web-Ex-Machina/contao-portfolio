@@ -12,9 +12,7 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-use Contao\Input;
 use Contao\System;
-use WEM\PortfolioBundle\DataContainer\ContentContainer;
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['wem_language'] = [
     'exclude' => true,
