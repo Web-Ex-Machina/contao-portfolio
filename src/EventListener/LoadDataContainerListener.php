@@ -234,9 +234,7 @@ class LoadDataContainerListener
                     $data['eval']['multiple'] = true;
                     $data['sql'] = 'blob NULL';
                 } else {
-                    $data['sql']['type'] = 'binary';
-                    $data['sql']['length'] = 16;
-                    $data['sql']['default'] = 'NULL';
+                    $data['sql'] = 'binary(16) NULL';
                 }
 
                 break;
