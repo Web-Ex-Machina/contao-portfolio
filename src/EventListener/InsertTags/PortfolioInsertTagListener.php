@@ -12,9 +12,9 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\PortfolioBundle\EventListener;
+namespace WEM\PortfolioBundle\EventListener\InsertTags;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\FilesModel;
 use Contao\Input;
 use WEM\PortfolioBundle\Model\Portfolio;
@@ -27,9 +27,8 @@ class PortfolioInsertTagListener
      * Examples:
      * {{portfolio::title}}
      * {{portfolio::title::1}}
-     *
-     * @Hook("replaceInsertTags", priority=100)
      */
+    #[AsHook('replaceInsertTags', priority: 100)]
     public function replaceInsertTags(string $tag)
     {
         $chunks = explode('::', $tag);
