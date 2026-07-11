@@ -18,6 +18,7 @@ use Contao\Config;
 use Contao\ContentModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\FilesModel;
+use Contao\Frontend;
 use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\Model\Collection;
@@ -36,6 +37,10 @@ use WEM\UtilsBundle\Classes\StringUtil;
  */
 abstract class ModuleController extends AbstractFrontendModuleController
 {
+    public function __construct()
+    {
+    }
+
     protected function catchAjaxRequests(): void
     {
         if (Input::post('TL_AJAX') && (int) $this->id === (int) Input::post('module')) {
@@ -97,7 +102,7 @@ abstract class ModuleController extends AbstractFrontendModuleController
      */
     protected function parsePortfolio(Portfolio $objItem, bool $blnAddArchive = false, string $strClass = '', int $intCount = 0): string
     {
-        $objTemplate = new FrontendTemplate($this->wem_portfolio_template);
+        $objTemplate = new FrontendTemplate($this->model->wem_portfolio_template);
         $objTemplate->setData($objItem->row());
 
         $objTemplate->title = $objItem->getL10nLabel('title');
@@ -228,20 +233,20 @@ abstract class ModuleController extends AbstractFrontendModuleController
         }
 
         // Retrieve item attributes
-        $objTemplate->blnDisplayAttributes = (bool) $this->wem_portfolio_displayAttributes;
-        if ((bool) $this->wem_portfolio_displayAttributes && null !== $this->wem_portfolio_attributes) {
+        $objTemplate->blnDisplayAttributes = (bool) $this->model->wem_portfolio_displayAttributes;
+        if ((bool) $this->model->wem_portfolio_displayAttributes && null !== $this->model->wem_portfolio_attributes) {
             if ($objItem->attributes) {
                 $objTemplate->attributes = $objItem->attributes;
             } else {
-                $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->wem_portfolio_attributes));
+                $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->model->wem_portfolio_attributes));
             }
         }
 
         // Notice the template if we want to display the text
-        if ($this->wem_portfolio_displayTeaser) {
+        if ($this->model->wem_portfolio_displayTeaser) {
             $objTemplate->blnDisplayText = true;
         } else {
-            $objTemplate->detailsUrl = $this->addToUrl('seeDetails='.$objItem->id, true, ['portfolio']);
+            $objTemplate->detailsUrl = Frontend::addToUrl('seeDetails='.$objItem->id, true, ['portfolio']);
         }
 
         // Parse the URL if we have a jumpTo configured
