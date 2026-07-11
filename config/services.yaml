@@ -8,14 +8,6 @@ services:
     resource: ../src/
     exclude: ../src/{ContaoManager,DependencyInjection}
 
-  wem_portfolio.listener.load_datacontainer:
-    class: WEM\PortfolioBundle\EventListener\LoadDataContainerListener
-    arguments:
-      $logger: '@logger'
-    public: true
-    tags:
-      - { name: contao.hook, hook: loadDataContainer, method: addAttributesToPortfolioDca, priority: 100 }
-
   wem_portfolio.listener.change_language_navigation:
     class: WEM\PortfolioBundle\EventListener\ChangeLanguageNavigationListener
     public: true
