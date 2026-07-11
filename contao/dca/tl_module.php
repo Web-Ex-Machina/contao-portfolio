@@ -31,7 +31,8 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_filters'] = '
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
     '{title_legend},name,headline,type;
     {config_legend},wem_portfolio_feeds,wem_portfolio_sort,numberOfItems,perPage,skipFirst;
-    {filters_legend},wem_portfolio_addFilters,wem_portfolio_addConstraints;
+    {filters_legend},wem_portfolio_addFilters;
+    {constraints_legend},wem_portfolio_addConstraints;
     {attributes_legend},wem_portfolio_displayAttributes;
     {template_legend:hide},wem_portfolio_template,customTpl;
     {image_legend:hide},imgSize;
@@ -54,7 +55,6 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['wem_portfolio_displayAttributes'
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_feeds'] = [
     'exclude' => true,
     'inputType' => 'checkbox',
-    'options_callback' => [ModuleContainer::class, 'getFeeds'],
     'eval' => ['multiple' => true, 'mandatory' => true],
     'sql' => 'blob NULL',
 ];
@@ -76,7 +76,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_addFilters'] = [
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters'] = [
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => [ModuleContainer::class, 'getFiltersOptions'],
     'eval' => ['chosen' => true, 'multiple' => true, 'mandatory' => true, 'tl_class' => 'w50'],
     'sql' => 'blob NULL',
 ];
@@ -95,12 +94,11 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_hideFiltersWithNoResult
     'sql' => "char(1) NOT NULL default ''",
 ];
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_template'] = [
-    'default' => 'wem_portfolio_default',
+    'default' => 'wem_portfolio_item_default',
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => [ModuleContainer::class, 'getTemplates'],
     'eval' => ['tl_class' => 'w50'],
-    'sql' => "varchar(64) NOT NULL default ''",
+    'sql' => "varchar(64) NOT NULL default 'wem_portfolio_item_default'",
 ];
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_displayAttributes'] = [
     'exclude' => true,
@@ -111,14 +109,12 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_displayAttributes'] = [
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_attributes'] = [
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => [ModuleContainer::class, 'getAttributesOptions'],
     'eval' => ['chosen' => true, 'multiple' => true, 'mandatory' => true, 'tl_class' => 'w50'],
     'sql' => 'blob NULL',
 ];
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters_module'] = [
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => [ModuleContainer::class, 'getFiltersModules'],
     'foreignKey' => 'tl_module.name',
     'eval' => ['mandatory' => true],
     'sql' => 'int(10) unsigned NOT NULL default 0',

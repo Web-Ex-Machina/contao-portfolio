@@ -1,53 +1,69 @@
 <?xml version="1.0" ?><xliff version="1.1">
-  <file datatype="php" original="src/Resources/contao/languages/en/tl_module.php" source-language="en" target-language="en">
+  <file datatype="php" original="src/Resources/contao/languages/en/tl_module.php" source-language="en" target-language="fr">
     <body>
-      <trans-unit id="tl_module.wem_portfolio_categories.0">
-        <source>Categories</source>
-        <target>Categories</target>
+      <trans-unit id="tl_module.wem_portfolio_feeds.0">
+        <source>Feeds</source>
+        <target>Feeds</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_categories.1">
-        <source>Please select the portfolio categories to display.</source>
-        <target>Please select the portfolio categories to display.</target>
+      <trans-unit id="tl_module.wem_portfolio_feeds.1">
+        <source>Please select the portfolio feeds to display</source>
+        <target>Please select the portfolio feeds to display</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_item_template.0">
-        <source>Items template</source>
-        <target>Items template</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_item_template.1">
-        <source>Please select the portfolio item template.</source>
-        <target>Please select the portfolio item template.</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_category_template.0">
-        <source>Categories template</source>
-        <target>Categories template</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_category_template.1">
-        <source>Please select the portfolio categories template.</source>
-        <target>Please select the portfolio categories template.</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_attributes.0">
-        <source>Retrieve attributes</source>
-        <target>Retrieve attributes</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_attributes.1">
-        <source>Check to retrieve item attributes.</source>
-        <target>Check to retrieve item attributes.</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_tags.0">
-        <source>Retrieve tags</source>
-        <target>Retrieve tags</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_tags.1">
-        <source>Check to retrieve item tags.</source>
-        <target>Check to retrieve item tags.</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_filters.0">
+      <trans-unit id="tl_module.wem_portfolio_addFilters.0">
         <source>Add filters</source>
         <target>Add filters</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_filters.1">
-        <source>Allow user to filter items depending on attributes</source>
-        <target>Allow user to filter items depending on attributes</target>
+      <trans-unit id="tl_module.wem_portfolio_addFilters.1">
+        <source>Check to add filters</source>
+        <target>Check to add filters</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_filters_module.0">
+        <source>Filters module</source>
+        <target>Filters module</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_filters_module.1">
+        <source>Please select the portfolio filters module to display</source>
+        <target>Please select the portfolio filters module to display</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_addConstraints.0">
+        <source>Add constraints</source>
+        <target>Add constraints</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_addConstraints.1">
+        <source>Check to add constraints</source>
+        <target>Check to add constraints</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_constraints.0">
+        <source>Constraints to apply</source>
+        <target>Constraints to apply</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_constraints.1">
+        <source>Please select the constraints to apply</source>
+        <target>Please select the constraints to apply</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_displayAttributes.0">
+        <source>Display attributes</source>
+        <target>Display attributes</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_displayAttributes.1">
+        <source>Check to display attributes</source>
+        <target>Check to display attributes</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_attributes.0">
+        <source>Attributes to display</source>
+        <target>Attributes to display</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_attributes.1">
+        <source>Please select the attributes to display</source>
+        <target>Please select the attributes to display</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_template.0">
+        <source>Items template</source>
+        <target>Items template</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_template.1">
+        <source>Please select the portfolio item template</source>
+        <target>Please select the portfolio item template</target>
       </trans-unit>
       <trans-unit id="tl_module.wem_portfolio_sort.0">
         <source>Sort by</source>
@@ -73,38 +89,43 @@
         <source>Title (Desc.)</source>
         <target>Title (Desc.)</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_category_sort.0">
-        <source>Sort by</source>
-        <target>Sort by</target>
+      
+      <trans-unit id="tl_module.wem_portfolio_addSearch.0">
+        <source>Add search</source>
+        <target>Add search</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_category_sort.1">
-        <source>Please select the sort mode</source>
-        <target>Please select the sort mode</target>
+      <trans-unit id="tl_module.wem_portfolio_addSearch.1">
+        <source>Check to add search input</source>
+        <target>Check to add search input</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_category_sort.global">
-        <source>Custom (globally)</source>
-        <target>Custom (globally)</target>
+      <trans-unit id="tl_module.wem_portfolio_filters.0">
+        <source>Filters to display</source>
+        <target>Filters to display</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_category_sort.title_ASC">
-        <source>Title (Asc.)</source>
-        <target>Title (Asc.)</target>
+      <trans-unit id="tl_module.wem_portfolio_filters.1">
+        <source>Please select the filters to display</source>
+        <target>Please select the filters to display</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_category_sort.title_DESC">
-        <source>Title (Desc.)</source>
-        <target>Title (Desc.)</target>
+      <trans-unit id="tl_module.wem_portfolio_hideFiltersWithNoResults.0">
+        <source>Hide when no results</source>
+        <target>Hide when no results</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_list_module.0">
-        <source>List module</source>
-        <target>List module</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_list_module.1">
-        <source>Please select the listing module</source>
-        <target>Please select the listing module</target>
+      <trans-unit id="tl_module.wem_portfolio_hideFiltersWithNoResults.1">
+        <source>Check to hide filters if there are no results</source>
+        <target>Check to hide filters if there are no results</target>
       </trans-unit>
 
-      <trans-unit id="tl_module.list_legend">
-        <source>Items list settings</source>
-        <target>Items list settings</target>
+      <trans-unit id="tl_module.filters_legend">
+        <source>Filters settings</source>
+        <target>Filters settings</target>
+      </trans-unit>
+      <trans-unit id="tl_module.constraints_legend">
+        <source>Constraints settings</source>
+        <target>Constraints settings</target>
+      </trans-unit>
+      <trans-unit id="tl_module.attributes_legend">
+        <source>Attributes settings</source>
+        <target>Attributes settings</target>
       </trans-unit>
     </body>
   </file>
