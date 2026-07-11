@@ -12,9 +12,9 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\PortfolioBundle\EventListener;
+namespace WEM\PortfolioBundle\EventListener\Breadcrumb;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Environment;
 use Contao\Input;
 use Contao\Module;
@@ -22,9 +22,7 @@ use WEM\PortfolioBundle\Model\Portfolio;
 
 class GenerateBreadcrumbListener
 {
-    /**
-     * @Hook("generateBreadcrumb", priority=100)
-     */
+    #[AsHook('generateBreadcrumb', priority: 100)]
     public function onGenerateBreadcrumb(array $items, Module $module): array
     {
         // Check if we have an auto_item and if it's an Offer

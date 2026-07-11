@@ -12,8 +12,9 @@ declare(strict_types=1);
  * @link     https://github.com/Web-Ex-Machina/contao-portfolio/
  */
 
-namespace WEM\PortfolioBundle\EventListener;
+namespace WEM\PortfolioBundle\EventListener\ChangeLanguage;
 
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Input;
 use Terminal42\ChangeLanguage\Event\ChangelanguageNavigationEvent;
 use WEM\PortfolioBundle\Model\Portfolio;
@@ -21,6 +22,7 @@ use WEM\PortfolioBundle\Model\PortfolioL10n;
 
 class ChangeLanguageNavigationListener
 {
+    #[AsHook('changelanguageNavigation', priority: 100)]
     public function onChangelanguageNavigation(ChangelanguageNavigationEvent $event): void
     {
         if (!Input::get('item')) {

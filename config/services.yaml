@@ -7,9 +7,3 @@ services:
   WEM\PortfolioBundle\:
     resource: ../src/
     exclude: ../src/{ContaoManager,DependencyInjection}
-
-  wem_portfolio.listener.change_language_navigation:
-    class: WEM\PortfolioBundle\EventListener\ChangeLanguageNavigationListener
-    public: true
-    tags:
-      - { name: contao.hook, hook: changelanguageNavigation, method: onChangelanguageNavigation, priority: 100 }
