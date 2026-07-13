@@ -17,6 +17,10 @@ namespace WEM\PortfolioBundle\Controller\Frontend;
 use Contao\BackendTemplate;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Exception\PageNotFoundException;
+use Contao\CoreBundle\Routing\ResponseContext\HtmlHeadBag\HtmlHeadBag;
+use Contao\CoreBundle\Routing\ResponseContext\JsonLd\ContaoPageSchema;
+use Contao\CoreBundle\Routing\ResponseContext\JsonLd\JsonLdManager;
+use Contao\CoreBundle\Util\UrlUtil;
 use Contao\Environment;
 use Contao\Input;
 use Contao\PageModel;
@@ -99,10 +103,50 @@ class ReaderModuleController extends ModuleController
             $template->back = $this->model->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
         }
 
-        global $objPage;
+        // Overwrite the page metadata
+        $responseContext = System::getContainer()->get('contao.routing.response_context_accessor')->getResponseContext();
 
-        $objPage->pageTitle = $this->portfolio->title.' | '.$this->portfolio->slug;
-        $objPage->description = StringUtil::substr($this->portfolio->teaser, 300);
+        if ($responseContext?->has(HtmlHeadBag::class)) {
+            $htmlHeadBag = $responseContext->get(HtmlHeadBag::class);
+            $htmlDecoder = System::getContainer()->get('contao.string.html_decoder');
+
+            $htmlHeadBag->setTitle($this->portfolio->title);
+
+            if ($this->portfolio->description) {
+                $htmlHeadBag->setMetaDescription($htmlDecoder->inputEncodedToPlainText($this->portfolio->description));
+            } elseif ($this->portfolio->teaser) {
+                $htmlHeadBag->setMetaDescription($htmlDecoder->htmlToPlainText($this->portfolio->teaser));
+            }
+
+            if ($this->portfolio->robots) {
+                $htmlHeadBag->setMetaRobots($this->portfolio->robots);
+            }
+
+            if ($this->portfolio->canonicalLink) {
+                $url = System::getContainer()->get('contao.insert_tag.parser')->replaceInline($this->portfolio->canonicalLink);
+
+                // Ensure absolute links
+                if (!preg_match('#^https?://#', $url)) {
+                    if (!$request = System::getContainer()->get('request_stack')->getCurrentRequest()) {
+                        throw new \RuntimeException('The request stack did not contain a request');
+                    }
+
+                    $url = UrlUtil::makeAbsolute($url, $request->getUri());
+                }
+
+                $htmlHeadBag->setCanonicalUri($url);
+            }
+            /**elseif (!$this->news_keepCanonical) {
+                $htmlHeadBag->setCanonicalUri($urlGenerator->generate($objArticle, array(), UrlGeneratorInterface::ABSOLUTE_URL));
+            }**/
+        }
+
+        // Update the JSON+LD "searchIndexer" setting
+        $pageSchema = $responseContext->get(JsonLdManager::class)->getGraphForSchema(JsonLdManager::SCHEMA_CONTAO)->get(ContaoPageSchema::class);
+
+        if ($this->portfolio->searchIndexer) {
+            $pageSchema['searchIndexer'] = $this->portfolio->searchIndexer;
+        }
 
         // Add the articles
         $template->portfolio = $this->parsePortfolio($this->portfolio);
