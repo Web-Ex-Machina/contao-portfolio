@@ -17,6 +17,7 @@ namespace WEM\PortfolioBundle\Controller\Frontend;
 use Contao\BackendTemplate;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Exception\PageNotFoundException;
+use Contao\CoreBundle\Routing\ContentUrlGenerator;
 use Contao\CoreBundle\Routing\ResponseContext\HtmlHeadBag\HtmlHeadBag;
 use Contao\CoreBundle\Routing\ResponseContext\JsonLd\ContaoPageSchema;
 use Contao\CoreBundle\Routing\ResponseContext\JsonLd\JsonLdManager;
@@ -47,8 +48,9 @@ class ReaderModuleController extends ModuleController
     protected ?PortfolioFeed $feed = null;
     protected ModuleModel $model;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly ContentUrlGenerator $contentUrlGenerator
+    ) {
         parent::__construct();
     }
 
@@ -98,8 +100,8 @@ class ReaderModuleController extends ModuleController
             throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
         }
 
-        if ($this->model->overviewPage) {
-            $template->referer = PageModel::findById($this->model->overviewPage)->getFrontendUrl();
+        if ($this->model->overviewPage && ($overviewPage = PageModel::findById($this->model->overviewPage))) {
+            $template->referer = $this->contentUrlGenerator->generate($overviewPage);
             $template->back = $this->model->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
         }
 
@@ -110,7 +112,11 @@ class ReaderModuleController extends ModuleController
             $htmlHeadBag = $responseContext->get(HtmlHeadBag::class);
             $htmlDecoder = System::getContainer()->get('contao.string.html_decoder');
 
-            $htmlHeadBag->setTitle($this->portfolio->title);
+            if ($this->portfolio->pageTitle) {
+                $htmlHeadBag->setTitle($this->portfolio->pageTitle);
+            } elseif ($this->portfolio->title) {
+                $htmlHeadBag->setTitle($this->portfolio->title);
+            }
 
             if ($this->portfolio->description) {
                 $htmlHeadBag->setMetaDescription($htmlDecoder->inputEncodedToPlainText($this->portfolio->description));

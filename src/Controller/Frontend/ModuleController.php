@@ -213,13 +213,6 @@ abstract class ModuleController extends AbstractFrontendModuleController
             }
         }
 
-        // Notice the template if we want to display the text
-        if ($this->model->wem_portfolio_displayTeaser) {
-            $objTemplate->blnDisplayText = true;
-        } else {
-            $objTemplate->detailsUrl = Frontend::addToUrl('seeDetails='.$objItem->id, true, ['portfolio']);
-        }
-
         // Parse the URL if we have a jumpTo configured
         $objTemplate->jumpTo = $objItem->getUrl();
 

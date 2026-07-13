@@ -54,6 +54,8 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         '__selector__' => ['overwriteMeta'],
         'default' => '
             {title_legend},title,slug,date,language;
+            {meta_legend},pageTitle,robots,description,serpPreview;
+            {source_legend},linkText,canonicalLink;
             {content_legend},teaser;
             {media_legend},singleSRC,size,floating,imagemargin,fullsize,overwriteMeta,pictures;
             {publish_legend},published,start,stop;
@@ -250,6 +252,47 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
                 'operations' => ['edit', 'delete'],
                 'tl_class' => 'clr',
             ],
+        ],
+        'pageTitle' => [
+            'search' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength'=>255, 'decodeEntities'=>true, 'tl_class'=>'w50'],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'robots' => [
+            'search' => true,
+            'backendSearch' => false,
+            'inputType' => 'select',
+            'options' => ['index,follow', 'index,nofollow', 'noindex,follow', 'noindex,nofollow'],
+            'eval' => ['tl_class'=>'w50', 'includeBlankOption' => true],
+            'sql' => "varchar(32) NOT NULL default ''"
+        ],
+        'description' => [
+            'search' => true,
+            'inputType' => 'textarea',
+            'eval' => ['style'=>'height:60px', 'decodeEntities'=>true, 'tl_class'=>'clr'],
+            'sql' => "text NULL"
+        ],
+        'serpPreview' => [
+            'label' => &$GLOBALS['TL_LANG']['MSC']['serpPreview'],
+            'inputType' => 'serpPreview',
+            'eval' => [
+                'titleFields' => ['pageTitle', 'title'], 
+                'descriptionFields' => ['description', 'teaser']
+            ],
+            'sql' => null
+        ],
+        'canonicalLink' => [
+            'search' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>2048, 'dcaPicker'=>true, 'tl_class'=>'w50'],
+            'sql' => "varchar(2048) NOT NULL default ''"
+        ],
+        'linkText' => [
+            'search' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength'=>255, 'decodeEntities'=>true, 'tl_class'=>'w50'],
+            'sql' => "varchar(255) NOT NULL default ''"
         ],
     ],
 ];
