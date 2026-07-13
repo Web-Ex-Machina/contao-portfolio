@@ -7,3 +7,8 @@ services:
   WEM\PortfolioBundle\:
     resource: ../src/
     exclude: ../src/{ContaoManager,DependencyInjection}
+
+  wem.portfolio.service.portfolio:
+    class: WEM\PortfolioBundle\Service\PortfolioService
+    arguments:
+      $contentUrlGenerator: '@contao.routing.content_url_generator'

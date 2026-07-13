@@ -8,6 +8,8 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Routing\Content\ContentUrlResolverInterface;
 use Contao\CoreBundle\Routing\Content\ContentUrlResult;
 use Contao\PageModel;
+use Contao\System;
+use Terminal42\ChangeLanguage\PageFinder;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 
@@ -26,8 +28,14 @@ class PortfolioResolver implements ContentUrlResolverInterface
         $pageAdapter = $this->framework->getAdapter(PageModel::class);
         $archiveAdapter = $this->framework->getAdapter(PortfolioFeed::class);
 
+        $r = System::getContainer()->get('request_stack')->getCurrentRequest();
+        $lang = $r->getLocale();
+
+        $objMaster = $pageAdapter->findById((int) $archiveAdapter->findById($content->pid)?->jumpTo);
+        $objTarget = (new PageFinder())->findAssociatedForLanguage($objMaster, $lang);
+
         // Link to the default page
-        return ContentUrlResult::resolve($pageAdapter->findById((int) $archiveAdapter->findById($content->pid)?->jumpTo));
+        return ContentUrlResult::resolve($objTarget);
     }
 
     public function getParametersForContent(object $content, PageModel $pageModel): array

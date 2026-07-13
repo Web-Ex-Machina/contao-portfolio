@@ -28,6 +28,7 @@ use Terminal42\ChangeLanguage\PageFinder;
 use WEM\PortfolioBundle\Model\Content;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
+use WEM\PortfolioBundle\Service\PortfolioService;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -37,8 +38,11 @@ use WEM\UtilsBundle\Classes\StringUtil;
  */
 abstract class ModuleController extends AbstractFrontendModuleController
 {
-    public function __construct()
+    protected PortfolioService $service;
+
+    public function __construct() 
     {
+        $this->service = System::getContainer()->get('wem.portfolio.service.portfolio');
     }
 
     /**
@@ -74,6 +78,10 @@ abstract class ModuleController extends AbstractFrontendModuleController
     protected function parsePortfolio(Portfolio $objItem, bool $blnAddArchive = false, string $strClass = '', int $intCount = 0): string
     {
         $objTemplate = new FrontendTemplate($this->model->wem_portfolio_template);
+
+        $this->service->load($objItem);
+
+
         $objTemplate->setData($objItem->row());
 
         $objTemplate->title = $objItem->getL10nLabel('title');
@@ -214,7 +222,7 @@ abstract class ModuleController extends AbstractFrontendModuleController
         }
 
         // Parse the URL if we have a jumpTo configured
-        $objTemplate->jumpTo = $objItem->getUrl();
+        $objTemplate->jumpTo = $this->service->getUrl();
 
         return $objTemplate->parse();
     }

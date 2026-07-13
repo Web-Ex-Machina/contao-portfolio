@@ -21,7 +21,6 @@ use Contao\Environment;
 use Contao\Input;
 use Contao\ModuleModel;
 use Contao\PageModel;
-use Contao\System;
 use Contao\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

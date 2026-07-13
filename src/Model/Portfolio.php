@@ -435,39 +435,6 @@ class Portfolio extends Model
         return $attributes;
     }
 
-    /**
-     * Generate item url.
-     *
-     * @throws \Exception
-     */
-    public function getUrl(bool $blnAbsolute = false, string $lang = ''): ?string
-    {
-        $objFeed = $this->getRelated('pid');
-
-        if (!$objFeed) {
-            throw new \Exception(\sprintf('Cannot retrieve pid from item id %s', $this->id));
-        }
-
-        $objTarget = $objFeed->getRelated('jumpTo');
-
-        if (!$objTarget) {
-            return null;
-        }
-
-        // If $l is null, retrieve current language
-        if ('' === $lang) {
-            $r = System::getContainer()->get('request_stack')->getCurrentRequest();
-            if (null !== $r) {
-                $lang = $r->getLocale();
-            }
-        }
-
-        $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $lang);
-        $params = (Config::get('useAutoItem') ? '/' : '/items/').'category/'.$objFeed->alias.'/item/'.($this->getL10nLabel('slug', $lang) ?: $this->id);
-
-        return $blnAbsolute ? $objPageData->getAbsoluteUrl($params) : $objPageData->getFrontendUrl($params);
-    }
-
     public function getL10nLabel($f, $l = null)
     {
         // Set default value
