@@ -16,8 +16,11 @@ namespace WEM\PortfolioBundle\Controller\Frontend;
 
 use Contao\Controller;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
+use Contao\CoreBundle\Routing\ContentUrlGenerator;
+use Contao\Environment;
 use Contao\Input;
 use Contao\ModuleModel;
+use Contao\PageModel;
 use Contao\System;
 use Contao\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,8 +48,9 @@ class FiltersModuleController extends ModuleController
      */
     protected $filters = [];
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly ContentUrlGenerator $contentUrlGenerator
+    ) {
         parent::__construct();
     }
 
@@ -88,6 +92,14 @@ class FiltersModuleController extends ModuleController
 
         $template->filters = $this->filters;
         $template->moduleId = $this->model->id;
+
+        // Define where the form is redirected
+        if ($this->model->jumpTo) {
+            $page = PageModel::findById($this->model->jumpTo);
+            $template->formAction = $this->contentUrlGenerator->generate($page);
+        } else {
+            $template->formAction = $request->getRequestUri();
+        }
 
         return $template->getResponse();
     }

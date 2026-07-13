@@ -3,7 +3,7 @@
 
 <?php $this->block('content'); ?>
 <?php if ($this->filters): ?>
-    <form action="{{env::request}}" method="GET">
+    <form action="<?= $this->formAction ?>" method="GET">
         <div class="portfolios__filters">
             <?php foreach ($this->filters as $f): ?>
                 <?php if ('search' !== $f['name']): ?>
@@ -35,7 +35,7 @@
                 <?php endif ?>
             <?php endforeach; ?>
             <div class="input-group portfolios__filters__submit">
-                <button type="submit" class="btn-sm "><i class="fal fa-search"></i></button>
+                <button type="submit" class="btn-sm"><i class="fal fa-search"></i></button>
             </div>
         </div>
     </form>
