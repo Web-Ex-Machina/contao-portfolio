@@ -69,7 +69,7 @@ class ListModuleController extends ModuleController
         Controller::loadDatacontainer('tl_wem_portfolio');
         Controller::loadLanguageFile('tl_wem_portfolio');
         $this->model = $model;
-        $model->wem_portfolio_feeds = StringUtil::deserialize($model->wem_portfolio_feeds);
+        $this->model->wem_portfolio_feeds = StringUtil::deserialize($model->wem_portfolio_feeds);
 
         // Return if there are no archives
         if (empty($model->wem_portfolio_feeds) || !\is_array($model->wem_portfolio_feeds)) {
@@ -156,7 +156,7 @@ class ListModuleController extends ModuleController
 
         // Retrieve filters
         if ($model->wem_portfolio_addFilters) {
-            $template->filters = $this->getFrontendModule($model->wem_portfolio_filters_module);
+            $template->filters = Controller::getFrontendModule($model->wem_portfolio_filters_module);
         }
 
         // Get the total number of items

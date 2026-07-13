@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Controller\Frontend;
 
+use Contao\Controller;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\Input;
 use Contao\ModuleModel;
@@ -35,6 +36,8 @@ class FiltersModuleController extends ModuleController
 {
     public const TYPE = 'wem_portfolio_filters';
 
+    protected ModuleModel $model;
+
     /**
      * List filters.
      *
@@ -52,15 +55,16 @@ class FiltersModuleController extends ModuleController
      */
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
-        $this->wem_portfolio_feeds = StringUtil::deserialize($this->wem_portfolio_feeds);
+        $this->model = $model;
+        $this->model->wem_portfolio_feeds = StringUtil::deserialize($this->model->wem_portfolio_feeds);
 
         // Return if there are no archives
-        if (empty($this->wem_portfolio_feeds) || !\is_array($this->wem_portfolio_feeds)) {
+        if (empty($this->model->wem_portfolio_feeds) || !\is_array($this->model->wem_portfolio_feeds)) {
             throw new \Exception('wem_portfolio_feeds not found.');
         }
 
         // Check if we have remote feeds
-        foreach ($this->wem_portfolio_feeds as $f) {
+        foreach ($this->model->wem_portfolio_feeds as $f) {
             $objFeed = PortfolioFeed::findByPk($f);
 
             // If we have one remote feed, consider we must
@@ -77,13 +81,13 @@ class FiltersModuleController extends ModuleController
         $this->catchAjaxRequests();
 
         // Add pids
-        $this->config = ['pid' => $this->wem_portfolio_feeds, 'published' => 1];
+        $this->config = ['pid' => $this->model->wem_portfolio_feeds, 'published' => 1];
 
         // Retrieve filters
         $this->buildFilters();
 
         $template->filters = $this->filters;
-        $template->moduleId = $this->id;
+        $template->moduleId = $this->model->id;
 
         return $template->getResponse();
     }
@@ -94,8 +98,8 @@ class FiltersModuleController extends ModuleController
     protected function buildFilters(): void
     {
         // Retrieve and format dropdowns filters
-        $filters = StringUtil::deserialize($this->wem_portfolio_filters);
-        $this->loadDataContainer('tl_wem_portfolio');
+        $filters = StringUtil::deserialize($this->model->wem_portfolio_filters);
+        Controller::loadDataContainer('tl_wem_portfolio');
 
         if (\is_array($filters) && [] !== $filters) {
             foreach ($filters as $f) {
@@ -106,7 +110,11 @@ class FiltersModuleController extends ModuleController
                 }
 
                 $field = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$f];
-                $fName = \sprintf('portfolio_filter_%s%s', $f, $field['eval']['multiple'] ? '[]' : '');
+                $fName = \sprintf(
+                    'portfolio_filter_%s%s', 
+                    $f, 
+                    array_key_exists('multiple', $field['eval']) && true === $field['eval']['multiple'] ? '[]' : ''
+                );
                 $fGet = \sprintf('portfolio_filter_%s', $f);
 
                 $filter = [
@@ -254,7 +262,7 @@ class FiltersModuleController extends ModuleController
         }
 
         // Add fulltext search if asked
-        if ($this->portfolio_addSearch) {
+        if ($this->model->portfolio_addSearch) {
             $this->filters[] = [
                 'type' => 'text',
                 'name' => 'portfolio_filter_search',
@@ -271,7 +279,7 @@ class FiltersModuleController extends ModuleController
 
     protected function shouldBeSkipped($statement): bool
     {
-        if (!$this->wem_portfolio_hideFiltersWithNoResults) {
+        if (!$this->model->wem_portfolio_hideFiltersWithNoResults) {
             return false;
         }
 
