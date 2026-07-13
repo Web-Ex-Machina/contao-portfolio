@@ -216,14 +216,6 @@ class ListModuleController extends ModuleController
 
         $template->moduleId = $model->id;
 
-        // Catch auto_item
-        if (Input::get('auto_item')) {
-            $objPortfolio = Portfolio::findItems(['slug' => Input::get('auto_item')], 1);
-
-            $template->openModalOnLoad = true;
-            $template->portfolioId = $objPortfolio->first()->id;
-        }
-
         return $template->getResponse();
     }
 }

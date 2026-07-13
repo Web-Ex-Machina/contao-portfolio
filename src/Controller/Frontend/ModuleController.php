@@ -41,35 +41,6 @@ abstract class ModuleController extends AbstractFrontendModuleController
     {
     }
 
-    protected function catchAjaxRequests(): void
-    {
-        if (Input::post('TL_AJAX') && (int) $this->id === (int) Input::post('module')) {
-            try {
-                switch (Input::post('action')) {
-                    case 'seeDetails':
-                        if (!Input::post('portfolio')) {
-                            throw new \Exception(\sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['argumentMissing'], 'portfolio'));
-                        }
-
-                        $objItem = Portfolio::findByPk(Input::post('portfolio'));
-
-                        $this->wem_portfolio_template = 'portfolio_details';
-                        echo System::getContainer()->get('contao.insert_tag.parser')->replace($this->parsePortfolio($objItem));
-                        exit;
-                    default:
-                        throw new \Exception(\sprintf($GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['ERROR']['unknownRequest'], Input::post('action')));
-                }
-            } catch (\Exception $e) {
-                $arrResponse = ['status' => 'error', 'msg' => $e->getResponse(), 'trace' => $e->getTrace()];
-            }
-
-            // Add Request Token to JSON answer and return
-            $arrResponse['rt'] = System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue();
-            echo json_encode($arrResponse);
-            exit;
-        }
-    }
-
     /**
      * Parse one or more items and return them as array.
      *

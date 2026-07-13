@@ -97,9 +97,6 @@ class ReaderModuleController extends ModuleController
             $template->back = $this->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
         }
 
-        // Catch Ajax requets
-        $this->catchAjaxRequests();
-
         global $objPage;
 
         $objPage->pageTitle = $this->portfolio->title.' | '.$this->portfolio->slug;

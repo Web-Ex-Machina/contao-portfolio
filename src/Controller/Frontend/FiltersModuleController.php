@@ -81,9 +81,6 @@ class FiltersModuleController extends ModuleController
             }
         }
 
-        // Catch Ajax requets
-        $this->catchAjaxRequests();
-
         // Add pids
         $this->config = ['pid' => $this->model->wem_portfolio_feeds, 'published' => 1];
 
