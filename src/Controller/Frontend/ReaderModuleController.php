@@ -41,6 +41,7 @@ class ReaderModuleController extends ModuleController
 
     protected ?Portfolio $portfolio = null;
     protected ?PortfolioFeed $feed = null;
+    protected ModuleModel $model;
 
     public function __construct()
     {
@@ -70,6 +71,7 @@ class ReaderModuleController extends ModuleController
             exit;
         }
 
+        $this->model = $model;
         $this->feed = PortfolioFeed::findByIdOrAlias(Input::get('category'));
 
         if ($this->feed->readFromRemote) {
@@ -92,9 +94,9 @@ class ReaderModuleController extends ModuleController
             throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
         }
 
-        if ($this->overviewPage) {
-            $template->referer = PageModel::findById($this->overviewPage)->getFrontendUrl();
-            $template->back = $this->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
+        if ($this->model->overviewPage) {
+            $template->referer = PageModel::findById($this->model->overviewPage)->getFrontendUrl();
+            $template->back = $this->model->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
         }
 
         global $objPage;
@@ -104,7 +106,7 @@ class ReaderModuleController extends ModuleController
 
         // Add the articles
         $template->portfolio = $this->parsePortfolio($this->portfolio);
-        $template->moduleId = $this->id;
+        $template->moduleId = $this->model->id;
 
         return $template->getResponse();
     }
