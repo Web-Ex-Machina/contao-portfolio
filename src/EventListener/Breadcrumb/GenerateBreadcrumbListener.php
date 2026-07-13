@@ -19,6 +19,7 @@ use Contao\Environment;
 use Contao\Input;
 use Contao\Module;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioL10n;
 
 class GenerateBreadcrumbListener
 {
@@ -26,7 +27,18 @@ class GenerateBreadcrumbListener
     public function onGenerateBreadcrumb(array $items, Module $module): array
     {
         // Check if we have an auto_item and if it's an Offer
-        if (Input::get('item') && $objItem = Portfolio::findByIdOrSlug(Input::get('item'))) {
+        if (Input::get('item')) {
+
+            $objItem = Portfolio::findByIdOrSlug(Input::get('item'));
+
+            if (null === $objItem) {
+                $objItem = PortfolioL10n::findByIdOrSlug(Input::get('item'));
+
+                if (!$objItem) {
+                    return $items;
+                }
+            }
+
             array_pop($items);
 
             $items[] = [
