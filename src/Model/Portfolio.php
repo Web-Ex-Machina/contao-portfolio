@@ -167,14 +167,15 @@ class Portfolio extends Model
     /**
      * Find a single record by its ID or code.
      *
-     * @param mixed $varId      The ID or code
-     * @param array $arrOptions An optional options array
+     * @param mixed  $varId      The ID or code
+     * @param string $locale     Enter a specific locale
+     * @param array  $arrOptions An optional options array
      *
      * @return \Contao\Model|static model or null if the result is empty
      */
-    public static function findByIdOrSlug(string $varId, array $arrOptions = [])
+    public static function findByIdOrSlug(int|string $varId, string $locale = '', array $arrOptions = [])
     {
-        $isCode = !preg_match('/^[1-9]\d*$/', $varId);
+        $isCode = !preg_match('/^[1-9]\d*$/', (string) $varId);
 
         // Try to load from the registry
         if (!$isCode && [] === $arrOptions) {
@@ -186,11 +187,20 @@ class Portfolio extends Model
         }
 
         $t = static::$strTable;
+        $columns = $isCode ? [$t.'.slug=?'] : [$t.'.id=?'];
+        $vars = [$varId];
 
-        $arrOptions = array_merge(
-            ['limit' => 1, 'column' => $isCode ? [$t.'.slug=?'] : [$t.'.id=?'], 'value' => $varId, 'return' => 'Model'],
-            $arrOptions
-        );
+        if ('' !== $locale) {
+            $columns[] = $t.'.language=?';
+            $vars[] = $locale;
+        }
+
+        $arrOptions = array_merge([
+            'limit' => 1, 
+            'column' => $columns, 
+            'value' => $vars, 
+            'return' => 'Model',
+        ], $arrOptions);
 
         return static::find($arrOptions);
     }
