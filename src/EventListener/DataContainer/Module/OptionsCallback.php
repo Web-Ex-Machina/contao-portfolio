@@ -6,6 +6,7 @@ use Contao\Controller;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\Database;
 use Contao\DataContainer;
+use Contao\Model\Collection;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -66,7 +67,7 @@ class OptionsCallback
         }
 
         $objAttributes = PortfolioFeedAttribute::findItems($c);
-
+        
         if (!$objAttributes instanceof Collection) {
             return [];
         }
