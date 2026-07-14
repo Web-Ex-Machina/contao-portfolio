@@ -10,13 +10,18 @@ use Contao\CoreBundle\Routing\Content\ContentUrlResult;
 use Contao\PageModel;
 use Contao\System;
 use Terminal42\ChangeLanguage\PageFinder;
+use Symfony\Component\HttpFoundation\RequestStack;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
+use WEM\PortfolioBundle\Service\PortfolioService;
 
 class PortfolioResolver implements ContentUrlResolverInterface
 {
-    public function __construct(private readonly ContaoFramework $framework)
-    {
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        private readonly RequestStack $requestStack,
+        private readonly PortfolioService $service
+    ) {
     }
 
     public function resolve(object $content): ContentUrlResult|null
@@ -27,12 +32,10 @@ class PortfolioResolver implements ContentUrlResolverInterface
 
         $pageAdapter = $this->framework->getAdapter(PageModel::class);
         $archiveAdapter = $this->framework->getAdapter(PortfolioFeed::class);
-
-        $r = System::getContainer()->get('request_stack')->getCurrentRequest();
-        $lang = $r->getLocale();
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $objMaster = $pageAdapter->findById((int) $archiveAdapter->findById($content->pid)?->jumpTo);
-        $objTarget = (new PageFinder())->findAssociatedForLanguage($objMaster, $lang);
+        $objTarget = (new PageFinder())->findAssociatedForLanguage($objMaster, $locale);
 
         // Link to the default page
         return ContentUrlResult::resolve($objTarget);
@@ -44,10 +47,12 @@ class PortfolioResolver implements ContentUrlResolverInterface
             return [];
         }
 
+        $this->service->load($content);
+
         $params = \sprintf(
             '/category/%s/item/%s',
             $content->getRelated('pid')->alias,
-            $content->slug ?: $content->id,
+            $this->service->getField('slug') ?: $content->id,
         );
 
         return ['parameters' => $params];
