@@ -12,3 +12,4 @@ services:
     class: WEM\PortfolioBundle\Service\PortfolioService
     arguments:
       $contentUrlGenerator: '@contao.routing.content_url_generator'
+      $requestStack: '@request_stack'
