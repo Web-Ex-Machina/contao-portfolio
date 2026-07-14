@@ -122,6 +122,14 @@
                 <source>Manage item translations</source>
                 <target>Gérez les traductions de l'élément</target>
             </trans-unit>
+            <trans-unit id="tl_wem_portfolio.cssClass.0">
+                <source>CSS Classes</source>
+                <target>Classes CSS</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.cssClass.1">
+                <source>Add CSS classes to item</source>                
+                <target>Ajouter des classes CSS à l'élément</target>                
+            </trans-unit>
 
             <trans-unit id="tl_wem_portfolio.title_legend">
                 <source>Global informations</source>
@@ -142,6 +150,10 @@
             <trans-unit id="tl_wem_portfolio.media_legend">
                 <source>Media</source>
                 <target>Médias</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.design_legend">
+                <source>Design</source>
+                <target>Design</target>
             </trans-unit>
             <trans-unit id="tl_wem_portfolio.publish_legend">
                 <source>Publish settings</source>

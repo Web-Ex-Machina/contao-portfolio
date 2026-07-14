@@ -92,6 +92,12 @@
             <trans-unit id="tl_wem_portfolio.translations.1">
                 <source>Manage item translations</source>                
             </trans-unit>
+            <trans-unit id="tl_wem_portfolio.cssClass.0">
+                <source>CSS Classes</source>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.cssClass.1">
+                <source>Add CSS classes to item</source>                
+            </trans-unit>
 
             <trans-unit id="tl_wem_portfolio.title_legend">
                 <source>Global informations</source>                
@@ -107,6 +113,9 @@
             </trans-unit>
             <trans-unit id="tl_wem_portfolio.media_legend">
                 <source>Media</source>                
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio.design_legend">
+                <source>Design</source>
             </trans-unit>
             <trans-unit id="tl_wem_portfolio.publish_legend">
                 <source>Publish settings</source>                

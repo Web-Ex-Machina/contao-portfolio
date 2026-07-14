@@ -58,6 +58,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
             {source_legend},linkText,canonicalLink;
             {content_legend},teaser;
             {media_legend},singleSRC,size,floating,imagemargin,fullsize,overwriteMeta,pictures;
+            {design_legend},cssClass;
             {publish_legend},published,start,stop;
             {translations_legend},translations
         ',
@@ -290,6 +291,11 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio'] = [
         ],
         'linkText' => [
             'search' => true,
+            'inputType' => 'text',
+            'eval' => ['maxlength'=>255, 'decodeEntities'=>true, 'tl_class'=>'w50'],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'cssClass' => [
             'inputType' => 'text',
             'eval' => ['maxlength'=>255, 'decodeEntities'=>true, 'tl_class'=>'w50'],
             'sql' => "varchar(255) NOT NULL default ''"
