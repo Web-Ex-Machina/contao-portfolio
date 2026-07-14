@@ -18,25 +18,27 @@ use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Environment;
 use Contao\Input;
 use Contao\Module;
+use Exception;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioL10n;
+use WEM\PortfolioBundle\Service\PortfolioService;
 
 class GenerateBreadcrumbListener
 {
+    public function __construct(
+        private readonly PortfolioService $service
+    ) {
+    }
+
     #[AsHook('generateBreadcrumb', priority: 100)]
     public function onGenerateBreadcrumb(array $items, Module $module): array
     {
         // Check if we have an auto_item and if it's an Offer
         if (Input::get('item')) {
-
-            $objItem = Portfolio::findByIdOrSlug(Input::get('item'));
-
-            if (null === $objItem) {
-                $objItem = PortfolioL10n::findByIdOrSlug(Input::get('item'));
-
-                if (!$objItem) {
-                    return $items;
-                }
+            try {
+                $this->service->load(Input::get('item'));
+            } catch (Exception $e) {
+                return $items;
             }
 
             array_pop($items);
@@ -45,8 +47,8 @@ class GenerateBreadcrumbListener
                 'isRoot' => false,
                 'isActive' => true,
                 'href' => Environment::get('request'),
-                'title' => $objItem->title,
-                'link' => $objItem->title,
+                'title' => $this->service->getField('title'),
+                'link' => $this->service->getField('title'),
                 'class' => '',
             ];
         }
