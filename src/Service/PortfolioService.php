@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Service;
 
 use Contao\CoreBundle\Routing\ContentUrlGenerator;
-use Contao\System;
 use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use WEM\PortfolioBundle\Model\Portfolio;
+use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\PortfolioBundle\Model\PortfolioL10n;
 
 class PortfolioService
@@ -39,16 +39,11 @@ class PortfolioService
         // If the var is a L10n, load its parent
         if ($var instanceof PortfolioL10n) {
             $this->model = $var->getRelated('pid');
-            $this->loadTranslationFields($var);
+            $translation = $var;
         }
         // If it's a Portfolio, we won't load the translation now
         else if ($var instanceof Portfolio) {
             $this->model = $var;
-
-            if ($this->model->language !== $this->locale) {
-                $translation = PortfolioL10n::findByIdOrSlug($this->model->id, $this->locale);
-                $this->loadTranslationFields($translation);
-            }
         } 
         // If we did not load a model directly, we will have to guess
         // if we want a translation or a model
@@ -69,15 +64,23 @@ class PortfolioService
                 }
 
                 $this->model = $translation->getRelated('pid');
-                $this->loadTranslationFields($translation);
-            }            
+            }     
+        }
+
+        // Load translation if locale is different from Model
+        if ($this->model->language !== $this->locale) {
+            if (!$translation) {
+                $translation = PortfolioL10n::findByIdOrSlug($this->model->id, $this->locale);
+            }
+
+            $this->loadTranslationFields($translation);
         }
     }
 
     /**
      * Load the translated fields into current model
      * 
-     * @param PortfolioL10n 
+     * @param PortfolioL10n - $translation
      */
     public function loadTranslationFields(PortfolioL10n $translation): void
     {
@@ -99,7 +102,7 @@ class PortfolioService
      * Load a specific translation
      * for the current item
      * 
-     * @param string - Locale
+     * @param string $locale - Locale
      * 
      * @return PortfolioL10n
      */
@@ -154,9 +157,12 @@ class PortfolioService
         }
 
         // Try to retrieve a l10n entry for this pid and language
-        $translation = $this->getL10n($locale);
+        $data = [];
+        foreach ($this->model->row() as $key => $value) {
+            $data[$key] = $this->getField($key);
+        }
 
-        return $translation->{$field};
+        return $data;
     }
 
     /**
