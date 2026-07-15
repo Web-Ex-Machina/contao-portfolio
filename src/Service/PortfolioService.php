@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace WEM\PortfolioBundle\Service;
 
 use Contao\CoreBundle\Routing\ContentUrlGenerator;
+use Contao\Controller;
 use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
+use WEM\PortfolioBundle\Model\PortfolioFeedAttributeL10n;
 use WEM\PortfolioBundle\Model\PortfolioL10n;
 
 class PortfolioService
@@ -22,6 +24,9 @@ class PortfolioService
         private readonly RequestStack $requestStack,
     ) {
         $this->locale = $this->requestStack->getCurrentRequest()->getLocale();
+
+        Controller::loadDataContainer('tl_wem_portfolio');
+        Controller::loadDataContainer('tl_wem_portfolio_l10n');
     }
 
     /**
@@ -128,9 +133,16 @@ class PortfolioService
      * 
      * @param string - Attribute to retrieve
      * @param string - Locale
+     * 
+     * @return mixed
      */
     public function getField(string $field, ?string $locale = null): mixed
     {
+        // If the field is an attribute
+        if ($this->isAttribute($field)) {
+            dump($this->getAttributeConfig($field));
+        }
+
         // If we have no locale or the current one is the same
         // return current model field
         if (!$locale || $locale === $this->locale) {
@@ -147,15 +159,11 @@ class PortfolioService
      * Get item fields
      * 
      * @param string - Locale
+     * 
+     * @return array
      */
-    public function getFields(?string $locale = null): mixed
+    public function getFields(?string $locale = null): array
     {
-        // If we have no locale or the current one is the same
-        // return current model field
-        if (!$locale || $locale === $this->locale) {
-            return $this->model->row();
-        }
-
         // Try to retrieve a l10n entry for this pid and language
         $data = [];
         foreach ($this->model->row() as $key => $value) {
@@ -180,5 +188,66 @@ class PortfolioService
             $params, 
             $format,
         );
+    }
+
+    /**
+     * Return true if field is an attribute
+     * 
+     * @param string $field - The field to check
+     * 
+     * @return bool
+     */
+    private function isAttribute(string $field): bool
+    {
+        $dc = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'];
+
+        return
+            array_key_exists($field, $dc)
+            && array_key_exists('eval', $dc[$field])
+            && array_key_exists('wemIsAttribute', $dc[$field]['eval'])
+            && true === $dc[$field]['eval']['wemIsAttribute']
+        ;
+    }
+
+    /**
+     * Return attribute config
+     * 
+     * @param string $field - The field to check
+     *
+     * @return PortfolioFeedAttribute
+     */
+    private function getAttributeConfig(string $field): PortfolioFeedAttribute
+    {
+        if (!$this->isAttribute($field)) {
+            throw new Exception(sprintf('Field %s is not an attribute', $field));
+        }
+
+        $dc = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'];
+
+        if (
+            !array_key_exists($field, $dc)
+            || !array_key_exists('eval', $dc[$field])
+            || !array_key_exists('wemAttributeConfig', $dc[$field]['eval'])
+        ) {
+            throw new Exception(sprintf('Field %s is an attribute with no wemAttributeConfig parameter', $field));
+        }
+
+        $config = $dc[$field]['eval']['wemAttributeConfig'];
+        $objConfig = PortfolioFeedAttribute::findById($config);
+
+        if (!$objConfig) {
+            throw new Exception(sprintf('Cannot retrieve the config ID %s for field %s', $config, $field));
+        }
+
+        // Get translations
+        $objL10n = PortfolioFeedAttributeL10n::findItems(['language' => $this->locale, 'pid' => $objConfig->id], 1);
+
+        if ($objL10n) {
+            foreach ($objL10n->row() as $col => $value) {
+                $objConfig->{$col} = $value;
+            }
+        }
+
+        return $objConfig;
     }
 }
