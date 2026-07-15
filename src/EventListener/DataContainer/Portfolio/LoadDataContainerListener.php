@@ -46,7 +46,6 @@ class LoadDataContainerListener
                 }
 
                 while ($objAttributes->next()) {
-
                     $field = $this->parseDcaAttribute($objAttributes->row(), $objAttributes->current(), $strTable);
 
                     if ('tl_wem_portfolio' === $strTable) {
@@ -68,7 +67,7 @@ class LoadDataContainerListener
             'label' => [0 => $model->getL10nLabel('label') ?: $row['name']],
             'name' => $row['name'],
             'inputType' => $row['type'],
-            'eval' => [],
+            'eval' => ['wemIsAttribute' => true, 'wemAttributeConfig' => $model->id],
             'sql' => ['name' => $row['name']],
         ];
 
