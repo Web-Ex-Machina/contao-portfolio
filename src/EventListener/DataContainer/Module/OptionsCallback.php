@@ -48,7 +48,7 @@ class OptionsCallback
         $fields = [];
 
         foreach ($GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'] as $k => $v) {
-            if (!empty($v['eval']) && array_key_exists('isFilter', $v['eval']) && true === $v['eval']['isFilter']) {
+            if (!empty($v['eval']) && array_key_exists('wemIsFilter', $v['eval']) && true === $v['eval']['wemIsFilter']) {
                 $fields[$k] = \sprintf('%s (%s)', $v['label'][0] ?: $k, $k);
             }
         }

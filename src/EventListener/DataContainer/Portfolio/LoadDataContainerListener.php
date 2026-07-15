@@ -85,7 +85,7 @@ class LoadDataContainerListener
 
         // Available for filters settings
         if ($row['isFilter']) {
-            $data['eval']['isFilter'] = true;
+            $data['eval']['wemIsFilter'] = true;
         }
 
         // Mandatory settings
