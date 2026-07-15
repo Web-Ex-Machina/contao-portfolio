@@ -41,22 +41,6 @@
         <source>Please select the constraints to apply</source>
         <target>Sélectionner les contraintes à appliquer</target>
       </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_displayAttributes.0">
-        <source>Display attributes</source>
-        <target>Afficher les attributs</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_displayAttributes.1">
-        <source>Check to display attributes</source>
-        <target>Cocher pour afficher des attributs</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_attributes.0">
-        <source>Attributes to display</source>
-        <target>Attributs à afficher</target>
-      </trans-unit>
-      <trans-unit id="tl_module.wem_portfolio_attributes.1">
-        <source>Please select the attributes to display</source>
-        <target>Sélectionner les attributs à afficher</target>
-      </trans-unit>
       <trans-unit id="tl_module.wem_portfolio_template.0">
         <source>Items template</source>
         <target>Modèle des éléments</target>

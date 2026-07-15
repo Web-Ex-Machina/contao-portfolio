@@ -7,10 +7,10 @@
       <?php endif; ?>
     </div>
     <div class="block-card__content flex-justifycontent--center-alignitems--center txt-center">
-      <div class="block-card__title h2"> <?php echo $this->title ?> </div>
+      <div class="block-card__title h2"> <?= $this->title ?> </div>
       <?php if ($this->text): ?>
         <div class="block-card__text" itemprop="description">
-          <?php echo strip_tags($this->text) ?>
+          <?= $this->text ?>
         </div>
       <?php endif ?>
     </div>

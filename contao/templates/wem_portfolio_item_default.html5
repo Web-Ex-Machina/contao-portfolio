@@ -7,22 +7,11 @@
       <?php endif; ?>
     </div>
     <div class="block-card__content flex-justifycontent--center-alignitems--center gap-1-em ">
-      <div class="block-card__title h2 txt-center"> <?php echo $this->title ?> </div>
-      <?php if ($this->teaser || $this->attributes): ?>
+      <div class="block-card__title h2 txt-center"> <?= $this->title ?> </div>
+      <?php if ($this->teaser): ?>
         <div class="block-card__text" itemprop="description">
-          <?php if($this->attributes): ?>
-          <div class="block-card__attributes">
-            <?php foreach($this->attributes as $key => $attr): ?>
-            <div class="block-card__attribute <?= $key ?> flex gap-1-em">
-              <span class="block-card__attribute__label"><?= $attr['label'] ?> :</span>
-              <span class="block-card__attribute__value "><?= $attr['human_readable_value'] ?></span>
-            </div>
-            <?php endforeach ?>
-          </div>
-          <?php endif ?>
-
           <?php if($this->teaser): ?>
-          <?php echo strip_tags($this->teaser) ?>
+          <?= $this->teaser ?>
           <?php endif ?>
         </div>
       <?php endif ?>

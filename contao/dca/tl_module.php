@@ -20,7 +20,6 @@ use WEM\PortfolioBundle\DataContainer\ModuleContainer;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'wem_portfolio_addFilters';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'wem_portfolio_addConstraints';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'wem_portfolio_displayAttributes';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_filters'] = '
     {title_legend},name,headline,type;
@@ -33,7 +32,6 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
     {config_legend},wem_portfolio_feeds,wem_portfolio_sort,numberOfItems,perPage,skipFirst;
     {filters_legend},wem_portfolio_addFilters;
     {constraints_legend},wem_portfolio_addConstraints;
-    {attributes_legend},wem_portfolio_displayAttributes;
     {template_legend:hide},wem_portfolio_template,customTpl;
     {image_legend:hide},imgSize;
     {protected_legend:hide},protected;
@@ -41,7 +39,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
 ';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '
     {title_legend},name,headline,type;
-    {config_legend},wem_portfolio_feeds,wem_portfolio_displayAttributes,overviewPage,customLabel;
+    {config_legend},wem_portfolio_feeds,overviewPage,customLabel;
     {template_legend:hide},wem_portfolio_template,customTpl;
     {image_legend:hide},imgSize;
     {protected_legend:hide},protected;
@@ -50,7 +48,6 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '
 
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['wem_portfolio_addFilters'] = 'wem_portfolio_filters_module';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['wem_portfolio_addConstraints'] = 'wem_portfolio_constraints';
-$GLOBALS['TL_DCA']['tl_module']['subpalettes']['wem_portfolio_displayAttributes'] = 'wem_portfolio_attributes';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_feeds'] = [
     'exclude' => true,
@@ -99,18 +96,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_template'] = [
     'inputType' => 'select',
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(64) NOT NULL default 'wem_portfolio_item_default'",
-];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_displayAttributes'] = [
-    'exclude' => true,
-    'inputType' => 'checkbox',
-    'eval' => ['doNotCopy' => true, 'tl_class' => 'clr', 'submitOnChange' => true],
-    'sql' => "char(1) NOT NULL default ''",
-];
-$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_attributes'] = [
-    'exclude' => true,
-    'inputType' => 'select',
-    'eval' => ['chosen' => true, 'multiple' => true, 'mandatory' => true, 'tl_class' => 'w50'],
-    'sql' => 'blob NULL',
 ];
 $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_filters_module'] = [
     'exclude' => true,

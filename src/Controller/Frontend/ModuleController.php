@@ -77,27 +77,31 @@ abstract class ModuleController extends AbstractFrontendModuleController
      */
     protected function parsePortfolio(Portfolio $objItem, bool $blnAddArchive = false, string $strClass = '', int $intCount = 0): string
     {
-        $objTemplate = new FrontendTemplate($this->model->wem_portfolio_template);
-
         $this->service->load($objItem);
 
-
-        $objTemplate->setData($objItem->row());
-
-        $objTemplate->title = $objItem->getL10nLabel('title');
+        $objTemplate = new FrontendTemplate($this->model->wem_portfolio_template);
+        $objTemplate->setData($this->service->getFields());
 
         if ('' !== $objItem->cssClass) {
             $strClass = ' '.$objItem->cssClass.$strClass;
         }
 
-        $objTemplate->model = $objItem;
         $objTemplate->class = $strClass;
-        $objTemplate->count = $intCount; // see #5708
+        $objTemplate->count = $intCount;
 
         // Add the meta information
         $objTemplate->date = (int) $objItem->date;
         $objTemplate->timestamp = $objItem->date;
-        $objTemplate->datetime = date('Y-m-d\TH:i:sP', (int) $objItem->date);
+        $objTemplate->datetime = date('c', (int) $objItem->date);
+
+        // Retrieve item teaser
+        if ($objItem->teaser) {
+            $objTemplate->hasTeaser = true;
+            $objTemplate->teaser = strip_tags($this->service->getField('teaser'));
+        }
+
+        // Parse the URL if we have a jumpTo configured
+        $objTemplate->jumpTo = $this->service->getUrl();
 
         // Add an image
         if ($objItem->singleSRC) {
@@ -184,11 +188,7 @@ abstract class ModuleController extends AbstractFrontendModuleController
             $objTemplate->pictures = $images;
         }
 
-        // Retrieve item teaser
-        if ($objItem->teaser) {
-            $objTemplate->hasTeaser = true;
-            $objTemplate->teaser = StringUtil::encodeEmail($objItem->getL10nLabel('teaser'));
-        }
+        
 
         // Retrieve item content
         if ($objItem->content_b64) {
@@ -211,18 +211,9 @@ abstract class ModuleController extends AbstractFrontendModuleController
             $objTemplate->hasText = static fn (): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
         }
 
-        // Retrieve item attributes
-        $objTemplate->blnDisplayAttributes = (bool) $this->model->wem_portfolio_displayAttributes;
-        if ((bool) $this->model->wem_portfolio_displayAttributes && null !== $this->model->wem_portfolio_attributes) {
-            if ($objItem->attributes) {
-                $objTemplate->attributes = $objItem->attributes;
-            } else {
-                $objTemplate->attributes = $objItem->getAttributesFull(StringUtil::deserialize($this->model->wem_portfolio_attributes));
-            }
-        }
+        
 
-        // Parse the URL if we have a jumpTo configured
-        $objTemplate->jumpTo = $this->service->getUrl();
+        
 
         return $objTemplate->parse();
     }
