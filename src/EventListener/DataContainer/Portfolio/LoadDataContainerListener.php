@@ -83,11 +83,6 @@ class LoadDataContainerListener
             $data['sql']['length'] = (int) $row['maxlength'];
         }
 
-        // Available for alerts settings
-        if (array_key_exists('isAlertCondition', $row) && $row['isAlertCondition']) {
-            $data['eval']['isAlertCondition'] = true;
-        }
-
         // Available for filters settings
         if ($row['isFilter']) {
             $data['eval']['isFilter'] = true;
