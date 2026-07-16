@@ -35,7 +35,12 @@ class PortfolioResolver implements ContentUrlResolverInterface
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $objMaster = $pageAdapter->findById((int) $archiveAdapter->findById($content->pid)?->jumpTo);
-        $objTarget = (new PageFinder())->findAssociatedForLanguage($objMaster, $locale);
+        
+        if ($objMaster) {
+            $objTarget = (new PageFinder())->findAssociatedForLanguage($objMaster, $lang);
+        } else {
+            $objTarget = $objMaster;
+        }
 
         // Link to the default page
         return ContentUrlResult::resolve($objTarget);
