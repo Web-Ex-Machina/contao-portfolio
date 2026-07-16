@@ -19,9 +19,15 @@ use Contao\Input;
 use Terminal42\ChangeLanguage\Event\ChangelanguageNavigationEvent;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioL10n;
+use WEM\PortfolioBundle\Service\PortfolioService;
 
 class ChangeLanguageNavigationListener
 {
+    public function __construct(
+        private readonly PortfolioService $service
+    ) {
+    }
+
     #[AsHook('changelanguageNavigation', priority: 100)]
     public function onChangelanguageNavigation(ChangelanguageNavigationEvent $event): void
     {
@@ -33,20 +39,11 @@ class ChangeLanguageNavigationListener
         $targetRoot = $event->getNavigationItem()->getRootPage();
         $language = $targetRoot->rootLanguage; // The target language
 
-        $objPortfolio = Portfolio::findByIdOrSlug(Input::get('item'));
+        $this->service->load(Input::get('item'));
 
-        if (null === $objPortfolio) {
-            $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('item'));
-
-            if (!$objL10nItem) {
-                return;
-            }
-
-            $objPortfolio = $objL10nItem->getRelated('pid');
-        }
-
-        if ($objPortfolio) {
-            $event->getUrlParameterBag()->setUrlAttribute('item', $objPortfolio->getL10nLabel('slug', $language));
-        }
+        $event->getUrlParameterBag()->setUrlAttribute(
+            'item', 
+            $this->service->getField('slug', $language)
+        );
     }
 }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Service;
 
+use Contao\CoreBundle\Filesystem\FilesystemItem;
+use Contao\CoreBundle\Filesystem\FilesystemItemIterator;
+use Contao\CoreBundle\Filesystem\FilesystemUtil;
 use Contao\CoreBundle\Routing\ContentUrlGenerator;
 use Contao\Controller;
 use Contao\FilesModel;
@@ -55,32 +58,27 @@ class PortfolioService
         else if ($var instanceof Portfolio) {
             $this->model = $var;
         } 
-        // If we did not load a model directly, we will have to guess
-        // if we want a translation or a model
+        // If we did not load a model directly, we will find a translation with the right ID / Slug
         else {
-            $this->model = Portfolio::findByIdOrSlug($var);
+            $translation = PortfolioL10n::findByIdOrSlug($var);
 
-            if (!$this->model) {
-                $translation = PortfolioL10n::findByIdOrSlug($var);
-
-                if (!$translation) {
-                    throw new Exception(
-                        \sprintf(
-                            "%s (%s) is not a Portfolio nor a Translation", 
-                            $var,
-                            $this->locale,
-                        )
-                    );
-                }
-
-                $this->model = $translation->getRelated('pid');
-            }     
+            if (!$translation) {
+                throw new Exception(
+                    \sprintf(
+                        "%s (%s) is not a Portfolio nor a Translation", 
+                        $var,
+                        $this->locale,
+                    )
+                );
+            }
+                
+            $this->model = $translation->getRelated('pid');
         }
 
         // Load translation if locale is different from Model
         if ($this->model->language !== $this->locale) {
             if (!$translation) {
-                $translation = PortfolioL10n::findByIdOrSlug($this->model->id, $this->locale);
+                $translation = PortfolioL10n::findTranslation($this->model->id, $this->locale);
             }
 
             $this->loadTranslationFields($translation);
@@ -118,7 +116,7 @@ class PortfolioService
      */
     public function getTranslation(string $locale): PortfolioL10n
     {
-        $translation = PortfolioL10n::findByIdOrSlug($this->model->id, $locale);
+        $translation = PortfolioL10n::findTranslation($this->model->id, $locale);
 
         if (!$translation) {
             throw new Exception(
@@ -305,72 +303,7 @@ class PortfolioService
                 return $this->model->getRelated($objAttr->name);
 
             case 'fileTree':
-                $figureBuilder = System::getContainer()
-                    ->get('contao.image.studio')
-                    ->createFigureBuilder()
-                    ->setSize($this->model->size)
-                    ->setLightboxGroupIdentifier('lb'.$this->model->id)
-                    ->enableLightbox((bool) $this->model->fullsize)
-                ;
-
-                if ($objAttr->multiple) {
-                    $objFiles = FilesModel::findMultipleByUuids(StringUtil::deserialize($this->model->{$objAttr->name}));
-
-                    if (!$objFiles) {
-                        return null;
-                    }
-
-                    $arrFiles = [];
-                    while ($objFiles->next()) {
-                        $figure = $figureBuilder
-                            ->fromPath($objFiles->path)
-                            ->build()
-                        ;
-
-                        $data = $figure->getLegacyTemplateData() ?: null;
-
-                        if (null === $data) {
-                            continue;
-                        }
-
-                        if ($forApi && is_array($data)) {
-                            $data['picture']['img']['srcset'] = Environment::get('base') . $data['picture']['img']['srcset'];
-                            $data['picture']['img']['src'] = Environment::get('base') . $data['picture']['img']['src'];
-                            $data['singleSRC'] = Environment::get('base') . $data['singleSRC'];
-                            $data['src'] = Environment::get('base') . $data['src'];
-                        }
-
-                        $arrFiles[] = $data;
-                    }
-
-                    return $arrFiles ?: null;
-                }
-
-                $data = $this->model->{$objAttr->name};
-
-                if (!is_array($data)) {
-                    $objFile = FilesModel::findByUuid($data);
-
-                    if (!$objFile) {
-                        return null;
-                    }
-
-                    $figure = $figureBuilder
-                        ->fromPath($objFile->path)
-                        ->build()
-                    ;
-
-                    $data = $figure->getLegacyTemplateData() ?: null;
-                }
-
-                if ($forApi && is_array($data)) {
-                    $data['picture']['img']['srcset'] = Environment::get('base') . $data['picture']['img']['srcset'];
-                    $data['picture']['img']['src'] = Environment::get('base') . $data['picture']['img']['src'];
-                    $data['singleSRC'] = Environment::get('base') . $data['singleSRC'];
-                    $data['src'] = Environment::get('base') . $data['src'];
-                }
-                
-                return $data;
+                return $this->getFilesFromSources($this->model->{$objAttr->name} ?: '', $objAttr);
 
             case 'listWizard':
                 $varValue = StringUtil::deserialize($this->model->{$objAttr->name});
@@ -388,5 +321,31 @@ class PortfolioService
             default:
                 return $this->model->{$objAttr->name};
         }
+    }
+
+    private function getFilesFromSources(string $sources, PortfolioFeedAttribute $config): array
+    {
+        if ($config->multiple) {
+            $sources = StringUtil::deserialize($sources);
+        } else {
+            $sources = [$sources];
+        }
+
+        $data = [];
+
+        $filesStorage = System::getContainer()->get('contao.filesystem.virtual.files');
+        $filesystemItems = FilesystemUtil::listContentsFromSerialized($filesStorage, $sources);
+
+        return $this->compileFiles($filesystemItems);
+    }
+
+    private function compileFiles(FilesystemItemIterator $filesystemItems): array
+    {
+        return array_map(
+            fn (FilesystemItem $filesystemItem): array => [
+                'file' => $filesystemItem,
+            ],
+            iterator_to_array($filesystemItems),
+        );
     }
 }
