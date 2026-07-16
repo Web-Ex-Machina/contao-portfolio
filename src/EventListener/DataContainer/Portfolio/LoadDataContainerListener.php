@@ -208,12 +208,14 @@ class LoadDataContainerListener
                 break;
 
             case 'fileTree':
+                $data['eval']['files'] = true;
+                
                 // filesOnly settings
                 if ($row['filesOnly']) {
                     $data['eval']['filesOnly'] = true;
                 }
 
-                // extensions settings
+                // fieldType settings
                 if ($row['fieldType']) {
                     $data['eval']['fieldType'] = $row['fieldType'];
                 }
