@@ -150,11 +150,6 @@ class PortfolioService
         if (!$locale || $locale === $this->locale) {
             return $this->model->{$field};
         }
-
-        // Try to retrieve a l10n entry for this pid and language
-        $translation = $this->getL10n($locale);
-
-        return $translation->{$field};
     }
 
     /**
