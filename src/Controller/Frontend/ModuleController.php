@@ -101,7 +101,9 @@ abstract class ModuleController extends AbstractFrontendModuleController
         }
 
         // Parse the URL if we have a jumpTo configured
-        $objTemplate->jumpTo = $this->service->getUrl();
+        if ($objItem->getRelated('pid')->jumpTo) {
+            $objTemplate->jumpTo = $this->service->getUrl();
+        }
 
         // Add an image
         if ($objItem->singleSRC) {
