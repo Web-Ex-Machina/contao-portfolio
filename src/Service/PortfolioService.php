@@ -46,7 +46,7 @@ class PortfolioService
         if (null !== $locale) {
             $this->locale = $locale;
         }
-
+        
         $translation = null;
 
         // If the var is a L10n, load its parent

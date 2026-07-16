@@ -19,6 +19,7 @@ use Contao\Environment;
 use Contao\Input;
 use Contao\Module;
 use Exception;
+use Symfony\Component\HttpFoundation\RequestStack;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\PortfolioBundle\Service\PortfolioService;
@@ -26,7 +27,8 @@ use WEM\PortfolioBundle\Service\PortfolioService;
 class GenerateBreadcrumbListener
 {
     public function __construct(
-        private readonly PortfolioService $service
+        private readonly RequestStack $requestStack,
+        private readonly PortfolioService $service,
     ) {
     }
 
@@ -36,7 +38,10 @@ class GenerateBreadcrumbListener
         // Check if we have an auto_item and if it's an Offer
         if (Input::get('item')) {
             try {
-                $this->service->load(Input::get('item'));
+                $this->service->load(
+                    Input::get('item'), 
+                    $this->requestStack->getCurrentRequest()->getLocale()
+                );
             } catch (Exception $e) {
                 return $items;
             }
