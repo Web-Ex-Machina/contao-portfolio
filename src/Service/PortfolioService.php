@@ -192,6 +192,27 @@ class PortfolioService
     }
 
     /**
+     * Get DCA Config
+     * 
+     * @param string $field - field name
+     * 
+     * @return array
+     */
+    public function getDCA(string $field): array
+    {
+        if (!array_key_exists($field, $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'])) {
+            throw new Exception(
+                \sprintf(
+                    "Field config cannot be loaded for %s", 
+                    $field,
+                )
+            );
+        }
+
+        return $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$field];
+    }
+
+    /**
      * Return true if field is an attribute
      * 
      * @param string $field - The field to check
