@@ -6,6 +6,9 @@ namespace WEM\PortfolioBundle\Service;
 
 use Contao\CoreBundle\Routing\ContentUrlGenerator;
 use Contao\Controller;
+use Contao\FilesModel;
+use Contao\StringUtil;
+use Contao\System;
 use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -55,10 +58,10 @@ class PortfolioService
         // If we did not load a model directly, we will have to guess
         // if we want a translation or a model
         else {
-            $this->model = Portfolio::findByIdOrSlug($var, $this->locale);
+            $this->model = Portfolio::findByIdOrSlug($var);
 
             if (!$this->model) {
-                $translation = PortfolioL10n::findByIdOrSlug($var, $this->locale);
+                $translation = PortfolioL10n::findByIdOrSlug($var);
 
                 if (!$translation) {
                     throw new Exception(
@@ -113,7 +116,7 @@ class PortfolioService
      * 
      * @return PortfolioL10n
      */
-    public function getL10n(string $locale): PortfolioL10n
+    public function getTranslation(string $locale): PortfolioL10n
     {
         $translation = PortfolioL10n::findByIdOrSlug($this->model->id, $locale);
 
@@ -140,16 +143,19 @@ class PortfolioService
      */
     public function getField(string $field, ?string $locale = null): mixed
     {
-        // If the field is an attribute
-        if ($this->isAttribute($field)) {
-            dump($this->getAttributeConfig($field));
+        if (null !== $locale && $locale !== $this->locale) {
+            $translation = $this->getTranslation($locale);
+            $this->loadTranslationFields($translation);
+            $this->locale = $locale;
         }
 
-        // If we have no locale or the current one is the same
-        // return current model field
-        if (!$locale || $locale === $this->locale) {
-            return $this->model->{$field};
+        // If the field is an attribute
+        if ($this->isAttribute($field)) {
+            return $this->getAttributeValue($field);
         }
+
+        // Else, return the model field
+        return $this->model->{$field};
     }
 
     /**
@@ -164,7 +170,7 @@ class PortfolioService
         // Try to retrieve a l10n entry for this pid and language
         $data = [];
         foreach ($this->model->row() as $key => $value) {
-            $data[$key] = $this->getField($key);
+            $data[$key] = $this->getField($key, $locale);
         }
 
         return $data;
@@ -246,5 +252,141 @@ class PortfolioService
         }
 
         return $objConfig;
+    }
+
+    /**
+     * Return a field value
+     *
+     * @param string      $field
+     *
+     * @throws \Exception
+     *
+     * @return array|Collection|mixed|string|Portfolio|null
+     */
+    private function getAttributeValue(string $field, bool $forApi = false)
+    {
+        // Retrieve attribute config
+        $objAttr = $this->getAttributeConfig($field);
+
+        switch ($objAttr->type) {
+            case 'select':
+                $return = null;
+                $arrArticleData = $this->model->row();
+                $options = StringUtil::deserialize($objAttr->options ?? []);
+
+                if ($objAttr->translatable) {
+                    $objL10n = PortfolioFeedAttributeL10n::findItems(['language' => $this->locale, 'pid' => $objAttr->id], 1);
+
+                    if (null !== $objL10n) {
+                        $options = StringUtil::deserialize($objL10n->options ?? []);
+                    }
+                }
+
+                if ($objAttr->multiple) {
+                    $arrArticleData[$objAttr->name] = StringUtil::deserialize($arrArticleData[$objAttr->name]);
+                    $return = [];
+                }
+
+                foreach ($options as $option) {
+                    if ($objAttr->multiple && \is_array($arrArticleData[$objAttr->name]) && \in_array($option['value'], $arrArticleData[$objAttr->name], true)) {
+                        $return[] = $option['label'];
+                    } elseif (!$objAttr->multiple && $option['value'] === $arrArticleData[$objAttr->name]) {
+                        $return = $option['label'];
+                    }
+                }
+
+                if ($objAttr->multiple) {
+                    $return = implode(', ', $return);
+                }
+
+                return $return;
+
+            case 'picker':
+                return $this->model->getRelated($objAttr->name);
+
+            case 'fileTree':
+                $figureBuilder = System::getContainer()
+                    ->get('contao.image.studio')
+                    ->createFigureBuilder()
+                    ->setSize($this->model->size)
+                    ->setLightboxGroupIdentifier('lb'.$this->model->id)
+                    ->enableLightbox((bool) $this->model->fullsize)
+                ;
+
+                if ($objAttr->multiple) {
+                    $objFiles = FilesModel::findMultipleByUuids(StringUtil::deserialize($this->model->{$objAttr->name}));
+
+                    if (!$objFiles) {
+                        return null;
+                    }
+
+                    $arrFiles = [];
+                    while ($objFiles->next()) {
+                        $figure = $figureBuilder
+                            ->fromPath($objFiles->path)
+                            ->build()
+                        ;
+
+                        $data = $figure->getLegacyTemplateData() ?: null;
+
+                        if (null === $data) {
+                            continue;
+                        }
+
+                        if ($forApi && is_array($data)) {
+                            $data['picture']['img']['srcset'] = Environment::get('base') . $data['picture']['img']['srcset'];
+                            $data['picture']['img']['src'] = Environment::get('base') . $data['picture']['img']['src'];
+                            $data['singleSRC'] = Environment::get('base') . $data['singleSRC'];
+                            $data['src'] = Environment::get('base') . $data['src'];
+                        }
+
+                        $arrFiles[] = $data;
+                    }
+
+                    return $arrFiles ?: null;
+                }
+
+                $data = $this->model->{$objAttr->name};
+
+                if (!is_array($data)) {
+                    $objFile = FilesModel::findByUuid($data);
+
+                    if (!$objFile) {
+                        return null;
+                    }
+
+                    $figure = $figureBuilder
+                        ->fromPath($objFile->path)
+                        ->build()
+                    ;
+
+                    $data = $figure->getLegacyTemplateData() ?: null;
+                }
+
+                if ($forApi && is_array($data)) {
+                    $data['picture']['img']['srcset'] = Environment::get('base') . $data['picture']['img']['srcset'];
+                    $data['picture']['img']['src'] = Environment::get('base') . $data['picture']['img']['src'];
+                    $data['singleSRC'] = Environment::get('base') . $data['singleSRC'];
+                    $data['src'] = Environment::get('base') . $data['src'];
+                }
+                
+                return $data;
+
+            case 'listWizard':
+                $varValue = StringUtil::deserialize($this->model->{$objAttr->name});
+
+                if (!$varValue) {
+                    return '';
+                }
+
+                if (is_array($varValue)) {
+                    return implode(', ', $varValue);
+                }
+
+                return $varValue;
+
+            default:
+                return $this->model->{$objAttr->name};
+        }
     }
 }
