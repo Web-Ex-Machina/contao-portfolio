@@ -69,4 +69,15 @@ class PortfolioL10n extends Model
 
         return static::find($arrOptions);
     }
+
+    public static function findTranslation(int $pid, string $locale): ?PortfolioL10n
+    {
+        $objL10n = PortfolioL10n::findItems(['language' => $locale, 'pid' => $pid], 1);
+        
+        if (!$objL10n) {
+            return null;
+        }
+
+        return $objL10n->current();
+    }
 }
