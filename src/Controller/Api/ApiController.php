@@ -24,32 +24,32 @@ use Contao\Model\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Uid\Uuid;
-use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
+use WEM\PortfolioBundle\Service\PortfolioService;
 use WEM\UtilsBundle\Classes\Encryption;
 use WEM\UtilsBundle\Classes\StringUtil;
 
-/**
- * @Route("/api/portfolio", defaults={"_scope" = "frontend", "_token_check" = false})
- *
- * @ServiceTag("controller.service_arguments")
- */
+#[Route(
+    '/api/portfolio',
+    name: 'wem_api_portfolio',
+    defaults: ['_scope' => 'frontend', '_token_check' => false]
+)]
+#[AsController]
 class ApiController
 {
-    private ContaoFramework $framework;
-
-    private Encryption $encryption;
-
     private ?string $apiKey;
 
-    public function __construct(ContaoFramework $framework, Encryption $encryption)
-    {
-        $this->encryption = $encryption;
-        $this->framework = $framework;
+    public function __construct(
+        private readonly ContaoFramework $framework, 
+        private readonly Encryption $encryption,
+        private readonly PortfolioService $service,
+    ) {
         $this->framework->initialize();
         $this->apiKey = null;
 
@@ -58,17 +58,17 @@ class ApiController
         }
     }
 
-    /**
-     * @Route("/")
-     */
+    #[Route("/")]
     public function view(Request $request): Response
     {
         return new Response('Hello World!');
     }
 
-    /**
-     * @Route("/doc", methods={"GET"})
-     */
+    #[Route(
+        '/doc',
+        name: 'doc',
+        methods: ['GET']
+    )]
     public function doc(Request $request): JsonResponse
     {
         $infos1 = [
@@ -87,25 +87,34 @@ class ApiController
         return new JsonResponse(['data' => [$infos1, $infos2, $infos3]]);
     }
 
-    /**
-     * @Route("/items/{page}/{limit}", requirements={"page"="\d+","limit"="\d+"}), methods={"GET"})
-     */
+    #[Route(
+        '/items/{page}/{limit}',
+        name: 'viewPortfolioList',
+        requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS],
+        methods: ['GET']
+    )]
     public function viewPortfolioList(Request $request, int $page, int $limit, array $pid = []): JsonResponse
     {
         return $this->getList($request, $page, $limit, 0, null, $pid);
     }
 
-    /**
-     * @Route("/items/{page}/{limit}/{offset}", requirements={"page"="\d+","limit"="\d+","offset"="\d+"}), methods={"GET"})
-     */
+    #[Route(
+        '/items/{page}/{limit}/{offset}',
+        name: 'viewPortfolioListWithOffset',
+        requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS, 'offset' => Requirement::DIGITS],
+        methods: ['GET']
+    )]
     public function viewPortfolioListWithOffset(Request $request, int $page, int $limit, int $offset, array $pid = []): JsonResponse
     {
         return $this->getList($request, $page, $limit, $offset, null, $pid);
     }
 
-    /**
-     * @Route("/items/{page}/{limit}/{offset}/{order}", requirements={"page"="\d+","limit"="\d+","offset"="\d+"}), methods={"GET"})
-     */
+    #[Route(
+        '/items/{page}/{limit}/{offset}/{order}',
+        name: 'viewPortfolioListWithOffsetAndOrder',
+        requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS, 'offset' => Requirement::DIGITS, 'order' => Requirement::ASCII_SLUG],
+        methods: ['GET']
+    )]
     public function viewPortfolioListWithOffsetAndOrder(Request $request, int $page, int $limit, int $offset, string $order, array $pid = []): JsonResponse
     {
         return $this->getList($request, $page, $limit, $offset, $order, $pid);
@@ -131,7 +140,7 @@ class ApiController
         }
 
         $params = $request->query->all();
-        $lang = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
+        $locale = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
 
         if (!is_iterable($params['pid'])) {
             return new JsonResponse('{"error":"Give at least one category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
@@ -156,7 +165,7 @@ class ApiController
                     continue;
                 }
 
-                $items[$item->id] = $this->prepareItem($item, $lang);
+                $items[$item->id] = $this->prepareItem($item, $locale);
             }
 
             return new JsonResponse($items, Response::HTTP_OK);
@@ -176,7 +185,7 @@ class ApiController
         }
 
         $params = $request->query->all();
-        $lang = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
+        $locale = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
 
         if (!is_iterable($params['pid'])) {
             return new JsonResponse('{"error":"Give at least one category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
@@ -208,11 +217,11 @@ class ApiController
             }
         }
 
-        $lang = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
+        $locale = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
 
         if ($objItem instanceof Portfolio) {
             if ($objItem->published) {
-                $return = $this->prepareItem($objItem, $lang, true);
+                $return = $this->prepareItem($objItem, $locale);
 
                 return new JsonResponse($return, Response::HTTP_OK);
             }
@@ -223,15 +232,26 @@ class ApiController
         return new JsonResponse('{"error":"404 : Item not found"}', Response::HTTP_NOT_FOUND, [], true);
     }
 
-    protected function prepareItem(Portfolio $item, string $lang = null, bool $getContent = false): array
+    protected function prepareItem(Portfolio $item, string $locale = null): ?array
     {
+        // Return null if the item is not published
+        if ('' === $item->published) {
+            return null;
+        }
+
+        $this->service->load($item, $locale);
+        $data = $this->service->getFields();
+
+        // Adjust fields for API
+        $base = Environment::get('base');
+
         $arrayItem = $item->row();
         $id = $arrayItem['id'];
         $return = [];
         $return['id'] = $id;
         $return['singleSRC'] = [];
         $return['pictures'] = [];
-        $base = Environment::get('base');
+        
 
         if ('1' === $arrayItem['published']) {
             $attributes = $item->getAttributesFull([], $lang, true);
