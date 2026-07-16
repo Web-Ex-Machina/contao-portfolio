@@ -37,7 +37,7 @@ class PortfolioResolver implements ContentUrlResolverInterface
         $objMaster = $pageAdapter->findById((int) $archiveAdapter->findById($content->pid)?->jumpTo);
         
         if ($objMaster) {
-            $objTarget = (new PageFinder())->findAssociatedForLanguage($objMaster, $lang);
+            $objTarget = (new PageFinder())->findAssociatedForLanguage($objMaster, $locale);
         } else {
             $objTarget = $objMaster;
         }
