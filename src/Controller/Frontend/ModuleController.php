@@ -16,6 +16,7 @@ namespace WEM\PortfolioBundle\Controller\Frontend;
 
 use Contao\Config;
 use Contao\ContentModel;
+use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\FilesModel;
 use Contao\Frontend;
@@ -204,7 +205,7 @@ abstract class ModuleController extends AbstractFrontendModuleController
 
                 if (null !== $objElement) {
                     while ($objElement->next()) {
-                        $strText .= $this->getContentElement($objElement->current());
+                        $strText .= Controller::getContentElement($objElement->current());
                     }
                 }
 
