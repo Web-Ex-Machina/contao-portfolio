@@ -41,6 +41,8 @@ class PortfolioService
             $this->locale = $locale;
         }
 
+        $translation = null;
+
         // If the var is a L10n, load its parent
         if ($var instanceof PortfolioL10n) {
             $this->model = $var->getRelated('pid');
