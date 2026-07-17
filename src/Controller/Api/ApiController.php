@@ -245,74 +245,44 @@ class ApiController
         // Adjust fields for API
         $base = Environment::get('base');
 
-        $arrayItem = $item->row();
-        $id = $arrayItem['id'];
-        $return = [];
-        $return['id'] = $id;
-        $return['singleSRC'] = [];
-        $return['pictures'] = [];
-        
+        foreach ($data as $col => &$value) {
+            $config = $this->service->getDca($col);
 
-        if ('1' === $arrayItem['published']) {
-            $attributes = $item->getAttributesFull([], $lang, true);
-
-            foreach($arrayItem as $c => $v) {
-                switch ($c) {
-                    case 'singleSRC':
-                        $imageP = FilesModel::findByUuid($arrayItem['singleSRC']);
-                        $uuidP = Uuid::fromBinary($imageP->uuid);
-                        $return['singleSRC']['uuid'] = $base . $imageP->path;
-                        $return['singleSRC']['path'] = $base . $imageP->path;
-                        $return['singleSRC']['singleSRC'] = $base . $imageP->path;
-                        $return['singleSRC']['extension'] = $imageP->extension;
-                        $return['singleSRC']['tstamp'] = $imageP->tstamp;
-                        $return['singleSRC']['hash'] = $imageP->hash;
-                        $return['singleSRC']['lastModified'] = $imageP->lastModified;
-                        $return['singleSRC']['basename'] = $imageP->basename;
-                        $return['singleSRC']['main'] = true;
-                        break;
-
-                    case 'pid':
-                        $arrayCategory = $item->getRelated('pid')->row();
-                        $return['category'] = $arrayCategory;
-                        $return['pid'] = $arrayCategory;
-                    break;
-
-                    case 'size':
-                    case 'imagemargin':
-                    case 'orderPictures':
-                    case 'id':
-                        // skip fields
-                    break;
-                    
-                    default:
-                        // Try to find a matching attribute
-                        if (array_key_exists($c, $attributes)) {
-                            $varValue = $item->getAttributeValue($c, $lang, true);
-                        } else {
-                            $varValue = $item->getL10nLabel($c, $lang, true);
+            switch ($config['type']) {
+                // For files & folders we need to transform relative paths
+                // into absolutes
+                case 'fileTree':
+                    // Adjust if the field is single / multiple
+                    if (
+                        array_key_exists('eval', $config) && 
+                        array_key_exists('multiple', $config['eval']) &&
+                        true === $config['eval']['multiple']
+                    ) {
+                        foreach ($value as &$f) {
+                            $f['path'] = Environment::get('base') . $f['path'];
                         }
+                    } else {
+                        $value['path'] = Environment::get('base') . $value['path'];
+                    }
 
-                        $return[$c] = $varValue ?: $v;
-                        break;
-                }
+                    break;
+
+                // For pid, we shoud retrieve all data from parent
+                // and put it under a new key "category"
+                case 'pid':
+                    $data['category'] = $item->getRelated($col)->row();
+                    break;
+                
+                default:
+                    // Do nothing
+                    break;
             }
         }
 
-        $return['attributes'] = $attributes;
+        // Retrieve item content
+        $data['content_b64'] = base64_encode($this->service->getContent());
 
-        if ($getContent) {
-            $strContent = '';
-            $objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_wem_portfolio') ?? [];
-
-            foreach ($objElement as $element) {
-                $strContent .= Controller::getContentElement($element);
-            }
-
-            $return['content_b64'] = base64_encode($strContent);
-        }
-
-        return $return;
+        return $data;
     }
 
     private function accessCheck(Request $request): ?JsonResponse

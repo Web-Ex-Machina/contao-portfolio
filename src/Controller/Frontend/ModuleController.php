@@ -17,6 +17,7 @@ namespace WEM\PortfolioBundle\Controller\Frontend;
 use Contao\Config;
 use Contao\ContentModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
+use Contao\Environment;
 use Contao\FilesModel;
 use Contao\Frontend;
 use Contao\FrontendTemplate;
