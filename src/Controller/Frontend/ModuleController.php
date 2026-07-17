@@ -16,7 +16,6 @@ namespace WEM\PortfolioBundle\Controller\Frontend;
 
 use Contao\Config;
 use Contao\ContentModel;
-use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\FilesModel;
 use Contao\Frontend;
@@ -133,26 +132,14 @@ abstract class ModuleController extends AbstractFrontendModuleController
 
             // Send also the data for flexible behavior
             $objTemplate->singleSRC = $file;
-        }        
+        }
 
         // Retrieve item content
         if ($objItem->content_b64) {
             $objTemplate->text = base64_decode($objItem->content_b64);
             $objTemplate->hasText = true;
         } else {
-            $id = $objItem->id;
-            $objTemplate->text = function () use ($id): string {
-                $strText = '';
-                $objElement = Content::findPublishedByPidAndTableAndLanguage($id, 'tl_wem_portfolio');
-
-                if (null !== $objElement) {
-                    while ($objElement->next()) {
-                        $strText .= Controller::getContentElement($objElement->current());
-                    }
-                }
-
-                return $strText;
-            };
+            $objTemplate->text = $this->service->getContent();
             $objTemplate->hasText = static fn (): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
         }
 

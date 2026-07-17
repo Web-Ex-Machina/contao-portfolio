@@ -12,6 +12,7 @@ use Contao\System;
 use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use WEM\PortfolioBundle\Model\Content;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttributeL10n;
@@ -207,6 +208,32 @@ class PortfolioService
         }
 
         return $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$field];
+    }
+
+    /**
+     * Get item content
+     * 
+     * @param array - Params to add
+     * @param int - URL format (check UrlGeneratorInterface)
+     * 
+     * @return string
+     */
+    public function getContent(): string
+    {
+        $strText = '';
+        $objElement = Content::findPublishedByPidAndTableAndLanguage(
+            $this->model->id, 
+            'tl_wem_portfolio',
+            $this->locale,
+        );
+
+        if (null !== $objElement) {
+            while ($objElement->next()) {
+                $strText .= Controller::getContentElement($objElement->current());
+            }
+        }
+
+        return $strText;
     }
 
     /**
