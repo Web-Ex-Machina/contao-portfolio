@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace WEM\PortfolioBundle\Service;
 
-use Contao\CoreBundle\Filesystem\FilesystemItem;
-use Contao\CoreBundle\Filesystem\FilesystemItemIterator;
-use Contao\CoreBundle\Filesystem\FilesystemUtil;
 use Contao\CoreBundle\Routing\ContentUrlGenerator;
 use Contao\Controller;
 use Contao\FilesModel;
@@ -198,7 +195,7 @@ class PortfolioService
      * 
      * @return array
      */
-    public function getDCA(string $field): array
+    public function getDca(string $field): array
     {
         if (!array_key_exists($field, $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'])) {
             throw new Exception(
@@ -324,7 +321,11 @@ class PortfolioService
                 return $this->model->getRelated($objAttr->name);
 
             case 'fileTree':
-                return $this->getFilesFromSources($this->model->{$objAttr->name} ?: '', $objAttr);
+                if (null === $this->model->{$objAttr->name}) {
+                    return [];
+                }
+
+                return $this->getFilesFromSources($this->model->{$objAttr->name}, $objAttr);
 
             case 'listWizard':
                 $varValue = StringUtil::deserialize($this->model->{$objAttr->name});
@@ -352,21 +353,49 @@ class PortfolioService
             $sources = [$sources];
         }
 
-        $data = [];
+        $files = [];
+        foreach ($sources as $s) {
+            $objFile = FilesModel::findByUuid($s);
 
-        $filesStorage = System::getContainer()->get('contao.filesystem.virtual.files');
-        $filesystemItems = FilesystemUtil::listContentsFromSerialized($filesStorage, $sources);
+            if ('folder' === $objFile->type) {
+                $files = array_merge($files, $this->getFilesFromFolder($objFile));
+            } else {
+                $files[] = $this->prepareFile($objFile);
+            }
+        }
 
-        return $this->compileFiles($filesystemItems);
+        return $files;
+
     }
 
-    private function compileFiles(FilesystemItemIterator $filesystemItems): array
+    private function getFilesFromFolder(FilesModel $objFile): array
     {
-        return array_map(
-            fn (FilesystemItem $filesystemItem): array => [
-                'file' => $filesystemItem,
-            ],
-            iterator_to_array($filesystemItems),
-        );
+        $objFiles = FilesModel::findMultipleByBasepath($objFile->path . '/');
+
+        if (!$objFiles) {
+            return [];
+        }
+
+        $files = [];
+        while ($objFiles->next()) {
+            if ('folder' === $objFiles->type) {
+                $files = array_merge($files, $this->getFilesFromFolder($objFiles->current()));
+            } else {
+                $files[] = $this->prepareFile($objFiles->current());
+            }
+        }
+
+        return $files;
+    }
+
+    private function prepareFile(FilesModel $objFile): array
+    {
+        return [
+            'type' => $objFile->type,
+            'path' => $objFile->path,
+            'name' => $objFile->name,
+            'extension' => $objFile->extension,
+            'size' => $objFile->size,
+        ];
     }
 }
