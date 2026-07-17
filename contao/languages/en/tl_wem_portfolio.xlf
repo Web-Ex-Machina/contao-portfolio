@@ -32,12 +32,6 @@
             <trans-unit id="tl_wem_portfolio.teaser.1">
                 <source>Enter the item teaser</source>                
             </trans-unit>
-            <trans-unit id="tl_wem_portfolio.pictures.0">
-                <source>Gallery</source>                
-            </trans-unit>
-            <trans-unit id="tl_wem_portfolio.pictures.1">
-                <source>Add there the picture for the gallery.</source>                
-            </trans-unit>
             <trans-unit id="tl_wem_portfolio.published.0">
                 <source>Publish the item</source>                
             </trans-unit>

@@ -133,65 +133,7 @@ abstract class ModuleController extends AbstractFrontendModuleController
 
             // Send also the data for flexible behavior
             $objTemplate->singleSRC = $file;
-        }
-
-        // Retrieve item pictures (remote)
-        if(is_array($objItem->pictures) && !empty($objItem->pictures)) {
-            $images = [];
-            foreach($objItem->pictures as $uuid => $i) {
-                $images[$i['path']] = [
-                    'id' => '',
-                    'uuid' => $uuid,
-                    'name' => $i['basename'],
-                    'singleSRC' => $i['path'],
-                    'filesModel' => null,
-                ];
-            }
-        }
-        // Retrieve item pictures (local)
-        else if ($objItem->pictures = StringUtil::deserialize($objItem->pictures)) {
-            $objFiles = FilesModel::findMultipleByUuids($objItem->pictures);
-            $images = [];
-            while ($objFiles->next()) {
-                $images[$objFiles->path] = [
-                    'id' => $objFiles->id,
-                    'uuid' => $objFiles->uuid,
-                    'name' => $objFiles->basename,
-                    'singleSRC' => $objFiles->path,
-                    'filesModel' => $objFiles->current(),
-                ];
-            }
-
-            if ('' !== $objItem->orderPictures) {
-                $t = StringUtil::deserialize($objItem->orderPictures);
-                if (!empty($t) && \is_array($t)) {
-                    // Remove all values
-                    $arrOrder = array_map(function (): void {
-                    }, array_flip($t));
-
-                    // Move the matching elements to their position in $arrOrder
-                    foreach ($images as $k => $v) {
-                        if (\array_key_exists($v['uuid'], $arrOrder)) {
-                            $arrOrder[$v['uuid']] = $v;
-                            unset($images[$k]);
-                        }
-                    }
-
-                    // Append the left-over images at the end
-                    if ([] !== $images) {
-                        $arrOrder = array_merge($arrOrder, array_values($images));
-                    }
-
-                    // Remove empty (unreplaced) entries
-                    $images = array_values(array_filter($arrOrder));
-                    unset($arrOrder);
-                }
-            }
-
-            $objTemplate->pictures = $images;
-        }
-
-        
+        }        
 
         // Retrieve item content
         if ($objItem->content_b64) {
@@ -213,10 +155,6 @@ abstract class ModuleController extends AbstractFrontendModuleController
             };
             $objTemplate->hasText = static fn (): bool => ContentModel::countPublishedByPidAndTable($objItem->id, 'tl_wem_portfolio') > 0;
         }
-
-        
-
-        
 
         return $objTemplate->parse();
     }

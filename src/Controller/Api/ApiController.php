@@ -272,23 +272,6 @@ class ApiController
                         $return['singleSRC']['main'] = true;
                         break;
 
-                    case 'pictures':
-                        $arrPictures = deserialize($v);
-                        foreach ($arrPictures as $uuid) {
-                            $imageP = FilesModel::findByUuid($uuid);
-                            $uuidP = Uuid::fromBinary($imageP->uuid);
-                            $return['pictures'][$uuidP->__toString()]['uuid'] = $uuidP->__toString();
-                            $return['pictures'][$uuidP->__toString()]['path'] = $base . $imageP->path;
-                            $return['pictures'][$uuidP->__toString()]['singleSRC'] = $base . $imageP->path;
-                            $return['pictures'][$uuidP->__toString()]['extension'] = $imageP->extension;
-                            $return['pictures'][$uuidP->__toString()]['tstamp'] = $imageP->tstamp;
-                            $return['pictures'][$uuidP->__toString()]['hash'] = $imageP->hash;
-                            $return['pictures'][$uuidP->__toString()]['lastModified'] = $imageP->lastModified;
-                            $return['pictures'][$uuidP->__toString()]['basename'] = $imageP->basename;
-                            $return['pictures'][$uuidP->__toString()]['main'] = false;
-                        }
-                    break;
-
                     case 'pid':
                         $arrayCategory = $item->getRelated('pid')->row();
                         $return['category'] = $arrayCategory;
