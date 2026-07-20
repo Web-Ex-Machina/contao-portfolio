@@ -6,7 +6,7 @@ services:
 
   WEM\PortfolioBundle\:
     resource: ../src/
-    exclude: ../src/{ContaoManager,DependencyInjection}
+    exclude: ../src/{ContaoManager,DependencyInjection,Wrapper}
 
   wem.portfolio.service.portfolio:
     class: WEM\PortfolioBundle\Service\PortfolioService
