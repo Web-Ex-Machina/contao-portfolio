@@ -261,7 +261,11 @@ class ApiController
         foreach ($data as $col => &$value) {
             $config = $this->service->getDca($col);
 
-            switch ($config['type']) {
+            if (!array_key_exists('inputType', $config)) {
+                continue;
+            }
+
+            switch ($config['inputType']) {
                 // For files & folders we need to transform relative paths
                 // into absolutes
                 case 'fileTree':
@@ -274,7 +278,7 @@ class ApiController
                         foreach ($value as &$f) {
                             $f['path'] = Environment::get('base') . $f['path'];
                         }
-                    } else {
+                    } else {               
                         $value['path'] = Environment::get('base') . $value['path'];
                     }
 
