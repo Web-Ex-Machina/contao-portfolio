@@ -372,9 +372,9 @@ class PortfolioService
         }
     }
 
-    private function getFilesFromSources(string $sources, PortfolioFeedAttribute $config): array
+    private function getFilesFromSources(string $sources, ?PortfolioFeedAttribute $config = null): array
     {
-        if ($config->multiple) {
+        if (null !== $config && $config->multiple) {
             $sources = StringUtil::deserialize($sources);
         } else {
             $sources = [$sources];
