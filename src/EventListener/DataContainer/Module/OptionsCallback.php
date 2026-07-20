@@ -6,14 +6,15 @@ use Contao\Controller;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\Database;
 use Contao\DataContainer;
+use Contao\Message;
 use Contao\Model\Collection;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
+use WEM\PortfolioBundle\Wrapper\PortfolioApi;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 class OptionsCallback
 {
-
     public function __construct(
     ) { 
     }
@@ -39,6 +40,38 @@ class OptionsCallback
         }
 
         return $arrFeeds;
+    }
+
+    #[AsCallback(table: 'tl_module', target: 'fields.wem_portfolio_remote_feeds.options')]
+    public function getRemoteFeeds(DataContainer|null $dc = null): array
+    {
+        // Return empty if no url or no apikey are defined
+        if (!$dc->activeRecord->wem_portfolio_remote_url || !$dc->activeRecord->wem_portfolio_remote_apikey) {
+            Message::addInfo('Configuration is missing: remote url and/or api key');
+
+            return [];
+        }
+
+        $options = [];
+
+        $api = new PortfolioApi(
+            $dc->activeRecord->wem_portfolio_remote_url,
+            $dc->activeRecord->wem_portfolio_remote_apikey,
+        );
+
+        $feeds = $api->getFeeds();
+
+        if (empty($feeds)) {
+            Message::addInfo('No remote feeds were found');
+
+            return [];
+        }
+
+        foreach ($feeds as $f) {
+            $options[$f['id']] = $f['title'];
+        }
+
+        return $options;
     }
 
     #[AsCallback(table: 'tl_module', target: 'fields.wem_portfolio_filters.options')]

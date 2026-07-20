@@ -37,6 +37,16 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_list'] =
     {protected_legend:hide},protected;
     {expert_legend:hide},guests,cssID
 ';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_remote_list'] =
+    '{title_legend},name,headline,type;
+    {config_legend},wem_portfolio_remote_url,wem_portfolio_remote_apikey,wem_portfolio_remote_feeds,wem_portfolio_sort,numberOfItems,perPage,skipFirst;
+    {filters_legend},wem_portfolio_addFilters;
+    {constraints_legend},wem_portfolio_addConstraints;
+    {template_legend:hide},wem_portfolio_template,customTpl;
+    {image_legend:hide},imgSize;
+    {protected_legend:hide},protected;
+    {expert_legend:hide},guests,cssID
+';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wem_portfolio_reader'] = '
     {title_legend},name,headline,type;
     {config_legend},wem_portfolio_feeds,overviewPage,customLabel;
@@ -116,5 +126,35 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_constraints'] = [
     'exclude' => true,
     'inputType' => 'listWizard',
     'eval' => ['multiple' => true, 'allowHtml' => true, 'tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_remote_url'] = [
+    'exclude' => true,
+    'inputType' => 'text',
+    'load_callback' => [
+        ['wem.encryption_util', 'decrypt_b64'],
+    ],
+    'save_callback' => [
+        ['wem.encryption_util', 'encrypt_b64'],
+    ],
+    'eval' => ['mandatory' => true, 'tl_class' => 'w50'],
+    'sql' => 'text NULL',
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_remote_apikey'] = [
+    'exclude' => true,
+    'inputType' => 'text',
+    'load_callback' => [
+        ['wem.encryption_util', 'decrypt_b64'],
+    ],
+    'save_callback' => [
+        ['wem.encryption_util', 'encrypt_b64'],
+    ],
+    'eval' => ['mandatory' => true, 'tl_class' => 'w50'],
+    'sql' => 'text NULL',
+];
+$GLOBALS['TL_DCA']['tl_module']['fields']['wem_portfolio_remote_feeds'] = [
+    'exclude' => true,
+    'inputType' => 'checkbox',
+    'eval' => ['multiple' => true],
     'sql' => 'blob NULL',
 ];
