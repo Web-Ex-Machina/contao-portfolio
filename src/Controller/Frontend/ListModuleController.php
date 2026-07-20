@@ -170,6 +170,7 @@ class ListModuleController extends ModuleController
             return $template->getResponse();
         }
 
+        $page = 1;
         $total = $intTotal - $model->offset;
 
         // Split the results
@@ -204,7 +205,9 @@ class ListModuleController extends ModuleController
         }
 
         if ($this->readFromRemote) {
-            $objItems = $this->findRemoteItems($this->config, $this->readFromRemoteFeed, (int) $page ?: 1, (int) $this->limit ?: 0, (int) $this->offset ?: 0, $this->options['order'] ?: "");
+            $this->options['order'] = str_replace(" ", "-", $this->options['order']);
+
+            $objItems = $this->findRemoteItems($this->config, $this->readFromRemoteFeed, (int) $page, (int) $this->limit ?: 0, (int) $this->offset ?: 0, $this->options['order'] ?: "");
         } else {
             $objItems = Portfolio::findItems($this->config, (int) $this->limit ?: 0, (int) $this->offset ?: 0, $this->options);
         }

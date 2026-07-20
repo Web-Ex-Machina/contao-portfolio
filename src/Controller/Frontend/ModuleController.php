@@ -257,7 +257,7 @@ abstract class ModuleController extends AbstractFrontendModuleController
             unset($params['pid']);
         }
 
-        $feedParams = deserialize($feed->readFromRemoteConfig);
+        $feedParams = StringUtil::deserialize($feed->readFromRemoteConfig);
         if (is_iterable($feedParams)) {
             foreach ($feedParams as $c) {
                 switch ($c['key']) {
