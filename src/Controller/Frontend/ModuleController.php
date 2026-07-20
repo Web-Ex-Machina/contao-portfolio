@@ -171,7 +171,6 @@ abstract class ModuleController extends AbstractFrontendModuleController
         // We need to format a Collection of Portfolio
         $items = [];
         foreach ($data as $item) {
-            unset($item['category']);
             $objModel = new Portfolio();
             $objModel->setRow($item);
             $objModel->pid = $feed->id;
