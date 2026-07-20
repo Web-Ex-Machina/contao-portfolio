@@ -79,7 +79,9 @@ class PortfolioService
                 $translation = PortfolioL10n::findTranslation($this->model->id, $this->locale);
             }
 
-            $this->loadTranslationFields($translation);
+            if (null !== $translation) {
+                $this->loadTranslationFields($translation);
+            }
         }
     }
 
