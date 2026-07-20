@@ -289,7 +289,7 @@ class ApiController
                         }
                     } else {
                         if (!array_key_exists('path', $value)) {
-                            continue;
+                            continue 2;
                         }
 
                         $value['path'] = Environment::get('base') . $value['path'];
