@@ -352,7 +352,9 @@ class PortfolioService
                     return [];
                 }
 
-                return $this->getFilesFromSources($this->model->{$objAttr->name}, $objAttr);
+                $files = $this->getFilesFromSources($this->model->{$objAttr->name}, $objAttr);
+
+                return $objAttr->multiple ? $files : $files[0];
 
             case 'listWizard':
                 $varValue = StringUtil::deserialize($this->model->{$objAttr->name});
