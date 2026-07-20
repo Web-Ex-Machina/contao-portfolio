@@ -1,0 +1,15 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/wem-portfolio/languages/en/tl_settings.php" source-language="en" target-language="en">
+    <body>
+      <trans-unit id="tl_settings.portfolio_legend">
+        <source>Portfolio module Settings</source>
+      </trans-unit>
+      <trans-unit id="tl_settings.portfolioApiKey.0">
+        <source>API Key</source>
+      </trans-unit>
+      <trans-unit id="tl_settings.portfolioApiKey.1">
+        <source>Enter API key to reach Portfolio</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
