@@ -74,20 +74,30 @@ class ApiController
     )]
     public function doc(Request $request): JsonResponse
     {
-        $infos1 = [
+        $routes = [];
+
+        $routes[] = [
             'usage' => 'To retrieve a list of article based on an categories array',
             'path' => '/items/{page}/{limit}?pid[]=1&pid[]=2&key=myKey',
         ];
-        $infos2 = [
+        $routes[] = [
+            'usage' => 'To retrieve a list of article based on an categories array with an offset',
+            'path' => '/items/{page}/{limit}/{offset}/?pid[]=1&pid[]=2&key=myKey',
+        ];
+        $routes[] = [
+            'usage' => 'To retrieve a list of article based on an categories array with an offset and an order',
+            'path' => '/items/{page}/{limit}/{offset}/{order}/?pid[]=1&pid[]=2&key=myKey',
+        ];
+        $routes[] = [
             'usage' => 'To count number of article based on an categories array',
             'path' => '/count?pid[]=1&pid[]=2&key=myKey',
         ];
-        $infos3 = [
+        $routes[] = [
             'usage' => 'To retrieve an unique item based on the unique Id',
             'path' => '/item/{id}&key=myKey',
         ];
 
-        return new JsonResponse(['data' => [$infos1, $infos2, $infos3]]);
+        return new JsonResponse(['routes' => $routes]);
     }
 
     #[Route(
