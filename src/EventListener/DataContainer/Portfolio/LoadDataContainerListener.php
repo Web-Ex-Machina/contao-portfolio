@@ -180,7 +180,7 @@ class LoadDataContainerListener
                             $data['options'][$key][$o['value']] = $o['label'];
                         }
 
-                        if (\array_key_exists('default', $o)) {
+                        if (\array_key_exists('default', $o) && 1 === (int) $o['default']) {
                             $data['default'] = $o['default'];
                             $data['sql'] = sprintf("varchar(255) NOT NULL default '%s'", $o['default']);
                         }
