@@ -21,6 +21,7 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Environment;
 use Contao\FilesModel;
 use Contao\Model\Collection;
+use Contao\System;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,14 +45,16 @@ use WEM\UtilsBundle\Classes\StringUtil;
 class ApiController
 {
     private ?string $apiKey;
+    private readonly PortfolioService $service;
 
     public function __construct(
         private readonly ContaoFramework $framework, 
         private readonly Encryption $encryption,
-        private readonly PortfolioService $service,
     ) {
         $this->framework->initialize();
         $this->apiKey = null;
+
+        $this->service = System::getContainer()->get('wem.portfolio.service.portfolio');
 
         if (Config::get('portfolioApiKey')) {
             $this->apiKey = $this->encryption->decrypt_b64((string) Config::get('portfolioApiKey'));
