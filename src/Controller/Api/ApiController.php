@@ -101,6 +101,33 @@ class ApiController
     }
 
     #[Route(
+        '/get/feeds',
+        name: 'getfeeds',
+        methods: ['GET']
+    )]
+    public function getFeeds(Request $request): JsonResponse
+    {
+        $check = $this->accessCheck($request);
+
+        if ($check instanceof JsonResponse) {
+            return $check;
+        }
+
+        $objItems = PortfolioFeed::findAll();
+        $arrFeeds = [];
+
+        if (!$objItems || 0 === $objItems->count()) {
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        }
+
+        while ($objItems->next()) {
+            $arrFeeds[$objItems->id] = $objItems->row();
+        }
+
+        return new JsonResponse($arrFeeds, Response::HTTP_OK);
+    }
+
+    #[Route(
         '/items/{page}/{limit}',
         name: 'viewPortfolioList',
         requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS],
