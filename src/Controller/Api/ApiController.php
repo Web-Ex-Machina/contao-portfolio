@@ -191,9 +191,11 @@ class ApiController
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    /**
-     * @Route("/count", methods={"GET"})
-     */
+    #[Route(
+        '/count',
+        name: 'countPortfolioList',
+        methods: ['GET']
+    )]
     public function countPortfolioList(Request $request, array $pid = []): JsonResponse
     {
         $check = $this->accessCheck($request);
