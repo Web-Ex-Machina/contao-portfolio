@@ -165,8 +165,12 @@ class ApiController
         $items = [];
         $options = [];
 
-        if ($order) {
-            $options['order'] = urldecode($order);
+        // Allow people to choose order direction
+        if(null !== $order && false !== strpos($order, "-")) {
+            $chunks = explode("-", $order);
+            $options['order'] = urldecode($chunks[0]) . ' ' . strtoupper($chunks[1]);
+        } else if (null !== $order) {
+            $options['order'] = urldecode($order) . ' DESC';
         }
 
         $objItems = Portfolio::findItems($params, $limit, $offset, $options);
