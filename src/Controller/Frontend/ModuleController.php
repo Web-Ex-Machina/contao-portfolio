@@ -108,15 +108,7 @@ abstract class ModuleController extends AbstractFrontendModuleController
 
         // Add an image
         if ($objItem->singleSRC) {
-            // remote
-            if(is_array($objItem->singleSRC)) {
-                $file = $objItem->singleSRC;
-            }
-            // local
-            else {
-                $objFile = FilesModel::findByUuid($objItem->singleSRC);
-                $file = $objFile->row();
-            }
+            $file = $this->service->getField('singleSRC');
 
             $figure = System::getContainer()
                 ->get('contao.image.studio')
