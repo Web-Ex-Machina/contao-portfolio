@@ -254,10 +254,9 @@ class ApiController
 
         $this->service->load($item, $locale);
         $data = $this->service->getFields();
-
-        // Adjust fields for API
         $base = Environment::get('base');
 
+        // Adjustement based on type
         foreach ($data as $col => &$value) {
             $config = $this->service->getDca($col);
 
@@ -276,18 +275,43 @@ class ApiController
                         true === $config['eval']['multiple']
                     ) {
                         foreach ($value as &$f) {
+                            if (!array_key_exists('path', $f)) {
+                                continue;
+                            }
+
                             $f['path'] = Environment::get('base') . $f['path'];
                         }
-                    } else {               
+                    } else {
+                        if (!array_key_exists('path', $value)) {
+                            continue;
+                        }
+
                         $value['path'] = Environment::get('base') . $value['path'];
+                    }
+
+                    break;
+                
+                default:
+                    // Do nothing
+                    break;
+            }
+        }
+
+        // Adjustement based on field
+        foreach ($data as $col => &$value) {
+            switch ($col) {
+                // Serialized values
+                case 'size':
+                case 'imagemargin':
+                    if ($value) {
+                        $value = StringUtil::deserialize($value);
                     }
 
                     break;
 
                 // For pid, we shoud retrieve all data from parent
-                // and put it under a new key "category"
                 case 'pid':
-                    $data['category'] = $item->getRelated($col)->row();
+                    $data['pid_data'] = $item->getRelated($col)->row();
                     break;
                 
                 default:
