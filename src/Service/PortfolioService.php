@@ -150,8 +150,17 @@ class PortfolioService
             return $this->getAttributeValue($field);
         }
 
-        // Else, return the model field
-        return $this->model->{$field};
+        switch ($field) {
+            case 'singleSRC':
+                $files = $this->getFilesFromSources($this->model->{$field});
+
+                return !empty($files) ? $files[0] : null;
+            break;
+
+            // Else, return the model field
+            default:
+                return $this->model->{$field};
+        }
     }
 
     /**
