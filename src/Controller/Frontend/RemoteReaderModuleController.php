@@ -51,113 +51,17 @@ class RemoteReaderModuleController extends ReaderModuleController
     public function __construct(
         private readonly ContentUrlGenerator $contentUrlGenerator
     ) {
-        parent::__construct();
+        parent::__construct($contentUrlGenerator);
     }
 
-    /**
-     * Generate the module.
-     */
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
+    protected function findItem(): ?Portfolio
     {
-        if ((!Input::get('category') || !Input::get('item')) && Input::get('auto_item')) {
-            $objItem = Portfolio::findByIdOrSlug(Input::get('auto_item'));
-
-            if (!$objItem) {
-                $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('auto_item'));
-
-                if (!$objL10nItem) {
-                    throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
-                }
-
-                $objItem = $objL10nItem->getRelated('pid');
-            }
-
-            global $objPage;
-            $this->redirect($objPage->getFrontendUrl('/category/'.$objItem->getRelated('pid')->alias.'/item/'.Input::get('auto_item')), 301);
-            exit;
+        $api = $this->getApi();
+        
+        if (null === $api) {
+            throw new Exception("The API is not reachable");
         }
 
-        $this->model = $model;
-        $this->feed = PortfolioFeed::findByIdOrAlias(Input::get('category'));
-
-        if ($this->feed->readFromRemote) {
-            $this->portfolio = $this->findRemoteItem(Input::get('item'), $this->feed);
-        } else {
-            $this->portfolio = Portfolio::findByIdOrSlug(Input::get('item'));
-
-            if (!$this->portfolio) {
-                $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('item'));
-
-                if (!$objL10nItem) {
-                    throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
-                }
-
-                $this->portfolio = $objL10nItem->getRelated('pid');
-            }
-        }
-
-        if (!$this->portfolio) {
-            throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
-        }
-
-        if ($this->model->overviewPage && ($overviewPage = PageModel::findById($this->model->overviewPage))) {
-            $template->referer = $this->contentUrlGenerator->generate($overviewPage);
-            $template->back = $this->model->customLabel ?: $GLOBALS['TL_LANG']['MSC']['newsOverview'];
-        }
-
-        // Overwrite the page metadata
-        $responseContext = System::getContainer()->get('contao.routing.response_context_accessor')->getResponseContext();
-
-        if ($responseContext?->has(HtmlHeadBag::class)) {
-            $htmlHeadBag = $responseContext->get(HtmlHeadBag::class);
-            $htmlDecoder = System::getContainer()->get('contao.string.html_decoder');
-
-            if ($this->portfolio->pageTitle) {
-                $htmlHeadBag->setTitle($this->portfolio->pageTitle);
-            } elseif ($this->portfolio->title) {
-                $htmlHeadBag->setTitle($this->portfolio->title);
-            }
-
-            if ($this->portfolio->description) {
-                $htmlHeadBag->setMetaDescription($htmlDecoder->inputEncodedToPlainText($this->portfolio->description));
-            } elseif ($this->portfolio->teaser) {
-                $htmlHeadBag->setMetaDescription($htmlDecoder->htmlToPlainText($this->portfolio->teaser));
-            }
-
-            if ($this->portfolio->robots) {
-                $htmlHeadBag->setMetaRobots($this->portfolio->robots);
-            }
-
-            if ($this->portfolio->canonicalLink) {
-                $url = System::getContainer()->get('contao.insert_tag.parser')->replaceInline($this->portfolio->canonicalLink);
-
-                // Ensure absolute links
-                if (!preg_match('#^https?://#', $url)) {
-                    if (!$request = System::getContainer()->get('request_stack')->getCurrentRequest()) {
-                        throw new \RuntimeException('The request stack did not contain a request');
-                    }
-
-                    $url = UrlUtil::makeAbsolute($url, $request->getUri());
-                }
-
-                $htmlHeadBag->setCanonicalUri($url);
-            }
-            /**elseif (!$this->news_keepCanonical) {
-                $htmlHeadBag->setCanonicalUri($urlGenerator->generate($objArticle, array(), UrlGeneratorInterface::ABSOLUTE_URL));
-            }**/
-        }
-
-        // Update the JSON+LD "searchIndexer" setting
-        $pageSchema = $responseContext->get(JsonLdManager::class)->getGraphForSchema(JsonLdManager::SCHEMA_CONTAO)->get(ContaoPageSchema::class);
-
-        if ($this->portfolio->searchIndexer) {
-            $pageSchema['searchIndexer'] = $this->portfolio->searchIndexer;
-        }
-
-        // Add the articles
-        $template->portfolio = $this->parsePortfolio($this->portfolio);
-        $template->moduleId = $this->model->id;
-
-        return $template->getResponse();
+        return $api->getItem(Input::get('item'));
     }
 }

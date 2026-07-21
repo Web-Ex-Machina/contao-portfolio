@@ -7,6 +7,7 @@ namespace WEM\PortfolioBundle\Wrapper;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Routing\Content\ContentUrlResolverInterface;
 use Contao\CoreBundle\Routing\Content\ContentUrlResult;
+use Contao\Model\Collection;
 use Contao\PageModel;
 use Contao\System;
 use Exception;
@@ -66,12 +67,31 @@ class PortfolioApi
 
     public function countItems(array $params = []): int
     {
-        return $this->callApi('/count/items', $params);
+        $res = $this->callApi('/count/items', $params);
+        return $res['items'];
     }
 
-    public function getItems(array $params = []): array
+    public function getItems(int $page = 1, int $limit = 30, int $offset = 0, string $order = 'createdAt-desc', array $params = []): Collection
     {
-        return $this->callApi('/get/items', $params);
+        $url = \sprintf(
+            '/get/items/%s/%s/%s/%s',
+            $page,
+            $limit,
+            $offset,
+            $order,
+        );
+
+        $data = $this->callApi($url, $params);
+        $models = [];
+
+        foreach ($data as $obj) {
+            $model = new Portfolio();
+            $model->setRow($obj);
+
+            $models[] = $model;
+        }
+
+        return new Collection($models, Portfolio::getTable());
     }
 
     public function getItem(int $item): Portfolio

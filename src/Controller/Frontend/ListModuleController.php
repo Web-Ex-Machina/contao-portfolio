@@ -42,6 +42,8 @@ class ListModuleController extends ModuleController
 
     protected ?array $config = [];
 
+    protected ?int $page = 0;
+
     protected ?int $limit = 0;
 
     protected ?int $offset = 0;
@@ -49,10 +51,6 @@ class ListModuleController extends ModuleController
     protected array $options = [];
 
     protected ?array $filters = [];
-
-    protected bool $readFromRemote = false;
-
-    protected ?PortfolioFeed $readFromRemoteFeed = null;
 
     protected ModuleModel $model;
 
@@ -66,35 +64,18 @@ class ListModuleController extends ModuleController
      */
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
-        Controller::loadDatacontainer('tl_wem_portfolio');
-        Controller::loadLanguageFile('tl_wem_portfolio');
         $this->model = $model;
-        $this->model->wem_portfolio_feeds = StringUtil::deserialize($model->wem_portfolio_feeds);
+        $this->model->wem_portfolio_feeds = $this->getFeeds();
 
         // Return if there are no archives
-        if (empty($model->wem_portfolio_feeds) || !\is_array($model->wem_portfolio_feeds)) {
+        if (empty($this->model->wem_portfolio_feeds) || !\is_array($this->model->wem_portfolio_feeds)) {
             throw new \Exception('wem_portfolio_feeds not found.');
         }
 
-        // Check if we have remote feeds
-        foreach ($model->wem_portfolio_feeds as $f) {
-            $objFeed = PortfolioFeed::findByPk($f);
+        $this->limit = null;
+        $this->offset = (int) $this->model->skipFirst;
 
-            // If we have one remote feed, consider we must
-            // get everything from remote, to improve later
-            if ($objFeed->readFromRemote) {
-                $this->readFromRemote = true;
-                $this->readFromRemoteFeed = $objFeed;
-
-                break;
-            }
-        }
-
-        global $objPage;
-        $model->limit = null;
-        $model->offset = (int) $model->skipFirst;
-
-        switch ($model->wem_portfolio_sort) {
+        switch ($this->model->wem_portfolio_sort) {
             case 'order_date_asc': $this->options['order'] = 'date ASC';
                 break;
             case 'order_date_desc': $this->options['order'] = 'date DESC';
@@ -106,8 +87,8 @@ class ListModuleController extends ModuleController
         }
 
         // Maximum number of items
-        if ($model->numberOfItems > 0) {
-            $this->limit = $model->numberOfItems;
+        if ($this->model->numberOfItems > 0) {
+            $this->limit = $this->model->numberOfItems;
         }
 
         $template->items = [];
@@ -115,8 +96,8 @@ class ListModuleController extends ModuleController
 
         // Add pids
         $this->config = [
-            'pid' => $model->wem_portfolio_feeds,
-            'language' => System::getContainer()->get('request_stack')->getCurrentRequest()->getLocale(),
+            'pid' => $this->model->wem_portfolio_feeds,
+            'language' => $request->getLocale(),
             'published' => 1,
         ];
 
@@ -144,8 +125,8 @@ class ListModuleController extends ModuleController
         }
 
         // Check if we have constraints to adjust config
-        if ($model->wem_portfolio_addConstraints) {
-            $arrWheres = StringUtil::deserialize($model->wem_portfolio_constraints);
+        if ($this->model->wem_portfolio_addConstraints) {
+            $arrWheres = StringUtil::deserialize($this->model->wem_portfolio_constraints);
 
             if (!empty($arrWheres)) {
                 foreach ($arrWheres as $w) {
@@ -155,70 +136,82 @@ class ListModuleController extends ModuleController
         }
 
         // Retrieve filters
-        if ($model->wem_portfolio_addFilters) {
-            $template->filters = Controller::getFrontendModule($model->wem_portfolio_filters_module);
-        }
+        $template->filters = $this->getFilters();
 
         // Get the total number of items
-        if ($this->readFromRemote) {
-            $intTotal = $this->countRemoteItems($this->config, $this->readFromRemoteFeed);
-        } else {
-            $intTotal = Portfolio::countItems($this->config);
-        }
+        $intTotal = $this->countItems();
 
         if ($intTotal < 1) {
             return $template->getResponse();
         }
 
-        $page = 1;
-        $total = $intTotal - $model->offset;
+        $this->page = 1;
+        $total = $intTotal - $this->model->offset;
 
         // Split the results
-        if ($model->perPage > 0 && (!isset($model->limit) || $model->numberOfItems > $model->perPage)) {
+        if ($this->model->perPage > 0 && (!isset($this->model->limit) || $this->model->numberOfItems > $this->model->perPage)) {
             // Adjust the overall limit
             if (isset($this->limit)) {
-                $total = min($model->limit, $total);
+                $total = min($this->model->limit, $total);
             }
 
             // Get the current page
-            $id = 'page_n'.$model->id;
-            $page = Input::get($id) ?? 1;
+            $id = 'page_n'.$this->model->id;
+            $this->page = Input::get($id) ?? 1;
 
             // Do not index or cache the page if the page number is outside the range
-            if ($page < 1 || $page > max(ceil($total / $model->perPage), 1)) {
+            if ($this->page < 1 || $this->page > max(ceil($total / $this->model->perPage), 1)) {
                 throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
             }
 
             // Set limit and offset
-            $this->limit = $model->perPage;
-            $this->offset += (max($page, 1) - 1) * $model->perPage;
-            $skip = (int) $model->skipFirst;
+            $this->limit = $this->model->perPage;
+            $this->offset += (max($this->page, 1) - 1) * $this->model->perPage;
+            $skip = (int) $this->model->skipFirst;
 
             // Overall limit
-            if ($model->offset + $model->limit > $total + $skip) {
-                $model->limit = $total + $skip - $model->offset;
+            if ($this->model->offset + $this->model->limit > $total + $skip) {
+                $this->model->limit = $total + $skip - $this->model->offset;
             }
 
             // Add the pagination menu
-            $objPagination = new Pagination($total, $model->perPage, Config::get('maxPaginationLinks'), $id);
+            $objPagination = new Pagination($total, $this->model->perPage, Config::get('maxPaginationLinks'), $id);
             $template->pagination = $objPagination->generate("\n  ");
         }
 
-        if ($this->readFromRemote) {
-            $this->options['order'] = str_replace(" ", "-", $this->options['order']);
-
-            $objItems = $this->findRemoteItems($this->config, $this->readFromRemoteFeed, (int) $page, (int) $this->limit ?: 0, (int) $this->offset ?: 0, $this->options['order'] ?: "");
-        } else {
-            $objItems = Portfolio::findItems($this->config, (int) $this->limit ?: 0, (int) $this->offset ?: 0, $this->options);
-        }
+        $objItems = $this->findItems();
 
         // Add the items
         if ($objItems instanceof Collection) {
             $template->items = $this->parsePortfolios($objItems);
         }
 
-        $template->moduleId = $model->id;
+        $template->moduleId = $this->model->id;
 
         return $template->getResponse();
+    }
+
+    protected function getFeeds(): array
+    {
+        return StringUtil::deserialize($this->model->wem_portfolio_feeds);
+    }
+
+    protected function getFilters(): string
+    {
+        if ($this->model->wem_portfolio_addFilters) {
+            return Controller::getFrontendModule($this->model->wem_portfolio_filters_module);
+        }
+
+        return '';
+    }
+
+    protected function countItems(): int
+    {
+        return Portfolio::countItems($this->config);
+    }
+
+    protected function findItems(): Collection
+    {
+        return Portfolio::findItems($this->config, (int) $this->limit ?: 0, (int) $this->offset ?: 0, $this->options);
     }
 }

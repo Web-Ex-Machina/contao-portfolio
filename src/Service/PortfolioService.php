@@ -154,6 +154,10 @@ class PortfolioService
 
         switch ($field) {
             case 'singleSRC':
+                if (is_array($this->model->{$field})) {
+                    return $this->model->{$field};
+                }
+
                 $files = $this->getFilesFromSources($this->model->{$field});
 
                 return !empty($files) ? $files[0] : null;
@@ -361,6 +365,10 @@ class PortfolioService
             case 'fileTree':
                 if (null === $this->model->{$objAttr->name}) {
                     return [];
+                }
+
+                if (is_array($this->model->{$objAttr->name})) {
+                    return $this->model->{$objAttr->name};
                 }
 
                 $files = $this->getFilesFromSources($this->model->{$objAttr->name}, $objAttr);

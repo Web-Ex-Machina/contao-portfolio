@@ -80,21 +80,7 @@ class ReaderModuleController extends ModuleController
         $this->model = $model;
         $this->feed = PortfolioFeed::findByIdOrAlias(Input::get('category'));
 
-        if ($this->feed->readFromRemote) {
-            $this->portfolio = $this->findRemoteItem(Input::get('item'), $this->feed);
-        } else {
-            $this->portfolio = Portfolio::findByIdOrSlug(Input::get('item'));
-
-            if (!$this->portfolio) {
-                $objL10nItem = PortfolioL10n::findByIdOrSlug(Input::get('item'));
-
-                if (!$objL10nItem) {
-                    throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
-                }
-
-                $this->portfolio = $objL10nItem->getRelated('pid');
-            }
-        }
+        $this->portfolio = $this->findItem();
 
         if (!$this->portfolio) {
             throw new PageNotFoundException('Page not found: '.Environment::get('uri'));
@@ -142,9 +128,6 @@ class ReaderModuleController extends ModuleController
 
                 $htmlHeadBag->setCanonicalUri($url);
             }
-            /**elseif (!$this->news_keepCanonical) {
-                $htmlHeadBag->setCanonicalUri($urlGenerator->generate($objArticle, array(), UrlGeneratorInterface::ABSOLUTE_URL));
-            }**/
         }
 
         // Update the JSON+LD "searchIndexer" setting
@@ -159,5 +142,22 @@ class ReaderModuleController extends ModuleController
         $template->moduleId = $this->model->id;
 
         return $template->getResponse();
+    }
+
+    protected function findItem(): ?Portfolio
+    {
+        $portfolio = Portfolio::findByIdOrSlug(Input::get('item'));
+
+        if ($portfolio) {
+            return $portfolio;
+        }
+
+        $l10n = PortfolioL10n::findByIdOrSlug(Input::get('item'));
+
+        if ($l10n) {
+            return $objL10nItem->getRelated('pid');
+        }
+
+        return null;
     }
 }

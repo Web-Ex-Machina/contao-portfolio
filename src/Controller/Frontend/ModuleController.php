@@ -26,10 +26,13 @@ use Contao\Model\Collection;
 use Contao\Module;
 use Contao\System;
 use Terminal42\ChangeLanguage\PageFinder;
+use Symfony\Component\HttpFoundation\RequestStack;
 use WEM\PortfolioBundle\Model\Content;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
 use WEM\PortfolioBundle\Service\PortfolioService;
+use WEM\PortfolioBundle\Wrapper\PortfolioApi;
+use WEM\UtilsBundle\Classes\Encryption;
 use WEM\UtilsBundle\Classes\StringUtil;
 
 /**
@@ -39,11 +42,14 @@ use WEM\UtilsBundle\Classes\StringUtil;
  */
 abstract class ModuleController extends AbstractFrontendModuleController
 {
+    protected Encryption $encrypt;
     protected PortfolioService $service;
+    protected RequestStack $request;
 
-    public function __construct() 
-    {
+    public function __construct() {
+        $this->encrypt = System::getContainer()->get('wem.encryption_util');
         $this->service = System::getContainer()->get('wem.portfolio.service.portfolio');
+        $this->request = System::getContainer()->get('request_stack');
     }
 
     /**
@@ -110,14 +116,25 @@ abstract class ModuleController extends AbstractFrontendModuleController
         if ($objItem->singleSRC) {
             $file = $this->service->getField('singleSRC');
 
-            $figure = System::getContainer()
-                ->get('contao.image.studio')
-                ->createFigureBuilder()
-                ->fromPath($file['path'])
-                ->setSize($objItem->size)
-                ->enableLightbox((bool) $objItem->fullsize)
-                ->buildIfResourceExists()
-            ;
+            if ($file['fromApi']) {
+                $figure = System::getContainer()
+                    ->get('contao.image.studio')
+                    ->createFigureBuilder()
+                    ->fromUrl($file['path'])
+                    ->setSize($objItem->size)
+                    ->enableLightbox((bool) $objItem->fullsize)
+                    ->buildIfResourceExists()
+                ;
+            } else {
+               $figure = System::getContainer()
+                    ->get('contao.image.studio')
+                    ->createFigureBuilder()
+                    ->fromPath($file['path'])
+                    ->setSize($objItem->size)
+                    ->enableLightbox((bool) $objItem->fullsize)
+                    ->buildIfResourceExists()
+                ;
+            }
 
             if (null !== $figure) {
                 $figure->applyLegacyTemplateData($objTemplate, $objItem->imagemargin, $objItem->floating);
@@ -139,143 +156,19 @@ abstract class ModuleController extends AbstractFrontendModuleController
         return $objTemplate->parse();
     }
 
-    /**
-     * Find items from remote
-     * 
-     * @var array config
-     * @var PortfolioFeed feed
-     *
-     * @return Collection
-     * 
-     * @throws \Exception
-     */
-    protected function findRemoteItems(array $config, PortfolioFeed $feed, int $page, int $limit, int $offset, ?string $order): Collection
+    protected function getApi(): ?PortfolioApi
     {
-        $ch = curl_init();
-        $params = $this->formatConfigForRemote($config, $feed);
-        $url = $feed->readFromRemoteUrl . '/api/portfolio/items/' . $page . '/' . $limit . '/' . $offset;
-
-        if ($order) {
-            $url .= '/' . urlencode($order);
-        }
-
-        $url .= '?' . $params;
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $request = curl_exec($ch);
-        curl_close($ch);
-        $data = json_decode($request, true);
-
-        // We need to format a Collection of Portfolio
-        $items = [];
-        foreach ($data as $item) {
-            $objModel = new Portfolio();
-            $objModel->setRow($item);
-            $objModel->pid = $feed->id;
-            $items[] = $objModel;
-        }
-
-        $objCollection = new Collection($items, 'tl_wem_portfolio');
-
-        return $objCollection;
-    }
-
-    /**
-     * Count items from remote
-     * 
-     * @var array config
-     * @var PortfolioFeed feed
-     *
-     * @return Portfolio
-     * 
-     * @throws \Exception
-     */
-    protected function countRemoteItems(array $config, PortfolioFeed $feed): int
-    {
-        $ch = curl_init();
-        
-        $params = $this->formatConfigForRemote($config, $feed);
-        $url = $feed->readFromRemoteUrl . '/api/portfolio/count?' . $params;
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $request = curl_exec($ch);
-        curl_close($ch);
-        $data = json_decode($request, true);
-
-        return (int) $data['items'];
-    }
-
-    /**
-     * Find a specific item from remote
-     * 
-     * @var mixed item (can be int or string)
-     * @var PortfolioFeed feed
-     *
-     * @return Portfolio
-     * 
-     * @throws \Exception
-     */
-    protected function findRemoteItem(mixed $item, PortfolioFeed $feed): ?Portfolio
-    {
-        $ch = curl_init();
-        $params = $this->formatConfigForRemote([], $feed);
-        $url = $feed->readFromRemoteUrl . '/api/portfolio/item/' . $item . '?' . $params;
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $request = curl_exec($ch);
-        curl_close($ch);
-        $data = json_decode($request, true);
-
-        unset($data['category']);
-
-        if (!$data || empty($data)) {
+        if (!$this->model) {
             return null;
         }
 
-        $objModel = new Portfolio();
-        $objModel->setRow($data);
-        $objModel->remotePid = $objModel->pid;
-        $objModel->pid = $feed->id;
-
-        return $objModel;
-    }
-
-    protected function formatConfigForRemote(array $config, PortfolioFeed $feed): string
-    {
-        $params = $config;
-
-        // Unset some default config settings
-        if (array_key_exists('pid', $config)) {
-            unset($params['pid']);
+        if (!$this->model->wem_portfolio_remote_url || !$this->model->wem_portfolio_remote_apikey) {
+            return null;
         }
 
-        $feedParams = StringUtil::deserialize($feed->readFromRemoteConfig);
-        if (is_iterable($feedParams)) {
-            foreach ($feedParams as $c) {
-                switch ($c['key']) {
-                    case 'pid':
-                        $params['pid'][] = $c['value'];
-                    break;
-
-                    default:
-                        $params[$c['key']] = $c['value'];
-                }
-            }
-        }
-
-        $params['key'] = System::getContainer()->get('wem.encryption_util')->decrypt_b64($feed->readFromRemoteApiKey);
-
-        if (!array_key_exists("lang", $params)) {
-            $params['lang'] = $GLOBALS["TL_LANGUAGE"];
-        }
-
-        return http_build_query($params);
+        return new PortfolioApi(
+            $this->encrypt->decrypt_b64($this->model->wem_portfolio_remote_url),
+            $this->encrypt->decrypt_b64($this->model->wem_portfolio_remote_apikey),
+        );
     }
 }

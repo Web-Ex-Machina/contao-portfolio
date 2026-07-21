@@ -530,6 +530,7 @@ class ApiController
                             }
 
                             $f['path'] = Environment::get('base') . $f['path'];
+                            $f['fromApi'] = true;
                         }
                     } else {
                         if (!array_key_exists('path', $value)) {
@@ -537,6 +538,7 @@ class ApiController
                         }
 
                         $value['path'] = Environment::get('base') . $value['path'];
+                        $value['fromApi'] = true;
                     }
 
                     break;
