@@ -116,7 +116,7 @@ abstract class ModuleController extends AbstractFrontendModuleController
         if ($objItem->singleSRC) {
             $file = $this->service->getField('singleSRC');
 
-            if ($file['fromApi']) {
+            if (array_key_exists('fromApi', $file)) {
                 $figure = System::getContainer()
                     ->get('contao.image.studio')
                     ->createFigureBuilder()
