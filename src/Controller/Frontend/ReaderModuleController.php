@@ -155,7 +155,7 @@ class ReaderModuleController extends ModuleController
         $l10n = PortfolioL10n::findByIdOrSlug(Input::get('item'));
 
         if ($l10n) {
-            return $objL10nItem->getRelated('pid');
+            return $l10n->getRelated('pid');
         }
 
         return null;
