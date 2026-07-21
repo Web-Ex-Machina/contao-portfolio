@@ -51,7 +51,7 @@ class PortfolioApi
 
     public function getAttributes(int $feed): array
     {
-        return $this->callApi('/get/feed/' . $feed . 'attributes');
+        return $this->callApi('/get/feed/' . $feed . '/attributes');
     }
 
     public function getAttribute(int $attribute): PortfolioFeedAttribute
