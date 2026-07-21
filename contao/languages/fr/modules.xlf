@@ -28,7 +28,7 @@
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_list.0">
         <source>Items List</source>
-        <target>Liste d’éléments</target>
+        <target>Liste de Portfolio</target>
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_list.1">
         <source>Display a list of portfolio items</source>
@@ -36,9 +36,33 @@
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_reader.0">
         <source>Item Reader</source>
-        <target>Lecteur d’élément</target>
+        <target>Lecteur de Portfolio</target>
       </trans-unit>
       <trans-unit id="FMD.wem_portfolio_reader.1">
+        <source>Display a reader of portfolio item</source>
+        <target>Afficher un lecteur d’élément du portfolio</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_filters.0">
+        <source>Portfolio filters</source>
+        <target>Filtres distants de portfolio</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_filters.1">
+        <source>Manage a portfolio filters system</source>
+        <target>Ajoute un système de filtres de portfolios</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_list.0">
+        <source>Items List</source>
+        <target>Liste de Portfolio distant</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_list.1">
+        <source>Display a list of portfolio items</source>
+        <target>Afficher une liste d’éléments du portfolio</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_reader.0">
+        <source>Item Reader</source>
+        <target>Lecteur de Portfolio distant</target>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_reader.1">
         <source>Display a reader of portfolio item</source>
         <target>Afficher un lecteur d’élément du portfolio</target>
       </trans-unit>

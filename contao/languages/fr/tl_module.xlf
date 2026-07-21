@@ -73,7 +73,53 @@
         <source>Title (Desc.)</source>
         <target>Intitulé (Desc.)</target>
       </trans-unit>
-      
+      <trans-unit id="tl_module.wem_portfolio_remote_url.0">
+        <source>Remote Url</source>
+        <target>URL distance</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_url.1">
+        <source>Enter the remote URL where we can find Portfolio data</source>
+        <target>Indiquez l'URL où aller chercher les données du Portfolio</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_apikey.0">
+        <source>Api Key</source>
+        <target>Clef API</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_apikey.1">
+        <source>Indiquez la clef API correspondate</source>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_feeds.0">
+        <source>Feeds</source>
+        <target>Flux</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_feeds.1">
+        <source>Please select the portfolio feeds to display</source>
+        <target>Sélectionner les flux du portfolio à afficher</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_addFilters.0">
+        <source>Add filters</source>
+        <target>Ajouter des filtres</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_addFilters.1">
+        <source>Check to add filters</source>
+        <target>Cocher pour ajouter des filtres</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_filters.0">
+        <source>Filters module</source>
+        <target>Filtres à afficher</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_filters.1">
+        <source>Please select the portfolio filters module to display</source>
+        <target>Sélectionner les filtres à afficher</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_filters_module.0">
+        <source>Filters module</source>
+        <target>Module filtres à appliquer</target>
+      </trans-unit>
+      <trans-unit id="tl_module.wem_portfolio_remote_filters_module.1">
+        <source>Please select the portfolio filters module to display</source>
+        <target>Sélectionner le module de filtres de portfolio à afficher</target>
+      </trans-unit>
       <trans-unit id="tl_module.wem_portfolio_addSearch.0">
         <source>Add search</source>
         <target>Ajouter une recherche</target>
