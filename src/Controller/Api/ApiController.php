@@ -32,6 +32,7 @@ use Symfony\Component\Uid\Uuid;
 use WEM\PortfolioBundle\Model\Portfolio;
 use WEM\PortfolioBundle\Model\PortfolioL10n;
 use WEM\PortfolioBundle\Model\PortfolioFeed;
+use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\PortfolioBundle\Service\PortfolioService;
 use WEM\UtilsBundle\Classes\Encryption;
 use WEM\UtilsBundle\Classes\StringUtil;
@@ -78,23 +79,161 @@ class ApiController
 
         $routes[] = [
             'usage' => 'To retrieve a list of article based on an categories array',
-            'path' => '/items/{page}/{limit}?pid[]=1&pid[]=2&key=myKey',
+            'path' => '/api/portfolio/get/items/{page}/{limit}?pid[]=1&pid[]=2&key={key}',
+            'arguments' => [
+                'page' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'limit' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'pid' => [
+                    'type' => 'array',
+                    'mandatory' => false,
+                ],
+                'key' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+            ],
         ];
         $routes[] = [
             'usage' => 'To retrieve a list of article based on an categories array with an offset',
-            'path' => '/items/{page}/{limit}/{offset}/?pid[]=1&pid[]=2&key=myKey',
+            'path' => '/api/portfolio/get/items/{page}/{limit}/{offset}/?pid[]=1&pid[]=2&key={key}',
+            'arguments' => [
+                'page' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'limit' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'offset' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'pid' => [
+                    'type' => 'array',
+                    'mandatory' => false,
+                ],
+                'key' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+            ],
         ];
         $routes[] = [
             'usage' => 'To retrieve a list of article based on an categories array with an offset and an order',
-            'path' => '/items/{page}/{limit}/{offset}/{order}/?pid[]=1&pid[]=2&key=myKey',
+            'path' => '/api/portfolio/get/items/{page}/{limit}/{offset}/{order}/?pid[]=1&pid[]=2&key={key}',
+            'arguments' => [
+                'page' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'limit' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'offset' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'order' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+                'pid' => [
+                    'type' => 'array',
+                    'mandatory' => false,
+                ],
+                'key' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+            ],
         ];
         $routes[] = [
             'usage' => 'To count number of article based on an categories array',
-            'path' => '/count?pid[]=1&pid[]=2&key=myKey',
+            'path' => '/api/portfolio/count/items?pid[]=1&pid[]=2&key={key}',
+            'arguments' => [
+                'pid' => [
+                    'type' => 'array',
+                    'mandatory' => false,
+                ],
+                'key' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+            ],
         ];
         $routes[] = [
             'usage' => 'To retrieve an unique item based on the unique Id',
-            'path' => '/item/{id}&key=myKey',
+            'path' => '/api/portfolio/get/item/{id}&key={key}',
+            'arguments' => [
+                'pid' => [
+                    'type' => 'array',
+                    'mandatory' => false,
+                ],
+                'key' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+            ],
+        ];
+        $routes[] = [
+            'usage' => 'To retrieve portfolio feeds',
+            'path' => '/api/portfolio/get/feeds&key={key}',
+            'arguments' => [
+                'key' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+            ],
+        ];
+        $routes[] = [
+            'usage' => 'To retrieve portfolio feed',
+            'path' => '/api/portfolio/get/feed/{id}&key={key}',
+            'arguments' => [
+                'id' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'key' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+            ],
+        ];
+        $routes[] = [
+            'usage' => 'To retrieve portfolio feed attributes',
+            'path' => '/api/portfolio/get/feed/{id}/attributes&key={key}',
+            'arguments' => [
+                'id' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'key' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+            ],
+        ];
+        $routes[] = [
+            'usage' => 'To retrieve portfolio feed attribute',
+            'path' => '/api/portfolio/get/feed/attribute/{id}&key={key}',
+            'arguments' => [
+                'id' => [
+                    'type' => 'int',
+                    'mandatory' => true,
+                ],
+                'key' => [
+                    'type' => 'string',
+                    'mandatory' => true,
+                ],
+            ],
         ];
 
         return new JsonResponse(['routes' => $routes]);
@@ -151,41 +290,156 @@ class ApiController
     }
 
     #[Route(
-        '/items/{page}/{limit}',
-        name: 'viewPortfolioList',
+        '/get/feed/{id}/attributes',
+        name: 'getfeedsattributes',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: ['GET']
+    )]
+    public function getFeedAttributes(Request $request, $id): JsonResponse
+    {
+        $check = $this->accessCheck($request);
+
+        if ($check instanceof JsonResponse) {
+            return $check;
+        }
+
+        $objItems = PortfolioFeedAttribute::findItems(['pid' => $id]);
+        $arrItems = [];
+
+        if (!$objItems || 0 === $objItems->count()) {
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        }
+
+        while ($objItems->next()) {
+            $arrItems[$objItems->id] = $objItems->row();
+        }
+
+        return new JsonResponse($arrItems, Response::HTTP_OK);
+    }
+
+    #[Route(
+        '/get/attribute/{id}',
+        name: 'getFeedAttribute',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: ['GET']
+    )]
+    public function getFeedAttribute(Request $request, $id): JsonResponse
+    {
+        $check = $this->accessCheck($request);
+
+        if ($check instanceof JsonResponse) {
+            return $check;
+        }
+
+        $objItem = PortfolioFeedAttribute::findById($id);
+
+        if (!$objItem) {
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse($objItem->row(), Response::HTTP_OK);
+    }
+
+    #[Route(
+        '/get/items/{page}/{limit}',
+        name: 'getItems',
         requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS],
         methods: ['GET']
     )]
-    public function viewPortfolioList(Request $request, int $page, int $limit, array $pid = []): JsonResponse
+    public function getItems(Request $request, int $page, int $limit, array $pid = []): JsonResponse
     {
         return $this->getList($request, $page, $limit, 0, null, $pid);
     }
 
     #[Route(
-        '/items/{page}/{limit}/{offset}',
-        name: 'viewPortfolioListWithOffset',
+        '/get/items/{page}/{limit}/{offset}',
+        name: 'getItemsWithOffset',
         requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS, 'offset' => Requirement::DIGITS],
         methods: ['GET']
     )]
-    public function viewPortfolioListWithOffset(Request $request, int $page, int $limit, int $offset, array $pid = []): JsonResponse
+    public function getItemsWithOffset(Request $request, int $page, int $limit, int $offset, array $pid = []): JsonResponse
     {
         return $this->getList($request, $page, $limit, $offset, null, $pid);
     }
 
     #[Route(
-        '/items/{page}/{limit}/{offset}/{order}',
-        name: 'viewPortfolioListWithOffsetAndOrder',
+        '/get/items/{page}/{limit}/{offset}/{order}',
+        name: 'getItemsWithOffsetAndOrder',
         requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS, 'offset' => Requirement::DIGITS, 'order' => Requirement::ASCII_SLUG],
         methods: ['GET']
     )]
-    public function viewPortfolioListWithOffsetAndOrder(Request $request, int $page, int $limit, int $offset, string $order, array $pid = []): JsonResponse
+    public function getItemsWithOffsetAndOrder(Request $request, int $page, int $limit, int $offset, string $order, array $pid = []): JsonResponse
     {
         return $this->getList($request, $page, $limit, $offset, $order, $pid);
+    }
+
+    #[Route(
+        '/count/items',
+        name: 'countItems',
+        methods: ['GET']
+    )]
+    public function countItems(Request $request, array $pid = []): JsonResponse
+    {
+        $check = $this->accessCheck($request);
+        if ($check instanceof JsonResponse) {
+            return $check;
+        }
+
+        $params = $request->query->all();
+        $locale = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
+
+        if (!is_iterable($params['pid'])) {
+            return new JsonResponse('{"error":"Give at least one category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
+        }
+
+        unset($params['key']);
+        unset($params['lang']);
+
+        return new JsonResponse(['items' => Portfolio::countItems($params)], Response::HTTP_OK);
+    }
+
+    #[Route(
+        '/get/item/{id}',
+        name: 'getItem',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: ['GET']
+    )]
+    public function getItem(Request $request, $id): JsonResponse
+    {
+        $check = $this->accessCheck($request);
+        if ($check instanceof JsonResponse) {
+            return $check;
+        }
+
+        $objItem = Portfolio::findByIdOrSlug($id, ['eager' => true]);
+
+        if (null === $objItem) {
+            $objL10nItem = PortfolioL10n::findByIdOrSlug($id);
+
+            if ($objL10nItem) {
+                $objItem = $objL10nItem->getRelated('pid');
+            }
+        }
+
+        $locale = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
+
+        if ($objItem instanceof Portfolio) {
+            if ($objItem->published) {
+                $return = $this->prepareItem($objItem, $locale);
+
+                return new JsonResponse($return, Response::HTTP_OK);
+            }
+
+            return new JsonResponse('{"error":"403 : Item not published"}', Response::HTTP_FORBIDDEN, [], true);
+        }
+
+        return new JsonResponse('{"error":"404 : Item not found"}', Response::HTTP_NOT_FOUND, [], true);
     }
 
     protected function getList(Request $request, int $page, int $limit, int $offset = 0, ?string $order = null, array $pid = []): JsonResponse
     {
         $check = $this->accessCheck($request);
+
         if ($check instanceof JsonResponse) {
             return $check;
         }
@@ -239,66 +493,6 @@ class ApiController
         }
 
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
-    }
-
-    #[Route(
-        '/count',
-        name: 'countPortfolioList',
-        methods: ['GET']
-    )]
-    public function countPortfolioList(Request $request, array $pid = []): JsonResponse
-    {
-        $check = $this->accessCheck($request);
-        if ($check instanceof JsonResponse) {
-            return $check;
-        }
-
-        $params = $request->query->all();
-        $locale = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
-
-        if (!is_iterable($params['pid'])) {
-            return new JsonResponse('{"error":"Give at least one category : ?pid[]=1&pid[]=2"}', Response::HTTP_NOT_ACCEPTABLE, [], true);
-        }
-
-        unset($params['key']);
-        unset($params['lang']);
-
-        return new JsonResponse(['items' => Portfolio::countItems($params)], Response::HTTP_OK);
-    }
-
-    /**
-     * @Route("/item/{id}", methods={"GET"})
-     */
-    public function viewPortfolioItem(Request $request, $id): JsonResponse
-    {
-        $check = $this->accessCheck($request);
-        if ($check instanceof JsonResponse) {
-            return $check;
-        }
-
-        $objItem = Portfolio::findByIdOrSlug($id, ['eager' => true]);
-
-        if (null === $objItem) {
-            $objL10nItem = PortfolioL10n::findByIdOrSlug($id);
-
-            if ($objL10nItem) {
-                $objItem = $objL10nItem->getRelated('pid');
-            }
-        }
-
-        $locale = $request->query->get('lang') ?: $GLOBALS['TL_LANGUAGE'];
-
-        if ($objItem instanceof Portfolio) {
-            if ($objItem->published) {
-                $return = $this->prepareItem($objItem, $locale);
-
-                return new JsonResponse($return, Response::HTTP_OK);
-            }
-
-            return new JsonResponse('{"error":"403 : Item not published"}', Response::HTTP_FORBIDDEN, [], true);
-        }
-
-        return new JsonResponse('{"error":"404 : Item not found"}', Response::HTTP_NOT_FOUND, [], true);
     }
 
     protected function prepareItem(Portfolio $item, string $locale = null): ?array

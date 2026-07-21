@@ -39,34 +39,49 @@ class PortfolioApi
         return $this->callApi('/get/feeds');
     }
 
-    public function getFeed(): PortfolioFeed
+    public function getFeed(int $feed): PortfolioFeed
     {
-        return [];
+        $data = $this->callApi('/get/feed/' . $feed);
+
+        $model = new PortfolioFeed();
+        $model->setRow($data);
+
+        return $model;
     }
 
-    public function getAttributes(): array
+    public function getAttributes(int $feed): array
     {
-        return [];
+        return $this->callApi('/get/feed/' . $feed . 'attributes');
     }
 
-    public function getAttribute(): PortfolioFeedAttribute
+    public function getAttribute(int $attribute): PortfolioFeedAttribute
     {
-        return [];
+        $data = $this->callApi('/get/feed/attribute/' . $attribute);
+
+        $model = new PortfolioFeedAttribute();
+        $model->setRow($data);
+
+        return $model;
     }
 
-    public function countItems(): int
+    public function countItems(array $params = []): int
     {
-        return 0;
+        return $this->callApi('/count/items', $params);
     }
 
-    public function getItems(): array
+    public function getItems(array $params = []): array
     {
-        return [];
+        return $this->callApi('/get/items', $params);
     }
 
-    public function getItem(): Portfolio
+    public function getItem(int $item): Portfolio
     {
-        return [];
+        $data = $this->callApi('/get/item/' . $item);
+
+        $model = new Portfolio();
+        $model->setRow($data);
+
+        return $model;
     }
 
     protected function callApi(string $route, array $params = []): mixed
