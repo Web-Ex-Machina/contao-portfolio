@@ -42,7 +42,7 @@ use WEM\UtilsBundle\Classes\StringUtil;
 )]
 class RemoteReaderModuleController extends ReaderModuleController
 {
-    public const TYPE = 'wem_portfolio_reader';
+    public const TYPE = 'wem_portfolio_remote_reader';
 
     protected ?Portfolio $portfolio = null;
     protected ?PortfolioFeed $feed = null;
