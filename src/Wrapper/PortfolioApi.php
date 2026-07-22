@@ -65,6 +65,11 @@ class PortfolioApi
         return $model;
     }
 
+    public function searchAttributes(array $params = []): array
+    {
+        return $this->callApi('/search/feed/attributes', $params);
+    }
+
     public function countItems(array $params = []): int
     {
         $res = $this->callApi('/count/items', $params);
