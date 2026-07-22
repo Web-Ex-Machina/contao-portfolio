@@ -50,10 +50,6 @@ class ListModuleController extends ModuleController
 
     protected array $options = [];
 
-    protected ?array $filters = [];
-
-    protected ModuleModel $model;
-
     public function __construct()
     {
         parent::__construct();
@@ -191,11 +187,6 @@ class ListModuleController extends ModuleController
         return $template->getResponse();
     }
 
-    protected function getFeeds(): array
-    {
-        return StringUtil::deserialize($this->model->wem_portfolio_feeds);
-    }
-
     protected function getFilters(): string
     {
         if ($this->model->wem_portfolio_addFilters) {
@@ -203,15 +194,5 @@ class ListModuleController extends ModuleController
         }
 
         return '';
-    }
-
-    protected function countItems(): int
-    {
-        return Portfolio::countItems($this->config);
-    }
-
-    protected function findItems(): Collection
-    {
-        return Portfolio::findItems($this->config, (int) $this->limit ?: 0, (int) $this->offset ?: 0, $this->options);
     }
 }

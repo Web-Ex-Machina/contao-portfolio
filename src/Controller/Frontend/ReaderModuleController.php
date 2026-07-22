@@ -46,7 +46,6 @@ class ReaderModuleController extends ModuleController
 
     protected ?Portfolio $portfolio = null;
     protected ?PortfolioFeed $feed = null;
-    protected ModuleModel $model;
 
     public function __construct(
         private readonly ContentUrlGenerator $contentUrlGenerator

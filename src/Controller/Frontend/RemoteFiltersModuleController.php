@@ -19,9 +19,11 @@ use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Routing\ContentUrlGenerator;
 use Contao\Environment;
 use Contao\Input;
+use Contao\Model\Collection;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\Template;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use WEM\PortfolioBundle\Model\Portfolio;
@@ -38,8 +40,6 @@ class RemoteFiltersModuleController extends FiltersModuleController
 {
     public const TYPE = 'wem_portfolio_remote_filters';
 
-    protected ModuleModel $model;
-
     /**
      * List filters.
      *
@@ -47,257 +47,97 @@ class RemoteFiltersModuleController extends FiltersModuleController
      */
     protected $filters = [];
 
+    /**
+     * List attributes.
+     *
+     * @var array<string>
+     */
+    protected $attributes = [];
+
     public function __construct(
         private readonly ContentUrlGenerator $contentUrlGenerator
     ) {
-        parent::__construct();
+        parent::__construct($contentUrlGenerator);
     }
 
     /**
-     * Generate the module.
+     * Retrieve filters.
      */
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
+    protected function getFilters(): array
     {
-        $this->model = $model;
-        $this->model->wem_portfolio_feeds = StringUtil::deserialize($this->model->wem_portfolio_feeds);
-
-        // Return if there are no archives
-        if (empty($this->model->wem_portfolio_feeds) || !\is_array($this->model->wem_portfolio_feeds)) {
-            throw new \Exception('wem_portfolio_feeds not found.');
-        }
-
-        // Check if we have remote feeds
-        foreach ($this->model->wem_portfolio_feeds as $f) {
-            $objFeed = PortfolioFeed::findByPk($f);
-
-            // If we have one remote feed, consider we must
-            // get everything from remote, to improve later
-            if ($objFeed->readFromRemote) {
-                $this->readFromRemote = true;
-                $this->readFromRemoteFeed = $objFeed;
-
-                break;
-            }
-        }
-
-        // Add pids
-        $this->config = ['pid' => $this->model->wem_portfolio_feeds, 'published' => 1];
-
-        // Retrieve filters
-        $this->buildFilters();
-
-        $template->filters = $this->filters;
-        $template->moduleId = $this->model->id;
-
-        // Define where the form is redirected
-        if ($this->model->jumpTo) {
-            $page = PageModel::findById($this->model->jumpTo);
-            $template->formAction = $this->contentUrlGenerator->generate($page);
-        } else {
-            $template->formAction = $request->getRequestUri();
-        }
-
-        return $template->getResponse();
+        return StringUtil::deserialize($this->model->wem_portfolio_remote_filters);
     }
 
     /**
-     * Retrieve list filters.
+     * Retrieve a specific filter
      */
-    protected function buildFilters(): void
+    protected function getFilter(string $f): PortfolioFeedAttribute
     {
-        // Retrieve and format dropdowns filters
-        $filters = StringUtil::deserialize($this->model->wem_portfolio_filters);
-        Controller::loadDataContainer('tl_wem_portfolio');
-
-        if (\is_array($filters) && [] !== $filters) {
-            foreach ($filters as $f) {
-                $objFeedAttribute = PortfolioFeedAttribute::findOneByName($f);
-
-                if ($this->shouldBeSkipped($f . ' != ""')) {
-                    continue;
-                }
-
-                $field = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$f];
-                $fName = \sprintf(
-                    'portfolio_filter_%s%s', 
-                    $f, 
-                    array_key_exists('multiple', $field['eval']) && true === $field['eval']['multiple'] ? '[]' : ''
-                );
-                $fGet = \sprintf('portfolio_filter_%s', $f);
-
-                $filter = [
-                    'type' => $field['inputType'],
-                    'name' => $fName,
-                    'label' => $objFeedAttribute->getL10nLabel('filterLabel') ?: $objFeedAttribute->getL10nLabel('label'),
-                    'value' => Input::get($fGet) ?: '',
-                    'options' => [],
-                    'multiple' => $field['eval']['multiple'] ?? false,
-                ];
-
-                switch ($field['inputType']) {
-                    case 'select':
-                        if (\is_array($field['options_callback'])) {
-                            $strClass = $field['options_callback'][0];
-                            $strMethod = $field['options_callback'][1];
-
-                            $this->import($strClass);
-                            $options = $this->$strClass->$strMethod($this);
-                        } elseif (\is_callable($field['options_callback'])) {
-                            $options = $field['options_callback']($this);
-                        } else {
-                            $opts = unserialize($objFeedAttribute->getL10nLabel('options'));
-
-                            if (is_array($opts) && !empty($opts)) {
-                                foreach($opts as $opt) {
-                                    $options[$opt['value']] = $opt['label'];
-                                }
-                            }
-                        }
-
-                        foreach ($options as $value => $label) {
-                            if (\is_array($label)) {
-                                foreach ($label as $subValue => $subLabel) {
-
-                                    $statement = $field['eval']['multiple'] 
-                                        ? $f . ' LIKE "%%'. $subValue .'%%"' 
-                                        : $f . ' = "'. $subValue .'"'
-                                    ;
-
-                                    if ($this->shouldBeSkipped($statement)) {
-                                        continue;
-                                    }
-
-                                    $filter['options'][$value]['options'][] = [
-                                        'value' => $subValue,
-                                        'label' => $subLabel,
-                                        'selected' => null !== Input::get($fGet) && (Input::get($fGet) === $subValue || (\is_array(Input::get($fGet)) && \in_array($subValue, Input::get($fGet), true))),
-                                    ];
-                                }
-                            } else {
-                                $statement = $field['eval']['multiple'] 
-                                    ? $f . ' LIKE "%%'. $value .'%%"' 
-                                    : $f . ' = "'. $value .'"'
-                                ;
-                                
-                                if ($this->shouldBeSkipped($statement)) {
-                                    continue;
-                                }
-
-                                $filter['options'][] = [
-                                    'value' => $value,
-                                    'label' => $label,
-                                    'selected' => null !== Input::get($fGet) && (Input::get($fGet) === $value || (\is_array(Input::get($fGet)) && \in_array($value, Input::get($fGet), true))),
-                                ];
-                            }
-                        }
-
-                        break;
-
-                    case 'listWizard':
-                        $objOptions = Portfolio::findItemsGroupByOneField($f);
-
-                        if ($objOptions) {
-                            $filter['type'] = 'select';
-                            if ($filter['multiple']) {
-                                $filter['name'] .= '[]';
-                            }
-
-                            while ($objOptions->next()) {
-                                if (!$objOptions->{$f}) {
-                                    continue;
-                                }
-
-                                $subOptions = StringUtil::deserialize($objOptions->{$f});
-                                foreach ($subOptions as $subOption) {
-                                    $statement = $field['eval']['multiple'] 
-                                        ? $f . ' LIKE "%%'. $subOption .'%%"' 
-                                        : $f . ' = "'. $subOption .'"'
-                                    ;
-                                    
-                                    if ($this->shouldBeSkipped($statement)) {
-                                        continue;
-                                    }
-
-                                    $filter['options'][$subOption] = [
-                                        'value' => $subOption,
-                                        'label' => $subOption,
-                                        'selected' => !$filter['multiple']
-                                            ? (null !== Input::get($fName) && Input::get($fName) === $subOption)
-                                            : (null !== Input::get($fName) && \in_array($subOption, Input::get($f ?? []), true)),
-                                    ];
-                                }
-                            }
-                        }
-
-                        break;
-
-                    case 'text':
-                    default:
-                        $objOptions = Portfolio::findItemsGroupByOneField($f);
-
-                        if ($objOptions && 0 < $objOptions->count()) {
-                            $filter['type'] = 'select';
-                            while ($objOptions->next()) {
-                                if (!$objOptions->{$f}) {
-                                    continue;
-                                }
-
-                                if ($this->shouldBeSkipped($f . ' = "'. $objOptions->{$f} .'"')) {
-                                    continue;
-                                }
-
-                                $filter['options'][] = [
-                                    'value' => $objOptions->{$f},
-                                    'label' => $objOptions->{$f},
-                                    'selected' => (null !== Input::get($fName) && Input::get($fName) === $objOptions->{$f}),
-                                ];
-                            }
-                        }
-
-                        break;
-                }
-
-                if ('select' === $filter['type'] && 1 >= \count($filter['options'])) {
-                    continue;
-                }
-
-                if (null !== Input::get($fName) && '' !== Input::get($fName)) {
-                    $this->config[$f] = Input::get($fName);
-                }
-
-                $this->filters[] = $filter;
-            }
+        $api = $this->getApi();
+        
+        if (null === $api) {
+            throw new Exception("The API is not reachable");
         }
 
-        // Add fulltext search if asked
-        if ($this->model->portfolio_addSearch) {
-            $this->filters[] = [
-                'type' => 'text',
-                'name' => 'portfolio_filter_search',
-                'label' => $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['search'],
-                'placeholder' => $GLOBALS['TL_LANG']['WEM']['PORTFOLIO']['searchPlaceholder'],
-                'value' => Input::get('portfolio_filter_search') ?: '',
-            ];
+        $attributes = $api->searchAttributes(['pid' => $this->config['pid'], 'name' => $f]);
 
-            if ('' !== Input::get('portfolio_filter_search') && null !== Input::get('portfolio_filter_search')) {
-                $this->config['portfolio_filter_search'] = StringUtil::formatKeywords(Input::get('portfolio_filter_search'));
-            }
+        if (!$attributes) {
+            throw new Exception(\sprintf("Filter %s not found", $f));
         }
+
+        $attr = $attributes->current();
+
+        // Store attribute to avoid API calls
+        $this->attributes[$attr->name] = $attr;
+
+        return $attr;
     }
 
-    protected function shouldBeSkipped($statement): bool
+    /**
+     * Retrieve a specific filter config
+     */
+    protected function getFilterConfig(string $f): array
     {
-        if (!$this->model->wem_portfolio_hideFiltersWithNoResults) {
-            return false;
+        return $this->attributes[$f]->dcaConfig;
+    }
+
+    /**
+     * Retrieve filter options
+     */
+    protected function getFilterOptions(string $f): Collection
+    {
+        return $this->findRemoteOptions($this->baseConfig, $f);
+    }
+
+    /**
+     * Retrieve filter label
+     */
+    protected function getFilterLabel(PortfolioFeedAttribute $attr): string
+    {
+        return $attr->label;
+    }
+
+    /**
+     * Retrieve filter select options
+     */
+    protected function getFilterSelectOptions(PortfolioFeedAttribute $attr): array
+    {
+        return StringUtil::deserialize($attr->options);
+    }
+
+    protected function findRemoteOptions(array $config, string $groupby): Collection
+    {
+        $api = $this->getApi();
+        
+        if (null === $api) {
+            throw new Exception("The API is not reachable");
         }
 
-        $config = $this->config;
-        $config['where'][] = $statement;
+        $config['options'] = [
+            'order' => $groupby . '-asc',
+            'group' => $groupby,
+        ];
 
-        if ($this->readFromRemote && $this->readFromRemoteFeed) {
-            return 0 === $this->countRemoteItems($config, $this->readFromRemoteFeed);
-        }
-
-        return 0 === Portfolio::countItems($config);
+        return $api->getItems($config);
     }
 }

@@ -21,7 +21,6 @@ use Contao\Controller;
 use Contao\Environment;
 use Contao\Input;
 use Contao\Model\Collection;
-use Contao\ModuleModel;
 use Contao\Pagination;
 use Contao\System;
 use Contao\Template;
@@ -80,6 +79,11 @@ class RemoteListModuleController extends ListModuleController
 
         $this->options['order'] = str_replace(" ", "-", $this->options['order']);
 
-        return $api->getItems($this->page, $this->limit, $this->offset, $this->options['order'], $this->config);
+        $config = $this->config;
+        $config['limit'] = $this->limit;
+        $config['offset'] = $this->offset;
+        $config['options'] = $this->options;
+
+        return $api->getItems($this->config);
     }
 }

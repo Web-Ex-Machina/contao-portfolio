@@ -24,6 +24,7 @@ use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\Model\Collection;
 use Contao\Module;
+use Contao\ModuleModel;
 use Contao\System;
 use Terminal42\ChangeLanguage\PageFinder;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -43,6 +44,7 @@ use WEM\UtilsBundle\Classes\StringUtil;
 abstract class ModuleController extends AbstractFrontendModuleController
 {
     protected Encryption $encrypt;
+    protected ModuleModel $model;
     protected PortfolioService $service;
     protected RequestStack $request;
 
@@ -154,6 +156,21 @@ abstract class ModuleController extends AbstractFrontendModuleController
         }
 
         return $objTemplate->parse();
+    }
+
+    protected function getFeeds(): array
+    {
+        return StringUtil::deserialize($this->model->wem_portfolio_feeds);
+    }
+
+    protected function countItems(): int
+    {
+        return Portfolio::countItems($this->config);
+    }
+
+    protected function findItems(): Collection
+    {
+        return Portfolio::findItems($this->config, (int) $this->limit ?: 0, (int) $this->offset ?: 0, $this->options);
     }
 
     protected function getApi(): ?PortfolioApi

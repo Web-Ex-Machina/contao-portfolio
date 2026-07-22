@@ -25,7 +25,6 @@ use Contao\CoreBundle\Util\UrlUtil;
 use Contao\Environment;
 use Contao\Input;
 use Contao\PageModel;
-use Contao\ModuleModel;
 use Contao\System;
 use Contao\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,7 +45,6 @@ class RemoteReaderModuleController extends ReaderModuleController
 
     protected ?Portfolio $portfolio = null;
     protected ?PortfolioFeed $feed = null;
-    protected ModuleModel $model;
 
     public function __construct(
         private readonly ContentUrlGenerator $contentUrlGenerator
