@@ -79,74 +79,22 @@ class ApiController
 
         $routes[] = [
             'usage' => 'To retrieve a list of article based on an categories array',
-            'path' => '/api/portfolio/get/items/{page}/{limit}?pid[]=1&pid[]=2&key={key}',
+            'path' => '/api/portfolio/get/items?pid[]=1&pid[]=2&key={key}',
             'arguments' => [
-                'page' => [
-                    'type' => 'int',
-                    'mandatory' => true,
-                ],
-                'limit' => [
-                    'type' => 'int',
-                    'mandatory' => true,
-                ],
                 'pid' => [
                     'type' => 'array',
                     'mandatory' => false,
                 ],
-                'key' => [
-                    'type' => 'string',
-                    'mandatory' => true,
-                ],
-            ],
-        ];
-        $routes[] = [
-            'usage' => 'To retrieve a list of article based on an categories array with an offset',
-            'path' => '/api/portfolio/get/items/{page}/{limit}/{offset}/?pid[]=1&pid[]=2&key={key}',
-            'arguments' => [
-                'page' => [
-                    'type' => 'int',
-                    'mandatory' => true,
-                ],
                 'limit' => [
                     'type' => 'int',
-                    'mandatory' => true,
-                ],
-                'offset' => [
-                    'type' => 'int',
-                    'mandatory' => true,
-                ],
-                'pid' => [
-                    'type' => 'array',
                     'mandatory' => false,
                 ],
-                'key' => [
-                    'type' => 'string',
-                    'mandatory' => true,
-                ],
-            ],
-        ];
-        $routes[] = [
-            'usage' => 'To retrieve a list of article based on an categories array with an offset and an order',
-            'path' => '/api/portfolio/get/items/{page}/{limit}/{offset}/{order}/?pid[]=1&pid[]=2&key={key}',
-            'arguments' => [
-                'page' => [
-                    'type' => 'int',
-                    'mandatory' => true,
-                ],
-                'limit' => [
-                    'type' => 'int',
-                    'mandatory' => true,
-                ],
                 'offset' => [
                     'type' => 'int',
-                    'mandatory' => true,
+                    'mandatory' => false,
                 ],
-                'order' => [
+                'options' => [
                     'type' => 'string',
-                    'mandatory' => true,
-                ],
-                'pid' => [
-                    'type' => 'array',
                     'mandatory' => false,
                 ],
                 'key' => [
@@ -341,11 +289,11 @@ class ApiController
     }
 
     #[Route(
-        '/search/feed/attribute',
-        name: 'searchFeedAttribute',
+        '/search/feed/attributes',
+        name: 'searchFeedAttributes',
         methods: ['GET']
     )]
-    public function searchFeedAttribute(Request $request): JsonResponse
+    public function searchFeedAttributes(Request $request): JsonResponse
     {
         $check = $this->accessCheck($request);
 
@@ -368,47 +316,14 @@ class ApiController
         return new JsonResponse($arrItems, Response::HTTP_OK);
     }
 
-    private function prepareAttribute(PortfolioFeedAttribute $attr): array 
-    {
-        $item = $attr->row();
-
-        Controller::loadDataContainer('tl_wem_portfolio');
-        $item['dcaConfig'] = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$attr->name];
-
-        return $item;
-    }
-
     #[Route(
-        '/get/items/{page}/{limit}',
+        '/get/items',
         name: 'getItems',
-        requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS],
         methods: ['GET']
     )]
-    public function getItems(Request $request, int $page, int $limit, array $pid = []): JsonResponse
+    public function getItems(Request $request): JsonResponse
     {
-        return $this->getList($request, $page, $limit, 0, null, $pid);
-    }
-
-    #[Route(
-        '/get/items/{page}/{limit}/{offset}',
-        name: 'getItemsWithOffset',
-        requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS, 'offset' => Requirement::DIGITS],
-        methods: ['GET']
-    )]
-    public function getItemsWithOffset(Request $request, int $page, int $limit, int $offset, array $pid = []): JsonResponse
-    {
-        return $this->getList($request, $page, $limit, $offset, null, $pid);
-    }
-
-    #[Route(
-        '/get/items/{page}/{limit}/{offset}/{order}',
-        name: 'getItemsWithOffsetAndOrder',
-        requirements: ['page' => Requirement::DIGITS, 'limit' => Requirement::DIGITS, 'offset' => Requirement::DIGITS, 'order' => Requirement::ASCII_SLUG],
-        methods: ['GET']
-    )]
-    public function getItemsWithOffsetAndOrder(Request $request, int $page, int $limit, int $offset, string $order, array $pid = []): JsonResponse
-    {
-        return $this->getList($request, $page, $limit, $offset, $order, $pid);
+        return $this->getList($request);
     }
 
     #[Route(
@@ -416,7 +331,7 @@ class ApiController
         name: 'countItems',
         methods: ['GET']
     )]
-    public function countItems(Request $request, array $pid = []): JsonResponse
+    public function countItems(Request $request): JsonResponse
     {
         $check = $this->accessCheck($request);
         if ($check instanceof JsonResponse) {
@@ -474,24 +389,12 @@ class ApiController
         return new JsonResponse('{"error":"404 : Item not found"}', Response::HTTP_NOT_FOUND, [], true);
     }
 
-    protected function getList(Request $request, int $page, int $limit, int $offset = 0, ?string $order = null, array $pid = []): JsonResponse
+    protected function getList(Request $request): JsonResponse
     {
         $check = $this->accessCheck($request);
 
         if ($check instanceof JsonResponse) {
             return $check;
-        }
-
-        if ($limit > 20) {
-            $limit = 20;
-        }
-
-        if ($limit < 1) {
-            $limit = 1;
-        }
-
-        if ($page < 1) {
-            $page = 1;
         }
 
         $params = $request->query->all();
@@ -504,27 +407,33 @@ class ApiController
         unset($params['key']);
         unset($params['lang']);
 
+        $limit = $request->query->get('limit') ?: 30;
+        $offset = $request->query->get('offset') ?: 0;
+        $options = $request->query->all('options') ?: [];
+
+        unset($params['limit']);
+        unset($params['offset']);
+        unset($params['options']);
+
+        if (!array_key_exists('published', $params)) {
+            $params['published'] = 1;
+        }
+
         $items = [];
-        $options = [];
 
         // Allow people to choose order direction
-        if(null !== $order && false !== strpos($order, "-")) {
-            $chunks = explode("-", $order);
+        if(array_key_exists('order', $options) && false !== strpos($options['order'], "-")) {
+            $chunks = explode("-", $options['order']);
             $options['order'] = urldecode($chunks[0]) . ' ' . strtoupper($chunks[1]);
-        } else if (null !== $order) {
-            $options['order'] = urldecode($order) . ' DESC';
+        } else if (array_key_exists('order', $options)) {
+            $options['order'] = urldecode($options['order']) . ' DESC';
         }
 
         $objItems = Portfolio::findItems($params, $limit, $offset, $options);
 
         if ($objItems instanceof Collection) {
-            /** @var Portfolio $item */
-            foreach ($objItems as $item) {
-                if (!$item->published) {
-                    continue;
-                }
-
-                $items[$item->id] = $this->prepareItem($item, $locale);
+            while ($objItems->next()) {
+                $items[$objItems->id] = $this->prepareItem($objItems->current(), $locale);
             }
 
             return new JsonResponse($items, Response::HTTP_OK);
@@ -614,6 +523,16 @@ class ApiController
         $data['content_b64'] = base64_encode($this->service->getContent());
 
         return $data;
+    }
+
+    protected function prepareAttribute(PortfolioFeedAttribute $attr): array 
+    {
+        $item = $attr->row();
+
+        Controller::loadDataContainer('tl_wem_portfolio');
+        $item['dcaConfig'] = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$attr->name];
+
+        return $item;
     }
 
     private function accessCheck(Request $request): ?JsonResponse
