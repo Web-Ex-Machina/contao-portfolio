@@ -311,14 +311,14 @@ class ApiController
         }
 
         while ($objItems->next()) {
-            $arrItems[$objItems->id] = $objItems->row();
+            $arrItems[$objItems->id] = $this->prepareAttribute($objItems->current());
         }
 
         return new JsonResponse($arrItems, Response::HTTP_OK);
     }
 
     #[Route(
-        '/get/attribute/{id}',
+        '/get/feed/attribute/{id}',
         name: 'getFeedAttribute',
         requirements: ['id' => Requirement::DIGITS],
         methods: ['GET']
@@ -337,7 +337,45 @@ class ApiController
             return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse($objItem->row(), Response::HTTP_OK);
+        return new JsonResponse($this->prepareAttribute($objItem), Response::HTTP_OK);
+    }
+
+    #[Route(
+        '/search/feed/attribute',
+        name: 'searchFeedAttribute',
+        methods: ['GET']
+    )]
+    public function searchFeedAttribute(Request $request): JsonResponse
+    {
+        $check = $this->accessCheck($request);
+
+        if ($check instanceof JsonResponse) {
+            return $check;
+        }
+
+        $params = $request->query->all();
+        $objItems = PortfolioFeedAttribute::findItems($params);
+
+        if (!$objItems) {
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        }
+
+        $arrItems = [];
+        while ($objItems->next()) {
+            $arrItems[$objItems->id] = $this->prepareAttribute($objItems->current());
+        }
+
+        return new JsonResponse($arrItems, Response::HTTP_OK);
+    }
+
+    private function prepareAttribute(PortfolioFeedAttribute $attr): array 
+    {
+        $item = $attr->row();
+
+        Controller::loadDataContainer('tl_wem_portfolio');
+        $item['dcaConfig'] = $GLOBALS['TL_DCA']['tl_wem_portfolio']['fields'][$attr->name];
+
+        return $item;
     }
 
     #[Route(
