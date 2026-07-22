@@ -7,14 +7,11 @@ Functionnalities
 -------------------
  * Handle main porfolio features (list, reader...)
  * Create attributes and fill values for each item
- * Create categories and associate them with items
+ * Create as many portfolio translations as needed
  * Filter items by attributes
  * Sort your items the way you want
  * Attach multiple files to portfolio items and display them in your templates
-
-Known issues
--------------------
- * Attribute can erase another attribute properties if they have the same name - will be fixed in 4.x (with a global attribute system)
+ * Use API to create remote feeds on several websites
 
 System requirements
 -------------------
