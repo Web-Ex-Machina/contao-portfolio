@@ -50,9 +50,19 @@ class PortfolioApi
         return $model;
     }
 
-    public function getAttributes(int $feed): array
+    public function getAttributes(int $feed): Collection
     {
-        return $this->callApi('/get/feed/' . $feed . '/attributes');
+        $data = $this->callApi('/get/feed/' . $feed . '/attributes');
+        $models = [];
+
+        foreach ($data as $obj) {
+            $model = new PortfolioFeedAttribute();
+            $model->setRow($obj);
+
+            $models[] = $model;
+        }
+
+        return new Collection($models, PortfolioFeedAttribute::getTable());
     }
 
     public function getAttribute(int $attribute): PortfolioFeedAttribute
@@ -65,9 +75,19 @@ class PortfolioApi
         return $model;
     }
 
-    public function searchAttributes(array $params = []): array
+    public function searchAttributes(array $params = []): Collection
     {
-        return $this->callApi('/search/feed/attributes', $params);
+        $data = $this->callApi('/search/feed/attributes', $params);
+        $models = [];
+
+        foreach ($data as $obj) {
+            $model = new PortfolioFeedAttribute();
+            $model->setRow($obj);
+
+            $models[] = $model;
+        }
+
+        return new Collection($models, PortfolioFeedAttribute::getTable());
     }
 
     public function countItems(array $params = []): int
@@ -76,17 +96,9 @@ class PortfolioApi
         return $res['items'];
     }
 
-    public function getItems(int $page = 1, int $limit = 30, int $offset = 0, string $order = 'createdAt-desc', array $params = []): Collection
+    public function getItems(array $params = []): Collection
     {
-        $url = \sprintf(
-            '/get/items/%s/%s/%s/%s',
-            $page,
-            $limit,
-            $offset,
-            $order,
-        );
-
-        $data = $this->callApi($url, $params);
+        $data = $this->callApi('/get/items', $params);
         $models = [];
 
         foreach ($data as $obj) {
@@ -116,6 +128,7 @@ class PortfolioApi
         $params['key'] = $this->apiKey;
 
         $url = $this->remoteUrl . '/api/portfolio' . $route . '?' . http_build_query($params);
+
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
