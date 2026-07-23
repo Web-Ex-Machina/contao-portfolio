@@ -25,6 +25,13 @@ Installation
 Clone the extension from Packagist (Contao Manager)
 Use Composer: `composer require webexmachina/contao-portfolio`
 
+Improvements/ Known issues
+------------
+ * Issue: Remote URL generation is not working because it generates the item url based on remote and not local website
+ * Improvement: Add a Key/Value attribute
+ * Improvement: Add a cache system on API
+ * Improvement: Update the list pagination
+
 Documentation
 -------------
 
