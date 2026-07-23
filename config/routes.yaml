@@ -1,0 +1,3 @@
+wem.portfolio.controller:
+  resource: '../src/Controller'
+  type: attribute

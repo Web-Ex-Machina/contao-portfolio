@@ -1,0 +1,65 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/wem-portfolio/languages/en/modules.php" source-language="en" target-language="fr">
+    <body>
+      <trans-unit id="WEM.PORTFOLIO.nbItems">
+        <source>%s items</source>
+        <target>%s éléments</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.empty">
+        <source>There is no items yet.</source>
+        <target>Il n'y a pas encore d'éléments.</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.filterBy">
+        <source>Filter by</source>
+        <target>Filtrer par</target>
+      </trans-unit>
+
+      <trans-unit id="WEM.PORTFOLIO.description">
+        <source>Description</source>
+        <target>Description</target>
+      </trans-unit>
+
+      <trans-unit id="WEM.PORTFOLIO.noCategories">
+        <source>No categories selected</source>
+        <target>Pas de catégories sélectionnées</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.noAttributes">
+        <source>No attributes available</source>
+        <target>Pas d'attributs disponibles</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.noFiltersAvailable">
+        <source>No filters available</source>
+        <target>Pas de filtres disponibles</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.cannotUseCategorySorting">
+        <source>You cannot use category sorting if you use more than one category.</source>
+        <target>Vous ne pouvez pas utiliser le tri par catégorie si vous utilisez plus d'une catégorie.</target>
+      </trans-unit>
+
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.text">
+        <source>Text</source>
+        <target>Texte</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.textarea">
+        <source>Textarea</source>
+        <target>Zone de texte</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.select">
+        <source>Dropdown</source>
+        <target>Liste déroulante</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.picker">
+        <source>Item picker</source>
+        <target>Sélection d'élément</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.fileTree">
+        <source>File picker</source>
+        <target>Sélection de fichiers</target>
+      </trans-unit>
+      <trans-unit id="WEM.PORTFOLIO.ATTRIBUTE.TYPE.listWizard">
+        <source>List of texts</source>
+        <target>Liste de textes</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

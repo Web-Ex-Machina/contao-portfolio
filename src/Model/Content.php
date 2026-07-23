@@ -27,7 +27,7 @@ class Content extends Model
      */
     protected static $strTable = 'tl_content';
 
-    public static function findPublishedByPidAndTableAndLanguage($intPid, $strParentTable, array $arrOptions = [])
+    public static function findPublishedByPidAndTableAndLanguage($intPid, $strParentTable, string $locale, array $arrOptions = [])
     {
         $t = static::$strTable;
         $arrColumns = [\sprintf('%s.pid=? AND %s.ptable=?', $t, $t)];
@@ -37,18 +37,13 @@ class Content extends Model
             $arrColumns[] = \sprintf('%s.invisible=0 AND (%s.start=\'\' OR %s.start<=%d) AND (%s.stop=\'\' OR %s.stop>%d)', $t, $t, $t, $time, $t, $t, $time);
         }
 
-        $r = System::getContainer()->get('request_stack')->getCurrentRequest();
-
-        if (null !== $r) {
-            $arrColumns[] = $t.'.wem_language=?';
-        }
-
+        $arrColumns[] = $t.'.wem_language=?';
         $arrColumns[] = $t.'.tstamp!=0';
 
         if (!isset($arrOptions['order'])) {
             $arrOptions['order'] = $t.'.sorting';
         }
 
-        return static::findBy($arrColumns, [$intPid, $strParentTable, $r->getLocale() ?: ''], $arrOptions);
+        return static::findBy($arrColumns, [$intPid, $strParentTable, $locale ?: ''], $arrOptions);
     }
 }

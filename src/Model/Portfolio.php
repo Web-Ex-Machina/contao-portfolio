@@ -167,14 +167,15 @@ class Portfolio extends Model
     /**
      * Find a single record by its ID or code.
      *
-     * @param mixed $varId      The ID or code
-     * @param array $arrOptions An optional options array
+     * @param mixed  $varId      The ID or code
+     * @param string $locale     Enter a specific locale
+     * @param array  $arrOptions An optional options array
      *
      * @return \Contao\Model|static model or null if the result is empty
      */
-    public static function findByIdOrSlug(string $varId, array $arrOptions = [])
+    public static function findByIdOrSlug(int|string $varId, string $locale = '', array $arrOptions = [])
     {
-        $isCode = !preg_match('/^[1-9]\d*$/', $varId);
+        $isCode = !preg_match('/^[1-9]\d*$/', (string) $varId);
 
         // Try to load from the registry
         if (!$isCode && [] === $arrOptions) {
@@ -186,50 +187,22 @@ class Portfolio extends Model
         }
 
         $t = static::$strTable;
+        $columns = $isCode ? [$t.'.slug=?'] : [$t.'.id=?'];
+        $vars = [$varId];
 
-        $arrOptions = array_merge(
-            ['limit' => 1, 'column' => $isCode ? [$t.'.slug=?'] : [$t.'.id=?'], 'value' => $varId, 'return' => 'Model'],
-            $arrOptions
-        );
+        if ('' !== $locale) {
+            $columns[] = $t.'.language=?';
+            $vars[] = $locale;
+        }
+
+        $arrOptions = array_merge([
+            'limit' => 1, 
+            'column' => $columns, 
+            'value' => $vars, 
+            'return' => 'Model',
+        ], $arrOptions);
 
         return static::find($arrOptions);
-    }
-
-    /**
-     * Get offer attributes as array.
-     *
-     * @param mixed|null $lang
-     *
-     * @throws \Exception
-     *
-     * @return array ['attribute_name'=>['label'=>$label, 'raw_value'=>$value,'human_readable_value'=>$human_readable_value]]
-     */
-    public function getAttributesFull($varAttributes = [], $lang = null, $forApi = false): array
-    {
-        $attributes = [];
-
-        if (empty($varAttributes)) {
-            $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $this->pid]);
-        } else {
-            $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttributes]);
-        }
-
-        if ($objAttributes && 0 < $objAttributes->count()) {
-            $arrArticleData = $this->row();
-            while ($objAttributes->next()) {
-                if (\array_key_exists($objAttributes->name, $arrArticleData)) {
-                    $varValue = $this->getAttributeValue($objAttributes->current(), $lang, $forApi);
-
-                    $attributes[$objAttributes->name] = [
-                        'label' => $objAttributes->current()->getL10nLabel('label'),
-                        'raw_value' => $varValue,
-                        'human_readable_value' => $varValue,
-                    ];
-                }
-            }
-        }
-
-        return $attributes;
     }
 
     /**
@@ -261,234 +234,5 @@ class Portfolio extends Model
         }
 
         return static::findBy($arrColumns, null, $arrOptions);
-    }
-
-    /**
-     * TODO : this fonction return too many different value type.
-     *
-     * @param mixed|null $lang
-     *
-     * @throws \Exception
-     *
-     * @return array|Collection|mixed|string|Portfolio|null
-     */
-    public function getAttributeValue($varAttribute, $lang = null, $forApi = false)
-    {
-        if ('string' === \gettype($varAttribute)) {
-            $varAttribute = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttribute], 1);
-        }
-
-        if (null === $varAttribute) {
-            return null;
-        }
-
-        // If $l is null, retrieve current language
-        if (null === $lang) {
-            $r = System::getContainer()->get('request_stack')->getCurrentRequest();
-            if (null !== $r) {
-                $lang = $r->getLocale();
-            }
-        }
-
-        switch ($varAttribute->type) {
-            case 'select':
-                $return = null;
-                $arrArticleData = $this->row();
-                $options = StringUtil::deserialize($varAttribute->options ?? []);
-
-                if ($varAttribute->translatable) {
-                    $objL10n = PortfolioFeedAttributeL10n::findItems(['language' => $lang, 'pid' => $varAttribute->id], 1);
-
-                    if (null !== $objL10n) {
-                        $options = StringUtil::deserialize($objL10n->options ?? []);
-                    }
-                }
-
-                if ($varAttribute->multiple) {
-                    $arrArticleData[$varAttribute->name] = StringUtil::deserialize($arrArticleData[$varAttribute->name]);
-                    $return = [];
-                }
-
-                foreach ($options as $option) {
-                    if ($varAttribute->multiple && \is_array($arrArticleData[$varAttribute->name]) && \in_array($option['value'], $arrArticleData[$varAttribute->name], true)) {
-                        $return[] = $option['label'];
-                    } elseif (!$varAttribute->multiple && $option['value'] === $arrArticleData[$varAttribute->name]) {
-                        $return = $option['label'];
-                    }
-                }
-
-                if ($varAttribute->multiple) {
-                    $return = implode(', ', $return);
-                }
-
-                return $return;
-
-            case 'picker':
-                return $this->getRelated($varAttribute->name);
-
-            case 'fileTree':
-                $figureBuilder = System::getContainer()
-                    ->get('contao.image.studio')
-                    ->createFigureBuilder()
-                    ->setSize($this->size)
-                    ->setLightboxGroupIdentifier('lb'.$this->id)
-                    ->enableLightbox((bool) $this->fullsize)
-                ;
-
-                if ($varAttribute->multiple) {
-                    $objFiles = FilesModel::findMultipleByUuids(StringUtil::deserialize($this->{$varAttribute->name}));
-
-                    if (!$objFiles) {
-                        return null;
-                    }
-
-                    $arrFiles = [];
-                    while ($objFiles->next()) {
-                        $figure = $figureBuilder
-                            ->fromPath($objFiles->path)
-                            ->build()
-                        ;
-
-                        $data = $figure->getLegacyTemplateData() ?: null;
-
-                        if (null === $data) {
-                            continue;
-                        }
-
-                        if ($forApi && is_array($data)) {
-                            $data['picture']['img']['srcset'] = Environment::get('base') . $data['picture']['img']['srcset'];
-                            $data['picture']['img']['src'] = Environment::get('base') . $data['picture']['img']['src'];
-                            $data['singleSRC'] = Environment::get('base') . $data['singleSRC'];
-                            $data['src'] = Environment::get('base') . $data['src'];
-                        }
-
-                        $arrFiles[] = $data;
-                    }
-
-                    return $arrFiles ?: null;
-                }
-
-                $data = $this->{$varAttribute->name};
-
-                if (!is_array($data)) {
-                    $objFile = FilesModel::findByUuid($data);
-
-                    $figure = $figureBuilder
-                        ->fromPath($objFile->path)
-                        ->build()
-                    ;
-
-                    $data = $figure->getLegacyTemplateData() ?: null;
-                }
-
-                if ($forApi && is_array($data)) {
-                    $data['picture']['img']['srcset'] = Environment::get('base') . $data['picture']['img']['srcset'];
-                    $data['picture']['img']['src'] = Environment::get('base') . $data['picture']['img']['src'];
-                    $data['singleSRC'] = Environment::get('base') . $data['singleSRC'];
-                    $data['src'] = Environment::get('base') . $data['src'];
-                }
-                
-                return $data;
-
-            case 'listWizard':
-                $varValue = StringUtil::deserialize($this->getL10nLabel($varAttribute->name, $lang));
-
-                if (!$varValue) {
-                    return '';
-                }
-
-                if (is_array($varValue)) {
-                    return implode(', ', $varValue);
-                }
-
-                return $varValue;
-
-            default:
-                return $this->getL10nLabel($varAttribute->name, $lang);
-        }
-    }
-
-    /**
-     * Get offer attributes as array.
-     *
-     * @param mixed|null $lang
-     *
-     * @throws \Exception
-     *
-     * @return array ['attribute_label'=>$human_readable_value,...]
-     */
-    public function getAttributesSimple($varAttributes = [], $lang = null): array
-    {
-        $attributes = [];
-
-        $objAttributes = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $varAttributes]);
-
-        if ($objAttributes && 0 < $objAttributes->count()) {
-            $arrArticleData = $this->row();
-            while ($objAttributes->next()) {
-                if (\array_key_exists($objAttributes->name, $arrArticleData)) {
-                    $attributes[$objAttributes->name] = $this->getAttributeValue($objAttributes->current(), $lang);
-                }
-            }
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * Generate item url.
-     *
-     * @throws \Exception
-     */
-    public function getUrl(bool $blnAbsolute = false, string $lang = ''): ?string
-    {
-        $objFeed = $this->getRelated('pid');
-
-        if (!$objFeed) {
-            throw new \Exception(\sprintf('Cannot retrieve pid from item id %s', $this->id));
-        }
-
-        $objTarget = $objFeed->getRelated('jumpTo');
-
-        if (!$objTarget) {
-            return null;
-        }
-
-        // If $l is null, retrieve current language
-        if ('' === $lang) {
-            $r = System::getContainer()->get('request_stack')->getCurrentRequest();
-            if (null !== $r) {
-                $lang = $r->getLocale();
-            }
-        }
-
-        $objPageData = (new PageFinder())->findAssociatedForLanguage($objTarget, $lang);
-        $params = (Config::get('useAutoItem') ? '/' : '/items/').'category/'.$objFeed->alias.'/item/'.($this->getL10nLabel('slug', $lang) ?: $this->id);
-
-        return $blnAbsolute ? $objPageData->getAbsoluteUrl($params) : $objPageData->getFrontendUrl($params);
-    }
-
-    public function getL10nLabel($f, $l = null)
-    {
-        // Set default value
-        $label = $this->{$f};
-
-        // If $l is null, retrieve current language
-        if (null === $l) {
-            $r = System::getContainer()->get('request_stack')->getCurrentRequest();
-            if (null !== $r) {
-                $l = $r->getLocale();
-            }
-        }
-
-        // Try to retrieve a l10n entry for this pid and language
-        $objL10n = PortfolioL10n::findItems(['language' => $l, 'pid' => $this->id], 1);
-
-        // If there is no translation available, retrieve the current field
-        if (null === $objL10n || null === $objL10n->{$f}) {
-            return $label;
-        }
-
-        return $objL10n->{$f};
     }
 }

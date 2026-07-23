@@ -1,0 +1,55 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/wem-portfolio/languages/en/modules.php" source-language="en" target-language="en">
+    <body>
+      <trans-unit id="MOD.wem_portfolio.0">
+        <source>Portfolio</source>
+      </trans-unit>
+      <trans-unit id="MOD.wem_portfolio_feed.0">
+        <source>Items</source>
+      </trans-unit>
+      <trans-unit id="MOD.wem_portfolio_feed.1">
+        <source>Manage portfolio items</source>
+      </trans-unit>
+
+      <trans-unit id="FMD.wem_portfolio">
+        <source>Portfolio</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_filters.0">
+        <source>Portfolio filters</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_filters.1">
+        <source>Manage a portfolio filters system</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_list.0">
+        <source>Portfolio List</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_list.1">
+        <source>Display a list of portfolio items</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_reader.0">
+        <source>Portfolio Reader</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_reader.1">
+        <source>Display a reader of portfolio item</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_filters.0">
+        <source>Remote Portfolio filters</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_filters.1">
+        <source>Manage a portfolio remote filters system</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_list.0">
+        <source>Remote Portfolio List</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_list.1">
+        <source>Display a list of portfolio remote items</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_reader.0">
+        <source>Remote Portfolio Reader</source>
+      </trans-unit>
+      <trans-unit id="FMD.wem_portfolio_remote_reader.1">
+        <source>Display a reader of portfolio remote item</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
