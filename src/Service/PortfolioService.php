@@ -101,7 +101,7 @@ class PortfolioService
                 
                 default:
                     if (!$value) {
-                        continue;
+                        break;
                     }
 
                     $this->model->{$col} = $value;
