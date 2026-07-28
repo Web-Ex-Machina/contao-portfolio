@@ -1,6 +1,9 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
+## 4.1 - yyyy-mm-dd
+- ADDED - Automatically retrieve raw data from attributes (available in templates with `$this->{field}_raw`)
+
 ## 4.0 - 2026-07-23
 - IMPORTANT - Drop Contao 4.13 Compatibility
 - UPDATED - Add Contao 5.7 compatibility
