@@ -186,6 +186,10 @@ class PortfolioService
         $data = [];
         foreach ($this->model->row() as $key => $value) {
             $data[$key] = $this->getField($key, $locale);
+
+            if ($this->isAttribute($key)) {
+                $data[$key . '_raw'] = $this->getAttributeValue($key, true);
+            }
         }
 
         return $data;
@@ -319,13 +323,14 @@ class PortfolioService
     /**
      * Return a field value
      *
-     * @param string      $field
+     * @param string    $field    - the field we want to return
+     * @param bool      $rawValue - set to true to return raw data
      *
      * @throws \Exception
      *
      * @return array|Collection|mixed|string|Portfolio|null
      */
-    private function getAttributeValue(string $field, bool $forApi = false)
+    private function getAttributeValue(string $field, bool $rawValue = false)
     {
         // Retrieve attribute config
         $objAttr = $this->getAttributeConfig($field);
@@ -349,11 +354,13 @@ class PortfolioService
                     $return = [];
                 }
 
+                $column = $rawValue ? 'value' : 'label';
+
                 foreach ($options as $option) {
                     if ($objAttr->multiple && \is_array($arrArticleData[$objAttr->name]) && \in_array($option['value'], $arrArticleData[$objAttr->name], true)) {
-                        $return[] = $option['label'];
+                        $return[] = $option[$column];
                     } elseif (!$objAttr->multiple && $option['value'] === $arrArticleData[$objAttr->name]) {
-                        $return = $option['label'];
+                        $return = $option[$column];
                     }
                 }
 
