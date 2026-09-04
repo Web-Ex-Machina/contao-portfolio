@@ -13,3 +13,9 @@ services:
     arguments:
       $contentUrlGenerator: '@contao.routing.content_url_generator'
       $requestStack: '@request_stack'
+
+  WEM\PortfolioBundle\Migration\M20260904_DeleteTranslationsWithNoLocale:
+    arguments:
+      $connection: '@database_connection'
+    tags:
+      - { name: contao.migration, priority: 0 }
