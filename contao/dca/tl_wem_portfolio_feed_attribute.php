@@ -73,7 +73,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
         ',
         'picker' => '
             {type_legend},type,name,label;
-            {config_legend},mandatory,fkey;
+            {config_legend},mandatory,fkey,multiple;
             {design_legend},insertInDca,insertType,class;
             {l10n_legend},translations
         ',
