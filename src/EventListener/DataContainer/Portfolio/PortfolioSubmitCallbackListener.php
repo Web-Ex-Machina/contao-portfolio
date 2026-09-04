@@ -19,6 +19,10 @@ class PortfolioSubmitCallbackListener
             return;
         }
 
+        if (!$dc->activeRecord->language) {
+            return;
+        }
+
         // Try to find a translation
         $db = Database::getInstance();
         $objModel = Portfolio::findById((int) $dc->id);
