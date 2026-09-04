@@ -39,11 +39,18 @@ class PortfolioContainer extends Backend
     public function listItems(array $r): string
     {
         $arrLanguages = System::getContainer()->get('contao.intl.locales')->getLocales(null, false);
-        $arrTranslations = [$arrLanguages[$r['language']]];
+        $arrTranslations = [];
+
+        if ($r['language'] && array_key_exists($r['language'], $arrLanguages)) {
+            $arrTranslations[] = $arrLanguages[$r['language']];
+        }
+
         $objTranslations = PortfolioL10n::findItems(['pid' => $r['id']]);
         if ($objTranslations) {
             while ($objTranslations->next()) {
-                $arrTranslations[] = $arrLanguages[$objTranslations->language];
+                if (!in_array($arrLanguages[$objTranslations->language], $arrTranslations)) {
+                    $arrTranslations[] = $arrLanguages[$objTranslations->language];
+                }
             }
         }
 
