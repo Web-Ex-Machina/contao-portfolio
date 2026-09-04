@@ -27,7 +27,8 @@ class PortfolioService
         private readonly ContentUrlGenerator $contentUrlGenerator,
         private readonly RequestStack $requestStack,
     ) {
-        $this->locale = $this->requestStack->getCurrentRequest()->getLocale();
+        $r = $this->requestStack->getCurrentRequest();
+        $this->locale = $r ? $r->getLocale() : '';
 
         Controller::loadDataContainer('tl_wem_portfolio');
         Controller::loadDataContainer('tl_wem_portfolio_l10n');
