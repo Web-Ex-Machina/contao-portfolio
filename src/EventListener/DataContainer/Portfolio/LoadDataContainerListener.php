@@ -205,6 +205,8 @@ class LoadDataContainerListener
                     $data['relation'] = ['type' => 'hasOne', 'load' => 'lazy'];
                 }
 
+                $data['eval']['isSortable'] = (bool) $row['sortable'];
+
                 break;
 
             case 'fileTree':
@@ -232,6 +234,8 @@ class LoadDataContainerListener
                 } else {
                     $data['sql'] = 'binary(16) NULL';
                 }
+
+                $data['eval']['isSortable'] = (bool) $row['sortable'];
 
                 break;
 

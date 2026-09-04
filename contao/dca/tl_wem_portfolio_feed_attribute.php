@@ -73,13 +73,13 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
         ',
         'picker' => '
             {type_legend},type,name,label;
-            {config_legend},mandatory,fkey,multiple;
+            {config_legend},mandatory,fkey,multiple,sortable;
             {design_legend},insertInDca,insertType,class;
             {l10n_legend},translations
         ',
         'fileTree' => '
             {type_legend},type,name,label;
-            {config_legend},mandatory,multiple,filesOnly,fieldType,extensions;
+            {config_legend},mandatory,multiple,sortable,filesOnly,fieldType,extensions;
             {design_legend},insertInDca,insertType,class;
             {l10n_legend},translations
         ',
@@ -158,6 +158,12 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'multiple' => [
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'sortable' => [
             'exclude' => true,
             'inputType' => 'checkbox',
             'eval' => ['tl_class' => 'w50'],

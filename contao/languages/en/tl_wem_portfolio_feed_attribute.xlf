@@ -51,6 +51,14 @@
                 <source>Check to make this attribute multiple</source>
                 <target>Check to make this attribute multiple</target>
             </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed_attribute.sortable.0">
+                <source>Sortable</source>
+                <target>Sortable</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed_attribute.sortable.1">
+                <source>Check to make this attribute sortable</source>
+                <target>Check to make this attribute sortable</target>
+            </trans-unit>
             <trans-unit id="tl_wem_portfolio_feed_attribute.chosen.0">
                 <source>Chosen</source>
                 <target>Chosen</target>
