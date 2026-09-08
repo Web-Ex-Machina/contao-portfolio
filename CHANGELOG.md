@@ -1,8 +1,13 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
-## 4.1 - yyyy-mm-dd
+## 4.1 - 2026-09-08
 - ADDED - Automatically retrieve raw data from attributes (available in templates with `$this->{field}_raw`)
+- ADDED - Picker can now be multiple
+- ADDED - Attributes `fileTree` and `picker` can now be sortable
+- ADDED - Migration will now automatically delete translations with no locales as it is not supposed to happen
+- FIXED - Translations are now properly displayed in backend
+- FIXED - Various issues and warnings
 
 ## 4.0 - 2026-07-23
 - IMPORTANT - Drop Contao 4.13 Compatibility
