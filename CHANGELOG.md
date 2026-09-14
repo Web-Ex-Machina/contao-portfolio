@@ -1,6 +1,9 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
+## 4.2 - 2026-09-14
+- ADDED - Picker widget can now link a Portfolio item
+
 ## 4.1 - 2026-09-08
 - ADDED - Automatically retrieve raw data from attributes (available in templates with `$this->{field}_raw`)
 - ADDED - Picker can now be multiple
