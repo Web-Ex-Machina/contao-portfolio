@@ -153,7 +153,7 @@ class ListModuleController extends ModuleController
 
             // Get the current page
             $id = 'page_n'.$this->model->id;
-            $this->page = Input::get($id) ?? 1;
+            $this->page = Input::get($id) ? (int) Input::get($id) : 1;
 
             // Do not index or cache the page if the page number is outside the range
             if ($this->page < 1 || $this->page > max(ceil($total / $this->model->perPage), 1)) {
