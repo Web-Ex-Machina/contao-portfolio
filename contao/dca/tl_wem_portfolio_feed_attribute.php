@@ -47,7 +47,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
 
     // Palettes
     'palettes' => [
-        '__selector__' => ['type', 'isFilter'],
+        '__selector__' => ['type', 'isFilter', 'syncWithSubtable'],
         'default' => '
             {type_legend},type,name,label;
         ',
@@ -73,7 +73,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
         ',
         'picker' => '
             {type_legend},type,name,label;
-            {config_legend},mandatory,fkey,multiple,sortable;
+            {config_legend},mandatory,fkey,multiple,sortable,syncWithSubtable;
             {design_legend},insertInDca,insertType,class;
             {l10n_legend},translations
         ',
@@ -95,6 +95,7 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
     // Subpalettes
     'subpalettes' => [
         'isFilter' => 'filterLabel',
+        'syncWithSubtable' => 'syncFcolumn',
     ],
 
     // Fields
@@ -168,6 +169,18 @@ $GLOBALS['TL_DCA']['tl_wem_portfolio_feed_attribute'] = [
             'inputType' => 'checkbox',
             'eval' => ['tl_class' => 'w50'],
             'sql' => "char(1) NOT NULL default ''",
+        ],
+        'syncWithSubtable' => [
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'syncFcolumn' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'chosen' => [
             'exclude' => true,

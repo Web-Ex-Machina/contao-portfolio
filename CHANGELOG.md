@@ -1,8 +1,9 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
-## 4.2 - 2026-09-14
+## 4.2 - 2026-09-15
 - ADDED - Picker widget can now link a Portfolio item
+- FIXED - Fixed a cast issue within paginations
 
 ## 4.1 - 2026-09-08
 - ADDED - Automatically retrieve raw data from attributes (available in templates with `$this->{field}_raw`)

@@ -17,6 +17,7 @@ namespace WEM\PortfolioBundle\EventListener\DataContainer\Portfolio;
 use Contao\Controller;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Psr\Log\LoggerInterface;
+use WEM\PortfolioBundle\DataContainer\PortfolioContainer;
 use WEM\PortfolioBundle\Model\PortfolioFeedAttribute;
 use WEM\UtilsBundle\Classes\StringUtil;
 
@@ -206,6 +207,12 @@ class LoadDataContainerListener
                 }
 
                 $data['eval']['isSortable'] = (bool) $row['sortable'];
+
+                // Sync settings
+                if ($row['syncWithSubtable']) {
+                    $data['load_callback'] = [[PortfolioContainer::class, 'loadAttributeValues']];
+                    $data['save_callback'] = [[PortfolioContainer::class, 'saveAttributeValues']];
+                }
 
                 break;
 

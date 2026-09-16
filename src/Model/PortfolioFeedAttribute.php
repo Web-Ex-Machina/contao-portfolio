@@ -123,4 +123,28 @@ class PortfolioFeedAttribute extends Model
 
         return $objL10n->{$f};
     }
+
+    public function getSyncColumn(): string
+    {
+        switch ($this->type) {
+            case 'text':
+                return 'value_varchar';
+            break;
+            case 'textarea':
+                return 'value_text';
+            break;
+            case 'select':
+                return 'value_varchar';
+            break;
+            case 'picker':
+                return 'value_int';
+            break;
+            case 'fileTree':
+                return 'value_binary';
+            break;
+            case 'listWizard':
+                return 'value_blob';
+            break;
+        }
+    }
 }

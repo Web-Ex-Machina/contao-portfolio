@@ -107,4 +107,27 @@ class PortfolioContainer extends Backend
 
         return $varValue;
     }
+
+    public function loadAttributeValues($varValue, DataContainer $dc): mixed
+    {
+        if (!$dc->activeRecord) {
+            return $varValue;
+        }
+
+        $objI = Portfolio::findById($dc->id);
+        
+        return $objI->getAttributeValues($dc->field);
+    }
+
+    public function saveAttributeValues($varValue, DataContainer $dc): mixed
+    {
+        if (!$dc->activeRecord) {
+            return $varValue;
+        }
+
+        $objI = Portfolio::findById($dc->id);
+        $objI->saveAttributeValues($dc->field, $varValue);
+
+        return $varValue;
+    }
 }

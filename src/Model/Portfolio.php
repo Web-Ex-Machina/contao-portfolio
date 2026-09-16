@@ -235,4 +235,116 @@ class Portfolio extends Model
 
         return static::findBy($arrColumns, null, $arrOptions);
     }
+
+    public function getFeedAttribute(string $field): PortfolioFeedAttribute
+    {
+        $objFeedAttribute = PortfolioFeedAttribute::findItems(['pid' => $this->pid, 'name' => $field], 1);
+
+        return $objFeedAttribute->current();
+    }
+
+    public function getAttributeValues(string $field): array
+    {
+        $objFeedAttribute = $this->getFeedAttribute($field);
+        $strFTable = array_first(explode(".", $objFeedAttribute->fkey));
+
+        $objValues = PortfolioAttribute::findItems([
+            'pid' => $this->id,
+            'ptable' => Portfolio::getTable(),
+            'ftable' => $strFTable, 
+            'fcolumn' => $objFeedAttribute->syncFcolumn
+        ]);
+
+        $arrValues = [];
+        if ($objValues && 0 < $objValues->count()) {
+            while ($objValues->next()) {
+                $arrValues[] = $objValues->{$objFeedAttribute->getSyncColumn()};
+            }
+        }
+
+        return $arrValues;
+    }
+
+    public function saveAttributeValues(string $field, mixed $values): void
+    {
+        $objFeedAttribute = $this->getFeedAttribute($field);
+        $strFTable = array_first(explode(".", $objFeedAttribute->fkey));
+
+        // If the attribute is multiple, we want to save values in different db rows
+        // Else, build a fake array to standardize the following process
+        if ($objFeedAttribute->multiple) {
+            $values = StringUtil::deserialize($values);
+        }
+
+        if (null === $values) {
+            $arrValues = [];
+        } else if (!is_array($values)) {
+            $arrValues = [$values];
+        } else {
+            $arrValues = $values;
+        }
+
+        if (!is_array($arrValues)) {
+            throw new Exception("Values to sync are not an array");
+        }
+
+        $arrFields = [
+            'createdAt' => time(),
+            'ptable' => Portfolio::getTable(),
+            'ftable' => $strFTable,
+            'fcolumn' => $objFeedAttribute->syncFcolumn,
+        ];
+
+        $arrWheres = [
+            'ptable' => Portfolio::getTable(),
+            'ftable' => $strFTable,
+            'fcolumn' => $objFeedAttribute->syncFcolumn,
+        ];
+
+        $ds = System::getContainer()->get('wem.utils.service.data_synchronizer');
+        $ds->syncData(
+            $arrValues, 
+            PortfolioAttribute::getTable(),
+            $this->id,
+            'pid',
+            $objFeedAttribute->getSyncColumn(),
+            [],
+            $arrFields,
+            $arrWheres,
+        );
+
+        if ($objFeedAttribute->syncWithSubtable) {
+            foreach ($arrValues as $val) {
+                $arrValues2 = [];
+                $objValues = PortfolioAttribute::findItems([
+                    'pid' => $val,
+                    'ptable' => Portfolio::getTable(),
+                    'ftable' => $strFTable,
+                    'fcolumn' => $objFeedAttribute->syncFcolumn
+                ]);
+
+                if ($objValues && 0 < $objValues->count()) {
+                    while ($objValues->next()) {
+                        $arrValues2[] = $objValues->{$objFeedAttribute->getSyncColumn()};
+                    }
+                }
+
+                if (!in_array($this->{$objFeedAttribute->syncFcolumn}, $arrValues2)) {
+                    $arrValues2[] = $this->{$objFeedAttribute->syncFcolumn};
+                }
+
+                $ds->syncData(
+                    $arrValues2,
+                    PortfolioAttribute::getTable(),
+                    $val,
+                    'pid',
+                    $objFeedAttribute->getSyncColumn(),
+                    [],
+                    $arrFields,
+                    $arrWheres,
+                );
+            }
+        }
+    }
 }
+

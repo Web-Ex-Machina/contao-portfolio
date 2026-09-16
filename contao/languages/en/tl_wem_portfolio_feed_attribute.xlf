@@ -59,6 +59,14 @@
                 <source>Check to make this attribute sortable</source>
                 <target>Check to make this attribute sortable</target>
             </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed_attribute.syncWithSubtable.0">
+                <source>Sync with subtable</source>
+                <target>Sync with subtable</target>
+            </trans-unit>
+            <trans-unit id="tl_wem_portfolio_feed_attribute.syncWithSubtable.1">
+                <source>Check to sync this attribute value within a subtable</source>
+                <target>Check to sync this attribute value within a subtable</target>
+            </trans-unit>
             <trans-unit id="tl_wem_portfolio_feed_attribute.chosen.0">
                 <source>Chosen</source>
                 <target>Chosen</target>
