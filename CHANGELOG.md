@@ -1,8 +1,9 @@
 
 # Extension "Portfolio" for Contao Open Source CMS
 
-## 4.2 - 2026-09-15
+## 4.2 - 2026-09-16
 - ADDED - Picker widget can now link a Portfolio item
+- ADDED - Sync items in a pivot table with attributes
 - FIXED - Fixed a cast issue within paginations
 
 ## 4.1 - 2026-09-08
